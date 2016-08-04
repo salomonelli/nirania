@@ -3,17 +3,17 @@
  * @constructor
  */
 function Particles() {
-    this.scene = null;
-    this.group = new THREE.Group();
-    this.particle = null;
+    var scene = null;
+    var group = new THREE.Group();
+    var particle = null;
 
     /**
      * adds the particles to the scene
-     * @param {THREE.Scene} scene - main scene
+     * @param {THREE.Scene} s - scene
      */
-    this.init = function (scene) {
-        this.scene = scene;
-        this.scene.add(this.group);
+    this.init = function (s) {
+        scene = s;
+        scene.add(group);
 
         for (var i = 0; i < 1000; i++) {
             var material = new THREE.SpriteCanvasMaterial({
@@ -24,12 +24,12 @@ function Particles() {
                     context.fill();
                 }
             });
-            this.particle = new THREE.Sprite(material);
-            this.particle.position.x = Math.random() * 2000 - 1000;
-            this.particle.position.y = Math.random() * 2000 - 1000;
-            this.particle.position.z = Math.random() * 2000 - 1000;
-            this.particle.scale.x = this.particle.scale.y = Math.random() * 2 + 1;
-            this.group.add(this.particle);
+            particle = new THREE.Sprite(material);
+            particle.position.x = Math.random() * 2000 - 1000;
+            particle.position.y = Math.random() * 2000 - 1000;
+            particle.position.z = Math.random() * 2000 - 1000;
+            particle.scale.x = particle.scale.y = Math.random() * 2 + 1;
+            group.add(particle);
         }
     };
 
@@ -37,8 +37,8 @@ function Particles() {
      * animates the particles
      */
     this.animate = function () {
-        this.group.rotation.x += 0.0001;
-        this.group.rotation.y += 0.0002;
+        group.rotation.x += 0.0001;
+        group.rotation.y += 0.0002;
     };
 
 }
