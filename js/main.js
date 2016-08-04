@@ -1,4 +1,4 @@
-var camera, scene, renderer, group, particle;
+var camera, scene, renderer;
 
 var zIndex = 1000;
 var windowHalfX = window.innerWidth / 2;
@@ -17,12 +17,23 @@ function init() {
 
     particles.init(scene);
 
-		
+    //added
+
+    var way = new THREE.Mesh(
+        new THREE.CubeGeometry(300, 100, 1000),
+        new THREE.MeshBasicMaterial({color: COLOR.way, wireframe: false})
+    );
+    way.position.z = 0;
+    way.position.y = -windowHalfY;
+    scene.add(way);
+    //
 
     renderer = new THREE.CanvasRenderer();
-		renderer.setClearColor( 0xFF7864); //3A3D7A);
-		//renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
-		//renderer.setPixelRatio(window.devicePixelRatio);
+
+    renderer.setClearColor(COLOR.background); //3A3D7A);
+    //renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
+
+    //renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
 
@@ -36,8 +47,6 @@ function animate() {
 
 function render() {
     camera.lookAt(scene.position);
-    //group.rotation.x += 0.0001;
-    //group.rotation.y += 0.0002;
     particles.animate();
     renderer.render(scene, camera);
 }
