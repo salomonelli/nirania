@@ -1,14 +1,24 @@
+/*
 var camera, scene, renderer;
-
 var zIndex = 1000;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var particles, protagonist;
 
+
+
 init();
 animate();
+ */
 
+var scene = new Scene(window.innerWidth, window.innerHeight);
+animate();
 
+function animate(){
+    requestAnimationFrame(animate);
+    scene.render();
+}
+/*
 function init() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
     camera.position.z = zIndex;
@@ -51,5 +61,5 @@ function render() {
     particles.animate();
     renderer.render(scene, camera);
 }
-
+ */
 
