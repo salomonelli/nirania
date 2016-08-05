@@ -5,9 +5,9 @@ var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
 var particles, protagonist;
 
-
 init();
 animate();
+
 
 function init() {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 3000);
@@ -51,3 +51,5 @@ function render() {
     particles.animate();
     renderer.render(scene, camera);
 }
+
+

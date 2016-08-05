@@ -1,5 +1,6 @@
 /**
  * Represents particles
+ * @param {THREE.Scene} scene
  * @constructor
  */
 function Particles(scene) {
