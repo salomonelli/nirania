@@ -3,6 +3,7 @@ var COLOR = {
   particles: 0xffffff,//FD5C98
   way: 0xCEBCA5,
   protagonist: {
-    body: 0xffffff
+    body: 0xffffff,
+    head: 0xffffff
   }
 };

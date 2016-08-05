@@ -3,9 +3,8 @@ var camera, scene, renderer;
 var zIndex = 1000;
 var windowHalfX = window.innerWidth / 2;
 var windowHalfY = window.innerHeight / 2;
+var particles, protagonist;
 
-var particles = new Particles();
-var protagonist = new Protagonist();
 
 init();
 animate();
@@ -15,9 +14,8 @@ function init() {
     camera.position.z = zIndex;
     scene = new THREE.Scene();
 
-
-    particles.init(scene);
-    protagonist.init(scene);
+    particles = new Particles(scene);
+    protagonist = new Protagonist(scene);
 
 
     //added
@@ -33,8 +31,8 @@ function init() {
 
     renderer = new THREE.CanvasRenderer();
 
-    renderer.setClearColor(COLOR.background); //3A3D7A);
-    //renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
+    //renderer.setClearColor(COLOR.background); //3A3D7A);
+    renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
 
     //renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);

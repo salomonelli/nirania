@@ -11,11 +11,27 @@ function Protagonist(){
         right: null
     };
 
+    this.getBody = function(cb){
+        var loader = new THREE.JSONLoader();
+        loader.load('/js/blender/body2.json', function(geometry, materials) {
+            body = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({color: COLOR.protagonist.body}));
+            body.scale.x = body.scale.y = body.scale.z = 20;
+            body.translation = THREE.GeometryUtils.center(geometry);
+            cb();
+        });
+    };
+
     this.init = function(s){
         scene = s;
-        var loader = new THREE.JSONLoader();
-        loader.load('blender/body.json', function(geometry) {
-            body = new THREE.Mesh(geometry);
+        //get body form blender
+        this.getBody(function(){
+            head = new THREE.Mesh(
+                new THREE.SphereGeometry(25, 20, 15),
+                new THREE.MeshBasicMaterial({color: COLOR.protagonist.head})
+            );
+            head.position.set(0, 80, 0);
+            scene.add(head);
+            body.position.z = 700;
             scene.add(body);
         });
     };
