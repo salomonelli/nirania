@@ -29,6 +29,11 @@ Scene.prototype.init = function(){
     this.objects.particles = new Particles(this.scene);
     this.objects.protagonist = new Protagonist(this.scene);
 
+    //var leg = new Leg();
+    //scene.add(leg.leg);
+
+
+
     //TODO create way
     var way = new THREE.Mesh(
         new THREE.CubeGeometry(300, 100, 1000),

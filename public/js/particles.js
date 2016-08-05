@@ -41,4 +41,3 @@ Particles.prototype.animate = function () {
     this.group.rotation.x += 0.0001;
     this.group.rotation.y += 0.0002;
 };
-
