@@ -10602,7 +10602,7 @@ THREE.Camera.prototype.clone = function ( camera ) {
 
 /**
  * Camera for rendering cube maps
- *	- renders scene into axis-aligned cube
+ *	- renders mainScene into axis-aligned cube
  *
  * @author alteredq / http://alteredqualia.com/
  */
@@ -11937,7 +11937,7 @@ THREE.JSONLoader.prototype.loadAjaxJSON = function ( context, url, callback, tex
 
                         }
 
-                        if ( metadata.type === 'scene' ) {
+                        if ( metadata.type === 'mainScene' ) {
 
                             THREE.error( 'THREE.JSONLoader: ' + url + ' seems to be a Scene. Use THREE.SceneLoader instead.' );
                             return;
@@ -14538,9 +14538,9 @@ THREE.ShaderMaterial = function ( parameters ) {
     this.wireframe = false;
     this.wireframeLinewidth = 1;
 
-    this.fog = false; // set to use scene fog
+    this.fog = false; // set to use mainScene fog
 
-    this.lights = false; // set to use scene lights
+    this.lights = false; // set to use mainScene lights
 
     this.vertexColors = THREE.NoColors; // set to use "color" attribute stream
 
@@ -17876,7 +17876,7 @@ THREE.WebGLRenderer = function ( parameters ) {
     this.autoClearDepth = true;
     this.autoClearStencil = true;
 
-    // scene graph
+    // mainScene graph
 
     this.sortObjects = true;
 
@@ -21107,7 +21107,7 @@ THREE.WebGLRenderer = function ( parameters ) {
         _currentCamera = null;
         _lightsNeedUpdate = true;
 
-        // update scene graph
+        // update mainScene graph
 
         if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
 
@@ -21946,7 +21946,7 @@ THREE.WebGLRenderer = function ( parameters ) {
 
         }
 
-        // heuristics to create shader parameters according to lights in the scene
+        // heuristics to create shader parameters according to lights in the mainScene
         // (not to blow over maxLights budget)
 
         var maxLightCount = allocateLights( lights );

@@ -37,6 +37,8 @@ Protagonist.prototype.init = function(){
 
 
 Protagonist.prototype.run = function(){
+    
+    
 
 };
 
@@ -45,7 +47,18 @@ Protagonist.prototype.slide = function(){
 
 };
 
-Protagonist.prototype.jump = function(){
+Protagonist.prototype.animateJump = function(){
+        console.log("JUMP");
+        //console.log(mainScene.objects.protagonist.head.position.y);
+        new TWEEN
+            .Tween({jump: 0})
+            .to({jump: Math.PI}, 500)
+            .onUpdate(function () {
+                console.log("Update");
+                //this.body.mesh.position.y = 2000 * Math.sin(this.jump);
+                mainScene.objects.protagonist.head.position.y = 2000 * Math.sin(this.jump);
+            })
+            .start();
 
 };
 

@@ -12,7 +12,7 @@ function Particles(scene) {
 
 
 /**
- * adds the particles to the scene
+ * adds the particles to the mainScene
  */
 Particles.prototype.init = function () {
     var self = this;
@@ -48,7 +48,7 @@ Particles.prototype.init = function () {
 };
 
 /**
- * animates the particles in the scene
+ * animates the particles in the mainScene
  */
 Particles.prototype.animate = function () {
     console.dir('asdasd');

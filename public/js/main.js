@@ -12,10 +12,10 @@ initUs.forEach(function (initMe) {
     });
 });
 
-var scene;
+var mainScene;
 
 function main() {
-    scene = new Scene(window.innerWidth, window.innerHeight);
+    mainScene = new Scene(window.innerWidth, window.innerHeight);
     $(".sk-folding-cube").remove();
     $(".loading").fadeOut(3000);
     animate();
@@ -23,5 +23,24 @@ function main() {
 
 function animate() {
     requestAnimationFrame(animate);
-    scene.render();
+    
+   
+        Wall.prototype.wallMove(5);
+        mainScene.render();
+    
+
+
 }
+function jump(){
+    Protagonist.prototype.animateJump();
+}
+document.addEventListener('keydown', function(event)
+
+{
+    var code = event.keyCode;
+    switch (code) {
+        case 32 :
+            jump();
+            break;
+    }
+});
