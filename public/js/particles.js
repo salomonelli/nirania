@@ -16,28 +16,13 @@ function Particles(scene) {
  */
 Particles.prototype.init = function () {
     var self = this;
-
     this.scene.add(this.group);
 
-    console.log('asdasdasdasd');
-
     for (var i = 0; i < 100; i++) {
-        /*
-        var material = new THREE.SpriteCanvasMaterial({
-            color: COLOR.particles,
-            program: function(context){
-                context.beginPath();
-                context.arc(0, 0, 0.5, 0, Math.PI * 2, true);
-                context.fill();
-            }
-        });
-        */
-
         self.particle = new THREE.Mesh(
-            new THREE.OctahedronGeometry(2, 0),
+            new THREE.SphereGeometry( 1, 32, 32 ),
             new THREE.MeshBasicMaterial()
         );
-            // new THREE.Sprite(material);
         self.particle.position.x = Math.random() * 2000 - 1000;
         self.particle.position.y = Math.random() * 2000 - 1000;
         self.particle.position.z = Math.random() * 2000 - 1000;
@@ -51,7 +36,6 @@ Particles.prototype.init = function () {
  * animates the particles in the mainScene
  */
 Particles.prototype.animate = function () {
-    console.dir('asdasd');
     this.group.rotation.x += 0.0001;
     this.group.rotation.y += 0.0002;
 };

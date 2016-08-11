@@ -17,9 +17,39 @@
 <script src="http://code.jquery.com/jquery-latest.min.js"
         type="text/javascript"></script>
 
+<!-- ---------------- Custom Shader Code ------------------------ -->
+<script id="vertexShader" type="x-shader/x-vertex">
+  uniform vec3 viewVector;
+  uniform float c;
+  uniform float p;
+  varying float intensity;
+  void main()
+  {
+      vec3 vNormal = normalize( normalMatrix * normal );
+  	vec3 vNormel = normalize( normalMatrix * viewVector );
+  	intensity = pow( c - dot(vNormal, vNormel), p );
+
+      gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+  }
+  </script>
+
+<!-- fragment shader a.k.a. pixel shader -->
+<script id="fragmentShader" type="x-shader/x-vertex">
+  uniform vec3 glowColor;
+  varying float intensity;
+  void main()
+  {
+  	vec3 glow = glowColor * intensity;
+      gl_FragColor = vec4( glow, 1.0 );
+  }
+  </script>
+<!-- ----------------------------------------------------------- -->
+
+
 <!--<script src="js/sources/ChromeFixes.js"></script>-->
 <script src="/js/sources/Scoreboard.js"></script>
 <script src="/js/sources/three.min.js"></script>
+<script src="http://threejs.org/examples/js/controls/OrbitControls.js"
 <script src="/js/sources/CanvasRenderer.js"></script>
 <script src="/js/sources/Projector.js"></script>
 <script src="/js/sources/Tween.js"></script>

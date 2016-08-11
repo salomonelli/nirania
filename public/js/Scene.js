@@ -15,6 +15,10 @@ function Scene(width, height){
         particles: null,
         protagonist: null
     };
+    this.lights = {
+        hemisphere: null,
+        shadow: null
+    };
     this.init();
 }
 
@@ -29,36 +33,86 @@ Scene.prototype.init = function(){
 
     //add objects to mainScene
     this.objects.particles = new Particles(this.scene);
-    this.objects.protagonist = new Protagonist(this.scene);
+    this.objects.protagonist = new Protagonist(this.scene, this.camera);
     
     //var leg = new Leg();
     //mainScene.add(leg.leg);
 
-
-
     //TODO create way
     var way = new THREE.Mesh(
         new THREE.CubeGeometry(300, 100, 2000),
-        new THREE.MeshBasicMaterial({color: COLOR.way, wireframe: false})
+        new THREE.MeshLambertMaterial({color: COLOR.way})
     );
     way.position.z = 0;//0;
-    way.position.y = -this.windowHalfY;
-
+    way.position.y = -50;//-this.windowHalfY;
+    console.log(way.receiveShadow);
+    way.receiveShadow = true;
     Wall.prototype.createWall();
 
     this.scene.add(way);
     this.scene.add(activeWall[activeWall.length - 1]);
-    this.renderer = new THREE.WebGLRenderer({alpha: true});//new THREE.CanvasRenderer();
-    //renderer.setClearColor(COLOR.background); //3A3D7A);
-    //this.renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
-
-    //renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer = new THREE.WebGLRenderer({alpha: true});
     this.renderer.setSize(this.width, this.height);
+    this.renderer.shadowMapEnabled = true;
+
+
+    this.addLights();
+    //this.scene.add(new THREE.Fog( 0xffffff, 1000, 0 ));
+
+    // controls
+    controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
     document.body.appendChild(this.renderer.domElement);
 };
 
+
+Scene.prototype.addLights = function(){
+
+    // A hemisphere light is a gradient colored light;
+    // the first parameter is the sky color, the second parameter is the ground color,
+    // the third parameter is the intensity of the light
+    this.lights.hemisphere = new THREE.HemisphereLight(0x53034A, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
+
+    // A directional light shines from a specific direction.
+    // It acts like the sun, that means that all the rays produced are parallel.
+    this.lights.shadow = new THREE.DirectionalLight(0xffffff, .9);//0xffffff, 1);
+
+
+    // Set the direction of the light
+    this.lights.shadow.position.set(0, 200, 0);
+
+    this.lights.shadow.position.copy(this.camera.position);
+    this.lights.shadow.position.y  += 1000;
+    //this.lights.shadow.position.z = 0;
+    //this.lights.shadow.position.x = 1000;
+    this.lights.shadow.target.position.set(0,0,0);
+    // Allow shadow casting
+    this.lights.shadow.castShadow = true;
+
+    // define the visible area of the projected shadow
+    this.lights.shadow.shadow.camera.left = -4000;
+    this.lights.shadow.shadow.camera.right = 4000;
+    this.lights.shadow.shadow.camera.top = 4000;
+    this.lights.shadow.shadow.camera.bottom = -4000;
+    this.lights.shadow.shadow.camera.near = 1;
+    this.lights.shadow.shadow.camera.far =4000;
+
+    // define the resolution of the shadow; the higher the better,
+    // but also the more expensive and less performant
+    this.lights.shadow.shadow.mapSize.width = 1000;
+    this.lights.shadow.shadow.mapSize.height = 1000;
+
+    // to activate the lights, just add them to the scene
+    this.scene.add(this.lights.hemisphere );
+    this.scene.add(this.lights.shadow);
+    this.scene.add( new THREE.DirectionalLightHelper(this.lights.shadow, 0.2) );
+
+    //light.position.copy( this.camera.position );
+
+    this.renderer.shadowMapEnabled = true;
+    this.renderer.shadowMapSoft = false;
+};
+
 Scene.prototype.addObject = function (givenObject) {
-    console.log(this.scene);
     mainScene.scene.add(givenObject);
 
 }
