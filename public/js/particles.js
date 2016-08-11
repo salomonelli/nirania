@@ -12,7 +12,7 @@ function Particles(scene) {
 
 
 /**
- * adds the particles to the scene
+ * adds the particles to the mainScene
  */
 Particles.prototype.init = function () {
     this.scene.add(this.group);
@@ -35,7 +35,7 @@ Particles.prototype.init = function () {
 };
 
 /**
- * animates the particles in the scene
+ * animates the particles in the mainScene
  */
 Particles.prototype.animate = function () {
     this.group.rotation.x += 0.0001;

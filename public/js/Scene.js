@@ -22,15 +22,15 @@ Scene.prototype.init = function(){
     this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
     this.camera.position.z = this.zIndex;
 
-    //create scene
+    //create mainScene
     this.scene = new THREE.Scene();
 
-    //add objects to scene
+    //add objects to mainScene
     this.objects.particles = new Particles(this.scene);
     this.objects.protagonist = new Protagonist(this.scene);
-
+    
     //var leg = new Leg();
-    //scene.add(leg.leg);
+    //mainScene.add(leg.leg);
 
 
 
@@ -41,8 +41,14 @@ Scene.prototype.init = function(){
     );
     way.position.z = 0;
     way.position.y = -this.windowHalfY;
-    this.scene.add(way);
 
+    
+
+    
+
+    Wall.prototype.createWall();
+    this.scene.add(way);
+    this.scene.add(activeWall[activeWall.length - 1]);
     this.renderer = new THREE.CanvasRenderer();
     //renderer.setClearColor(COLOR.background); //3A3D7A);
     this.renderer = new THREE.CanvasRenderer( { alpha: true }); // gradient
@@ -51,6 +57,17 @@ Scene.prototype.init = function(){
     this.renderer.setSize(this.width, this.height);
     document.body.appendChild(this.renderer.domElement);
 };
+
+Scene.prototype.addObject = function (givenObject) {
+    console.log(this.scene);
+    mainScene.scene.add(givenObject);
+
+}
+Scene.prototype.removeObject = function (givenObject) {
+
+    mainScene.scene.remove(givenObject);
+
+}
 
 
 Scene.prototype.render = function(){
