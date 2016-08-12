@@ -1,4 +1,4 @@
-module.exports = (function(){
+module.exports = (function(THREE){
     /**
      * Represents particles
      * @param {THREE.Scene} scene
@@ -41,4 +41,6 @@ module.exports = (function(){
         this.group.rotation.y += 0.0002;
     };
     return Particles;
-})();
+})(
+    require('three')
+);

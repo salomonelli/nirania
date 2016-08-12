@@ -1,5 +1,10 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $) {
+module.exports = (function (Scene, $, THREE) {
+
+    //because some three js modules need a global THREE-variable....
+    window.THREE = THREE;
+
+
     var mainScene;
     window.initMe = 0;
 
@@ -50,7 +55,8 @@ module.exports = (function (Scene, $) {
 
 })(
     require('./Scene'),
-    require('jquery')
+    require('jquery'),
+    require('three')
 )
 ;
 

@@ -18,6 +18,8 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-shell": "^1.2.1",
     "jit-grunt": "^0.9.1",
-    "jquery": "^2.2.0"
+    "jquery": "^2.2.0",
+    "three": "*",
+    "tween.js": "*"
   }
 }

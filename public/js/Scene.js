@@ -1,4 +1,4 @@
-module.exports = (function(Particles, Protagonist, COLOR, Wall){
+module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
      */
@@ -174,5 +174,6 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall){
     require('./Particles'),
     require('./protagonist/Protagonist'),
     require('./COLOR'),
-    require('./Wall')
+    require('./Wall'),
+    require('three')
 );

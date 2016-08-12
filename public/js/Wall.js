@@ -1,4 +1,4 @@
-module.exports = (function(){
+module.exports = (function(THREE){
     /**
      * Created by Jan-Philipp on 07.08.2016.
      */
@@ -37,5 +37,5 @@ module.exports = (function(){
 
     return Wall;
 })(
-
+    require('three')
 );

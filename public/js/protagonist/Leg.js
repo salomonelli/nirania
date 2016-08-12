@@ -1,4 +1,4 @@
-module.exports = (function(COLOR){
+module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
      */
@@ -32,5 +32,6 @@ module.exports = (function(COLOR){
 
     return Leg;
 })(
-    require('../COLOR')
+    require('../COLOR'),
+    require('three')
 );

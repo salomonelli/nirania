@@ -1,4 +1,4 @@
-module.exports = (function(Head, Body, Leg, COLOR, $){
+module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
 
     /**
@@ -126,5 +126,6 @@ module.exports = (function(Head, Body, Leg, COLOR, $){
     require('./Body'),
     require('./Leg'),
     require('../COLOR'),
-    require('jquery')
+    require('jquery'),
+    require('three')
 );
