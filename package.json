@@ -1,9 +1,23 @@
 {
-  "name": "application-name",
-  "version": "0.0.1",
-
+  "name": "integrationsprojekt",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "concurrently --kill-others 'node app.js' 'grunt --verbose'",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
-    "express": "*"
-
+    "express": "^4.14.0"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "concurrently": "^2.2.0",
+    "grunt": "^0.4.5",
+    "grunt-browserify": "^4.0.1",
+    "grunt-cli": "^1.2.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-shell": "^1.2.1",
+    "jit-grunt": "^0.9.1",
+    "jquery": "^2.2.0"
   }
 }
