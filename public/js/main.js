@@ -26,6 +26,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             function prepareScene(next) {
                 console.log('main.prepareScene()');
                 mainScene = new Scene(window.innerWidth, window.innerHeight);
+                document.body.appendChild(mainScene.renderer.domElement);
                 next();
             },
             function hideLoadingIcon(next) {
@@ -38,8 +39,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             },
             function showIntro(next) {
                 console.log('main.showIntro()');
-                mainScene.intro();
-                animate();
+                mainScene.showIntro();
+                render();
                 next();
             },
             function waitForAnyKeyPress(next) {
@@ -52,22 +53,20 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             },
             function startingAnimation(next){
                 console.log('main.startingAnimation()');
-                mainScene.startGame(next);
+                mainScene.startingAnimation(next);
             },
             function startGame(next){
                 console.log('main.startGame()');
             }
         ]);
 
-
-        function animate() {
-            requestAnimationFrame(animate);
-            //TWEEN.update();
-            //Wall.prototype.wallMove(5);
+        /**
+         * renders game
+         */
+        function render() {
+            requestAnimationFrame(render);
             mainScene.render();
         }
-
-
     };
 
 

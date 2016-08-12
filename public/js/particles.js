@@ -1,11 +1,9 @@
 module.exports = (function(THREE){
     /**
      * Represents particles
-     * @param {THREE.Scene} scene
      * @constructor
      */
-    function Particles(scene) {
-        this.scene = scene;
+    function Particles() {
         this.group = new THREE.Group();
         this.particle = null;
         this.init();
@@ -17,7 +15,6 @@ module.exports = (function(THREE){
      */
     Particles.prototype.init = function () {
         var self = this;
-        this.scene.add(this.group);
 
         for (var i = 0; i < 1000; i++) {
             self.particle = new THREE.Mesh(

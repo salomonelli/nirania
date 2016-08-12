@@ -3,15 +3,23 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
     /**
      * Represents Protagonist
-     * @param {THREE.Scene} scene
      * @constructor
      */
-    function Protagonist(scene){
-        this.scene = scene;
+    function Protagonist(){
         //create an empty container
         this.group = new THREE.Object3D();
-        this.head = new Head();
+
+        //add body to group
         this.body = new Body();
+        this.body.mesh.position.set(0,0,0);
+        this.group.add(this.body.mesh);
+
+        //add head to group
+        this.head = new Head();
+        this.head.mesh.position.set(0,0.1,0);
+        this.group.add(this.head.mesh);
+
+
         this.left = {
             leg: new Leg(),
             arm: null
@@ -20,25 +28,6 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
             leg: new Leg(),
             arm: null
         };
-        this.init();
-        this.swing = {
-            min: -1,
-            max: -1
-        }
-    }
-
-    Protagonist.prototype.getBody = function(cb){
-
-    };
-
-    Protagonist.prototype.init = function(){
-        var self = this;
-        //add body to group
-        this.body.mesh.position.set(0,0,0);
-        this.group.add(this.body.mesh);
-        //ad head to group
-        this.head.mesh.position.set(0,0.1,0);
-        this.group.add(this.head.mesh);
         //add right leg to group
         this.right.leg.mesh.position.set(0.5,0,0);
         this.group.add(this.right.leg.mesh);
@@ -48,20 +37,9 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
         this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
-    };
+    }
 
-
-    Protagonist.prototype.run = function(){
-
-
-
-    };
-
-
-    Protagonist.prototype.slide = function(){
-
-    };
-
+    /*
     Protagonist.prototype.standing = function(){
         this.standing = true;
         this.body.mesh.rotateZ(-Math.PI/16);
@@ -84,7 +62,7 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
             .start();
 
     };
-
+    */
 
     Protagonist.prototype.animate = function(){
         /*if(this.swing === "left"){

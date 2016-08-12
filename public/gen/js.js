@@ -56971,80 +56971,127 @@ module.exports = (function(){
     return COLOR;
 })();
 },{}],6:[function(require,module,exports){
-module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
+module.exports = (function(THREE){
     /**
-     * Created by sarasteiert on 05/08/16.
+     * Represents particles
+     * @constructor
+     */
+    function Particles() {
+        this.group = new THREE.Group();
+        this.particle = null;
+        this.init();
+    }
+
+
+    /**
+     * adds the particles to the mainScene
+     */
+    Particles.prototype.init = function () {
+        var self = this;
+
+        for (var i = 0; i < 1000; i++) {
+            self.particle = new THREE.Mesh(
+                new THREE.SphereGeometry( 1, 32, 32 ),
+                new THREE.MeshBasicMaterial()
+            );
+            self.particle.position.x = Math.random() * 5000 - 1000;
+            self.particle.position.y = Math.random() * 5000 - 1000;
+            self.particle.position.z = Math.random() * 5000 - 1000;
+            self.particle.scale.x = this.particle.scale.y = Math.random() * 2 + 1;
+            self.group.add(this.particle);
+        }
+
+    };
+
+    /**
+     * animates the particles in the mainScene
+     */
+    Particles.prototype.animate = function () {
+        this.group.rotation.x += 0.0001;
+        this.group.rotation.y += 0.0002;
+    };
+    return Particles;
+})(
+    require('three')
+);
+},{"three":4}],7:[function(require,module,exports){
+module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
+
+    /**
+     * Represents Scene
+     * @param {number} width width of browser window
+     * @param {number} height height of browser window
+     * @constructor
      */
     function Scene(width, height){
-        this.camera = null;
-        this.scene = null;
-        this.renderer = null;
-        this.zIndex = 1000;
-        this.yIndex = 100;
-        this.windowHalfX = width/2;
-        this.windowHalfY = height/2;
         this.width = width;
         this.height = height;
+
+        this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
+        this.scene = new THREE.Scene();
+
+        this.renderer = new THREE.WebGLRenderer({alpha: true});
+        this.renderer.setSize(this.width, this.height);
+        this.renderer.shadowMap.enabled = true;
+        this.renderer.shadowMapSoft = false;
+
+        this.zIndex = 1000;
+        this.yIndex = 100;
         this.objects= {
-            particles: null,
-            protagonist: null
+            particles: new Particles(),
+            protagonist: new Protagonist()
         };
+
         this.lights = {
             hemisphere: null,
             shadow: null
         };
-        this.status = 'intro';
-        this.init();
-    }
-
-    Scene.prototype.init = function(){
-        //set camera
-        this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
-
-        //create mainScene
-        this.scene = new THREE.Scene();
-
-        //add lights to scene
         this.addLights();
 
-        //add objects to mainScene
-        this.objects.particles = new Particles(this.scene);
+    }
 
+    /**
+     * adds lights to scene
+     */
+    Scene.prototype.addLights = function(){
+        this.lights.hemisphere = new THREE.HemisphereLight(0xA73B63, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
 
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, .9);//0xffffff, 1);
+        this.lights.shadow.position.set(0, 200, 0);
+        this.lights.shadow.position.copy(this.camera.position);
+        this.lights.shadow.position.y  += 1000;
+        this.lights.shadow.target.position.set(0,0,0);
+        this.lights.shadow.castShadow = true;
 
-        //TODO create way
-        var way = new THREE.Mesh(
-            new THREE.CubeGeometry(300, 100, 2000),
-            new THREE.MeshLambertMaterial({color: COLOR.way})
-        );
-        way.position.z = 0;//0;
-        way.position.y = -50;
-        way.receiveShadow = true;
-        Wall.prototype.createWall();
+        //visible area of the projected shadow
+        this.lights.shadow.shadow.camera.left = -4000;
+        this.lights.shadow.shadow.camera.right = 4000;
+        this.lights.shadow.shadow.camera.top = 4000;
+        this.lights.shadow.shadow.camera.bottom = -4000;
+        this.lights.shadow.shadow.camera.near = 1;
+        this.lights.shadow.shadow.camera.far =4000;
 
-        this.scene.add(way);
-        //this.scene.add(activeWall[activeWall.length - 1]);
+        //resolution
+        this.lights.shadow.shadow.mapSize.width = 1000;
+        this.lights.shadow.shadow.mapSize.height = 1000;
 
-
-        this.renderer = new THREE.WebGLRenderer({alpha: true});
-        this.renderer.setSize(this.width, this.height);
-
-        this.renderer.shadowMapEnabled = true;
-        this.renderer.shadowMapSoft = false;
-
-        //this.scene.add(new THREE.Fog( 0xffffff, 1000, 0 ));
-
-        // controls
-        controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-        document.body.appendChild(this.renderer.domElement);
+        this.scene.add(this.lights.hemisphere );
+        this.scene.add(this.lights.shadow);
+        this.scene.add( new THREE.DirectionalLightHelper(this.lights.shadow, 0.2) );
     };
 
-    Scene.prototype.intro = function(){
+    /**
+     * positions and creates intro view
+     */
+    Scene.prototype.showIntro = function(){
         this.camera.position.z = 850;
         this.camera.position.y = 1000;
         this.camera.position.x = 250;
 
-        this.objects.protagonist = new Protagonist(this.scene);
+        //add particles
+        this.scene.add(this.objects.particles.group);
+
+        //add protagonist
         this.objects.protagonist.group.position.set(0,950,800);
         this.objects.protagonist.group.rotateY(Math.PI);
         this.scene.add(this.objects.protagonist.group);
@@ -57059,7 +57106,20 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
         this.camera.lookAt(this.objects.protagonist.group.position);
     };
 
-    Scene.prototype.startGame = function(cb){
+    /**
+     * Renders scene and starts basic animations like particles
+     */
+    Scene.prototype.render = function(){
+        this.objects.particles.animate();
+        this.objects.protagonist.animate();
+        this.renderer.render(this.scene, this.camera);
+    };
+
+    /**
+     * creates the animation for starting the game
+     * @param {function} cb callback function
+     */
+    Scene.prototype.startingAnimation = function(cb){
         //protagonist and cube fall
         var self = this;
         var t = 215;
@@ -57070,8 +57130,11 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
             if(t > 0){
                 setTimeout(function(){
                     fallOne();
-                }, 10);
+                }, 2.5);
             }else{
+                //fall finished
+                
+
                 cb();
             }
         };
@@ -57081,50 +57144,42 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
     };
 
 
-    Scene.prototype.addLights = function(){
 
-        // A hemisphere light is a gradient colored light;
-        // the first parameter is the sky color, the second parameter is the ground color,
-        // the third parameter is the intensity of the light
-        this.lights.hemisphere = new THREE.HemisphereLight(0xA73B63, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
+    /*
+    TODO das muss wo anders hin
+     //TWEEN.update();
+     //Wall.prototype.wallMove(5);
+     */
 
-        // A directional light shines from a specific direction.
-        // It acts like the sun, that means that all the rays produced are parallel.
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, .9);//0xffffff, 1);
+    /*
 
+    Scene.prototype.init = function(){
+        // controls
+        //controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
 
-        // Set the direction of the light
-        this.lights.shadow.position.set(0, 200, 0);
+        //TODO create way
+        var way = new THREE.Mesh(
+            new THREE.CubeGeometry(300, 100, 2000),
+            new THREE.MeshLambertMaterial({color: COLOR.way})
+        );
+        way.position.z = 0;//0;
+        way.position.y = -50;
+        way.receiveShadow = true;
+        Wall.prototype.createWall();
 
-        this.lights.shadow.position.copy(this.camera.position);
-        this.lights.shadow.position.y  += 1000;
-        //this.lights.shadow.position.z = 0;
-        //this.lights.shadow.position.x = 1000;
-        this.lights.shadow.target.position.set(0,0,0);
-        // Allow shadow casting
-        this.lights.shadow.castShadow = true;
-
-        // define the visible area of the projected shadow
-        this.lights.shadow.shadow.camera.left = -4000;
-        this.lights.shadow.shadow.camera.right = 4000;
-        this.lights.shadow.shadow.camera.top = 4000;
-        this.lights.shadow.shadow.camera.bottom = -4000;
-        this.lights.shadow.shadow.camera.near = 1;
-        this.lights.shadow.shadow.camera.far =4000;
-
-        // define the resolution of the shadow; the higher the better,
-        // but also the more expensive and less performant
-        this.lights.shadow.shadow.mapSize.width = 1000;
-        this.lights.shadow.shadow.mapSize.height = 1000;
-
-        // to activate the lights, just add them to the scene
-        this.scene.add(this.lights.hemisphere );
-        this.scene.add(this.lights.shadow);
-        this.scene.add( new THREE.DirectionalLightHelper(this.lights.shadow, 0.2) );
-
-        //light.position.copy( this.camera.position );
+        this.scene.add(way);
+        //this.scene.add(activeWall[activeWall.length - 1]);
 
     };
+
+    */
+
+
+
+
+
+
+
 
     Scene.prototype.addObject = function (givenObject) {
         mainScene.scene.add(givenObject);
@@ -57135,12 +57190,8 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
     };
 
 
-    Scene.prototype.render = function(){
-        //this.camera.lookAt(this.scene.position);
-        this.objects.particles.animate();
-        this.objects.protagonist.animate();
-        this.renderer.render(this.scene, this.camera);
-    };
+
+
 
     return Scene;
 })(
@@ -57150,7 +57201,7 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
     require('./Wall'),
     require('three')
 );
-},{"./COLOR":5,"./Particles":9,"./Wall":7,"./protagonist/Protagonist":13,"three":4}],7:[function(require,module,exports){
+},{"./COLOR":5,"./Particles":6,"./Wall":8,"./protagonist/Protagonist":13,"three":4}],8:[function(require,module,exports){
 module.exports = (function(THREE){
     /**
      * Created by Jan-Philipp on 07.08.2016.
@@ -57192,7 +57243,7 @@ module.exports = (function(THREE){
 })(
     require('three')
 );
-},{"three":4}],8:[function(require,module,exports){
+},{"three":4}],9:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist) {
 
@@ -57221,6 +57272,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             function prepareScene(next) {
                 console.log('main.prepareScene()');
                 mainScene = new Scene(window.innerWidth, window.innerHeight);
+                document.body.appendChild(mainScene.renderer.domElement);
                 next();
             },
             function hideLoadingIcon(next) {
@@ -57233,8 +57285,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             },
             function showIntro(next) {
                 console.log('main.showIntro()');
-                mainScene.intro();
-                animate();
+                mainScene.showIntro();
+                render();
                 next();
             },
             function waitForAnyKeyPress(next) {
@@ -57247,22 +57299,20 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             },
             function startingAnimation(next){
                 console.log('main.startingAnimation()');
-                mainScene.startGame(next);
+                mainScene.startingAnimation(next);
             },
             function startGame(next){
                 console.log('main.startGame()');
             }
         ]);
 
-
-        function animate() {
-            requestAnimationFrame(animate);
-            //TWEEN.update();
-            //Wall.prototype.wallMove(5);
+        /**
+         * renders game
+         */
+        function render() {
+            requestAnimationFrame(render);
             mainScene.render();
         }
-
-
     };
 
 
@@ -57279,122 +57329,27 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
 
 
 
-},{"./Scene":6,"./protagonist/Protagonist":13,"async":1,"jquery":2,"three":4}],9:[function(require,module,exports){
-module.exports = (function(THREE){
+},{"./Scene":7,"./protagonist/Protagonist":13,"async":1,"jquery":2,"three":4}],10:[function(require,module,exports){
+module.exports = (function(COLOR, THREE){
+
     /**
-     * Represents particles
-     * @param {THREE.Scene} scene
+     * Represents the body of the protagonist
      * @constructor
      */
-    function Particles(scene) {
-        this.scene = scene;
-        this.group = new THREE.Group();
-        this.particle = null;
-        this.init();
-    }
-
-
-    /**
-     * adds the particles to the mainScene
-     */
-    Particles.prototype.init = function () {
-        var self = this;
-        this.scene.add(this.group);
-
-        for (var i = 0; i < 1000; i++) {
-            self.particle = new THREE.Mesh(
-                new THREE.SphereGeometry( 1, 32, 32 ),
-                new THREE.MeshBasicMaterial()
-            );
-            self.particle.position.x = Math.random() * 5000 - 1000;
-            self.particle.position.y = Math.random() * 5000 - 1000;
-            self.particle.position.z = Math.random() * 5000 - 1000;
-            self.particle.scale.x = this.particle.scale.y = Math.random() * 2 + 1;
-            self.group.add(this.particle);
-        }
-
-    };
-
-    /**
-     * animates the particles in the mainScene
-     */
-    Particles.prototype.animate = function () {
-        this.group.rotation.x += 0.0001;
-        this.group.rotation.y += 0.0002;
-    };
-    return Particles;
-})(
-    require('three')
-);
-},{"three":4}],10:[function(require,module,exports){
-module.exports = (function(COLOR, THREE){
-    /**
-     * Created by sarasteiert on 05/08/16.
-     */
     function Body(){
-        this.mesh = null;
-        this.geometry = null;
-        this.init();
-    }
-
-
-    Body.prototype.init = function(){
-        var _this=this;
-
-        // init body
-        var material = new THREE.MeshLambertMaterial({
+        this.material = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             transparent: false,
             opacity: 0.8
         });
-
-        this.mesh = new THREE.Mesh(Body.geometry, material);
-        //this.mesh.scale.x = this.mesh.scale.y = this.mesh.scale.z = 50;
-        //this.mesh.castShadow = true;
-        /*
-         //init glow
-         var customMaterial = new THREE.ShaderMaterial(
-         {
-         uniforms:
-         {
-         "c":   { type: "f", value: 0.1 },
-         "p":   { type: "f", value: 3 },
-         glowColor: { type: "c", value: new THREE.Color(0xffff00) },
-         viewVector: { type: "v3", value: this.camera.position }
-         },
-         vertexShader:   document.getElementById( 'vertexShader'   ).textContent,
-         fragmentShader: document.getElementById( 'fragmentShader' ).textContent,
-         side: THREE.FrontSide,
-         blending: THREE.AdditiveBlending,
-         transparent: true
-         }   );
+        this.mesh = new THREE.Mesh(Body.geometry, this.material);
+    }
 
 
-         this.glow = new THREE.Mesh( Body.geometry.clone(), customMaterial.clone() );
-         this.glow.position = this.mesh.position;
-         this.glow.scale.multiplyScalar(this.mesh.scale.z*3);
-         console.dir(this.glow.size);
-         //this.scene.add( this.moonGlow );
-
-         window.setP=function(x){
-         _this.glow.material.uniforms[ "p" ].value = x;
-         };
-         window.setC=function(x){
-         _this.glow.material.uniforms[ "c" ].value = x;
-         };
-
-         */
-        //this.mesh.position.y = 100;
-        //this.mesh.rotation.y = Math.PI; /// 2;
-        //this.mesh.castShadow = true;
-
-
-
-
-        //this.mesh.translation = THREE.GeometryUtils.center(Body.geometry);
-    };
-
-
+    /**
+     * loads the body from json file (blender)
+     * @param {function} cb callback
+     */
     Body.init = function(cb){
         var loader = new THREE.JSONLoader();
         loader.load('/js/blender/type1/body.json', function(geometry, materials) {
@@ -57490,15 +57445,23 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
     /**
      * Represents Protagonist
-     * @param {THREE.Scene} scene
      * @constructor
      */
-    function Protagonist(scene){
-        this.scene = scene;
+    function Protagonist(){
         //create an empty container
         this.group = new THREE.Object3D();
-        this.head = new Head();
+
+        //add body to group
         this.body = new Body();
+        this.body.mesh.position.set(0,0,0);
+        this.group.add(this.body.mesh);
+
+        //add head to group
+        this.head = new Head();
+        this.head.mesh.position.set(0,0.1,0);
+        this.group.add(this.head.mesh);
+
+
         this.left = {
             leg: new Leg(),
             arm: null
@@ -57507,25 +57470,6 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
             leg: new Leg(),
             arm: null
         };
-        this.init();
-        this.swing = {
-            min: -1,
-            max: -1
-        }
-    }
-
-    Protagonist.prototype.getBody = function(cb){
-
-    };
-
-    Protagonist.prototype.init = function(){
-        var self = this;
-        //add body to group
-        this.body.mesh.position.set(0,0,0);
-        this.group.add(this.body.mesh);
-        //ad head to group
-        this.head.mesh.position.set(0,0.1,0);
-        this.group.add(this.head.mesh);
         //add right leg to group
         this.right.leg.mesh.position.set(0.5,0,0);
         this.group.add(this.right.leg.mesh);
@@ -57535,20 +57479,9 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
         this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
-    };
+    }
 
-
-    Protagonist.prototype.run = function(){
-
-
-
-    };
-
-
-    Protagonist.prototype.slide = function(){
-
-    };
-
+    /*
     Protagonist.prototype.standing = function(){
         this.standing = true;
         this.body.mesh.rotateZ(-Math.PI/16);
@@ -57571,7 +57504,7 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
             .start();
 
     };
-
+    */
 
     Protagonist.prototype.animate = function(){
         /*if(this.swing === "left"){
@@ -57615,4 +57548,4 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
     require('jquery'),
     require('three')
 );
-},{"../COLOR":5,"./Body":10,"./Head":11,"./Leg":12,"jquery":2,"three":4}]},{},[8]);
+},{"../COLOR":5,"./Body":10,"./Head":11,"./Leg":12,"jquery":2,"three":4}]},{},[9]);
