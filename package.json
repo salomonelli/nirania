@@ -11,6 +11,7 @@
   },
   "license": "ISC",
   "devDependencies": {
+    "async": "^2.0.1",
     "concurrently": "^2.2.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",

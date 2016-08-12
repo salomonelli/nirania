@@ -102,8 +102,7 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
      * loads blender files for protagonist
      * @param {function} cb
      */
-    Protagonist.init = (function(){
-        window.initMe++;
+    Protagonist.init = (function(cb){
         var initUs = [
             Leg,
             Body,
@@ -114,11 +113,11 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
             initMe.init(function () {
                 initCount--;
                 if (initCount === 0) {
-                    $(window).trigger('init');
+                    cb();
                 }
             });
         });
-    })();
+    });
 
     return Protagonist;
 })(

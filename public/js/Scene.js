@@ -45,8 +45,7 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
             new THREE.MeshLambertMaterial({color: COLOR.way})
         );
         way.position.z = 0;//0;
-        way.position.y = -50;//-this.windowHalfY;
-        console.log(way.receiveShadow);
+        way.position.y = -50;
         way.receiveShadow = true;
         Wall.prototype.createWall();
 
@@ -87,9 +86,8 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
         this.camera.lookAt(this.objects.protagonist.group.position);
     };
 
-    Scene.prototype.startGame = function(){
+    Scene.prototype.startGame = function(cb){
         //protagonist and cube fall
-        console.log('fall');
         var self = this;
         var t = 215;
         var fallOne = function(){
@@ -100,6 +98,8 @@ module.exports = (function(Particles, Protagonist, COLOR, Wall, THREE){
                 setTimeout(function(){
                     fallOne();
                 }, 10);
+            }else{
+                cb();
             }
         };
         fallOne();
