@@ -43,7 +43,7 @@ module.exports = (function(THREE){
      * @param {number} angle
      */
     Particles.prototype.rotate = function(angle){
-        this.group.rotation.y = angle*5;
+        this.group.rotation.y += angle;
     };
 
     return Particles;

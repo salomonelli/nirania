@@ -57927,7 +57927,7 @@ module.exports = (function(THREE){
      * @param {number} angle
      */
     Particles.prototype.rotate = function(angle){
-        this.group.rotation.y = angle*5;
+        this.group.rotation.y += angle;
     };
 
     return Particles;
@@ -58188,7 +58188,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
      * @param {string} direction
      */
     Scene.prototype.turn = function(direction){
-        var angle = Math.PI*0.1;
+        var angle = Math.PI*0.01;
         if(direction === "left"){
             angle = -angle;
         }
@@ -58197,6 +58197,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.objects.way.rotate(angle);
         this.objects.particles.rotate(angle);
     };
+
     /*
      TODO das muss wo anders hin
      //TWEEN.update();
@@ -58757,7 +58758,7 @@ module.exports = (function (THREE, COLOR) {
      * @param {number} angle
      */
     Way.prototype.rotate = function (angle) {
-        this.group.rotation.y = angle;
+        this.group.rotation.y += angle;
     };
 
     /**

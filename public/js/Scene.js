@@ -251,15 +251,15 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
      * @param {string} direction
      */
     Scene.prototype.turn = function(direction){
-        var angle = Math.PI*0.1;
+        var angle = Math.PI*0.01;
         if(direction === "left"){
             angle = -angle;
         }
         //rotate way and particles
-        console.log('rotate');
         this.objects.way.rotate(angle);
         this.objects.particles.rotate(angle);
     };
+
     /*
      TODO das muss wo anders hin
      //TWEEN.update();

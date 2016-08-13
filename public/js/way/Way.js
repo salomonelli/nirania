@@ -56,7 +56,7 @@ module.exports = (function (THREE, COLOR) {
      * @param {number} angle
      */
     Way.prototype.rotate = function (angle) {
-        this.group.rotation.y = angle;
+        this.group.rotation.y += angle;
     };
 
     /**
