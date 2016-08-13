@@ -57909,8 +57909,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMapSoft = false;
 
-        this.zIndex = 1000;
-        this.yIndex = 100;
         this.objects = {
             particles: new Particles(),
             protagonist: new Protagonist()
@@ -57958,7 +57956,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
      * positions and creates intro view
      */
     Scene.prototype.showIntro = function () {
-        this.camera.position.z = 850;
+        this.camera.position.z = 50;
         this.camera.position.y = 1000;
         this.camera.position.x = 250;
 
@@ -57966,17 +57964,20 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.scene.add(this.objects.particles.group);
 
         //add protagonist
-        this.objects.protagonist.group.position.set(0, 950, 800);
+        this.objects.protagonist.group.position.set(0, 950, 0);
         this.objects.protagonist.group.rotateY(Math.PI);
         this.scene.add(this.objects.protagonist.group);
 
+        /*
         //add cube
         this.objects.wayHelper = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
+            new THREE.CylinderGeometry( 25, 25, 20, 32 ),
             new THREE.MeshLambertMaterial({color: COLOR.way})
         );
         this.objects.wayHelper.position.set(0, 915, 802);
         this.scene.add(this.objects.wayHelper);
+        */
+
         this.camera.lookAt(this.objects.protagonist.group.position);
     };
 
@@ -57997,7 +57998,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         var self = this;
         var t = 150;
         var fall = function () {
-            self.objects.wayHelper.position.y--;
+            //self.objects.wayHelper.position.y--;
             self.objects.protagonist.group.position.y--;
             t--;
             if (t > 0) {
@@ -58019,7 +58020,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         var self = this;
         var t = 800;
         var fall = function () {
-            self.objects.wayHelper.position.y--;
+            //self.objects.wayHelper.position.y--;
             self.objects.protagonist.group.position.y--;
             self.camera.position.y--;
             t--;
@@ -58079,7 +58080,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         };
         fall();
     };
-    
+
     /**
      * creates the animation for starting the game
      * @param {function} cb callback function
@@ -58098,8 +58099,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
                 });
             });
         });
-        //this.camera.position.z = this.zIndex;
-        //this.camera.position.y = this.yIndex;
     };
 
 

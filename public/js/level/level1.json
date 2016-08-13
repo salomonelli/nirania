@@ -1,0 +1,14 @@
+{
+  "level": 1,
+  "pipe": {
+    "length": 1000,
+    "obstacles": [
+      {
+        "type": "",
+        "position": {
+          "z": 0
+        }
+      }
+    ]
+  }
+}
