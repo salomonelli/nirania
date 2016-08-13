@@ -57845,6 +57845,43 @@ module.exports = (function(){
     return COLOR;
 })();
 },{}],7:[function(require,module,exports){
+//require this anywhere
+module.exports = (function () {
+
+    function Keybindings() {
+
+    }
+
+    Keybindings.eval = function (code) {
+        switch (code) {
+            case 37:
+            case 65:
+                return 'left';
+                break;
+            case 39:
+            case 68:
+                return 'right';
+                break;
+        }
+    };
+
+
+    /*
+
+     document.addEventListener('keydown', function (event) {
+     var code = event.keyCode;
+     switch (code) {
+     case 32 :
+     //jump();
+     mainScene.startGame();
+     break;
+     }
+     });
+
+     */
+    return Keybindings;
+})();
+},{}],8:[function(require,module,exports){
 module.exports = (function(THREE){
     /**
      * Represents particles
@@ -57884,11 +57921,20 @@ module.exports = (function(THREE){
         this.group.rotation.x += 0.0001;
         this.group.rotation.y += 0.0002;
     };
+
+    /**
+     * rotates the way around the z axis according to given angle
+     * @param {number} angle
+     */
+    Particles.prototype.rotate = function(angle){
+        this.group.rotation.y = angle*10;
+    };
+
     return Particles;
 })(
     require('three')
 );
-},{"three":4}],8:[function(require,module,exports){
+},{"three":4}],9:[function(require,module,exports){
 module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
@@ -58082,6 +58128,29 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     };
 
     /**
+     * starting animation part 5 (zooms into protagonist)
+     * @param {function} cb callback function
+     */
+    Scene.prototype.startingAnimation5 = function (cb) {
+        var self = this;
+        var t = 80;
+        var zoom = function () {
+            self.camera.position.z--;
+            self.camera.lookAt(self.objects.protagonist.group.position);
+            t--;
+            if (t > 0) {
+                setTimeout(function () {
+                    zoom();
+                }, 1);
+            } else {
+                self.camera.lookAt(self.objects.protagonist.group.position);
+                cb();
+            }
+        };
+        zoom();
+    };
+
+    /**
      * creates the animation for starting the game
      * @param {function} cb callback function
      */
@@ -58093,15 +58162,41 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             self.startingAnimation2(function () {
                 //camera falls to needed height
                 self.startingAnimation3(function(){
+                    //rotate around the protagonist
                     self.startingAnimation4(function(){
-                        cb();
+                        //zoom in
+                        self.startingAnimation5(function(){
+                            cb();
+                        });
                     });
                 });
             });
         });
     };
 
+    /**
+     * adds current level objects to scene
+     * @param {Level} level
+     */
+    Scene.prototype.addLevel = function(level){
+        this.objects.way = level.way;
+        this.scene.add(level.way.mesh);
+    };
 
+    /**
+     * turns camera and protagonist according to given direction
+     * @param {string} direction
+     */
+    Scene.prototype.turn = function(direction){
+        var angle = Math.PI*0.1;
+        if(direction === "left"){
+            angle = -angle;
+        }
+        //rotate way and particles
+        console.log('rotate');
+        this.objects.way.rotate(angle);
+        this.objects.particles.rotate(angle);
+    };
     /*
      TODO das muss wo anders hin
      //TWEEN.update();
@@ -58129,7 +58224,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
      };
 
-     */
 
 
     Scene.prototype.addObject = function (givenObject) {
@@ -58139,6 +58233,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     Scene.prototype.removeObject = function (givenObject) {
         mainScene.scene.remove(givenObject);
     };
+     */
 
 
     return Scene;
@@ -58150,7 +58245,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     require('three'),
     require('tween.js')
 );
-},{"./COLOR":6,"./Particles":7,"./Wall":9,"./protagonist/Protagonist":14,"three":4,"tween.js":5}],9:[function(require,module,exports){
+},{"./COLOR":6,"./Particles":8,"./Wall":10,"./protagonist/Protagonist":17,"three":4,"tween.js":5}],10:[function(require,module,exports){
 module.exports = (function(THREE){
     /**
      * Created by Jan-Philipp on 07.08.2016.
@@ -58192,15 +58287,81 @@ module.exports = (function(THREE){
 })(
     require('three')
 );
-},{"three":4}],10:[function(require,module,exports){
+},{"three":4}],11:[function(require,module,exports){
+module.exports = (function (THREE, COLOR, Way,  level1) {
+
+    /**
+     * Represents Level
+     * @param {number} current number starting at 1 representing current level
+     * @constructor
+     */
+    function Level(current, speed) {
+        this.current = current;
+        this.way = null;
+        this.obstacles = [];
+        this.speed = speed;
+    }
+
+    /**
+     * generates and positions three meshes for the current level
+     */
+    Level.prototype.prepare = function () {
+        var self = this;
+        var way, speed;
+        switch (self.current){
+            case 1:
+                way = level1.way;
+                speed = level1.speed;
+                break;
+        }
+        this.way = new Way(way.length, speed);
+    };
+
+    /**
+     * starts level
+     * @param {function} cb callback function
+     */
+    Level.prototype.begin = function(cb){
+        this.way.moveForwardTillEnd(function(){
+            console.log('end of level1');
+        });
+    };
+
+    return Level;
+})(
+    require('three'),
+    require('../COLOR'),
+    require('../way/Way'),
+    require('./level1')
+);
+},{"../COLOR":6,"../way/Way":18,"./level1":12,"three":4}],12:[function(require,module,exports){
+module.exports = (function(){
+    var level = {
+        level: 1,
+        speed: 1,
+        way: {
+            length: 1400,
+            obstacles : {
+                position : {
+                }
+            }
+        }
+    };
+
+    return level;
+})();
+},{}],13:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
 
     var mainScene;
+    var level = {
+        one: new Level(1)
+    };
     window.initMe = 0;
 
     var main = function () {
@@ -58240,6 +58401,12 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
                 render();
                 next();
             },
+            function preloadAndAddLevel1(next){
+                console.log('main.preloadAndAddLevel1');
+                level.one.prepare();
+                mainScene.addLevel(level.one);
+                next();
+            },
             function waitForAnyKeyPress(next) {
                 console.log('main.waitForAnyKeyPress()');
                 var keyHandler = function () {
@@ -58257,8 +58424,22 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
                     mainScene.startingAnimation(next);
                 }, fadeTime);
             },
-            function startGame(next){
-                console.log('main.startGame()');
+            function startLevel1(next){
+                console.log('main.startLevel1()');
+                //enable keydown
+                var keyHandler = function (event) {
+                    var direction = Keybindings.eval(event.keyCode);
+                    mainScene.turn(direction);
+                };
+                $(document).bind('keydown', keyHandler);
+                //start moving way
+                level.one.begin(function(){
+                    $(document).unbind('keydown', keyHandler);
+                    next();
+                });
+            },
+            function level1SuccessScreen(next){
+
             }
         ]);
 
@@ -58279,13 +58460,15 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
     require('jquery'),
     require('three'),
     require('async'),
-    require('./protagonist/Protagonist')
+    require('./protagonist/Protagonist'),
+    require('./level/Level'),
+    require('./Keybindings')
 );
 
 
 
 
-},{"./Scene":8,"./protagonist/Protagonist":14,"async":1,"jquery":2,"three":4}],11:[function(require,module,exports){
+},{"./Keybindings":7,"./Scene":9,"./level/Level":11,"./protagonist/Protagonist":17,"async":1,"jquery":2,"three":4}],14:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -58319,7 +58502,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],12:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],15:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58357,7 +58540,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],13:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],16:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58395,7 +58578,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],14:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],17:[function(require,module,exports){
 module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
 
@@ -58436,6 +58619,8 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
         this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
     }
+
+
 
     /*
     Protagonist.prototype.standing = function(){
@@ -58504,4 +58689,58 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
     require('jquery'),
     require('three')
 );
-},{"../COLOR":6,"./Body":11,"./Head":12,"./Leg":13,"jquery":2,"three":4}]},{},[10]);
+},{"../COLOR":6,"./Body":14,"./Head":15,"./Leg":16,"jquery":2,"three":4}],18:[function(require,module,exports){
+module.exports = (function(THREE, COLOR){
+    /**
+     * Represents way
+     * @param {number} length how long the way is
+     * @param {number} speed how fast the way should move
+     * @constructor
+     */
+    function Way(length, speed){
+        this.length = length;
+        this.speed = speed;
+        this.geometry = new THREE.CylinderGeometry(100,100,1000,this.length);
+        this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.position.y = -120;
+        this.mesh.position.z = (-this.length*0.5)+50;
+        this.mesh.rotation.x = Math.PI/2;
+        console.dir(this.mesh.position)
+    }
+
+    /**
+     * moves way direction z positive according to speed
+     * @param {function} cb callback function
+     */
+    Way.prototype.moveForwardTillEnd = function(cb){
+        var self = this;
+        var t = self.length-80;
+        var animate = function(){
+            self.mesh.position.z++;
+            t--;
+            if(t > 0){
+                setTimeout(function(){
+                    animate();
+                }, self.speed);
+            }else{
+                cb();
+            }
+        };
+        animate();
+    };
+
+    /**
+     * rotates the way around the z axis according to given angle
+     * @param {number} angle
+     */
+    Way.prototype.rotate = function(angle){
+        this.mesh.rotation.y = angle;
+    };
+
+    return Way;
+})(
+    require('three'),
+    require('../COLOR')
+);
+},{"../COLOR":6,"three":4}]},{},[13]);

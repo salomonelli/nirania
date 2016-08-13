@@ -191,6 +191,29 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     };
 
     /**
+     * starting animation part 5 (zooms into protagonist)
+     * @param {function} cb callback function
+     */
+    Scene.prototype.startingAnimation5 = function (cb) {
+        var self = this;
+        var t = 80;
+        var zoom = function () {
+            self.camera.position.z--;
+            self.camera.lookAt(self.objects.protagonist.group.position);
+            t--;
+            if (t > 0) {
+                setTimeout(function () {
+                    zoom();
+                }, 1);
+            } else {
+                self.camera.lookAt(self.objects.protagonist.group.position);
+                cb();
+            }
+        };
+        zoom();
+    };
+
+    /**
      * creates the animation for starting the game
      * @param {function} cb callback function
      */
@@ -202,15 +225,41 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             self.startingAnimation2(function () {
                 //camera falls to needed height
                 self.startingAnimation3(function(){
+                    //rotate around the protagonist
                     self.startingAnimation4(function(){
-                        cb();
+                        //zoom in
+                        self.startingAnimation5(function(){
+                            cb();
+                        });
                     });
                 });
             });
         });
     };
 
+    /**
+     * adds current level objects to scene
+     * @param {Level} level
+     */
+    Scene.prototype.addLevel = function(level){
+        this.objects.way = level.way;
+        this.scene.add(level.way.mesh);
+    };
 
+    /**
+     * turns camera and protagonist according to given direction
+     * @param {string} direction
+     */
+    Scene.prototype.turn = function(direction){
+        var angle = Math.PI*0.1;
+        if(direction === "left"){
+            angle = -angle;
+        }
+        //rotate way and particles
+        console.log('rotate');
+        this.objects.way.rotate(angle);
+        this.objects.particles.rotate(angle);
+    };
     /*
      TODO das muss wo anders hin
      //TWEEN.update();
@@ -238,7 +287,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
      };
 
-     */
 
 
     Scene.prototype.addObject = function (givenObject) {
@@ -248,6 +296,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     Scene.prototype.removeObject = function (givenObject) {
         mainScene.scene.remove(givenObject);
     };
+     */
 
 
     return Scene;

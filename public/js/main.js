@@ -1,11 +1,14 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
 
     var mainScene;
+    var level = {
+        one: new Level(1)
+    };
     window.initMe = 0;
 
     var main = function () {
@@ -45,6 +48,12 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
                 render();
                 next();
             },
+            function preloadAndAddLevel1(next){
+                console.log('main.preloadAndAddLevel1');
+                level.one.prepare();
+                mainScene.addLevel(level.one);
+                next();
+            },
             function waitForAnyKeyPress(next) {
                 console.log('main.waitForAnyKeyPress()');
                 var keyHandler = function () {
@@ -62,8 +71,22 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
                     mainScene.startingAnimation(next);
                 }, fadeTime);
             },
-            function startGame(next){
-                console.log('main.startGame()');
+            function startLevel1(next){
+                console.log('main.startLevel1()');
+                //enable keydown
+                var keyHandler = function (event) {
+                    var direction = Keybindings.eval(event.keyCode);
+                    mainScene.turn(direction);
+                };
+                $(document).bind('keydown', keyHandler);
+                //start moving way
+                level.one.begin(function(){
+                    $(document).unbind('keydown', keyHandler);
+                    next();
+                });
+            },
+            function level1SuccessScreen(next){
+
             }
         ]);
 
@@ -84,7 +107,9 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
     require('jquery'),
     require('three'),
     require('async'),
-    require('./protagonist/Protagonist')
+    require('./protagonist/Protagonist'),
+    require('./level/Level'),
+    require('./Keybindings')
 );
 
 

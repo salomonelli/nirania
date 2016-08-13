@@ -37,6 +37,15 @@ module.exports = (function(THREE){
         this.group.rotation.x += 0.0001;
         this.group.rotation.y += 0.0002;
     };
+
+    /**
+     * rotates the way around the z axis according to given angle
+     * @param {number} angle
+     */
+    Particles.prototype.rotate = function(angle){
+        this.group.rotation.y = angle*5;
+    };
+
     return Particles;
 })(
     require('three')

@@ -39,6 +39,8 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
     }
 
+
+
     /*
     Protagonist.prototype.standing = function(){
         this.standing = true;
