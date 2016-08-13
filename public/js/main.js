@@ -39,6 +39,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
             },
             function showIntro(next) {
                 console.log('main.showIntro()');
+                $('.game-name').fadeIn(3000);
+                $('.intro').fadeIn(3000);
                 mainScene.showIntro();
                 render();
                 next();
@@ -52,8 +54,13 @@ module.exports = (function (Scene, $, THREE, async, Protagonist) {
                 $(document).bind('keydown', keyHandler);
             },
             function startingAnimation(next){
-                console.log('main.startingAnimation()');
-                mainScene.startingAnimation(next);
+                var fadeTime = 1000;
+                $('.game-name').fadeOut(fadeTime);
+                $('.intro').fadeOut(fadeTime);
+                setTimeout(function(){
+                    console.log('main.startingAnimation()');
+                    mainScene.startingAnimation(next);
+                }, fadeTime);
             },
             function startGame(next){
                 console.log('main.startGame()');
