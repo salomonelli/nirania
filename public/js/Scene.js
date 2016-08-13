@@ -243,7 +243,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
      */
     Scene.prototype.addLevel = function(level){
         this.objects.way = level.way;
-        this.scene.add(level.way.mesh);
+        this.scene.add(level.way.group);
     };
 
     /**

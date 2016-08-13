@@ -19,7 +19,6 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
         this.head.mesh.position.set(0,0.1,0);
         this.group.add(this.head.mesh);
 
-
         this.left = {
             leg: new Leg(),
             arm: null

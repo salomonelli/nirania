@@ -3,9 +3,11 @@ module.exports = (function(){
         level: 1,
         speed: 1,
         way: {
-            length: 1400,
+            length: 1000,
             obstacles : {
+                type: 'cube',
                 position : {
+                    z: 500
                 }
             }
         }

@@ -13,7 +13,7 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
     }
 
     /**
-     * generates and positions three meshes for the current level
+     * generates and positions meshes for the current level
      */
     Level.prototype.prepare = function () {
         var self = this;
@@ -24,7 +24,15 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
                 speed = level1.speed;
                 break;
         }
+        //create new way
         this.way = new Way(way.length, speed);
+
+        //add obstacles to way
+        var obstacles = [];
+        this.way.addObstacles(obstacles);
+
+        //position way into the scene
+        this.way.position( -120, -450);
     };
 
     /**
