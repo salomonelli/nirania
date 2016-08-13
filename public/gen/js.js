@@ -58448,8 +58448,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                     next();
                 });
             },
-            function level1SuccessScreen(next){
-
+            function levelOneSuccessScreen(next){
+                console.log('main.levelOneSuccessScreen()');
             }
         ]);
 
@@ -58766,10 +58766,10 @@ module.exports = (function (THREE, COLOR) {
      */
     Way.prototype.addObstacles = function (obstacles) {
         var obstacle = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
+            new THREE.CubeGeometry(50, 50, 50),
             new THREE.MeshBasicMaterial()
         );
-        obstacle.position.set(0,300,100);
+        obstacle.position.set(0,100,-100);
         this.group.add(obstacle);
     };
     return Way;
