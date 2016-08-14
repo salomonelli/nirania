@@ -65,12 +65,33 @@ module.exports = (function (THREE, COLOR) {
      */
     Way.prototype.addObstacles = function (obstacles) {
         var obstacle = new THREE.Mesh(
-            new THREE.CubeGeometry(50, 50, 50),
+            new THREE.CubeGeometry(25, 25, 25),
             new THREE.MeshBasicMaterial()
         );
         obstacle.position.set(0,100,-100);
+        var obstacle2 = new THREE.Mesh(
+            new THREE.CubeGeometry(25, 25, 25),
+            new THREE.MeshBasicMaterial({color: 0x000000})
+        );
+        var position = Way.calcCirlce(Math.PI*0.02);
+        obstacle2.position.set(100,-400,0);//0,position.x,position.z);
+        console.dir(obstacle2.position);
         this.group.add(obstacle);
+        this.group.add(obstacle2);
     };
+
+    Way.calcCirlce = function(angle){
+        var h = 0;
+        var k = 0;
+        var radius = 100;
+        var z = radius * Math.cos(angle) + h;
+        var x = radius * Math.sin(angle) + k;
+        return {
+            z: z,
+            x: x
+        };
+    };
+
     return Way;
 })(
     require('three'),

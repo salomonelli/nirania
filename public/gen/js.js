@@ -57852,7 +57852,7 @@ module.exports = (function () {
 
     }
 
-    Keybindings.eval = function (code) {
+    Keybindings.handleKeyCode = function (code) {
         switch (code) {
             case 37:
             case 65:
@@ -57887,12 +57887,24 @@ module.exports = (function(THREE){
      * Represents particles
      * @constructor
      */
-    function Particles() {
+    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
         this.group = new THREE.Group();
         this.particle = null;
+        this.amount = amount;
+        this.x = {
+            min: minX,
+            max: maxX
+        };
+        this.y = {
+            min: minY,
+            max: maxY
+        };
+        this.z = {
+            min: minZ,
+            max: maxZ
+        };
         this.init();
     }
-
 
     /**
      * adds the particles to the mainScene
@@ -57900,26 +57912,23 @@ module.exports = (function(THREE){
     Particles.prototype.init = function () {
         var self = this;
 
-        for (var i = 0; i < 1000; i++) {
+        for(var i = 0; i < self.amount; i++){
             self.particle = new THREE.Mesh(
                 new THREE.SphereGeometry( 1, 32, 32 ),
                 new THREE.MeshBasicMaterial()
             );
-            self.particle.position.x = Math.random() * 5000 - 1000;
-            self.particle.position.y = Math.random() * 5000 - 1000;
-            self.particle.position.z = Math.random() * 5000 - 1000;
-            self.particle.scale.x = this.particle.scale.y = Math.random() * 2 + 1;
-            self.group.add(this.particle);
+            self.particle.position.x = Particles.randomIntFromInterval(self.x.min,self.x.max);
+            self.particle.position.y = Particles.randomIntFromInterval(self.y.min,self.y.max);
+            self.particle.position.z = Particles.randomIntFromInterval(self.z.min,self.z.max);
+            self.group.add(self.particle);
         }
-
     };
 
     /**
      * animates the particles in the mainScene
      */
     Particles.prototype.animate = function () {
-        this.group.rotation.x += 0.0001;
-        this.group.rotation.y += 0.0002;
+        this.group.rotation.z += 0.0004;
     };
 
     /**
@@ -57927,7 +57936,18 @@ module.exports = (function(THREE){
      * @param {number} angle
      */
     Particles.prototype.rotate = function(angle){
-        this.group.rotation.y += angle;
+        this.group.rotation.z += angle;
+    };
+
+    /**
+     * calculates random integer from interval
+     * @param {number} min
+     * @param {number} max
+     * @returns {number}
+     */
+    Particles.randomIntFromInterval = function(min,max)
+    {
+        return Math.floor(Math.random()*(max-min+1)+min);
     };
 
     return Particles;
@@ -57956,7 +57976,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.renderer.shadowMapSoft = false;
 
         this.objects = {
-            particles: new Particles(),
+            particles: new Particles(-600,600,-600,600,-300,0, 100),
+            introParticles: new Particles(20,-300,100,1300,-500,0, 30),
             protagonist: new Protagonist()
         };
 
@@ -58007,22 +58028,17 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.camera.position.x = 250;
 
         //add particles
+        this.objects.particles.group.position.set(0,0,-500);
         this.scene.add(this.objects.particles.group);
+
+        //add particles for intro
+        this.objects.introParticles.group.position.set(0,0,250);
+        this.scene.add(this.objects.introParticles.group);
 
         //add protagonist
         this.objects.protagonist.group.position.set(0, 950, 0);
         this.objects.protagonist.group.rotateY(Math.PI);
         this.scene.add(this.objects.protagonist.group);
-
-        /*
-        //add cube
-        this.objects.wayHelper = new THREE.Mesh(
-            new THREE.CylinderGeometry( 25, 25, 20, 32 ),
-            new THREE.MeshLambertMaterial({color: COLOR.way})
-        );
-        this.objects.wayHelper.position.set(0, 915, 802);
-        this.scene.add(this.objects.wayHelper);
-        */
 
         this.camera.lookAt(this.objects.protagonist.group.position);
     };
@@ -58166,6 +58182,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
                     self.startingAnimation4(function(){
                         //zoom in
                         self.startingAnimation5(function(){
+                            self.scene.remove(self.objects.introParticles);
                             cb();
                         });
                     });
@@ -58193,10 +58210,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             angle = -angle;
         }
         //rotate way and particles
-        console.log('rotate');
         this.objects.way.rotate(angle);
         this.objects.particles.rotate(angle);
     };
+
 
     /*
      TODO das muss wo anders hin
@@ -58438,8 +58455,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function startLevel1(next){
                 console.log('main.startLevel1()');
                 //enable keydown
-                var keyHandler = function (event) {
-                    var direction = Keybindings.eval(event.keyCode);
+                var keyHandler = function keyHandler(event) {
+                    var direction = Keybindings.handleKeyCode(event.keyCode);
                     mainScene.turn(direction);
                 };
                 $(document).bind('keydown', keyHandler);
@@ -58767,12 +58784,33 @@ module.exports = (function (THREE, COLOR) {
      */
     Way.prototype.addObstacles = function (obstacles) {
         var obstacle = new THREE.Mesh(
-            new THREE.CubeGeometry(50, 50, 50),
+            new THREE.CubeGeometry(25, 25, 25),
             new THREE.MeshBasicMaterial()
         );
         obstacle.position.set(0,100,-100);
+        var obstacle2 = new THREE.Mesh(
+            new THREE.CubeGeometry(25, 25, 25),
+            new THREE.MeshBasicMaterial({color: 0x000000})
+        );
+        var position = Way.calcCirlce(Math.PI*0.02);
+        obstacle2.position.set(100,-400,0);//0,position.x,position.z);
+        console.dir(obstacle2.position);
         this.group.add(obstacle);
+        this.group.add(obstacle2);
     };
+
+    Way.calcCirlce = function(angle){
+        var h = 0;
+        var k = 0;
+        var radius = 100;
+        var z = radius * Math.cos(angle) + h;
+        var x = radius * Math.sin(angle) + k;
+        return {
+            z: z,
+            x: x
+        };
+    };
+
     return Way;
 })(
     require('three'),

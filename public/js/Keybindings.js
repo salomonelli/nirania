@@ -5,7 +5,7 @@ module.exports = (function () {
 
     }
 
-    Keybindings.eval = function (code) {
+    Keybindings.handleKeyCode = function (code) {
         switch (code) {
             case 37:
             case 65:

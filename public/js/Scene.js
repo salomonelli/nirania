@@ -19,7 +19,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.renderer.shadowMapSoft = false;
 
         this.objects = {
-            particles: new Particles(),
+            particles: new Particles(-600,600,-600,600,-300,0, 100),
+            introParticles: new Particles(20,-300,100,1300,-500,0, 30),
             protagonist: new Protagonist()
         };
 
@@ -70,22 +71,17 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.camera.position.x = 250;
 
         //add particles
+        this.objects.particles.group.position.set(0,0,-500);
         this.scene.add(this.objects.particles.group);
+
+        //add particles for intro
+        this.objects.introParticles.group.position.set(0,0,250);
+        this.scene.add(this.objects.introParticles.group);
 
         //add protagonist
         this.objects.protagonist.group.position.set(0, 950, 0);
         this.objects.protagonist.group.rotateY(Math.PI);
         this.scene.add(this.objects.protagonist.group);
-
-        /*
-        //add cube
-        this.objects.wayHelper = new THREE.Mesh(
-            new THREE.CylinderGeometry( 25, 25, 20, 32 ),
-            new THREE.MeshLambertMaterial({color: COLOR.way})
-        );
-        this.objects.wayHelper.position.set(0, 915, 802);
-        this.scene.add(this.objects.wayHelper);
-        */
 
         this.camera.lookAt(this.objects.protagonist.group.position);
     };
@@ -229,6 +225,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
                     self.startingAnimation4(function(){
                         //zoom in
                         self.startingAnimation5(function(){
+                            self.scene.remove(self.objects.introParticles);
                             cb();
                         });
                     });
@@ -259,6 +256,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.objects.way.rotate(angle);
         this.objects.particles.rotate(angle);
     };
+
 
     /*
      TODO das muss wo anders hin

@@ -74,8 +74,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function startLevel1(next){
                 console.log('main.startLevel1()');
                 //enable keydown
-                var keyHandler = function (event) {
-                    var direction = Keybindings.eval(event.keyCode);
+                var keyHandler = function keyHandler(event) {
+                    var direction = Keybindings.handleKeyCode(event.keyCode);
                     mainScene.turn(direction);
                 };
                 $(document).bind('keydown', keyHandler);
