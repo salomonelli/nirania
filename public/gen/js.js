@@ -58280,7 +58280,37 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     require('three'),
     require('tween.js')
 );
-},{"./COLOR":6,"./Particles":8,"./Wall":10,"./protagonist/Protagonist":17,"three":4,"tween.js":5}],10:[function(require,module,exports){
+},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/Protagonist":18,"three":4,"tween.js":5}],10:[function(require,module,exports){
+module.exports = (function(){
+    /**
+     * Contains functions that can be used anywhere
+     * @constructor
+     */
+    function UTIL(){
+
+    }
+
+    /**
+     * converts degrees to radians
+     * @param {number} degrees
+     * @returns {number}
+     */
+    UTIL.convertDegreesToRadians = function(degrees){
+        return degrees *(Math.PI/180);
+    };
+
+    /**
+     * converts radians to degrees
+     * @param {number} radians
+     * @returns {number}
+     */
+    UTIL.convertRadiansToDegrees = function(radians){
+        return radians *(180/Math.PI);
+    };
+
+    return UTIL;
+})();
+},{}],11:[function(require,module,exports){
 module.exports = (function(THREE){
     /**
      * Created by Jan-Philipp on 07.08.2016.
@@ -58322,18 +58352,19 @@ module.exports = (function(THREE){
 })(
     require('three')
 );
-},{"three":4}],11:[function(require,module,exports){
+},{"three":4}],12:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Way,  level1) {
-
+    var levels = [
+        level1
+    ];
     /**
      * Represents Level
-     * @param {number} current number starting at 1 representing current level
+     * @param {number} current - number starting at 1 representing current level
      * @constructor
      */
     function Level(current, speed) {
         this.current = current;
         this.way = null;
-        this.obstacles = [];
         this.speed = speed;
     }
 
@@ -58342,32 +58373,22 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
      */
     Level.prototype.prepare = function () {
         var self = this;
-        var way, speed;
-        switch (self.current){
-            case 1:
-                way = level1.way;
-                speed = level1.speed;
-                break;
-        }
+        var current = levels[self.current-1];
         //create new way
-        this.way = new Way(way.length, speed);
-
+        this.way = new Way(current.way.length, current.speed);
         //add obstacles to way
-        var obstacles = [];
-        this.way.addObstacles(obstacles);
-
+        this.way.addObstacles(current.way.obstacles);
         //position way into the scene
         this.way.position( -120, -450);
     };
 
     /**
      * starts level
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Level.prototype.begin = function(cb){
-        console.log('start turning');
         this.way.moveForwardTillEnd(function(){
-            console.log('end of level1');
+            //level succeeded
             cb();
         });
     };
@@ -58379,25 +58400,74 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
     require('../way/Way'),
     require('./level1')
 );
-},{"../COLOR":6,"../way/Way":18,"./level1":12,"three":4}],12:[function(require,module,exports){
+},{"../COLOR":6,"../way/Way":19,"./level1":13,"three":4}],13:[function(require,module,exports){
 module.exports = (function(){
     var level = {
         level: 1,
         speed: 1,
         way: {
             length: 1000,
-            obstacles : {
-                type: 'cube',
-                position : {
-                    z: 500
+            obstacles : [
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 500,
+                        angle: 90
+                    }
                 }
-            }
+                ,
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 300,
+                        angle: -20
+                    }
+                },
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 700,
+                        angle: -30
+                    }
+                }
+            ]
         }
     };
 
     return level;
 })();
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
     "use strict";
@@ -58526,7 +58596,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
 
 
 
-},{"./Keybindings":7,"./Scene":9,"./level/Level":11,"./protagonist/Protagonist":17,"async":1,"jquery":2,"three":4}],14:[function(require,module,exports){
+},{"./Keybindings":7,"./Scene":9,"./level/Level":12,"./protagonist/Protagonist":18,"async":1,"jquery":2,"three":4}],15:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -58560,7 +58630,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],15:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],16:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58598,7 +58668,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],16:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],17:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58636,7 +58706,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],17:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],18:[function(require,module,exports){
 module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
 
@@ -58746,8 +58816,8 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
     require('jquery'),
     require('three')
 );
-},{"../COLOR":6,"./Body":14,"./Head":15,"./Leg":16,"jquery":2,"three":4}],18:[function(require,module,exports){
-module.exports = (function (THREE, COLOR) {
+},{"../COLOR":6,"./Body":15,"./Head":16,"./Leg":17,"jquery":2,"three":4}],19:[function(require,module,exports){
+module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -58762,7 +58832,8 @@ module.exports = (function (THREE, COLOR) {
         this.group = new THREE.Object3D();
 
         //add way
-        this.geometry = new THREE.CylinderGeometry(100, 100, 1000, this.length);
+        this.radius = 100;
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
@@ -58773,7 +58844,7 @@ module.exports = (function (THREE, COLOR) {
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function(y,z){
+    Way.prototype.position = function (y, z) {
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = y;
         this.group.position.z = z;
@@ -58813,37 +58884,87 @@ module.exports = (function (THREE, COLOR) {
      * @param {[{}]} obstacles
      */
     Way.prototype.addObstacles = function (obstacles) {
-        var obstacle = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
-            new THREE.MeshBasicMaterial()
-        );
-        obstacle.position.set(0,100,-100);
-        var obstacle2 = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
-            new THREE.MeshBasicMaterial({color: 0x000000})
-        );
-        var position = Way.calcCirlce(Math.PI*0.02);
-        obstacle2.position.set(100,-400,0);//0,position.x,position.z);
-        console.dir(obstacle2.position);
-        this.group.add(obstacle);
-        this.group.add(obstacle2);
-    };
-
-    Way.calcCirlce = function(angle){
-        var h = 0;
-        var k = 0;
-        var radius = 100;
-        var z = radius * Math.cos(angle) + h;
-        var x = radius * Math.sin(angle) + k;
-        return {
-            z: z,
-            x: x
-        };
+        var self = this;
+        //generate obstacles
+        self.obstacles = Obstacle.generateFromArray(obstacles);
+        //calculate positions
+        self.obstacles.forEach(function (obstacle) {
+            if(obstacle.distance<self.length){
+                var angle = UTIL.convertDegreesToRadians(obstacle.angle);
+                var y = (self.length / 2) - obstacle.distance;
+                var x = self.radius * Math.cos(angle) + 0;
+                var z = -(self.radius * Math.sin(angle) + 0);
+                obstacle.mesh.rotation.y += angle;
+                obstacle.mesh.position.set(x,y,z);
+                self.group.add(obstacle.mesh);
+            }else{
+                console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
+            }
+        });
     };
 
     return Way;
 })(
     require('three'),
-    require('../COLOR')
+    require('../COLOR'),
+    require('./obstacles/Obstacle'),
+    require('../UTIL')
 );
-},{"../COLOR":6,"three":4}]},{},[13]);
+},{"../COLOR":6,"../UTIL":10,"./obstacles/Obstacle":21,"three":4}],20:[function(require,module,exports){
+module.exports=(function(THREE){
+
+    function Cube(cube){
+        this.material = new THREE.MeshBasicMaterial({color: cube.color});
+        this.geometry = new THREE.CubeGeometry(cube.size.x, cube.size.y, cube.size.z);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+    }
+
+    return Cube;
+})(
+    require('three')
+);
+},{"three":4}],21:[function(require,module,exports){
+module.exports = (function (Cube) {
+    var obstacleTypes = {
+        cube: Cube
+    };
+
+    /**
+     * Represents an Obstacle on the way
+     * @param {String} type - string like "cube"
+     * @param {THREE.Mesh} mesh - mesh of obstacle
+     * @param {number} distance - from starting point of way up to obstacle
+     * @param {number} angle - in radiant, on which side the obstacle is positioned
+     * @constructor
+     */
+    function Obstacle(type, mesh, distance, angle) {
+        this.type = type;
+        this.mesh = mesh;
+        this.distance = distance;
+        this.angle = angle;
+        this.position = {
+            x: null,
+            y: null,
+            z: null
+        }
+    }
+
+    /**
+     * creates from array obstacles and returns them
+     * @param {Array} obstacles - contains information to generate obstacles
+     * @returns {Array} ret - containing obstacle objects
+     */
+    Obstacle.generateFromArray = function (obstacles) {
+        var ret = [];
+        obstacles.forEach(function (o) {
+            var obstacle = new obstacleTypes[o.type](o);
+            ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle));
+        });
+        return ret;
+    };
+
+    return Obstacle;
+})(
+    require('./Cube')
+);
+},{"./Cube":20}]},{},[14]);

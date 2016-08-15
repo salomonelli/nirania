@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR) {
+module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -13,7 +13,8 @@ module.exports = (function (THREE, COLOR) {
         this.group = new THREE.Object3D();
 
         //add way
-        this.geometry = new THREE.CylinderGeometry(100, 100, 1000, this.length);
+        this.radius = 100;
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
@@ -24,7 +25,7 @@ module.exports = (function (THREE, COLOR) {
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function(y,z){
+    Way.prototype.position = function (y, z) {
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = y;
         this.group.position.z = z;
@@ -64,36 +65,29 @@ module.exports = (function (THREE, COLOR) {
      * @param {[{}]} obstacles
      */
     Way.prototype.addObstacles = function (obstacles) {
-        var obstacle = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
-            new THREE.MeshBasicMaterial()
-        );
-        obstacle.position.set(0,100,-100);
-        var obstacle2 = new THREE.Mesh(
-            new THREE.CubeGeometry(25, 25, 25),
-            new THREE.MeshBasicMaterial({color: 0x000000})
-        );
-        var position = Way.calcCirlce(Math.PI*0.02);
-        obstacle2.position.set(100,-400,0);//0,position.x,position.z);
-        console.dir(obstacle2.position);
-        this.group.add(obstacle);
-        this.group.add(obstacle2);
-    };
-
-    Way.calcCirlce = function(angle){
-        var h = 0;
-        var k = 0;
-        var radius = 100;
-        var z = radius * Math.cos(angle) + h;
-        var x = radius * Math.sin(angle) + k;
-        return {
-            z: z,
-            x: x
-        };
+        var self = this;
+        //generate obstacles
+        self.obstacles = Obstacle.generateFromArray(obstacles);
+        //calculate positions
+        self.obstacles.forEach(function (obstacle) {
+            if(obstacle.distance<self.length){
+                var angle = UTIL.convertDegreesToRadians(obstacle.angle);
+                var y = (self.length / 2) - obstacle.distance;
+                var x = self.radius * Math.cos(angle) + 0;
+                var z = -(self.radius * Math.sin(angle) + 0);
+                obstacle.mesh.rotation.y += angle;
+                obstacle.mesh.position.set(x,y,z);
+                self.group.add(obstacle.mesh);
+            }else{
+                console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
+            }
+        });
     };
 
     return Way;
 })(
     require('three'),
-    require('../COLOR')
+    require('../COLOR'),
+    require('./obstacles/Obstacle'),
+    require('../UTIL')
 );

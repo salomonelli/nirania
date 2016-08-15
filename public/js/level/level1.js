@@ -4,12 +4,61 @@ module.exports = (function(){
         speed: 1,
         way: {
             length: 1000,
-            obstacles : {
-                type: 'cube',
-                position : {
-                    z: 500
+            obstacles : [
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 500,
+                        angle: 90
+                    }
                 }
-            }
+                ,
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 300,
+                        angle: -20
+                    }
+                },
+                {
+                    type: 'cube',
+                    size: {
+                        x: 25,
+                        y: 25,
+                        z: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 700,
+                        angle: -30
+                    }
+                }
+            ]
         }
     };
 

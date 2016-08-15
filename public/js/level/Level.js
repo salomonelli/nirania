@@ -1,14 +1,15 @@
 module.exports = (function (THREE, COLOR, Way,  level1) {
-
+    var levels = [
+        level1
+    ];
     /**
      * Represents Level
-     * @param {number} current number starting at 1 representing current level
+     * @param {number} current - number starting at 1 representing current level
      * @constructor
      */
     function Level(current, speed) {
         this.current = current;
         this.way = null;
-        this.obstacles = [];
         this.speed = speed;
     }
 
@@ -17,32 +18,22 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
      */
     Level.prototype.prepare = function () {
         var self = this;
-        var way, speed;
-        switch (self.current){
-            case 1:
-                way = level1.way;
-                speed = level1.speed;
-                break;
-        }
+        var current = levels[self.current-1];
         //create new way
-        this.way = new Way(way.length, speed);
-
+        this.way = new Way(current.way.length, current.speed);
         //add obstacles to way
-        var obstacles = [];
-        this.way.addObstacles(obstacles);
-
+        this.way.addObstacles(current.way.obstacles);
         //position way into the scene
         this.way.position( -120, -450);
     };
 
     /**
      * starts level
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Level.prototype.begin = function(cb){
-        console.log('start turning');
         this.way.moveForwardTillEnd(function(){
-            console.log('end of level1');
+            //level succeeded
             cb();
         });
     };
