@@ -2,8 +2,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * Represents Scene
-     * @param {number} width width of browser window
-     * @param {number} height height of browser window
+     * @param {number} width - width of browser window
+     * @param {number} height - height of browser window
      * @constructor
      */
     function Scene(width, height) {
@@ -102,7 +102,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * starting animation part 1 (protagonist and cube fall)
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation1 = function (cb) {
         var self = this;
@@ -124,7 +124,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * starting animation part 2 (protagonist, cube and camera fall)
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation2 = function (cb) {
         var self = this;
@@ -147,7 +147,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * starting animation part 3 (camera falls to needed height)
-     * @param cb
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation3 = function (cb) {
         var self = this;
@@ -169,7 +169,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * starting animation part 4 (camera rotates to x position = 0)
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation4 = function (cb) {
         var self = this;
@@ -193,7 +193,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * starting animation part 5 (zooms into protagonist)
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation5 = function (cb) {
         var self = this;
@@ -216,7 +216,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * creates the animation for starting the game
-     * @param {function} cb callback function
+     * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation = function (cb) {
         var self = this;
@@ -241,7 +241,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * adds current level objects to scene
-     * @param {Level} level
+     * @param {Level} level - current level
      */
     Scene.prototype.addLevel = function (level) {
         this.objects.way = level.way;
@@ -250,7 +250,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     /**
      * turns camera and protagonist until told to stop
-     * @param {string} direction
      */
     Scene.prototype.turn = function () {
         var self = this;
@@ -267,51 +266,21 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     };
 
+    /**
+     * enables the turn in the given direction
+     * @param {string} direction - 'left', 'right'
+     */
     Scene.prototype.startTurning = function (direction) {
         this.move[direction] = true;
     };
 
+    /**
+     * enables the turn in the given direction
+     * @param {string} direction - 'left', 'right'
+     */
     Scene.prototype.stopTurning = function (direction) {
         this.move[direction] = false;
     };
-
-    /*
-     TODO das muss wo anders hin
-     //TWEEN.update();
-     //Wall.prototype.wallMove(5);
-     */
-
-    /*
-
-     Scene.prototype.init = function(){
-     // controls
-     //controls = new THREE.OrbitControls( this.camera, this.renderer.domElement );
-
-     //TODO create way
-     var way = new THREE.Mesh(
-     new THREE.CubeGeometry(300, 100, 2000),
-     new THREE.MeshLambertMaterial({color: COLOR.way})
-     );
-     way.position.z = 0;//0;
-     way.position.y = -50;
-     way.receiveShadow = true;
-     Wall.prototype.createWall();
-
-     this.scene.add(way);
-     //this.scene.add(activeWall[activeWall.length - 1]);
-
-     };
-
-
-
-     Scene.prototype.addObject = function (givenObject) {
-     mainScene.scene.add(givenObject);
-     };
-
-     Scene.prototype.removeObject = function (givenObject) {
-     mainScene.scene.remove(givenObject);
-     };
-     */
 
 
     return Scene;

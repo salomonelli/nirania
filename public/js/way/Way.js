@@ -13,7 +13,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         this.group = new THREE.Object3D();
 
         //add way
-        this.radius = 100;
+        this.radius = 80;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
@@ -27,8 +27,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      */
     Way.prototype.position = function (y, z) {
         this.group.rotation.x = Math.PI / 2;
-        this.group.position.y = y;
-        this.group.position.z = z;
+        this.group.position.y = -this.radius-18;
+        this.group.position.z = -this.length*0.5+50;
     };
 
     /**
