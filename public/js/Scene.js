@@ -64,7 +64,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
         this.scene.add(this.lights.hemisphere);
         this.scene.add(this.lights.shadow);
-        this.scene.add(new THREE.DirectionalLightHelper(this.lights.shadow, 0.2));
     };
 
     /**
