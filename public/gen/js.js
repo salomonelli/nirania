@@ -58470,7 +58470,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
-
     var mainScene;
     var level = {
         one: new Level(1)
@@ -58478,7 +58477,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     window.initMe = 0;
 
     var main = function () {
-
 
         async.series([
             function showLoadingIcon(next) {
