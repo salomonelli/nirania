@@ -57976,14 +57976,19 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.renderer.shadowMapSoft = false;
 
         this.objects = {
-            particles: new Particles(-600,600,-600,600,-300,0, 100),
-            introParticles: new Particles(20,-300,100,1300,-500,0, 30),
+            particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
+            introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
             protagonist: new Protagonist()
         };
 
         this.lights = {
             hemisphere: null,
             shadow: null
+        };
+        this.move = {
+            left: false,
+            right: false,
+            continue: false
         };
         this.addLights();
 
@@ -58028,11 +58033,11 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         this.camera.position.x = 250;
 
         //add particles
-        this.objects.particles.group.position.set(0,0,-500);
+        this.objects.particles.group.position.set(0, 0, -500);
         this.scene.add(this.objects.particles.group);
 
         //add particles for intro
-        this.objects.introParticles.group.position.set(0,0,250);
+        this.objects.introParticles.group.position.set(0, 0, 250);
         this.scene.add(this.objects.introParticles.group);
 
         //add protagonist
@@ -58128,7 +58133,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
         var t = 250;
         var fall = function () {
             self.camera.position.x--;
-            self.camera.position.z+= 0.5 ;
+            self.camera.position.z += 0.5;
             self.camera.lookAt(self.objects.protagonist.group.position);
             t--;
             if (t > 0) {
@@ -58177,11 +58182,11 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             //protagonist, cube and camera fall
             self.startingAnimation2(function () {
                 //camera falls to needed height
-                self.startingAnimation3(function(){
+                self.startingAnimation3(function () {
                     //rotate around the protagonist
-                    self.startingAnimation4(function(){
+                    self.startingAnimation4(function () {
                         //zoom in
-                        self.startingAnimation5(function(){
+                        self.startingAnimation5(function () {
                             self.scene.remove(self.objects.introParticles);
                             cb();
                         });
@@ -58195,25 +58200,37 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
      * adds current level objects to scene
      * @param {Level} level
      */
-    Scene.prototype.addLevel = function(level){
+    Scene.prototype.addLevel = function (level) {
         this.objects.way = level.way;
         this.scene.add(level.way.group);
     };
 
     /**
-     * turns camera and protagonist according to given direction
+     * turns camera and protagonist until told to stop
      * @param {string} direction
      */
-    Scene.prototype.turn = function(direction){
-        var angle = Math.PI*0.01;
-        if(direction === "left"){
-            angle = -angle;
+    Scene.prototype.turn = function () {
+        var self = this;
+        if(self.move.continue){
+            if (self.move.left) {
+                self.objects.way.rotate(-Math.PI * 0.01);
+                self.objects.particles.rotate(-Math.PI * 0.01);
+            }
+            if (self.move.right) {
+                self.objects.way.rotate(Math.PI * 0.01);
+                self.objects.particles.rotate(Math.PI * 0.01);
+            }
         }
-        //rotate way and particles
-        this.objects.way.rotate(angle);
-        this.objects.particles.rotate(angle);
+
     };
 
+    Scene.prototype.startTurning = function (direction) {
+        this.move[direction] = true;
+    };
+
+    Scene.prototype.stopTurning = function (direction) {
+        this.move[direction] = false;
+    };
 
     /*
      TODO das muss wo anders hin
@@ -58244,13 +58261,13 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
 
 
-    Scene.prototype.addObject = function (givenObject) {
-        mainScene.scene.add(givenObject);
-    };
+     Scene.prototype.addObject = function (givenObject) {
+     mainScene.scene.add(givenObject);
+     };
 
-    Scene.prototype.removeObject = function (givenObject) {
-        mainScene.scene.remove(givenObject);
-    };
+     Scene.prototype.removeObject = function (givenObject) {
+     mainScene.scene.remove(givenObject);
+     };
      */
 
 
@@ -58348,8 +58365,10 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
      * @param {function} cb callback function
      */
     Level.prototype.begin = function(cb){
+        console.log('start turning');
         this.way.moveForwardTillEnd(function(){
             console.log('end of level1');
+            cb();
         });
     };
 
@@ -58381,6 +58400,7 @@ module.exports = (function(){
 },{}],13:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
+    "use strict";
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
@@ -58454,15 +58474,24 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function startLevel1(next){
                 console.log('main.startLevel1()');
-                //enable keydown
                 var keyHandler = function keyHandler(event) {
                     var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.turn(direction);
+                    mainScene.startTurning(direction);
                 };
                 $(document).bind('keydown', keyHandler);
+
+                var keyHandlerUp = function keyHandlerUp(event) {
+                    var direction = Keybindings.handleKeyCode(event.keyCode);
+                    mainScene.stopTurning(direction);
+                };
+                $(document).bind('keyup', keyHandlerUp);
                 //start moving way
+                mainScene.move.continue=true;
                 level.one.begin(function(){
+                    //level done
+                    mainScene.move.continue = false;
                     $(document).unbind('keydown', keyHandler);
+                    $(document).unbind('keyup', keyHandler);
                     next();
                 });
             },
@@ -58477,6 +58506,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         function render() {
             requestAnimationFrame(render);
             mainScene.render();
+            mainScene.turn();
         }
     };
 

@@ -40,8 +40,10 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
      * @param {function} cb callback function
      */
     Level.prototype.begin = function(cb){
+        console.log('start turning');
         this.way.moveForwardTillEnd(function(){
             console.log('end of level1');
+            cb();
         });
     };
 

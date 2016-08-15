@@ -1,5 +1,6 @@
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
+    "use strict";
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
@@ -73,15 +74,24 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function startLevel1(next){
                 console.log('main.startLevel1()');
-                //enable keydown
                 var keyHandler = function keyHandler(event) {
                     var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.turn(direction);
+                    mainScene.startTurning(direction);
                 };
                 $(document).bind('keydown', keyHandler);
+
+                var keyHandlerUp = function keyHandlerUp(event) {
+                    var direction = Keybindings.handleKeyCode(event.keyCode);
+                    mainScene.stopTurning(direction);
+                };
+                $(document).bind('keyup', keyHandlerUp);
                 //start moving way
+                mainScene.move.continue=true;
                 level.one.begin(function(){
+                    //level done
+                    mainScene.move.continue = false;
                     $(document).unbind('keydown', keyHandler);
+                    $(document).unbind('keyup', keyHandler);
                     next();
                 });
             },
@@ -96,6 +106,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         function render() {
             requestAnimationFrame(render);
             mainScene.render();
+            mainScene.turn();
         }
     };
 
