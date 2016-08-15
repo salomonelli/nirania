@@ -266,21 +266,22 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     };
 
     /**
-     * enables the turn in the given direction
-     * @param {string} direction - 'left', 'right'
+     * disables turning in the given direction
+     * @param {Scene} scene
+     * @param {string} direction - "left" or "right"
      */
-    Scene.prototype.startTurning = function (direction) {
-        this.move[direction] = true;
+    Scene.stopTurning = function(scene, direction){
+        scene.move[direction]= false;
     };
 
     /**
-     * enables the turn in the given direction
-     * @param {string} direction - 'left', 'right'
+     * enables turning in the given direction
+     * @param {Scene} scene
+     * @param {string} direction - "left" or "right"
      */
-    Scene.prototype.stopTurning = function (direction) {
-        this.move[direction] = false;
+    Scene.startTurning = function(scene, direction){
+        scene.move[direction]= true;
     };
-
 
     return Scene;
 })(

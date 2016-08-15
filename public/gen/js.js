@@ -57846,12 +57846,20 @@ module.exports = (function(){
 })();
 },{}],7:[function(require,module,exports){
 //require this anywhere
-module.exports = (function () {
+module.exports = (function ($) {
 
+    /**
+     * Handles key events
+     * @constructor
+     */
     function Keybindings() {
-
     }
 
+    /**
+     * Handles key code and returns fitting string like 'left' or 'right'
+     * @param {number} code - keycode
+     * @returns {string}
+     */
     Keybindings.handleKeyCode = function (code) {
         switch (code) {
             case 37:
@@ -57862,26 +57870,44 @@ module.exports = (function () {
             case 68:
                 return 'right';
                 break;
+            /*
+            case 32:
+                return 'up';
+                break;
+             */
+            default:
+                return 'anyKey';
+                break;
         }
     };
 
-
-    /*
-
-     document.addEventListener('keydown', function (event) {
-     var code = event.keyCode;
-     switch (code) {
-     case 32 :
-     //jump();
-     mainScene.startGame();
-     break;
-     }
-     });
-
+    /**
+     * Binds a given event to document
+     * @param {string} e - like 'keydown'
+     * @param {Scene} scene
+     * @param {function} doSomething - function that should be started when event has been triggered
      */
+    Keybindings.bind = function(e, scene, doSomething){
+        var keyHandler = function keyHandler(event) {
+            var direction = Keybindings.handleKeyCode(event.keyCode);
+            doSomething(scene, direction);
+        };
+        $(document).bind(e, keyHandler);
+    };
+
+    /**
+     * Unbinds a given event from document
+     * @param {string} event - like 'keydown'
+     */
+    Keybindings.unbind = function(event){
+        $(document).unbind(event);
+    };
+
     return Keybindings;
-})();
-},{}],8:[function(require,module,exports){
+})(
+    require('jquery')
+);
+},{"jquery":2}],8:[function(require,module,exports){
 module.exports = (function(THREE){
     /**
      * Represents particles
@@ -58021,7 +58047,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
         this.scene.add(this.lights.hemisphere);
         this.scene.add(this.lights.shadow);
-        this.scene.add(new THREE.DirectionalLightHelper(this.lights.shadow, 0.2));
     };
 
     /**
@@ -58224,21 +58249,22 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     };
 
     /**
-     * enables the turn in the given direction
-     * @param {string} direction - 'left', 'right'
+     * disables turning in the given direction
+     * @param {Scene} scene
+     * @param {string} direction - "left" or "right"
      */
-    Scene.prototype.startTurning = function (direction) {
-        this.move[direction] = true;
+    Scene.stopTurning = function(scene, direction){
+        scene.move[direction]= false;
     };
 
     /**
-     * enables the turn in the given direction
-     * @param {string} direction - 'left', 'right'
+     * enables turning in the given direction
+     * @param {Scene} scene
+     * @param {string} direction - "left" or "right"
      */
-    Scene.prototype.stopTurning = function (direction) {
-        this.move[direction] = false;
+    Scene.startTurning = function(scene, direction){
+        scene.move[direction]= true;
     };
-
 
     return Scene;
 })(
@@ -58496,11 +58522,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function waitForAnyKeyPress(next) {
                 console.log('main.waitForAnyKeyPress()');
-                var keyHandler = function () {
-                    $(document).unbind('keydown', keyHandler);
+                Keybindings.bind('keydown', mainScene, function(){
+                    Keybindings.unbind('keydown');
                     next();
-                };
-                $(document).bind('keydown', keyHandler);
+                });
             },
             function startingAnimation(next){
                 var fadeTime = 1000;
@@ -58513,24 +58538,15 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function startLevel1(next){
                 console.log('main.startLevel1()');
-                var keyHandler = function keyHandler(event) {
-                    var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.startTurning(direction);
-                };
-                $(document).bind('keydown', keyHandler);
-
-                var keyHandlerUp = function keyHandlerUp(event) {
-                    var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.stopTurning(direction);
-                };
-                $(document).bind('keyup', keyHandlerUp);
+                Keybindings.bind('keydown', mainScene, Scene.startTurning);
+                Keybindings.bind('keyup', mainScene, Scene.stopTurning);
                 //start moving way
                 mainScene.move.continue=true;
                 level.one.begin(function(){
                     //level done
                     mainScene.move.continue = false;
-                    $(document).unbind('keydown', keyHandler);
-                    $(document).unbind('keyup', keyHandler);
+                    Keybindings.unbind('keydown');
+                    Keybindings.unbind('keyup');
                     next();
                 });
             },

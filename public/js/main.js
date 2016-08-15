@@ -57,11 +57,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function waitForAnyKeyPress(next) {
                 console.log('main.waitForAnyKeyPress()');
-                var keyHandler = function () {
-                    $(document).unbind('keydown', keyHandler);
+                Keybindings.bind('keydown', mainScene, function(){
+                    Keybindings.unbind('keydown');
                     next();
-                };
-                $(document).bind('keydown', keyHandler);
+                });
             },
             function startingAnimation(next){
                 var fadeTime = 1000;
@@ -74,24 +73,15 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function startLevel1(next){
                 console.log('main.startLevel1()');
-                var keyHandler = function keyHandler(event) {
-                    var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.startTurning(direction);
-                };
-                $(document).bind('keydown', keyHandler);
-
-                var keyHandlerUp = function keyHandlerUp(event) {
-                    var direction = Keybindings.handleKeyCode(event.keyCode);
-                    mainScene.stopTurning(direction);
-                };
-                $(document).bind('keyup', keyHandlerUp);
+                Keybindings.bind('keydown', mainScene, Scene.startTurning);
+                Keybindings.bind('keyup', mainScene, Scene.stopTurning);
                 //start moving way
                 mainScene.move.continue=true;
                 level.one.begin(function(){
                     //level done
                     mainScene.move.continue = false;
-                    $(document).unbind('keydown', keyHandler);
-                    $(document).unbind('keyup', keyHandler);
+                    Keybindings.unbind('keydown');
+                    Keybindings.unbind('keyup');
                     next();
                 });
             },
