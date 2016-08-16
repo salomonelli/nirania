@@ -17,11 +17,6 @@ module.exports = (function (Box, Ring) {
         this.mesh = mesh;
         this.distance = distance;
         this.angle = angle;
-        this.position = {
-            x: null,
-            y: null,
-            z: null
-        }
     }
 
     /**
@@ -29,10 +24,11 @@ module.exports = (function (Box, Ring) {
      * @param {Array} obstacles - contains information to generate obstacles
      * @returns {Array} ret - containing obstacle objects
      */
-    Obstacle.generateFromArray = function (obstacles) {
+    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
         var ret = [];
         obstacles.forEach(function (o) {
             var obstacle = new obstacleTypes[o.type](o);
+            obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
             ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle));
         });
         return ret;

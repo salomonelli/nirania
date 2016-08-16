@@ -63,17 +63,10 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     Way.prototype.addObstacles = function (obstacles) {
         var self = this;
         //generate obstacles
-        self.obstacles = Obstacle.generateFromArray(obstacles);
+        self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
         //calculate positions
         self.obstacles.forEach(function (obstacle) {
             if(obstacle.distance<self.length){
-                obstacle.angle = -(obstacle.angle -90);
-                var angle = UTIL.convertDegreesToRadians(obstacle.angle);
-                var y = (self.length / 2) - obstacle.distance;
-                var x = self.radius * Math.cos(angle);
-                var z = -(self.radius * Math.sin(angle));
-                obstacle.mesh.rotation.y += angle;
-                obstacle.mesh.position.set(x,y,z);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')

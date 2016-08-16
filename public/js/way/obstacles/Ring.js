@@ -5,8 +5,12 @@ module.exports = (function(){
         this.material = new THREE.MeshLambertMaterial( { color: ring.color } );
         this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100 );
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.rotation.x += Math.PI/2;
     }
+
+    Ring.prototype.position = function(angle, distance, wayLength, radius){
+        this.mesh.rotation.x += Math.PI/2;
+        this.mesh.position.y = (wayLength / 2) - distance;
+    };
 
     Ring.prepareForCollisionDetection = function(obstacle, radius){
         return {
