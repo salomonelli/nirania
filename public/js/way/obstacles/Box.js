@@ -15,7 +15,7 @@ module.exports=(function(THREE, UTIL){
      * Positions the box on way
      * @param {number} angle - angle of position in degrees
      * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of box
+     * @param {number} length - length of way
      * @param {number} radius - radius of way
      */
     Box.prototype.position = function(angle, distance, length, radius){

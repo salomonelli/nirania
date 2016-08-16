@@ -1,7 +1,8 @@
-module.exports = (function (Box, Ring) {
+module.exports = (function (Box, Ring, Diamond) {
     var obstacleTypes = {
         box: Box,
-        ring: Ring
+        ring: Ring,
+        diamond: Diamond
     };
 
     /**
@@ -53,5 +54,6 @@ module.exports = (function (Box, Ring) {
     return Obstacle;
 })(
     require('./Box'),
-    require('./Ring')
+    require('./Ring'),
+    require('./Diamond')
 );
