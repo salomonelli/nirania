@@ -1,7 +1,7 @@
 module.exports=(function(THREE){
 
     function Box(box){
-        this.material = new THREE.MeshBasicMaterial({color: box.color});
+        this.material = new THREE.MeshLambertMaterial({color: box.color});
         this.geometry = new THREE.BoxGeometry(box.size.width, box.size.length, box.size.height);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
