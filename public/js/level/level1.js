@@ -6,7 +6,7 @@ module.exports = (function(){
             length: 1000,
             obstacles : [
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
                         x: 25,
                         y: 25,
@@ -19,7 +19,7 @@ module.exports = (function(){
                     }
                 },
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
                         x: 25,
                         y: 25,
@@ -33,7 +33,7 @@ module.exports = (function(){
                 }
                 ,
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
                         x: 25,
                         y: 25,
@@ -46,7 +46,7 @@ module.exports = (function(){
                     }
                 },
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
                         x: 25,
                         y: 25,
