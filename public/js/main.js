@@ -51,7 +51,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function preloadAndAddLevel1(next){
                 console.log('main.preloadAndAddLevel1');
                 level.one.prepare();
-                mainScene.addCollisionDetector(level.one.obstacles);
+                mainScene.addCollisionDetector(level.one.way.obstaclesGroup);
                 mainScene.addLevel(level.one);
                 next();
             },
