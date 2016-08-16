@@ -58249,14 +58249,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
 
     };
 
-    Scene.prototype.addCollisionDetector = function(obstacles){
-        this.collisionDetector = new CollisionDetector(this.objects.protagonist.mesh, obstacles, this.scene);
-    };
-
-    Scene.prototype.startCollisionDetection = function(){
-        this.collisionDetector.detectCollision();
-    }
-
     /**
      * disables turning in the given direction
      * @param {Scene} scene
@@ -58358,10 +58350,11 @@ module.exports = (function(THREE){
     require('three')
 );
 },{"three":4}],12:[function(require,module,exports){
-module.exports = (function (THREE, COLOR, Way,  level1) {
+module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle) {
     var levels = [
         level1
     ];
+
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
@@ -58379,24 +58372,69 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
      */
     Level.prototype.prepare = function () {
         var self = this;
-        var current = levels[self.current-1];
+        var current = levels[self.current - 1];
         //create new way
         this.way = new Way(current.way.length, current.speed);
         //add obstacles to way
         this.way.addObstacles(current.way.obstacles);
+        var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles)
+        this.collisionDetector = new CollisionDetector(obstacles);
         //position way into the scene
-        this.way.position( -120, -450);
+        this.way.position(-120, -450);
     };
 
     /**
      * starts level
      * @param {function} cb - callback function
      */
-    Level.prototype.begin = function(cb){
-        this.way.moveForwardTillEnd(function(){
+    Level.prototype.begin = function (cb) {
+        var self = this;
+        var t = self.way.length - 80;
+        var animate = function () {
+            t--;
+            //move way and obstacles
+            self.way.moveForwardTillEnd();
+            //check whether collision
+            if(self.collisionDetector.collision(self.way.currentPosition)){
+                console.log('gameover');
+            }else{
+                if (t > 0) {
+                    setTimeout(function () {
+                        animate();
+                    }, self.speed);
+                } else {
+                    cb();
+                }
+            }
+        };
+        animate();
+
+        /*
+        var self = this;
+        var levelEnd = false;
+        var checkCollision = function () {
+            if(self.collisionDetector.collision(self.way.currentPosition)){
+                //collision
+                console.log('gameover');
+            }else if(!levelEnd){
+                //no collision and level is not over => repeat this function
+
+            }
+
+            /*if (self.collisionDetector.collision(self.way.currentPosition)) {
+                //game over
+                self.way.stopTurning();
+                console.log('GAME OVER');
+            } else if (!levelEnd) {
+                checkCollision();
+            }
+        };
+        checkCollision();
+        self.way.moveForwardTillEnd(function () {
             //level succeeded
+            levelEnd = true;
             cb();
-        });
+        });*/
     };
 
     return Level;
@@ -58404,9 +58442,11 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
     require('three'),
     require('../COLOR'),
     require('../way/Way'),
-    require('./level1')
+    require('./level1'),
+    require('../protagonist/CollisionDetector'),
+    require('../way/obstacles/Obstacle')
 );
-},{"../COLOR":6,"../way/Way":20,"./level1":13,"three":4}],13:[function(require,module,exports){
+},{"../COLOR":6,"../protagonist/CollisionDetector":16,"../way/Way":20,"../way/obstacles/Obstacle":22,"./level1":13,"three":4}],13:[function(require,module,exports){
 module.exports = (function(){
     var level = {
         level: 1,
@@ -58414,25 +58454,35 @@ module.exports = (function(){
         way: {
             length: 1000,
             obstacles : [
+                /*
                 {
-                    type: 'cube',
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 800,
+                        angle: 0
+                    }
+                },*/
+                {
+                    type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 600,
+                        distance: 500,
                         angle: 0
                     }
                 },
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
@@ -58442,28 +58492,28 @@ module.exports = (function(){
                 }
                 ,
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
-                        distance: 300,
+                        distance: 800,
                         angle: -20
                     }
                 },
                 {
-                    type: 'cube',
+                    type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
-                        distance: 700,
+                        distance: 800,
                         angle: -30
                     }
                 }
@@ -58527,7 +58577,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function preloadAndAddLevel1(next){
                 console.log('main.preloadAndAddLevel1');
                 level.one.prepare();
-                mainScene.addCollisionDetector(level.one.obstacles);
                 mainScene.addLevel(level.one);
                 next();
             },
@@ -58555,7 +58604,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 mainScene.move.continue=true;
                 level.one.begin(function(){
                     //level done
-                    mainScene.startCollisionDetection();
                     mainScene.move.continue = false;
                     Keybindings.unbind('keydown');
                     Keybindings.unbind('keyup');
@@ -58629,38 +58677,62 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 },{"../COLOR":6,"three":4}],16:[function(require,module,exports){
-module.exports = (function(THREE){
-    function CollisionDetector(mesh, obstacles, scene){
-        this.mesh = mesh;
+module.exports = (function(){
+    function CollisionDetector(obstacles){
         this.obstacles = obstacles;
-        this.scene = scene;
-
+        console.log('CollisionDetector.constructor(): this.obstacles:');
+        console.dir(this.obstacles);
     }
 
-    CollisionDetector.prototype.detectCollision = function () {
+    /**
+     *
+     * @param {Object} currentPosition - contains the current distance and angle
+     * @returns {boolean} - when true, then collision was detected
+     */
+    CollisionDetector.prototype.collision = function (currentPosition) {
+        /*
+        Algorithmus:
+        mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
+        pro obstacle:
+            Ist die Distanz des Obstacles  um 0.01 größer als die der currentPosition?
+            wenn ja:
+                dann kann das obstacle eine collision verursachen
+                ist der winkel der currentposition derselbe wie der des obstacles?
+                    wenn ja:
+                        dann gibt es eine collision: return true
+                    wenn nein:
+                        keine collision: return false
 
-        var vector = new THREE.Vector3(0, -1, 0);
-        var rayCaster = new THREE.Raycaster(this.mesh.position, vector);
-        var forbiddenZones = []; 
+        ACHTUNG: sagen wir mal das männchen ist an der Position 0°, und ein obstacle 3°.
+        Dann gibt es trotzdem eine Collision, da die Breite des Männchens und des obstacles berücksichtigt werden müssen.
+        für jedes obstacle wird ein minimaler und maximaler WInkel angegeben.
+        genauso hat jedes obstacle eine minimale und maximale entfernung (berücksichtigung der länge eines objektes).
+        zwischen disen Winkeln und Entfernungen befindet sich das obstacle.
 
-        for(var i = 0; i < this.obstacles.length < 1; i++){
+        */
+        return false;
+    };
 
-            forbiddenZones.push(this.obstacles[i]);
+    /*
+
+     alter code:
+     var vector = new THREE.Vector3(0, -1, 0);
+     var rayCaster = new THREE.Raycaster(this.mesh.position, vector);
+     var forbiddenZones = [];
+
+     for(var i = 0; i < this.obstacles.length < 1; i++){
+
+     forbiddenZones.push(this.obstacles[i]);
 
 
-        }
-        co
-        var intersects = rayCaster.intersectObjects(forbiddenZones);
-
-    }
+     }
+     co
+     var intersects = rayCaster.intersectObjects(forbiddenZones);
+     */
 
     return CollisionDetector;
-})(
-
-        require('three')
-
-);
-},{"three":4}],17:[function(require,module,exports){
+})();
+},{}],17:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58861,15 +58933,20 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         //create an empty container
         this.group = new THREE.Object3D();
 
-        //create empty container for collision detection of obstacles
-        this.obstacles = new THREE.Object3D();
+        //array with obstacles from level settings
+        this.obstacles = [];
 
         //add way
         this.radius = 80;
-        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, 1000);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
+
+        this.currentPosition = {
+            angle: 0,
+            distance: 50
+        }
     }
 
     /**
@@ -58884,24 +58961,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     };
 
     /**
-     * moves way direction z positive according to speed
-     * @param {function} cb callback function
+     * moves way direction z positive
      */
-    Way.prototype.moveForwardTillEnd = function (cb) {
-        var self = this;
-        var t = self.length - 80;
-        var animate = function () {
-            self.group.position.z++;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    animate();
-                }, self.speed);
-            } else {
-                cb();
-            }
-        };
-        animate();
+    Way.prototype.moveForwardTillEnd = function () {
+        this.group.position.z++;
+        this.currentPosition.distance++;
     };
 
     /**
@@ -58910,6 +58974,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      */
     Way.prototype.rotate = function (angle) {
         this.group.rotation.y += angle;
+        this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
     };
 
     /**
@@ -58923,13 +58988,13 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         //calculate positions
         self.obstacles.forEach(function (obstacle) {
             if(obstacle.distance<self.length){
+                obstacle.angle = -(obstacle.angle -90);
                 var angle = UTIL.convertDegreesToRadians(obstacle.angle);
                 var y = (self.length / 2) - obstacle.distance;
-                var x = self.radius * Math.cos(angle) + 0;
-                var z = -(self.radius * Math.sin(angle) + 0);
+                var x = self.radius * Math.cos(angle);
+                var z = -(self.radius * Math.sin(angle));
                 obstacle.mesh.rotation.y += angle;
                 obstacle.mesh.position.set(x,y,z);
-                self.obstacles.add(obstacle.mesh);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
@@ -58949,18 +59014,40 @@ module.exports=(function(THREE){
 
     function Box(box){
         this.material = new THREE.MeshBasicMaterial({color: box.color});
-        this.geometry = new THREE.BoxGeometry(box.size.x, box.size.y, box.size.z);
+        this.geometry = new THREE.BoxGeometry(box.size.width, box.size.length, box.size.height);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
+
+    Box.prepareForCollisionDetection = function(obstacle, radius){
+        var a = radius - 0.5* obstacle.size.height;
+        var b = obstacle.size.width*0.5;
+        var angleRight = Math.atan(b/a);
+        var ret = {
+            size: obstacle.size,
+            angle: {
+                center: obstacle.position.angle,
+                min: obstacle.position.angle - angleRight,
+                max: obstacle.position.angle + angleRight
+            },
+            distance: {
+                center: obstacle.position.distance,
+                min: obstacle.position.distance - (0.5*obstacle.size.length),
+                max: obstacle.position.distance + (0.5*obstacle.size.length)
+            }
+        };
+        return ret;
+    };
+
 
     return Box;
 })(
     require('three')
 );
 },{"three":4}],22:[function(require,module,exports){
-module.exports = (function (Box) {
+module.exports = (function (Box, Ring) {
     var obstacleTypes = {
-        box: Box
+        box: Box,
+        ring: Ring
     };
 
     /**
@@ -58997,8 +59084,51 @@ module.exports = (function (Box) {
         return ret;
     };
 
+    /**
+     * prepares the array from levelX.js to a proper form that can be used for collision detection
+     * @param {number} radius - radius of way
+     * @param {Array} obstacles - array from levelX.js with settings of obstacles
+     * @returns {Array} ret - array that was prepared for simple collision detection
+     */
+    Obstacle.prepareForCollisionDetection = function(radius, obstacles){
+        var ret = [];
+        obstacles.forEach(function(obstacle){
+            ret.push(
+                obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
+            );
+        });
+        return ret;
+    };
+
     return Obstacle;
 })(
-    require('./Box')
+    require('./Box'),
+    require('./Ring')
 );
-},{"./Box":21}]},{},[14]);
+},{"./Box":21,"./Ring":23}],23:[function(require,module,exports){
+module.exports = (function(){
+    var radius = 100;
+
+    function Ring(ring){
+        this.material = new THREE.MeshBasicMaterial( { color: ring.color } );
+        this.geometry = new THREE.TorusGeometry( radius, 3, 16, 100 );
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.rotation.x += Math.PI/2;
+    }
+
+    Ring.prepareForCollisionDetection = function(obstacle, radius){
+        return {
+            type: obstacle.type,
+                size: obstacle.size,
+            angle: {
+            center: 0,
+                min: 0,
+                max: 360
+        },
+            distance: obstacle.position.distance
+        };
+    };
+
+    return Ring;
+})();
+},{}]},{},[14]);

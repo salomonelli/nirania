@@ -3,8 +3,9 @@ module.exports = (function(){
         level: 1,
         speed: 1,
         way: {
-            length: 3000,
+            length: 1000,
             obstacles : [
+                /*
                 {
                     type: 'ring',
                     size: {},
@@ -13,26 +14,26 @@ module.exports = (function(){
                         distance: 800,
                         angle: 0
                     }
-                },
+                },*/
                 {
                     type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 600,
+                        distance: 500,
                         angle: 0
                     }
                 },
                 {
                     type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
@@ -44,26 +45,26 @@ module.exports = (function(){
                 {
                     type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
-                        distance: 300,
+                        distance: 800,
                         angle: -20
                     }
                 },
                 {
                     type: 'box',
                     size: {
-                        x: 25,
-                        y: 25,
-                        z: 25
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: 0x000000,
                     position: {
-                        distance: 700,
+                        distance: 800,
                         angle: -30
                     }
                 }

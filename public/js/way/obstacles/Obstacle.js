@@ -38,6 +38,22 @@ module.exports = (function (Box, Ring) {
         return ret;
     };
 
+    /**
+     * prepares the array from levelX.js to a proper form that can be used for collision detection
+     * @param {number} radius - radius of way
+     * @param {Array} obstacles - array from levelX.js with settings of obstacles
+     * @returns {Array} ret - array that was prepared for simple collision detection
+     */
+    Obstacle.prepareForCollisionDetection = function(radius, obstacles){
+        var ret = [];
+        obstacles.forEach(function(obstacle){
+            ret.push(
+                obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
+            );
+        });
+        return ret;
+    };
+
     return Obstacle;
 })(
     require('./Box'),

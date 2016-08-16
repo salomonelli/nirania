@@ -12,14 +12,20 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         //create an empty container
         this.group = new THREE.Object3D();
 
-        //create empty container for collision detection of obstacles
-        this.obstaclesGroup = [];
+        //array with obstacles from level settings
+        this.obstacles = [];
+
         //add way
         this.radius = 80;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, 1000);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
+
+        this.currentPosition = {
+            angle: 0,
+            distance: 50
+        }
     }
 
     /**
@@ -34,24 +40,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     };
 
     /**
-     * moves way direction z positive according to speed
-     * @param {function} cb callback function
+     * moves way direction z positive
      */
-    Way.prototype.moveForwardTillEnd = function (cb) {
-        var self = this;
-        var t = self.length - 80;
-        var animate = function () {
-            self.group.position.z++;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    animate();
-                }, self.speed);
-            } else {
-                cb();
-            }
-        };
-        animate();
+    Way.prototype.moveForwardTillEnd = function () {
+        this.group.position.z++;
+        this.currentPosition.distance++;
     };
 
     /**
@@ -60,6 +53,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      */
     Way.prototype.rotate = function (angle) {
         this.group.rotation.y += angle;
+        this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
     };
 
     /**
@@ -73,13 +67,13 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         //calculate positions
         self.obstacles.forEach(function (obstacle) {
             if(obstacle.distance<self.length){
+                obstacle.angle = -(obstacle.angle -90);
                 var angle = UTIL.convertDegreesToRadians(obstacle.angle);
                 var y = (self.length / 2) - obstacle.distance;
-                var x = self.radius * Math.cos(angle) + 0;
-                var z = -(self.radius * Math.sin(angle) + 0);
+                var x = self.radius * Math.cos(angle);
+                var z = -(self.radius * Math.sin(angle));
                 obstacle.mesh.rotation.y += angle;
                 obstacle.mesh.position.set(x,y,z);
-                self.obstaclesGroup.push(obstacle.mesh);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')

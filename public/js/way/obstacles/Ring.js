@@ -8,5 +8,18 @@ module.exports = (function(){
         this.mesh.rotation.x += Math.PI/2;
     }
 
+    Ring.prepareForCollisionDetection = function(obstacle, radius){
+        return {
+            type: obstacle.type,
+                size: obstacle.size,
+            angle: {
+            center: 0,
+                min: 0,
+                max: 360
+        },
+            distance: obstacle.position.distance
+        };
+    };
+
     return Ring;
 })();
