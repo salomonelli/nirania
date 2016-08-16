@@ -3,8 +3,17 @@ module.exports = (function(){
         level: 1,
         speed: 1,
         way: {
-            length: 1000,
+            length: 3000,
             obstacles : [
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 800,
+                        angle: 0
+                    }
+                },
                 {
                     type: 'box',
                     size: {
