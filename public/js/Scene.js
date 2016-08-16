@@ -267,7 +267,11 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     };
 
     Scene.prototype.addCollisionDetector = function(obstacles){
-        this.collisionDetector = new CollisionDetector(this.objects.protagonist.mesh, obstacles, this.scene);
+        this.collisionDetector = new CollisionDetector(
+            this.objects.protagonist.group,
+            obstacles,
+            this.scene
+        );
     };
 
     Scene.prototype.startCollisionDetection = function(){
