@@ -14,10 +14,9 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
 
         //create empty container for collision detection of obstacles
         this.obstaclesGroup = [];
-
         //add way
         this.radius = 80;
-        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, 1000);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
