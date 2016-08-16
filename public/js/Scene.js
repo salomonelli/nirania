@@ -300,5 +300,5 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     require('./Wall'),
     require('three'),
     require('tween.js'),
-    require('')
+    require('./protagonist/CollisionDetector')
 );
