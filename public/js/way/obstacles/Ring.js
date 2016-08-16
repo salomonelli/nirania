@@ -7,5 +7,5 @@ module.exports = (function(){
         scene.add( torus );
     }
 
-    module.exports = Ring();
+    return Ring;
 })();

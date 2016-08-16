@@ -1,6 +1,6 @@
 module.exports = (function (Box) {
     var obstacleTypes = {
-        cube: Cube
+        box: Box
     };
 
     /**

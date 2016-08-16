@@ -57981,7 +57981,7 @@ module.exports = (function(THREE){
     require('three')
 );
 },{"three":4}],9:[function(require,module,exports){
-module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
+module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, CollisionDetector) {
 
     /**
      * Represents Scene
@@ -58250,7 +58250,11 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     };
 
     Scene.prototype.addCollisionDetector = function(obstacles){
-        this.collisionDetector = new CollisionDetector(obstacles);
+        this.collisionDetector = new CollisionDetector(this.objects.protagonist.mesh, obstacles, this.scene);
+    };
+
+    Scene.prototype.startCollisionDetection = function(){
+        this.collisionDetector.detectCollision();
     }
 
     /**
@@ -58278,9 +58282,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     require('./COLOR'),
     require('./Wall'),
     require('three'),
-    require('tween.js')
+    require('tween.js'),
+    require('./protagonist/CollisionDetector')
 );
-},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/Protagonist":19,"three":4,"tween.js":5}],10:[function(require,module,exports){
+},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/CollisionDetector":16,"./protagonist/Protagonist":19,"three":4,"tween.js":5}],10:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58550,6 +58555,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 mainScene.move.continue=true;
                 level.one.begin(function(){
                     //level done
+                    mainScene.startCollisionDetection();
                     mainScene.move.continue = false;
                     Keybindings.unbind('keydown');
                     Keybindings.unbind('keyup');
@@ -58623,7 +58629,7 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 },{"../COLOR":6,"three":4}],16:[function(require,module,exports){
-module.exports = (function(){
+module.exports = (function(THREE){
     function CollisionDetector(mesh, obstacles, scene){
         this.mesh = mesh;
         this.obstacles = obstacles;
@@ -58631,9 +58637,30 @@ module.exports = (function(){
 
     }
 
+    CollisionDetector.prototype.detectCollision = function () {
+
+        var vector = new THREE.Vector3(0, -1, 0);
+        var rayCaster = new THREE.Raycaster(this.mesh.position, vector);
+        var forbiddenZones = []; 
+
+        for(var i = 0; i < this.obstacles.length < 1; i++){
+
+            forbiddenZones.push(this.obstacles[i]);
+
+
+        }
+        co
+        var intersects = rayCaster.intersectObjects(forbiddenZones);
+
+    }
+
     return CollisionDetector;
-})();
-},{}],17:[function(require,module,exports){
+})(
+
+        require('three')
+
+);
+},{"three":4}],17:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58933,7 +58960,7 @@ module.exports=(function(THREE){
 },{"three":4}],22:[function(require,module,exports){
 module.exports = (function (Box) {
     var obstacleTypes = {
-        cube: Cube
+        box: Box
     };
 
     /**
