@@ -11,6 +11,7 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
         this.current = current;
         this.way = null;
         this.speed = speed;
+        this.collisionDetector = null;
     }
 
     /**
