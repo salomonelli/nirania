@@ -1,5 +1,5 @@
-module.exports = (function(){
-    function CollisionDetector(obstacles){
+module.exports = (function () {
+    function CollisionDetector(obstacles) {
         this.obstacles = obstacles;
         console.log('CollisionDetector.constructor(): this.obstacles:');
         console.dir(this.obstacles);
@@ -12,29 +12,30 @@ module.exports = (function(){
      */
     CollisionDetector.prototype.collision = function (currentPosition) {
 
-       for(var i = 0; i < this.obstacles.length; i++)
-       {
+        for (var i = 0; i < this.obstacles.length; i++) {
 
-           if(this.obstacles[i].type == "ring")
-           {
-               if(this.obstacles[i].distance == currentPosition.distance)
-               {
-                   if(this.obstacles[i].size.height > currentPosition.height)
-                   {
-                      return true;
-                   }
-               }
-           }
-           if(this.obstacles[i].distance.min < currentPosition.distance && currentPosition.distance < this.obstacles[i].distance.max ){
-               if(this.obstacles[i].angle.min < currentPosition.angle && currentPosition.angle < this.obstacles[i].angle.max){
-                   return true;
-               }
-           }
-       }
+            if (
+                (
+                    //ring collision
+                    this.obstacles[i].type == "ring" &&
+                    this.obstacles[i].distance == currentPosition.distance &&
+                    this.obstacles[i].size.height > currentPosition.height
+                ) ||
+                (
+                    //other collision
+                    this.obstacles[i].distance.min < currentPosition.distance &&
+                    currentPosition.distance < this.obstacles[i].distance.max &&
+                    this.obstacles[i].angle.min < currentPosition.angle &&
+                    currentPosition.angle < this.obstacles[i].angle.max
+                )
+            ) {
+                return true;
+            }
+        }
         return false;
     };
 
-   
+
     /*
      Algorithmus:
      mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
