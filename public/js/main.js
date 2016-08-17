@@ -1,5 +1,5 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, CollisionDetector) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
@@ -9,6 +9,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var level = {
         one: new Level(1)
     };
+    var collisionDetector = null;
     window.initMe = 0;
 
     var main = function () {
@@ -50,6 +51,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function preloadAndAddLevel1(next){
                 console.log('main.preloadAndAddLevel1');
                 level.one.prepare();
+                mainScene.addCollisionDetector(level.one.obstacles);
                 mainScene.addLevel(level.one);
                 next();
             },
@@ -77,6 +79,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 mainScene.move.continue=true;
                 level.one.begin(function(){
                     //level done
+                    mainScene.startCollisionDetection();
                     mainScene.move.continue = false;
                     Keybindings.unbind('keydown');
                     Keybindings.unbind('keyup');
@@ -108,7 +111,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('async'),
     require('./protagonist/Protagonist'),
     require('./level/Level'),
-    require('./Keybindings')
+    require('./Keybindings'),
+    require('./protagonist/CollisionDetector')
 );
 
 

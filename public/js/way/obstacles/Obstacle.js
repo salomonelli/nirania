@@ -1,4 +1,4 @@
-module.exports = (function (Cube) {
+module.exports = (function (Box) {
     var obstacleTypes = {
         cube: Cube
     };
@@ -39,5 +39,5 @@ module.exports = (function (Cube) {
 
     return Obstacle;
 })(
-    require('./Cube')
+    require('./Box')
 );

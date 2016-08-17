@@ -1,4 +1,4 @@
-module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
+module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, CollisionDetector) {
 
     /**
      * Represents Scene
@@ -33,6 +33,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             right: false,
             continue: false
         };
+        this.collisionDetector = null;
         this.addLights();
 
     }
@@ -265,6 +266,14 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     };
 
+    Scene.prototype.addCollisionDetector = function(obstacles){
+        this.collisionDetector = new CollisionDetector(this.objects.protagonist.mesh, obstacles, this.scene);
+    };
+
+    Scene.prototype.startCollisionDetection = function(){
+        this.collisionDetector.detectCollision();
+    }
+
     /**
      * disables turning in the given direction
      * @param {Scene} scene
@@ -290,5 +299,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     require('./COLOR'),
     require('./Wall'),
     require('three'),
-    require('tween.js')
+    require('tween.js'),
+    require('')
 );

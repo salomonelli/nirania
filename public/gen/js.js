@@ -58016,6 +58016,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
             right: false,
             continue: false
         };
+        this.collisionDetector = null;
         this.addLights();
 
     }
@@ -58248,6 +58249,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
 
     };
 
+    Scene.prototype.addCollisionDetector = function(obstacles){
+        this.collisionDetector = new CollisionDetector(obstacles);
+    }
+
     /**
      * disables turning in the given direction
      * @param {Scene} scene
@@ -58275,7 +58280,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN) {
     require('three'),
     require('tween.js')
 );
-},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/Protagonist":18,"three":4,"tween.js":5}],10:[function(require,module,exports){
+},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/Protagonist":19,"three":4,"tween.js":5}],10:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58361,6 +58366,7 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
         this.current = current;
         this.way = null;
         this.speed = speed;
+        this.collisionDetector = null;
     }
 
     /**
@@ -58395,7 +58401,7 @@ module.exports = (function (THREE, COLOR, Way,  level1) {
     require('../way/Way'),
     require('./level1')
 );
-},{"../COLOR":6,"../way/Way":19,"./level1":13,"three":4}],13:[function(require,module,exports){
+},{"../COLOR":6,"../way/Way":20,"./level1":13,"three":4}],13:[function(require,module,exports){
 module.exports = (function(){
     var level = {
         level: 1,
@@ -58464,7 +58470,7 @@ module.exports = (function(){
 })();
 },{}],14:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, CollisionDetector) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
@@ -58474,6 +58480,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var level = {
         one: new Level(1)
     };
+    var collisionDetector = null;
     window.initMe = 0;
 
     var main = function () {
@@ -58515,6 +58522,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function preloadAndAddLevel1(next){
                 console.log('main.preloadAndAddLevel1');
                 level.one.prepare();
+                mainScene.addCollisionDetector(level.one.obstacles);
                 mainScene.addLevel(level.one);
                 next();
             },
@@ -58573,13 +58581,14 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('async'),
     require('./protagonist/Protagonist'),
     require('./level/Level'),
-    require('./Keybindings')
+    require('./Keybindings'),
+    require('./protagonist/CollisionDetector')
 );
 
 
 
 
-},{"./Keybindings":7,"./Scene":9,"./level/Level":12,"./protagonist/Protagonist":18,"async":1,"jquery":2,"three":4}],15:[function(require,module,exports){
+},{"./Keybindings":7,"./Scene":9,"./level/Level":12,"./protagonist/CollisionDetector":16,"./protagonist/Protagonist":19,"async":1,"jquery":2,"three":4}],15:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -58614,6 +58623,17 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 },{"../COLOR":6,"three":4}],16:[function(require,module,exports){
+module.exports = (function(){
+    function CollisionDetector(mesh, obstacles, scene){
+        this.mesh = mesh;
+        this.obstacles = obstacles;
+        this.scene = scene;
+
+    }
+
+    return CollisionDetector;
+})();
+},{}],17:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58651,7 +58671,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],17:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],18:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
     /**
      * Created by sarasteiert on 05/08/16.
@@ -58689,7 +58709,7 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],18:[function(require,module,exports){
+},{"../COLOR":6,"three":4}],19:[function(require,module,exports){
 module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
 
 
@@ -58799,7 +58819,7 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
     require('jquery'),
     require('three')
 );
-},{"../COLOR":6,"./Body":15,"./Head":16,"./Leg":17,"jquery":2,"three":4}],19:[function(require,module,exports){
+},{"../COLOR":6,"./Body":15,"./Head":17,"./Leg":18,"jquery":2,"three":4}],20:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     /**
      * Represents way
@@ -58813,6 +58833,9 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
 
         //create an empty container
         this.group = new THREE.Object3D();
+
+        //create empty container for collision detection of obstacles
+        this.obstacles = new THREE.Object3D();
 
         //add way
         this.radius = 80;
@@ -58879,6 +58902,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
                 var z = -(self.radius * Math.sin(angle) + 0);
                 obstacle.mesh.rotation.y += angle;
                 obstacle.mesh.position.set(x,y,z);
+                self.obstacles.add(obstacle.mesh);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
@@ -58893,21 +58917,21 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     require('./obstacles/Obstacle'),
     require('../UTIL')
 );
-},{"../COLOR":6,"../UTIL":10,"./obstacles/Obstacle":21,"three":4}],20:[function(require,module,exports){
+},{"../COLOR":6,"../UTIL":10,"./obstacles/Obstacle":22,"three":4}],21:[function(require,module,exports){
 module.exports=(function(THREE){
 
-    function Cube(cube){
-        this.material = new THREE.MeshBasicMaterial({color: cube.color});
-        this.geometry = new THREE.CubeGeometry(cube.size.x, cube.size.y, cube.size.z);
+    function Box(box){
+        this.material = new THREE.MeshBasicMaterial({color: box.color});
+        this.geometry = new THREE.BoxGeometry(box.size.x, box.size.y, box.size.z);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
 
-    return Cube;
+    return Box;
 })(
     require('three')
 );
-},{"three":4}],21:[function(require,module,exports){
-module.exports = (function (Cube) {
+},{"three":4}],22:[function(require,module,exports){
+module.exports = (function (Box) {
     var obstacleTypes = {
         cube: Cube
     };
@@ -58948,6 +58972,6 @@ module.exports = (function (Cube) {
 
     return Obstacle;
 })(
-    require('./Cube')
+    require('./Box')
 );
-},{"./Cube":20}]},{},[14]);
+},{"./Box":21}]},{},[14]);

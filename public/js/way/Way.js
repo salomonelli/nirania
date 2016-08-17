@@ -12,6 +12,9 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         //create an empty container
         this.group = new THREE.Object3D();
 
+        //create empty container for collision detection of obstacles
+        this.obstacles = new THREE.Object3D();
+
         //add way
         this.radius = 80;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, 1000, this.length);
@@ -77,6 +80,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
                 var z = -(self.radius * Math.sin(angle) + 0);
                 obstacle.mesh.rotation.y += angle;
                 obstacle.mesh.position.set(x,y,z);
+                self.obstacles.add(obstacle.mesh);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
