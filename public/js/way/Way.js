@@ -34,6 +34,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      * @param {number} z z position
      */
     Way.prototype.position = function (y, z) {
+        console.log('postionining');
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = -this.radius-18;
         this.group.position.z = -this.length*0.5+50;
