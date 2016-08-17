@@ -62,7 +62,6 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
                         cb();
                     }
                 }
-
             }else{
                 if (t > 0) {
                     setTimeout(function () {
