@@ -31,7 +31,7 @@ module.exports = (function () {
      * @param radius - radius of way
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
-    Ring.prepareForCollisionDetection = function (obstacle, radius) {
+    Ring.prepareForCollisionDetection = function (obstacle, r) {
         return {
             type: 'ring',
             size: {
