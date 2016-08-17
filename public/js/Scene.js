@@ -1,4 +1,4 @@
-module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, async, TWEEN) {
+module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) {
 
     /**
      * Represents Scene
@@ -242,7 +242,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, async, T
 
         //add protagonist
         this.objects.protagonist.position(0, 5, 0);
-        this.objects.protagonist.rotate('y',Math.PI);
+        this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
 
         this.camera.lookAt(this.objects.protagonist.getPosition());
@@ -271,7 +271,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, async, T
     require('./Particles'),
     require('./protagonist/Protagonist'),
     require('./COLOR'),
-    require('./Wall'),
     require('three'),
     require('async'),
     require('tween.js')

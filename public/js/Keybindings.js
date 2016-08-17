@@ -40,7 +40,7 @@ module.exports = (function ($) {
      * @param {Scene} scene
      * @param {function} doSomething - function that should be started when event has been triggered
      */
-    Keybindings.bind = function(e, scene, doSomething){
+    Keybindings.bind = function (e, scene, doSomething) {
         var keyHandler = function keyHandler(event) {
             var direction = Keybindings.handleKeyCode(event.keyCode);
             doSomething(scene, direction);
@@ -52,7 +52,7 @@ module.exports = (function ($) {
      * Unbinds a given event from document
      * @param {string} event - like 'keydown'
      */
-    Keybindings.unbind = function(event){
+    Keybindings.unbind = function (event) {
         $(document).unbind(event);
     };
 

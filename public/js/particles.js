@@ -1,6 +1,14 @@
-module.exports = (function(THREE){
+module.exports = (function (THREE) {
+
     /**
-     * Represents particles
+     * Represents Particles
+     * @param {number} minX - minimum x value
+     * @param {number} maxX -maximum x value
+     * @param {number} minY - minimum y value
+     * @param {number} maxY - maximum y value
+     * @param {number} minZ - minimum z value
+     * @param {number} maxZ - maximum z value
+     * @param {number} amount - amount of particles distributed in given space
      * @constructor
      */
     function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
@@ -27,15 +35,14 @@ module.exports = (function(THREE){
      */
     Particles.prototype.init = function () {
         var self = this;
-
-        for(var i = 0; i < self.amount; i++){
+        for (var i = 0; i < self.amount; i++) {
             self.particle = new THREE.Mesh(
-                new THREE.SphereGeometry( 1, 32, 32 ),
+                new THREE.SphereGeometry(1, 32, 32),
                 new THREE.MeshBasicMaterial()
             );
-            self.particle.position.x = Particles.randomIntFromInterval(self.x.min,self.x.max);
-            self.particle.position.y = Particles.randomIntFromInterval(self.y.min,self.y.max);
-            self.particle.position.z = Particles.randomIntFromInterval(self.z.min,self.z.max);
+            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
+            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
+            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
             self.group.add(self.particle);
         }
     };
@@ -51,7 +58,7 @@ module.exports = (function(THREE){
      * rotates the way around the z axis according to given angle
      * @param {number} angle
      */
-    Particles.prototype.rotate = function(angle){
+    Particles.prototype.rotate = function (angle) {
         this.group.rotation.z += angle;
     };
 
@@ -61,15 +68,15 @@ module.exports = (function(THREE){
      * @param {number} y - y position of particles group
      * @param {number} z - z position of particles group
      */
-    Particles.prototype.position = function(x,y,z){
-        this.group.position.set(x,y,z);
+    Particles.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
     };
 
     /**
      * adds particles to given scene
      * @param {THREE.Scene} scene - scene to which the particles will be added
      */
-    Particles.prototype.addToScene = function(scene){
+    Particles.prototype.addToScene = function (scene) {
         scene.add(this.group);
     };
 
@@ -77,7 +84,7 @@ module.exports = (function(THREE){
      * removes particles from given scene
      * @param {THREE.Scene} scene - scene from which the particles will be removed
      */
-    Particles.prototype.removeFromScene = function(scene){
+    Particles.prototype.removeFromScene = function (scene) {
         scene.remove(this.group);
     };
 
@@ -87,12 +94,9 @@ module.exports = (function(THREE){
      * @param {number} max
      * @returns {number}
      */
-    Particles.randomIntFromInterval = function(min,max)
-    {
-        return Math.floor(Math.random()*(max-min+1)+min);
+    Particles.randomIntFromInterval = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     };
-
-
 
     return Particles;
 })(
