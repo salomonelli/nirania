@@ -9,15 +9,13 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         this.length = length;
         this.speed = speed;
 
-        //create an empty container
         this.group = new THREE.Object3D();
 
-        //array with obstacles from level settings
         this.obstacles = [];
 
-        //add way
         this.radius = 80;
-        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, 1000);
+        this.segments = 1000;
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
@@ -34,8 +32,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function (y, z) {
-        console.log('postionining');
+    Way.prototype.position = function () {
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = -this.radius-18;
         this.group.position.z = -this.length*0.5+50;
@@ -82,7 +79,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      */
     Way.prototype.addToScene = function(scene){
         scene.add(this.group);
-    }
+    };
 
     return Way;
 })(

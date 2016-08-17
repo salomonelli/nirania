@@ -1,4 +1,5 @@
 module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle) {
+
     var levels = [
         level1
     ];
@@ -6,6 +7,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
+     * @param {number} speed - speed in milliseconds
      * @constructor
      */
     function Level(current, speed) {
@@ -22,14 +24,14 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     Level.prototype.prepare = function () {
         var self = this;
         var current = levels[self.current - 1];
-        //create new way
+
         this.way = new Way(current.way.length, current.speed);
-        //add obstacles to way
         this.way.addObstacles(current.way.obstacles);
-        var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles)
-        this.collisionDetector = new CollisionDetector(obstacles);
-        //position way into the scene
-        this.way.position(-120, -450);
+
+        //var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles);
+        this.collisionDetector = new CollisionDetector(this.way.obstacles);
+
+        this.way.position();
     };
 
     /**
@@ -46,15 +48,14 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
-            if(collObj.collision){
-                if(collObj.type == 'box' || collObj.type == 'ring')
-                {
+            if (collObj.collision) {
+                if (collObj.type == 'box' || collObj.type == 'ring') {
                     console.log("Getroffenes Objekt: " + collObj.type);
                     console.log('gameover');
                     self.gameOver = true;
                     cb();
                 }
-                else{
+                else {
                     if (t > 0) {
                         setTimeout(function () {
                             animate();
@@ -63,7 +64,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
                         cb();
                     }
                 }
-            }else{
+            } else {
                 if (t > 0) {
                     setTimeout(function () {
                         animate();
@@ -74,33 +75,6 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             }
         };
         animate();
-
-        /*
-        var self = this;
-        var levelEnd = false;
-        var checkCollision = function () {
-            if(self.collisionDetector.collision(self.way.currentPosition)){
-                //collision
-                console.log('gameover');
-            }else if(!levelEnd){
-                //no collision and level is not over => repeat this function
-
-            }
-
-            /*if (self.collisionDetector.collision(self.way.currentPosition)) {
-                //game over
-                self.way.stopTurning();
-                console.log('GAME OVER');
-            } else if (!levelEnd) {
-                checkCollision();
-            }
-        };
-        checkCollision();
-        self.way.moveForwardTillEnd(function () {
-            //level succeeded
-            levelEnd = true;
-            cb();
-        });*/
     };
 
     return Level;

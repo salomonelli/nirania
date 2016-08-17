@@ -14,11 +14,12 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
      * @param {number} angle - in radiant, on which side the obstacle is positioned
      * @constructor
      */
-    function Obstacle(type, mesh, distance, angle) {
+    function Obstacle(type, mesh, distance, angle, collisionData) {
         this.type = type;
         this.mesh = mesh;
         this.distance = distance;
         this.angle = angle;
+        this.collisionData = collisionData;
     }
 
     /**
@@ -31,7 +32,16 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
         obstacles.forEach(function (o) {
             var obstacle = new obstacleTypes[o.type](o);
             obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
-            ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle));
+            var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
+            ret.push(
+                new Obstacle(
+                    o.type,
+                    obstacle.mesh,
+                    o.position.distance,
+                    o.position.angle,
+                    collisionData
+                )
+            );
         });
         return ret;
     };
@@ -49,6 +59,7 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
                 obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
             );
         });
+        console.dir(ret);
         return ret;
     };
 
