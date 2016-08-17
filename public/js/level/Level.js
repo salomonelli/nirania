@@ -44,10 +44,25 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             self.way.moveForwardTillEnd();
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
-            if(self.collisionDetector.collision(self.way.currentPosition)){
-                console.dir(self.way.currentPosition);
-                console.log('gameover');
-                cb();
+            var collObj = self.collisionDetector.collision(self.way.currentPosition);
+            if(collObj.collision){
+
+                if(collObj.type == 'box' || collObj.type == 'ring')
+                {
+                    console.dir(self.way.currentPosition);
+                    console.log("Getroffenes Objekt: " + collObj.type);
+                    console.log('gameover');
+                }
+                else{
+                    if (t > 0) {
+                        setTimeout(function () {
+                            animate();
+                        }, self.speed);
+                    } else {
+                        cb();
+                    }
+                }
+
             }else{
                 if (t > 0) {
                     setTimeout(function () {
