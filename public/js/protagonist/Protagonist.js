@@ -59,9 +59,81 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
         }
     };
 
+    /**
+     * positions protagonist according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Protagonist.prototype.position = function(x,y,z){
+        this.group.position.set(x,y,z);
+    };
+
+    /**
+     * rotates the protagonist according to axis and angle
+     * @param {string} axis - "x", "y" or "z"
+     * @param {number} angle - in radians
+     */
+    Protagonist.prototype.rotate = function(axis, angle){
+        switch(axis){
+            case 'x':
+                this.group.rotateX(angle);
+                break;
+            case 'y':
+                this.group.rotateY(angle);
+                break;
+            case 'z':
+                this.group.rotateZ(angle);
+                break;
+        }
+    };
+
+    /**
+     * adds protagonist to given scene
+     * @param {THREE.Scene} scene - scene to which the protagonist will be added
+     */
+    Protagonist.prototype.addToScene = function(scene){
+        scene.add(this.group);
+    };
+
+    /**
+     * returns the current position of the Protagonist
+     * @returns {Object}
+     */
+    Protagonist.prototype.getPosition = function(){
+        return this.group.position;
+    };
+
+    /**
+     * decreases the position of the protagonist according to given axis
+     * @param {string} axis - "x", "y" or "z"
+     */
+    Protagonist.prototype.decreasePosition = function(axis){
+        switch(axis){
+            case "x":
+                this.group.position.x--;
+                break;
+            case "y":
+                this.group.position.y--;
+                break;
+            case "z":
+                this.group.position.z--;
+                break;
+        }
+    };
+
+    /**
+     * returns the group of meshes of the protagonist
+     * @returns {THREE.Object3D}
+     */
+    Protagonist.prototype.returnGroup = function(){
+        return this.group;
+    };
+
+
     Protagonist.prototype.animate = function () {
         //TODO let dress move slightly
-    }
+    };
 
     /**
      * loads blender files for protagonist
@@ -83,6 +155,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
             });
         });
     });
+
 
     return Protagonist;
 })(

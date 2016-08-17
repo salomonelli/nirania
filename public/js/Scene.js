@@ -1,4 +1,4 @@
-module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, CollisionDetector) {
+module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, async, TWEEN) {
 
     /**
      * Represents Scene
@@ -9,7 +9,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     function Scene(width, height) {
         this.width = width;
         this.height = height;
-
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
@@ -34,9 +33,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
             up: false,
             continue: false
         };
-        this.collisionDetector = null;
         this.addLights();
-
     }
 
     /**
@@ -72,24 +69,22 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * positions and creates intro view
      */
     Scene.prototype.showIntro = function () {
-        this.camera.position.z = 50;
-        this.camera.position.y = 1000;
-        this.camera.position.x = 250;
+        this.camera.position.set(250, 1000, 50);
 
         //add particles
-        this.objects.particles.group.position.set(0, 0, -500);
-        this.scene.add(this.objects.particles.group);
+        this.objects.particles.position(0, 0, -500);
+        this.objects.particles.addToScene(this.scene);
 
         //add particles for intro
-        this.objects.introParticles.group.position.set(0, 0, 250);
-        this.scene.add(this.objects.introParticles.group);
+        this.objects.introParticles.position(0, 0, 250);
+        this.objects.introParticles.addToScene(this.scene);
 
         //add protagonist
-        this.objects.protagonist.group.position.set(0, 950, 0);
-        this.objects.protagonist.group.rotateY(Math.PI);
-        this.scene.add(this.objects.protagonist.group);
+        this.objects.protagonist.position(0, 950, 0);
+        this.objects.protagonist.rotate('y', Math.PI);
+        this.objects.protagonist.addToScene(this.scene);
 
-        this.camera.lookAt(this.objects.protagonist.group.position);
+        this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
     /**
@@ -102,143 +97,100 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     };
 
     /**
-     * starting animation part 1 (protagonist and cube fall)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation1 = function (cb) {
-        var self = this;
-        var t = 150;
-        var fall = function () {
-            //self.objects.wayHelper.position.y--;
-            self.objects.protagonist.group.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 2 (protagonist, cube and camera fall)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation2 = function (cb) {
-        var self = this;
-        var t = 800;
-        var fall = function () {
-            //self.objects.wayHelper.position.y--;
-            self.objects.protagonist.group.position.y--;
-            self.camera.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 3 (camera falls to needed height)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation3 = function (cb) {
-        var self = this;
-        var t = 150;
-        var fall = function () {
-            self.camera.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 4 (camera rotates to x position = 0)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation4 = function (cb) {
-        var self = this;
-        var t = 250;
-        var fall = function () {
-            self.camera.position.x--;
-            self.camera.position.z += 0.5;
-            self.camera.lookAt(self.objects.protagonist.group.position);
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 5 (zooms into protagonist)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation5 = function (cb) {
-        var self = this;
-        var t = 80;
-        var zoom = function () {
-            self.camera.position.z--;
-            self.camera.lookAt(self.objects.protagonist.group.position);
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    zoom();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        zoom();
-    };
-
-    /**
      * creates the animation for starting the game
      * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation = function (cb) {
         var self = this;
         //protagonist and cube fall
-        self.startingAnimation1(function () {
-            //protagonist, cube and camera fall
-            self.startingAnimation2(function () {
-                //camera falls to needed height
-                self.startingAnimation3(function () {
-                    //rotate around the protagonist
-                    self.startingAnimation4(function () {
-                        //zoom in
-                        self.startingAnimation5(function () {
-                            self.scene.remove(self.objects.introParticles);
-                            console.dir(self.objects.protagonist.group);
-                            cb();
-                        });
-                    });
-                });
-            });
-        });
+        async.series([
+            function animation1(next) {
+                var t = 150;
+                var fall = function () {
+                    self.objects.protagonist.decreasePosition('y');
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation2(next) {
+                var t = 800;
+                var fall = function () {
+                    self.objects.protagonist.decreasePosition('y');
+                    self.camera.position.y--;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation3(next) {
+                var t = 150;
+                var fall = function () {
+                    self.camera.position.y--;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation4(next) {
+                var t = 250;
+                var fall = function () {
+                    self.camera.position.x--;
+                    self.camera.position.z += 0.5;
+                    self.camera.lookAt(self.objects.protagonist.getPosition());
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation5(next) {
+                var t = 80;
+                var zoom = function () {
+                    self.camera.position.z--;
+                    self.camera.lookAt(self.objects.protagonist.getPosition());
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            zoom();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                zoom();
+            },
+            function endAnimation() {
+                self.objects.introParticles.removeFromScene(self.scene);
+                cb();
+            }
+        ]);
     };
 
     /**
@@ -247,7 +199,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      */
     Scene.prototype.addLevel = function (level) {
         this.objects.way = level.way;
-        this.scene.add(level.way.group);
+        this.objects.way.addToScene(this.scene);
     };
 
     /**
@@ -255,7 +207,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      */
     Scene.prototype.turn = function () {
         var self = this;
-        if(self.move.continue){
+        if (self.move.continue) {
             if (self.move.left) {
                 self.objects.way.rotate(-Math.PI * 0.01);
                 self.objects.particles.rotate(-Math.PI * 0.01);
@@ -264,7 +216,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
                 self.objects.way.rotate(Math.PI * 0.01);
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
-            if (self.move.up){
+            if (self.move.up) {
                 self.objects.protagonist.jump();
             }
         }
@@ -274,27 +226,26 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * returns the THREE group of the protagonist
      * @returns {THREE.Object3D} group of protagonist
      */
-    Scene.prototype.getProtagonist = function(){
-        return this.objects.protagonist.group;
+    Scene.prototype.getProtagonist = function () {
+        return this.objects.protagonist.returnGroup();
     };
 
     /**
      * sets camera to the right position
      */
-    Scene.prototype.simpleIntro = function(){
-        this.camera.position.set(0,50,95);
+    Scene.prototype.simpleIntro = function () {
+        this.camera.position.set(0, 50, 95);
 
         //add particles
-        this.objects.particles.group.position.set(0, 0, -500);
-        this.scene.add(this.objects.particles.group);
+        this.objects.particles.position(0, 0, -500);
+        this.objects.particles.addToScene(this.scene);
 
         //add protagonist
-        this.objects.protagonist.group.position.set(0, 5, 0);
-        this.objects.protagonist.group.rotateY(Math.PI);
-        this.scene.add(this.objects.protagonist.group);
+        this.objects.protagonist.position(0, 5, 0);
+        this.objects.protagonist.rotate('y',Math.PI);
+        this.objects.protagonist.addToScene(this.scene);
 
-        this.camera.lookAt(this.objects.protagonist.group.position);
-        console.log('added stuff');
+        this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
     /**
@@ -302,8 +253,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.stopMovingProtagonist = function(scene, direction){
-        scene.move[direction]= false;
+    Scene.stopMovingProtagonist = function (scene, direction) {
+        scene.move[direction] = false;
     };
 
     /**
@@ -311,11 +262,9 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.startMovingProtagonist = function(scene, direction){
-        scene.move[direction]= true;
+    Scene.startMovingProtagonist = function (scene, direction) {
+        scene.move[direction] = true;
     };
-
-
 
     return Scene;
 })(
@@ -324,6 +273,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     require('./COLOR'),
     require('./Wall'),
     require('three'),
-    require('tween.js'),
-    require('./protagonist/CollisionDetector')
+    require('async'),
+    require('tween.js')
 );

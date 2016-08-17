@@ -76,6 +76,14 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         });
     };
 
+    /**
+     * adds way to given scene
+     * @param {THREE.Scene} scene - scene to which the way will be added
+     */
+    Way.prototype.addToScene = function(scene){
+        scene.add(this.group);
+    }
+
     return Way;
 })(
     require('three'),
