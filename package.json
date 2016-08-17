@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "dev": "concurrently --kill-others 'node app.js' 'grunt --verbose'",
+    "dev": "concurrently --kill-others \"node app.js\" \"grunt --verbose\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
