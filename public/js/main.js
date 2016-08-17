@@ -1,5 +1,5 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, CollisionDetector) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
@@ -72,8 +72,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function startLevel1(next){
                 console.log('main.startLevel1()');
-                Keybindings.bind('keydown', mainScene, Scene.startTurning);
-                Keybindings.bind('keyup', mainScene, Scene.stopTurning);
+                Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
+                Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
                 //start moving way
                 mainScene.move.continue=true;
                 level.one.begin(function(){
@@ -96,6 +96,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             requestAnimationFrame(render);
             mainScene.render();
             mainScene.turn();
+            TWEEN.update();
         }
     };
 
@@ -110,7 +111,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./protagonist/Protagonist'),
     require('./level/Level'),
     require('./Keybindings'),
-    require('./protagonist/CollisionDetector')
+    require('tween.js')
 );
 
 

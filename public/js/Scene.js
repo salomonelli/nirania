@@ -31,6 +31,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
         this.move = {
             left: false,
             right: false,
+            up: false,
             continue: false
         };
         this.collisionDetector = null;
@@ -262,6 +263,9 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
                 self.objects.way.rotate(Math.PI * 0.01);
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
+            if (self.move.up){
+                self.objects.protagonist.jump();
+            }
         }
 
     };
@@ -271,7 +275,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.stopTurning = function(scene, direction){
+    Scene.stopMovingProtagonist = function(scene, direction){
         scene.move[direction]= false;
     };
 
@@ -280,9 +284,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.startTurning = function(scene, direction){
+    Scene.startMovingProtagonist = function(scene, direction){
         scene.move[direction]= true;
     };
+
 
     return Scene;
 })(

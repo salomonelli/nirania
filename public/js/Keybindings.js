@@ -23,11 +23,11 @@ module.exports = (function ($) {
             case 68:
                 return 'right';
                 break;
-            /*
-            case 32:
+            //case 32:
+            case 87:
+            case 38:
                 return 'up';
                 break;
-             */
             default:
                 return 'anyKey';
                 break;
