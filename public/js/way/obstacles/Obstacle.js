@@ -1,8 +1,9 @@
-module.exports = (function (Box, Ring, Diamond) {
+module.exports = (function (Box, Ring, Diamond, Opponent) {
     var obstacleTypes = {
         box: Box,
         ring: Ring,
-        diamond: Diamond
+        diamond: Diamond,
+        opponent: Opponent
     };
 
     /**
@@ -41,13 +42,14 @@ module.exports = (function (Box, Ring, Diamond) {
      * @param {Array} obstacles - array from levelX.js with settings of obstacles
      * @returns {Array} ret - array that was prepared for simple collision detection
      */
-    Obstacle.prepareForCollisionDetection = function(radius, obstacles){
+    Obstacle.prepareForCollisionDetection = function (radius, obstacles) {
         var ret = [];
-        obstacles.forEach(function(obstacle){
+        obstacles.forEach(function (obstacle) {
             ret.push(
                 obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
             );
         });
+        ret.shift();
         return ret;
     };
 
@@ -55,5 +57,6 @@ module.exports = (function (Box, Ring, Diamond) {
 })(
     require('./Box'),
     require('./Ring'),
-    require('./Diamond')
+    require('./Diamond'),
+    require('./Opponent')
 );

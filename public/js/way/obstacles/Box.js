@@ -39,11 +39,12 @@ module.exports=(function(THREE, UTIL){
         var b = obstacle.size.width*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
+            type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - angleRight,
-                max: obstacle.position.angle + angleRight
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,

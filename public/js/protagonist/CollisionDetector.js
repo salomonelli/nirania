@@ -14,52 +14,44 @@ module.exports = (function(){
 
        for(var i = 0; i < this.obstacles.length; i++)
        {
-
            if(this.obstacles[i].distance.min < currentPosition.distance && currentPosition.distance < this.obstacles[i].distance.max ){
-
-               console.log("Mögliche Kollision");
-               console.log(currentPosition.distance);
-               console.log(this.obstacles[i].angle.min ); 
-               console.log(currentPosition.angle);
                if(this.obstacles[i].angle.min < currentPosition.angle && currentPosition.angle < this.obstacles[i].angle.max){
-                   console.log("Im Objekt");
+                   return true;
                }
-
            }
-
-           /*if ( this.obstacles[i].distance.min - currentPosition.distance > 0 && this.obstacles[i].distance.min - currentPosition.distance < 1  )
-           {
-               if(this.obstacles[i].angle.center == currentPosition.angle)
-               {
-                   console.log("Potentielle Kollision");
-               }
-
-
-           }*/
        }
-        /*
-        Algorithmus:
-        mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
-        pro obstacle:
-            Ist die Distanz des Obstacles  um 0.01 größer als die der currentPosition?
-            wenn ja:
-                dann kann das obstacle eine collision verursachen
-                ist der winkel der currentposition derselbe wie der des obstacles?
-                    wenn ja:
-                        dann gibt es eine collision: return true
-                    wenn nein:
-                        keine collision: return false
-
-        ACHTUNG: sagen wir mal das männchen ist an der Position 0°, und ein obstacle 3°.
-        Dann gibt es trotzdem eine Collision, da die Breite des Männchens und des obstacles berücksichtigt werden müssen.
-        für jedes obstacle wird ein minimaler und maximaler WInkel angegeben.
-        genauso hat jedes obstacle eine minimale und maximale entfernung (berücksichtigung der länge eines objektes).
-        zwischen disen Winkeln und Entfernungen befindet sich das obstacle.
-
-        */
         return false;
     };
 
+    /*if ( this.obstacles[i].distance.min - currentPosition.distance > 0 && this.obstacles[i].distance.min - currentPosition.distance < 1  )
+     {
+     if(this.obstacles[i].angle.center == currentPosition.angle)
+     {
+     console.log("Potentielle Kollision");
+     }
+
+
+     }*/
+    /*
+     Algorithmus:
+     mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
+     pro obstacle:
+     Ist die Distanz des Obstacles  um 0.01 größer als die der currentPosition?
+     wenn ja:
+     dann kann das obstacle eine collision verursachen
+     ist der winkel der currentposition derselbe wie der des obstacles?
+     wenn ja:
+     dann gibt es eine collision: return true
+     wenn nein:
+     keine collision: return false
+
+     ACHTUNG: sagen wir mal das männchen ist an der Position 0°, und ein obstacle 3°.
+     Dann gibt es trotzdem eine Collision, da die Breite des Männchens und des obstacles berücksichtigt werden müssen.
+     für jedes obstacle wird ein minimaler und maximaler WInkel angegeben.
+     genauso hat jedes obstacle eine minimale und maximale entfernung (berücksichtigung der länge eines objektes).
+     zwischen disen Winkeln und Entfernungen befindet sich das obstacle.
+
+     */
     /*
 
      alter code:
