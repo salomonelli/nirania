@@ -47,6 +47,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             if(self.collisionDetector.collision(self.way.currentPosition)){
                 console.dir(self.way.currentPosition);
                 console.log('gameover');
+                cb();
             }else{
                 if (t > 0) {
                     setTimeout(function () {

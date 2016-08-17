@@ -232,6 +232,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
                         //zoom in
                         self.startingAnimation5(function () {
                             self.scene.remove(self.objects.introParticles);
+                            console.dir(self.objects.protagonist.group);
                             cb();
                         });
                     });
@@ -269,8 +270,31 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
         }
     };
 
+    /**
+     * returns the THREE group of the protagonist
+     * @returns {THREE.Object3D} group of protagonist
+     */
     Scene.prototype.getProtagonist = function(){
         return this.objects.protagonist.group;
+    };
+
+    /**
+     * sets camera to the right position
+     */
+    Scene.prototype.simpleIntro = function(){
+        this.camera.position.set(0,50,95);
+
+        //add particles
+        this.objects.particles.group.position.set(0, 0, -500);
+        this.scene.add(this.objects.particles.group);
+
+        //add protagonist
+        this.objects.protagonist.group.position.set(0, 5, 0);
+        this.objects.protagonist.group.rotateY(Math.PI);
+        this.scene.add(this.objects.protagonist.group);
+
+        this.camera.lookAt(this.objects.protagonist.group.position);
+        console.log('added stuff');
     };
 
     /**

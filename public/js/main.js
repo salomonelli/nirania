@@ -6,15 +6,24 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     window.THREE = THREE;
 
     var mainScene;
-    var level = {
-        one: new Level(1)
-    };
+    var level = [
+        {},
+        new Level(1)
+    ];
+    var currentLevel = 1;
     var collisionDetector = null;
+    var URLpath = '';
     window.initMe = 0;
 
     var main = function () {
 
         async.series([
+            function getURL(next) {
+                console.log('main.getURL()');
+                var URL = window.location.href;
+                URLpath = URL.replace(/http:\/\/.+\//g, '');
+                next();
+            },
             function showLoadingIcon(next) {
                 console.log('main.showLoadingIcon()');
                 //align loading icon
@@ -41,51 +50,75 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 next();
             },
             function showIntro(next) {
-                console.log('main.showIntro()');
-                $('.game-name').fadeIn(3000);
-                $('.intro').fadeIn(3000);
-                mainScene.showIntro();
+                if (URLpath === "") {
+                    console.log('main.showIntro()');
+                    $('.game-name').fadeIn(3000);
+                    $('.intro').fadeIn(3000);
+                    mainScene.showIntro();
+                }else{
+                    //load simple intro
+                    console.log('main.simpleIntro()');
+                    mainScene.simpleIntro();
+                    //position the camera properly
+                }
                 render();
                 next();
             },
-            function preloadAndAddLevel1(next){
-                console.log('main.preloadAndAddLevel1');
-                level.one.prepare();
-                mainScene.addLevel(level.one);
+            function preloadAndAddLevel1(next) {
+                if(URLpath === "" || URLpath === "#1"){
+                    console.log('main.preloadAndAddLevel1');
+                    level[currentLevel].prepare();
+                    mainScene.addLevel(level[currentLevel]);
+                }
                 next();
             },
             function waitForAnyKeyPress(next) {
-                console.log('main.waitForAnyKeyPress()');
-                Keybindings.bind('keydown', mainScene, function(){
-                    Keybindings.unbind('keydown');
+                if (URLpath === "") {
+                    console.log('main.waitForAnyKeyPress()');
+                    Keybindings.bind('keydown', mainScene, function () {
+                        Keybindings.unbind('keydown');
+                        next();
+                    });
+                } else {
                     next();
-                });
+                }
             },
-            function startingAnimation(next){
-                var fadeTime = 1000;
-                $('.game-name').fadeOut(fadeTime);
-                $('.intro').fadeOut(fadeTime);
-                setTimeout(function(){
-                    console.log('main.startingAnimation()');
-                    mainScene.startingAnimation(next);
-                }, fadeTime);
-            },
-            function startLevel1(next){
-                console.log('main.startLevel1()');
-                Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
-                Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
-                //start moving way
-                mainScene.move.continue=true;
-                level.one.begin(function(){
-                    //level done
-                    mainScene.move.continue = false;
-                    Keybindings.unbind('keydown');
-                    Keybindings.unbind('keyup');
+            function startingAnimation(next) {
+                if (URLpath === "") {
+                    var fadeTime = 1000;
+                    $('.game-name').fadeOut(fadeTime);
+                    $('.intro').fadeOut(fadeTime);
+                    setTimeout(function () {
+                        console.log('main.startingAnimation()');
+                        mainScene.startingAnimation(next);
+                    }, fadeTime);
+                } else {
                     next();
-                }, mainScene.getProtagonist());
+                }
             },
-            function levelOneSuccessScreen(next){
-                console.log('main.levelOneSuccessScreen()');
+            function startLevel1(next) {
+                if(URLpath === "" || URLpath === "#1"){
+                    console.log('main.startLevel1()');
+                    Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
+                    Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+                    //start moving way
+                    mainScene.move.continue = true;
+                    level[currentLevel].begin(function () {
+                        //level done
+                        mainScene.move.continue = false;
+                        Keybindings.unbind('keydown');
+                        Keybindings.unbind('keyup');
+                        next();
+                    }, mainScene.getProtagonist());
+                }else{
+                    next();
+                }
+            },
+            function levelOneSuccessScreen(next) {
+                if(URLpath === "" || URLpath === "#1"){
+                    console.log('main.levelOneSuccessScreen()');
+                }
+                next();
             }
         ]);
 
