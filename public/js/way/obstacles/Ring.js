@@ -40,7 +40,8 @@ module.exports = (function () {
                 min: 0,
                 max: 360
             },
-            distance: obstacle.position.distance
+            distance: obstacle.position.distance,
+            heightFromGround: radius - 80
         };
     };
 

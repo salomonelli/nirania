@@ -267,7 +267,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
                 self.objects.protagonist.jump();
             }
         }
+    };
 
+    Scene.prototype.getProtagonist = function(){
+        return this.objects.protagonist.group;
     };
 
     /**
@@ -287,6 +290,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     Scene.startMovingProtagonist = function(scene, direction){
         scene.move[direction]= true;
     };
+
 
 
     return Scene;

@@ -82,7 +82,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                     Keybindings.unbind('keydown');
                     Keybindings.unbind('keyup');
                     next();
-                });
+                }, mainScene.getProtagonist());
             },
             function levelOneSuccessScreen(next){
                 console.log('main.levelOneSuccessScreen()');

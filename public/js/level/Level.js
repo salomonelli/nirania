@@ -35,7 +35,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
      * starts level
      * @param {function} cb - callback function
      */
-    Level.prototype.begin = function (cb) {
+    Level.prototype.begin = function (cb, protagonist) {
         var self = this;
         var t = self.way.length - 80;
         var animate = function () {
@@ -43,7 +43,9 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             //move way and obstacles
             self.way.moveForwardTillEnd();
             //check whether collision
+            self.way.currentPosition.height = protagonist.position.y;
             if(self.collisionDetector.collision(self.way.currentPosition)){
+                console.dir(self.way.currentPosition);
                 console.log('gameover');
             }else{
                 if (t > 0) {
