@@ -10,7 +10,7 @@ module.exports = (function(THREE){
 
         var vector = new THREE.Vector3(0, -1, 0);
         var rayCaster = new THREE.Raycaster(this.mesh.position, vector);
-        var forbiddenZones = [];
+        var forbiddenZones = []; 
 
         for(var i = 0; i < this.obstacles.length < 1; i++){
 
