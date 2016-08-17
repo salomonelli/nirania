@@ -49,7 +49,6 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
                 obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
             );
         });
-        ret.shift();
         return ret;
     };
 
