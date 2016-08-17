@@ -56,6 +56,32 @@ module.exports = (function(THREE){
     };
 
     /**
+     * positions particles according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Particles.prototype.position = function(x,y,z){
+        this.group.position.set(x,y,z);
+    };
+
+    /**
+     * adds particles to given scene
+     * @param {THREE.Scene} scene - scene to which the particles will be added
+     */
+    Particles.prototype.addToScene = function(scene){
+        scene.add(this.group);
+    };
+
+    /**
+     * removes particles from given scene
+     * @param {THREE.Scene} scene - scene from which the particles will be removed
+     */
+    Particles.prototype.removeFromScene = function(scene){
+        scene.remove(this.group);
+    };
+
+    /**
      * calculates random integer from interval
      * @param {number} min
      * @param {number} max
@@ -65,6 +91,8 @@ module.exports = (function(THREE){
     {
         return Math.floor(Math.random()*(max-min+1)+min);
     };
+
+
 
     return Particles;
 })(
