@@ -1,30 +1,43 @@
-module.exports = (function(COLOR, THREE){
+module.exports = (function (COLOR, THREE) {
+
     /**
-     * Created by sarasteiert on 05/08/16.
+     * Represents head of protagonist
+     * @constructor
      */
-    function Head(){
-        this.mesh = null;
-        this.geometry = null;
-        this.init();
-    }
-
-
-    Head.prototype.init = function(){
-        // init head
-        var material = new THREE.MeshLambertMaterial({
+    function Head() {
+        this.material = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             transparent: false,
             opacity: 0.8
         });
-        this.mesh = new THREE.Mesh(Head.geometry, material);
-        //this.mesh.scale.x = this.mesh.scale.y = this.mesh.scale.z = 50;
-        //this.mesh.castShadow = true;
+        this.mesh = new THREE.Mesh(Head.geometry, this.material);
+    }
+
+    /**
+     * positions the head according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    Head.prototype.position = function (x, y, z) {
+        this.mesh.position.set(x, y, z);
     };
 
+    /**
+     * adds the head to a group
+     * @param {THREE.Group} group
+     */
+    Head.prototype.addToGroup = function (group) {
+        group.add(this.mesh);
+    };
 
-    Head.init = function(cb){
+    /**
+     * loads the head from json file (blender)
+     * @param {function} cb callback
+     */
+    Head.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/head.json', function(geometry, materials) {
+        loader.load('/js/blender/type1/head.json', function (geometry, materials) {
             Head.geometry = geometry;
             cb();
         });

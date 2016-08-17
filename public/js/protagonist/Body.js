@@ -13,6 +13,23 @@ module.exports = (function(COLOR, THREE){
         this.mesh = new THREE.Mesh(Body.geometry, this.material);
     }
 
+    /**
+     * positions the body according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    Body.prototype.position = function (x, y, z) {
+        this.mesh.position.set(x, y, z);
+    };
+
+    /**
+     * adds the body to a group
+     * @param {THREE.Group} group
+     */
+    Body.prototype.addToGroup = function (group) {
+        group.add(this.mesh);
+    };
 
     /**
      * loads the body from json file (blender)

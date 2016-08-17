@@ -7,37 +7,35 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
     function Protagonist() {
         //create an empty container
         this.group = new THREE.Object3D();
-
-        //add body to group
         this.body = new Body();
-        this.body.mesh.position.set(0, 0, 0);
-        this.group.add(this.body.mesh);
-
-        //add head to group
         this.head = new Head();
-        this.head.mesh.position.set(0, 0.1, 0);
-        this.group.add(this.head.mesh);
-
         this.left = {
-            leg: new Leg(),
-            arm: null
+            leg: new Leg()
         };
         this.right = {
-            leg: new Leg(),
-            arm: null
+            leg: new Leg()
         };
-        //add right leg to group
-        this.right.leg.mesh.position.set(0.5, 0, 0);
-        this.group.add(this.right.leg.mesh);
-        //add left leg to group
-        this.left.leg.mesh.position.set(0, 0, 0);
-        this.group.add(this.left.leg.mesh);
+        this.groupBodyParts();
 
         this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
 
         this.isJumping = false;
     }
+
+    /**
+     * groups the body parts of protagonist and positions them
+     */
+    Protagonist.prototype.groupBodyParts = function () {
+        this.body.position(0, 0, 0);
+        this.body.addToGroup(this.group);
+        this.head.position(0, 0.1, 0);
+        this.head.addToGroup(this.group);
+        this.right.leg.position(0.5, 0, 0);
+        this.right.leg.addToGroup(this.group);
+        this.left.leg.position(0, 0, 0);
+        this.left.leg.addToGroup(this.group);
+    };
 
     /**
      * Makes protagonist jump a given height
@@ -65,8 +63,8 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * @param {number} y - y position of particles group
      * @param {number} z - z position of particles group
      */
-    Protagonist.prototype.position = function(x,y,z){
-        this.group.position.set(x,y,z);
+    Protagonist.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
     };
 
     /**
@@ -74,8 +72,8 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * @param {string} axis - "x", "y" or "z"
      * @param {number} angle - in radians
      */
-    Protagonist.prototype.rotate = function(axis, angle){
-        switch(axis){
+    Protagonist.prototype.rotate = function (axis, angle) {
+        switch (axis) {
             case 'x':
                 this.group.rotateX(angle);
                 break;
@@ -92,7 +90,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * adds protagonist to given scene
      * @param {THREE.Scene} scene - scene to which the protagonist will be added
      */
-    Protagonist.prototype.addToScene = function(scene){
+    Protagonist.prototype.addToScene = function (scene) {
         scene.add(this.group);
     };
 
@@ -100,7 +98,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * returns the current position of the Protagonist
      * @returns {Object}
      */
-    Protagonist.prototype.getPosition = function(){
+    Protagonist.prototype.getPosition = function () {
         return this.group.position;
     };
 
@@ -108,8 +106,8 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * decreases the position of the protagonist according to given axis
      * @param {string} axis - "x", "y" or "z"
      */
-    Protagonist.prototype.decreasePosition = function(axis){
-        switch(axis){
+    Protagonist.prototype.decreasePosition = function (axis) {
+        switch (axis) {
             case "x":
                 this.group.position.x--;
                 break;
@@ -126,7 +124,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * returns the group of meshes of the protagonist
      * @returns {THREE.Object3D}
      */
-    Protagonist.prototype.returnGroup = function(){
+    Protagonist.prototype.returnGroup = function () {
         return this.group;
     };
 
@@ -155,7 +153,6 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
             });
         });
     });
-
 
     return Protagonist;
 })(
