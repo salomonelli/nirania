@@ -11,6 +11,32 @@ module.exports = (function(){
      * @returns {boolean} - when true, then collision was detected
      */
     CollisionDetector.prototype.collision = function (currentPosition) {
+
+       for(var i = 0; i < this.obstacles.length; i++)
+       {
+
+           if(this.obstacles[i].distance.min < currentPosition.distance && currentPosition.distance < this.obstacles[i].distance.max ){
+
+               console.log("Mögliche Kollision");
+               console.log(currentPosition.distance);
+               console.log(this.obstacles[i].angle.min ); 
+               console.log(currentPosition.angle);
+               if(this.obstacles[i].angle.min < currentPosition.angle && currentPosition.angle < this.obstacles[i].angle.max){
+                   console.log("Im Objekt");
+               }
+
+           }
+
+           /*if ( this.obstacles[i].distance.min - currentPosition.distance > 0 && this.obstacles[i].distance.min - currentPosition.distance < 1  )
+           {
+               if(this.obstacles[i].angle.center == currentPosition.angle)
+               {
+                   console.log("Potentielle Kollision");
+               }
+
+
+           }*/
+       }
         /*
         Algorithmus:
         mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
