@@ -34,14 +34,15 @@ module.exports = (function () {
     Ring.prepareForCollisionDetection = function (obstacle, radius) {
         return {
             type: 'ring',
-            size: obstacle.size,
+            size: {
+                height: radius - 80
+            },
             angle: {
                 center: 0,
                 min: 0,
                 max: 360
             },
             distance: obstacle.position.distance,
-            heightFromGround: radius - 80
         };
     };
 

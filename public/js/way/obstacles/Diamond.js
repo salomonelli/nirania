@@ -43,7 +43,9 @@ module.exports = (function(THREE, UTIL){
         var angleRight = Math.atan(b/a);
         var ret = {
             type: 'diamond',
-            size: obstacle.size,
+            size: {
+                height: heightFromWay
+            },
             angle: {
                 center: obstacle.position.angle,
                 min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
