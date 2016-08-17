@@ -1,8 +1,6 @@
 module.exports = (function () {
     function CollisionDetector(obstacles) {
         this.obstacles = obstacles;
-        console.log('CollisionDetector.constructor(): this.obstacles:');
-        console.dir(this.obstacles);
     }
 
     /**
@@ -32,7 +30,7 @@ module.exports = (function () {
             ) {
                 return {
                     collision: true,
-                    type: this.obstacles[i].collisionDawta.type,
+                    type: this.obstacles[i].collisionData.type,
                     mesh: this.obstacles[i].mesh
                 };
             }
