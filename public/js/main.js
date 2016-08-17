@@ -11,7 +11,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         new Level(1)
     ];
     var currentLevel = 1;
-    var collisionDetector = null;
     var URLpath = '';
     window.initMe = 0;
 

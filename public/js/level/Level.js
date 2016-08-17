@@ -13,6 +13,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         this.way = null;
         this.speed = speed;
         this.collisionDetector = null;
+        this.gameOver = false;
     }
 
     /**
@@ -46,12 +47,12 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
             if(collObj.collision){
-
                 if(collObj.type == 'box' || collObj.type == 'ring')
                 {
-                    console.dir(self.way.currentPosition);
                     console.log("Getroffenes Objekt: " + collObj.type);
                     console.log('gameover');
+                    self.gameOver = true;
+                    cb();
                 }
                 else{
                     if (t > 0) {
