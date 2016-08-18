@@ -29,7 +29,10 @@ module.exports = (function () {
                     currentPosition.angle < this.obstacles[i].angle.max
                 )
             ) {
-                return true;
+                return {
+                    collision: true,
+                    type: this.obstacles[i].type
+                };
             }
         }
         return false;

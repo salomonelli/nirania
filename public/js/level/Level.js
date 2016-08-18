@@ -46,6 +46,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             self.way.currentPosition.height = protagonist.position.y;
             if(self.collisionDetector.collision(self.way.currentPosition)){
                 console.dir(self.way.currentPosition);
+                console.log(self.collisionDetector.collision.type);
                 console.log('gameover');
             }else{
                 if (t > 0) {
