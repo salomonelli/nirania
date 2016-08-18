@@ -1,7 +1,9 @@
-module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle, $, successScreen, gameoverScreen) {
+module.exports = (function (THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, Cookies) {
 
     var levels = [
-        level1
+        level1,
+        level2,
+        level3
     ];
 
     /**
@@ -59,7 +61,6 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
                     case "diamond":
                         //TODO let diamond fly away
                         self.score++;
-                        console.log('aaaaa'+ self.score);
                         if (t > 0) {
                             setTimeout(function () {
                                 animate();
@@ -97,7 +98,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         var html = successScreen.render(obj);
         $('body').append(html);
         var marginTop = ($(document).height() - $('#successScreen div').height())/2;
-        $('#successScreen div').css('marginTop',marginTop);
+        $('#successScreen div').css('marginTop', marginTop);
     };
 
     /**
@@ -114,15 +115,48 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         $('#gameoverScreen div').css('marginTop',marginTop);
     };
 
+    /**
+     * stores the score and success in cookie
+     * @param {boolean} success - whether current level has been ended with success
+     */
+    Level.prototype.setCookie = function(success){
+        Cookies.set(this.current+'-success', success);
+        Cookies.set(this.current, this.score);
+        var all = Cookies.get();
+        var sum = 0;
+        Object.keys(all).forEach(function(key,index) {
+            sum += all[key]
+        });
+        Cookies.set('total', sum);
+    };
+
+    /**
+     * checks whether the level can be played
+     * @param {number} level - that should be played
+     * @returns {boolean}
+     */
+    Level.canBePlayed = function(level){
+        level--;
+        if(Cookies.get(level-'success')){
+            return true;
+        }else{
+            return false;
+        }
+    };
+
+
     return Level;
 })(
     require('three'),
     require('../COLOR'),
     require('../way/Way'),
     require('./level1'),
+    require('./level2'),
+    require('./level3'),
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
     require('../templates/success.mustache'),
-    require('../templates/gameover.mustache')
+    require('../templates/gameover.mustache'),
+    require('js-cookie')
 );

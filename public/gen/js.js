@@ -5216,7 +5216,250 @@
 
 }));
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":3}],2:[function(require,module,exports){
+},{"_process":5}],2:[function(require,module,exports){
+/*
+ *  Copyright 2011 Twitter, Inc.
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+
+var Hogan = {};
+
+(function (Hogan, useArrayBuffer) {
+  Hogan.Template = function (renderFunc, text, compiler, options) {
+    this.r = renderFunc || this.r;
+    this.c = compiler;
+    this.options = options;
+    this.text = text || '';
+    this.buf = (useArrayBuffer) ? [] : '';
+  }
+
+  Hogan.Template.prototype = {
+    // render: replaced by generated code.
+    r: function (context, partials, indent) { return ''; },
+
+    // variable escaping
+    v: hoganEscape,
+
+    // triple stache
+    t: coerceToString,
+
+    render: function render(context, partials, indent) {
+      return this.ri([context], partials || {}, indent);
+    },
+
+    // render internal -- a hook for overrides that catches partials too
+    ri: function (context, partials, indent) {
+      return this.r(context, partials, indent);
+    },
+
+    // tries to find a partial in the curent scope and render it
+    rp: function(name, context, partials, indent) {
+      var partial = partials[name];
+
+      if (!partial) {
+        return '';
+      }
+
+      if (this.c && typeof partial == 'string') {
+        partial = this.c.compile(partial, this.options);
+      }
+
+      return partial.ri(context, partials, indent);
+    },
+
+    // render a section
+    rs: function(context, partials, section) {
+      var tail = context[context.length - 1];
+
+      if (!isArray(tail)) {
+        section(context, partials, this);
+        return;
+      }
+
+      for (var i = 0; i < tail.length; i++) {
+        context.push(tail[i]);
+        section(context, partials, this);
+        context.pop();
+      }
+    },
+
+    // maybe start a section
+    s: function(val, ctx, partials, inverted, start, end, tags) {
+      var pass;
+
+      if (isArray(val) && val.length === 0) {
+        return false;
+      }
+
+      if (typeof val == 'function') {
+        val = this.ls(val, ctx, partials, inverted, start, end, tags);
+      }
+
+      pass = (val === '') || !!val;
+
+      if (!inverted && pass && ctx) {
+        ctx.push((typeof val == 'object') ? val : ctx[ctx.length - 1]);
+      }
+
+      return pass;
+    },
+
+    // find values with dotted names
+    d: function(key, ctx, partials, returnFound) {
+      var names = key.split('.'),
+          val = this.f(names[0], ctx, partials, returnFound),
+          cx = null;
+
+      if (key === '.' && isArray(ctx[ctx.length - 2])) {
+        return ctx[ctx.length - 1];
+      }
+
+      for (var i = 1; i < names.length; i++) {
+        if (val && typeof val == 'object' && names[i] in val) {
+          cx = val;
+          val = val[names[i]];
+        } else {
+          val = '';
+        }
+      }
+
+      if (returnFound && !val) {
+        return false;
+      }
+
+      if (!returnFound && typeof val == 'function') {
+        ctx.push(cx);
+        val = this.lv(val, ctx, partials);
+        ctx.pop();
+      }
+
+      return val;
+    },
+
+    // find values with normal names
+    f: function(key, ctx, partials, returnFound) {
+      var val = false,
+          v = null,
+          found = false;
+
+      for (var i = ctx.length - 1; i >= 0; i--) {
+        v = ctx[i];
+        if (v && typeof v == 'object' && key in v) {
+          val = v[key];
+          found = true;
+          break;
+        }
+      }
+
+      if (!found) {
+        return (returnFound) ? false : "";
+      }
+
+      if (!returnFound && typeof val == 'function') {
+        val = this.lv(val, ctx, partials);
+      }
+
+      return val;
+    },
+
+    // higher order templates
+    ho: function(val, cx, partials, text, tags) {
+      var compiler = this.c;
+      var options = this.options;
+      options.delimiters = tags;
+      var text = val.call(cx, text);
+      text = (text == null) ? String(text) : text.toString();
+      this.b(compiler.compile(text, options).render(cx, partials));
+      return false;
+    },
+
+    // template result buffering
+    b: (useArrayBuffer) ? function(s) { this.buf.push(s); } :
+                          function(s) { this.buf += s; },
+    fl: (useArrayBuffer) ? function() { var r = this.buf.join(''); this.buf = []; return r; } :
+                           function() { var r = this.buf; this.buf = ''; return r; },
+
+    // lambda replace section
+    ls: function(val, ctx, partials, inverted, start, end, tags) {
+      var cx = ctx[ctx.length - 1],
+          t = null;
+
+      if (!inverted && this.c && val.length > 0) {
+        return this.ho(val, cx, partials, this.text.substring(start, end), tags);
+      }
+
+      t = val.call(cx);
+
+      if (typeof t == 'function') {
+        if (inverted) {
+          return true;
+        } else if (this.c) {
+          return this.ho(t, cx, partials, this.text.substring(start, end), tags);
+        }
+      }
+
+      return t;
+    },
+
+    // lambda replace variable
+    lv: function(val, ctx, partials) {
+      var cx = ctx[ctx.length - 1];
+      var result = val.call(cx);
+
+      if (typeof result == 'function') {
+        result = coerceToString(result.call(cx));
+        if (this.c && ~result.indexOf("{\u007B")) {
+          return this.c.compile(result, this.options).render(cx, partials);
+        }
+      }
+
+      return coerceToString(result);
+    }
+
+  };
+
+  var rAmp = /&/g,
+      rLt = /</g,
+      rGt = />/g,
+      rApos =/\'/g,
+      rQuot = /\"/g,
+      hChars =/[&<>\"\']/;
+
+
+  function coerceToString(val) {
+    return String((val === null || val === undefined) ? '' : val);
+  }
+
+  function hoganEscape(str) {
+    str = coerceToString(str);
+    return hChars.test(str) ?
+      str
+        .replace(rAmp,'&amp;')
+        .replace(rLt,'&lt;')
+        .replace(rGt,'&gt;')
+        .replace(rApos,'&#39;')
+        .replace(rQuot, '&quot;') :
+      str;
+  }
+
+  var isArray = Array.isArray || function(a) {
+    return Object.prototype.toString.call(a) === '[object Array]';
+  };
+
+})(typeof exports !== 'undefined' ? exports : Hogan);
+
+
+},{}],3:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -15032,7 +15275,160 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
+/*!
+ * JavaScript Cookie v2.1.2
+ * https://github.com/js-cookie/js-cookie
+ *
+ * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
+ * Released under the MIT license
+ */
+;(function (factory) {
+	if (typeof define === 'function' && define.amd) {
+		define(factory);
+	} else if (typeof exports === 'object') {
+		module.exports = factory();
+	} else {
+		var OldCookies = window.Cookies;
+		var api = window.Cookies = factory();
+		api.noConflict = function () {
+			window.Cookies = OldCookies;
+			return api;
+		};
+	}
+}(function () {
+	function extend () {
+		var i = 0;
+		var result = {};
+		for (; i < arguments.length; i++) {
+			var attributes = arguments[ i ];
+			for (var key in attributes) {
+				result[key] = attributes[key];
+			}
+		}
+		return result;
+	}
+
+	function init (converter) {
+		function api (key, value, attributes) {
+			var result;
+			if (typeof document === 'undefined') {
+				return;
+			}
+
+			// Write
+
+			if (arguments.length > 1) {
+				attributes = extend({
+					path: '/'
+				}, api.defaults, attributes);
+
+				if (typeof attributes.expires === 'number') {
+					var expires = new Date();
+					expires.setMilliseconds(expires.getMilliseconds() + attributes.expires * 864e+5);
+					attributes.expires = expires;
+				}
+
+				try {
+					result = JSON.stringify(value);
+					if (/^[\{\[]/.test(result)) {
+						value = result;
+					}
+				} catch (e) {}
+
+				if (!converter.write) {
+					value = encodeURIComponent(String(value))
+						.replace(/%(23|24|26|2B|3A|3C|3E|3D|2F|3F|40|5B|5D|5E|60|7B|7D|7C)/g, decodeURIComponent);
+				} else {
+					value = converter.write(value, key);
+				}
+
+				key = encodeURIComponent(String(key));
+				key = key.replace(/%(23|24|26|2B|5E|60|7C)/g, decodeURIComponent);
+				key = key.replace(/[\(\)]/g, escape);
+
+				return (document.cookie = [
+					key, '=', value,
+					attributes.expires && '; expires=' + attributes.expires.toUTCString(), // use expires attribute, max-age is not supported by IE
+					attributes.path    && '; path=' + attributes.path,
+					attributes.domain  && '; domain=' + attributes.domain,
+					attributes.secure ? '; secure' : ''
+				].join(''));
+			}
+
+			// Read
+
+			if (!key) {
+				result = {};
+			}
+
+			// To prevent the for loop in the first place assign an empty array
+			// in case there are no cookies at all. Also prevents odd result when
+			// calling "get()"
+			var cookies = document.cookie ? document.cookie.split('; ') : [];
+			var rdecode = /(%[0-9A-Z]{2})+/g;
+			var i = 0;
+
+			for (; i < cookies.length; i++) {
+				var parts = cookies[i].split('=');
+				var cookie = parts.slice(1).join('=');
+
+				if (cookie.charAt(0) === '"') {
+					cookie = cookie.slice(1, -1);
+				}
+
+				try {
+					var name = parts[0].replace(rdecode, decodeURIComponent);
+					cookie = converter.read ?
+						converter.read(cookie, name) : converter(cookie, name) ||
+						cookie.replace(rdecode, decodeURIComponent);
+
+					if (this.json) {
+						try {
+							cookie = JSON.parse(cookie);
+						} catch (e) {}
+					}
+
+					if (key === name) {
+						result = cookie;
+						break;
+					}
+
+					if (!key) {
+						result[name] = cookie;
+					}
+				} catch (e) {}
+			}
+
+			return result;
+		}
+
+		api.set = api;
+		api.get = function (key) {
+			return api(key);
+		};
+		api.getJSON = function () {
+			return api.apply({
+				json: true
+			}, [].slice.call(arguments));
+		};
+		api.defaults = {};
+
+		api.remove = function (key, attributes) {
+			api(key, '', extend(attributes, {
+				expires: -1
+			}));
+		};
+
+		api.withConverter = init;
+
+		return api;
+	}
+
+	return init(function () {});
+}));
+
+},{}],5:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -15194,7 +15590,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 // File:src/Three.js
 
 /**
@@ -56957,7 +57353,7 @@ THREE.MorphBlendMesh.prototype.update = function ( delta ) {
 };
 
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 (function (process){
 /**
  * Tween.js - Licensed under the MIT license
@@ -57831,7 +58227,7 @@ TWEEN.Interpolation = {
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":3}],6:[function(require,module,exports){
+},{"_process":5}],8:[function(require,module,exports){
 module.exports = (function(){
     var COLOR = {
         background: 0xFF7864,
@@ -57844,7 +58240,7 @@ module.exports = (function(){
     };
     return COLOR;
 })();
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 //require this anywhere
 module.exports = (function ($) {
 
@@ -57870,11 +58266,11 @@ module.exports = (function ($) {
             case 68:
                 return 'right';
                 break;
-            /*
             case 32:
+            case 87:
+            case 38:
                 return 'up';
                 break;
-             */
             default:
                 return 'anyKey';
                 break;
@@ -57887,7 +58283,7 @@ module.exports = (function ($) {
      * @param {Scene} scene
      * @param {function} doSomething - function that should be started when event has been triggered
      */
-    Keybindings.bind = function(e, scene, doSomething){
+    Keybindings.bind = function (e, scene, doSomething) {
         var keyHandler = function keyHandler(event) {
             var direction = Keybindings.handleKeyCode(event.keyCode);
             doSomething(scene, direction);
@@ -57899,7 +58295,7 @@ module.exports = (function ($) {
      * Unbinds a given event from document
      * @param {string} event - like 'keydown'
      */
-    Keybindings.unbind = function(event){
+    Keybindings.unbind = function (event) {
         $(document).unbind(event);
     };
 
@@ -57907,10 +58303,18 @@ module.exports = (function ($) {
 })(
     require('jquery')
 );
-},{"jquery":2}],8:[function(require,module,exports){
-module.exports = (function(THREE){
+},{"jquery":3}],10:[function(require,module,exports){
+module.exports = (function (THREE) {
+
     /**
-     * Represents particles
+     * Represents Particles
+     * @param {number} minX - minimum x value
+     * @param {number} maxX -maximum x value
+     * @param {number} minY - minimum y value
+     * @param {number} maxY - maximum y value
+     * @param {number} minZ - minimum z value
+     * @param {number} maxZ - maximum z value
+     * @param {number} amount - amount of particles distributed in given space
      * @constructor
      */
     function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
@@ -57937,15 +58341,14 @@ module.exports = (function(THREE){
      */
     Particles.prototype.init = function () {
         var self = this;
-
-        for(var i = 0; i < self.amount; i++){
+        for (var i = 0; i < self.amount; i++) {
             self.particle = new THREE.Mesh(
-                new THREE.SphereGeometry( 1, 32, 32 ),
+                new THREE.SphereGeometry(1, 32, 32),
                 new THREE.MeshBasicMaterial()
             );
-            self.particle.position.x = Particles.randomIntFromInterval(self.x.min,self.x.max);
-            self.particle.position.y = Particles.randomIntFromInterval(self.y.min,self.y.max);
-            self.particle.position.z = Particles.randomIntFromInterval(self.z.min,self.z.max);
+            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
+            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
+            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
             self.group.add(self.particle);
         }
     };
@@ -57961,8 +58364,34 @@ module.exports = (function(THREE){
      * rotates the way around the z axis according to given angle
      * @param {number} angle
      */
-    Particles.prototype.rotate = function(angle){
+    Particles.prototype.rotate = function (angle) {
         this.group.rotation.z += angle;
+    };
+
+    /**
+     * positions particles according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Particles.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
+    };
+
+    /**
+     * adds particles to given scene
+     * @param {THREE.Scene} scene - scene to which the particles will be added
+     */
+    Particles.prototype.addToScene = function (scene) {
+        scene.add(this.group);
+    };
+
+    /**
+     * removes particles from given scene
+     * @param {THREE.Scene} scene - scene from which the particles will be removed
+     */
+    Particles.prototype.removeFromScene = function (scene) {
+        scene.remove(this.group);
     };
 
     /**
@@ -57971,17 +58400,16 @@ module.exports = (function(THREE){
      * @param {number} max
      * @returns {number}
      */
-    Particles.randomIntFromInterval = function(min,max)
-    {
-        return Math.floor(Math.random()*(max-min+1)+min);
+    Particles.randomIntFromInterval = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     };
 
     return Particles;
 })(
     require('three')
 );
-},{"three":4}],9:[function(require,module,exports){
-module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, CollisionDetector) {
+},{"three":6}],11:[function(require,module,exports){
+module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) {
 
     /**
      * Represents Scene
@@ -57992,7 +58420,6 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     function Scene(width, height) {
         this.width = width;
         this.height = height;
-
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
@@ -58014,11 +58441,10 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
         this.move = {
             left: false,
             right: false,
+            up: false,
             continue: false
         };
-        this.collisionDetector = null;
         this.addLights();
-
     }
 
     /**
@@ -58054,24 +58480,22 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * positions and creates intro view
      */
     Scene.prototype.showIntro = function () {
-        this.camera.position.z = 50;
-        this.camera.position.y = 1000;
-        this.camera.position.x = 250;
+        this.camera.position.set(250, 1000, 50);
 
         //add particles
-        this.objects.particles.group.position.set(0, 0, -500);
-        this.scene.add(this.objects.particles.group);
+        this.objects.particles.position(0, 0, -500);
+        this.objects.particles.addToScene(this.scene);
 
         //add particles for intro
-        this.objects.introParticles.group.position.set(0, 0, 250);
-        this.scene.add(this.objects.introParticles.group);
+        this.objects.introParticles.position(0, 0, 250);
+        this.objects.introParticles.addToScene(this.scene);
 
         //add protagonist
-        this.objects.protagonist.group.position.set(0, 950, 0);
-        this.objects.protagonist.group.rotateY(Math.PI);
-        this.scene.add(this.objects.protagonist.group);
+        this.objects.protagonist.position(0, 950, 0);
+        this.objects.protagonist.rotate('y', Math.PI);
+        this.objects.protagonist.addToScene(this.scene);
 
-        this.camera.lookAt(this.objects.protagonist.group.position);
+        this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
     /**
@@ -58084,142 +58508,100 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     };
 
     /**
-     * starting animation part 1 (protagonist and cube fall)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation1 = function (cb) {
-        var self = this;
-        var t = 150;
-        var fall = function () {
-            //self.objects.wayHelper.position.y--;
-            self.objects.protagonist.group.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 2 (protagonist, cube and camera fall)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation2 = function (cb) {
-        var self = this;
-        var t = 800;
-        var fall = function () {
-            //self.objects.wayHelper.position.y--;
-            self.objects.protagonist.group.position.y--;
-            self.camera.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 3 (camera falls to needed height)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation3 = function (cb) {
-        var self = this;
-        var t = 150;
-        var fall = function () {
-            self.camera.position.y--;
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 4 (camera rotates to x position = 0)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation4 = function (cb) {
-        var self = this;
-        var t = 250;
-        var fall = function () {
-            self.camera.position.x--;
-            self.camera.position.z += 0.5;
-            self.camera.lookAt(self.objects.protagonist.group.position);
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    fall();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        fall();
-    };
-
-    /**
-     * starting animation part 5 (zooms into protagonist)
-     * @param {function} cb - callback function
-     */
-    Scene.prototype.startingAnimation5 = function (cb) {
-        var self = this;
-        var t = 80;
-        var zoom = function () {
-            self.camera.position.z--;
-            self.camera.lookAt(self.objects.protagonist.group.position);
-            t--;
-            if (t > 0) {
-                setTimeout(function () {
-                    zoom();
-                }, 1);
-            } else {
-                self.camera.lookAt(self.objects.protagonist.group.position);
-                cb();
-            }
-        };
-        zoom();
-    };
-
-    /**
      * creates the animation for starting the game
      * @param {function} cb - callback function
      */
     Scene.prototype.startingAnimation = function (cb) {
         var self = this;
         //protagonist and cube fall
-        self.startingAnimation1(function () {
-            //protagonist, cube and camera fall
-            self.startingAnimation2(function () {
-                //camera falls to needed height
-                self.startingAnimation3(function () {
-                    //rotate around the protagonist
-                    self.startingAnimation4(function () {
-                        //zoom in
-                        self.startingAnimation5(function () {
-                            self.scene.remove(self.objects.introParticles);
-                            cb();
-                        });
-                    });
-                });
-            });
-        });
+        async.series([
+            function animation1(next) {
+                var t = 150;
+                var fall = function () {
+                    self.objects.protagonist.decreasePosition('y');
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation2(next) {
+                var t = 800;
+                var fall = function () {
+                    self.objects.protagonist.decreasePosition('y');
+                    self.camera.position.y--;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation3(next) {
+                var t = 150;
+                var fall = function () {
+                    self.camera.position.y--;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation4(next) {
+                var t = 250;
+                var fall = function () {
+                    self.camera.position.x--;
+                    self.camera.position.z += 0.5;
+                    self.camera.lookAt(self.objects.protagonist.getPosition());
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                fall();
+            },
+            function animation5(next) {
+                var t = 80;
+                var zoom = function () {
+                    self.camera.position.z--;
+                    self.camera.lookAt(self.objects.protagonist.getPosition());
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            zoom();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.getPosition());
+                        next();
+                    }
+                };
+                zoom();
+            },
+            function endAnimation() {
+                self.objects.introParticles.removeFromScene(self.scene);
+                cb();
+            }
+        ]);
     };
 
     /**
@@ -58228,7 +58610,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      */
     Scene.prototype.addLevel = function (level) {
         this.objects.way = level.way;
-        this.scene.add(level.way.group);
+        this.objects.way.addToScene(this.scene);
     };
 
     /**
@@ -58236,7 +58618,7 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      */
     Scene.prototype.turn = function () {
         var self = this;
-        if(self.move.continue){
+        if (self.move.continue) {
             if (self.move.left) {
                 self.objects.way.rotate(-Math.PI * 0.01);
                 self.objects.particles.rotate(-Math.PI * 0.01);
@@ -58245,8 +58627,36 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
                 self.objects.way.rotate(Math.PI * 0.01);
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
+            if (self.move.up) {
+                self.objects.protagonist.jump();
+            }
         }
+    };
 
+    /**
+     * returns the THREE group of the protagonist
+     * @returns {THREE.Object3D} group of protagonist
+     */
+    Scene.prototype.getProtagonist = function () {
+        return this.objects.protagonist.returnGroup();
+    };
+
+    /**
+     * sets camera to the right position
+     */
+    Scene.prototype.simpleIntro = function () {
+        this.camera.position.set(0, 50, 95);
+
+        //add particles
+        this.objects.particles.position(0, 0, -500);
+        this.objects.particles.addToScene(this.scene);
+
+        //add protagonist
+        this.objects.protagonist.position(0, 5, 0);
+        this.objects.protagonist.rotate('y', Math.PI);
+        this.objects.protagonist.addToScene(this.scene);
+
+        this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
     /**
@@ -58254,8 +58664,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.stopTurning = function(scene, direction){
-        scene.move[direction]= false;
+    Scene.stopMovingProtagonist = function (scene, direction) {
+        scene.move[direction] = false;
     };
 
     /**
@@ -58263,8 +58673,8 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.startTurning = function(scene, direction){
-        scene.move[direction]= true;
+    Scene.startMovingProtagonist = function (scene, direction) {
+        scene.move[direction] = true;
     };
 
     return Scene;
@@ -58272,12 +58682,11 @@ module.exports = (function (Particles, Protagonist, COLOR, Wall, THREE, TWEEN, C
     require('./Particles'),
     require('./protagonist/Protagonist'),
     require('./COLOR'),
-    require('./Wall'),
     require('three'),
-    require('tween.js'),
-    require('./protagonist/CollisionDetector')
+    require('async'),
+    require('tween.js')
 );
-},{"./COLOR":6,"./Particles":8,"./Wall":11,"./protagonist/CollisionDetector":16,"./protagonist/Protagonist":19,"three":4,"tween.js":5}],10:[function(require,module,exports){
+},{"./COLOR":8,"./Particles":10,"./protagonist/Protagonist":22,"async":1,"three":6,"tween.js":7}],12:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58307,57 +58716,19 @@ module.exports = (function(){
 
     return UTIL;
 })();
-},{}],11:[function(require,module,exports){
-module.exports = (function(THREE){
-    /**
-     * Created by Jan-Philipp on 07.08.2016.
-     */
+},{}],13:[function(require,module,exports){
+module.exports = (function (THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, Cookies) {
 
-    var wallGeometry;
-    var wallMesh;
-    var activeWall = [];
-
-    function Wall(scene){
-        this.scene = scene;
-
-    }
-
-    Wall.prototype.createWall = function(){
-        wallGeometry = new THREE.PlaneGeometry( 30, 10 );
-        wallMesh = new THREE.Mesh( wallGeometry,new THREE.MeshBasicMaterial() );
-        activeWall.push(wallMesh);
-
-
-    }
-
-    Wall.prototype.wallMove = function(speed) {
-
-
-        if(activeWall[activeWall.length - 1].position.z === 900)
-        {
-            Scene.prototype.removeObject(activeWall[activeWall.length - 1]);
-            Wall.prototype.createWall();
-            Scene.prototype.addObject( activeWall[activeWall.length - 1]);
-
-
-        }
-        wallMesh.position.z += speed;
-
-    }
-
-    return Wall;
-})(
-    require('three')
-);
-},{"three":4}],12:[function(require,module,exports){
-module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle) {
     var levels = [
-        level1
+        level1,
+        level2,
+        level3
     ];
 
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
+     * @param {number} speed - speed in milliseconds
      * @constructor
      */
     function Level(current, speed) {
@@ -58365,6 +58736,8 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         this.way = null;
         this.speed = speed;
         this.collisionDetector = null;
+        this.gameOver = false;
+        this.score = 0;
     }
 
     /**
@@ -58373,21 +58746,21 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     Level.prototype.prepare = function () {
         var self = this;
         var current = levels[self.current - 1];
-        //create new way
+
         this.way = new Way(current.way.length, current.speed);
-        //add obstacles to way
         this.way.addObstacles(current.way.obstacles);
-        var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles)
-        this.collisionDetector = new CollisionDetector(obstacles);
-        //position way into the scene
-        this.way.position(-120, -450);
+
+        //var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles);
+        this.collisionDetector = new CollisionDetector(this.way.obstacles);
+
+        this.way.position();
     };
 
     /**
      * starts level
      * @param {function} cb - callback function
      */
-    Level.prototype.begin = function (cb) {
+    Level.prototype.begin = function (cb, protagonist) {
         var self = this;
         var t = self.way.length - 80;
         var animate = function () {
@@ -58395,9 +58768,31 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             //move way and obstacles
             self.way.moveForwardTillEnd();
             //check whether collision
-            if(self.collisionDetector.collision(self.way.currentPosition)){
-                console.log('gameover');
-            }else{
+            self.way.currentPosition.height = protagonist.position.y;
+            var collObj = self.collisionDetector.collision(self.way.currentPosition);
+            if (collObj.collision) {
+                switch (collObj.type) {
+                    case "box":
+                    case "ring":
+                        self.gameOver = true;
+                        cb();
+                        break;
+                    case "diamond":
+                        //TODO let diamond fly away
+                        self.score++;
+                        if (t > 0) {
+                            setTimeout(function () {
+                                animate();
+                            }, self.speed);
+                        } else {
+                            cb();
+                        }
+                        break;
+                    default:
+                        console.log('Level.prototype.begin(): Obstacle type is unknown.');
+                        break;
+                }
+            } else {
                 if (t > 0) {
                     setTimeout(function () {
                         animate();
@@ -58408,34 +58803,66 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             }
         };
         animate();
-
-        /*
-        var self = this;
-        var levelEnd = false;
-        var checkCollision = function () {
-            if(self.collisionDetector.collision(self.way.currentPosition)){
-                //collision
-                console.log('gameover');
-            }else if(!levelEnd){
-                //no collision and level is not over => repeat this function
-
-            }
-
-            /*if (self.collisionDetector.collision(self.way.currentPosition)) {
-                //game over
-                self.way.stopTurning();
-                console.log('GAME OVER');
-            } else if (!levelEnd) {
-                checkCollision();
-            }
-        };
-        checkCollision();
-        self.way.moveForwardTillEnd(function () {
-            //level succeeded
-            levelEnd = true;
-            cb();
-        });*/
     };
+
+    /**
+     * renders hogan tempalte success.mustache and adds it to html-body
+     */
+    Level.prototype.showSuccessScreen = function () {
+        var obj = {
+            score: this.score,
+            level: this.current,
+            next: this.current + 1
+        };
+        var html = successScreen.render(obj);
+        $('body').append(html);
+        var marginTop = ($(document).height() - $('#successScreen div').height())/2;
+        $('#successScreen div').css('marginTop', marginTop);
+    };
+
+    /**
+     * renders hogan tempalte gameover.mustache and adds it to html-body
+     */
+    Level.prototype.showGameOverScreen = function () {
+        var obj = {
+            score: this.score,
+            level: this.current
+        };
+        var html = gameoverScreen.render(obj);
+        $('body').append(html);
+        var marginTop = ($(document).height() - $('#gameoverScreen div').height())/2;
+        $('#gameoverScreen div').css('marginTop',marginTop);
+    };
+
+    /**
+     * stores the score and success in cookie
+     * @param {boolean} success - whether current level has been ended with success
+     */
+    Level.prototype.setCookie = function(success){
+        Cookies.set(this.current+'-success', success);
+        Cookies.set(this.current, this.score);
+        var all = Cookies.get();
+        var sum = 0;
+        Object.keys(all).forEach(function(key,index) {
+            sum += all[key]
+        });
+        Cookies.set('total', sum);
+    };
+
+    /**
+     * checks whether the level can be played
+     * @param {number} level - that should be played
+     * @returns {boolean}
+     */
+    Level.canBePlayed = function(level){
+        level--;
+        if(Cookies.get(level-'success')){
+            return true;
+        }else{
+            return false;
+        }
+    };
+
 
     return Level;
 })(
@@ -58443,10 +58870,16 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     require('../COLOR'),
     require('../way/Way'),
     require('./level1'),
+    require('./level2'),
+    require('./level3'),
     require('../protagonist/CollisionDetector'),
-    require('../way/obstacles/Obstacle')
+    require('../way/obstacles/Obstacle'),
+    require('jquery'),
+    require('../templates/success.mustache'),
+    require('../templates/gameover.mustache'),
+    require('js-cookie')
 );
-},{"../COLOR":6,"../protagonist/CollisionDetector":16,"../way/Way":20,"../way/obstacles/Obstacle":22,"./level1":13,"three":4}],13:[function(require,module,exports){
+},{"../COLOR":8,"../protagonist/CollisionDetector":19,"../templates/gameover.mustache":23,"../templates/success.mustache":24,"../way/Way":25,"../way/obstacles/Obstacle":28,"./level1":14,"./level2":15,"./level3":16,"jquery":3,"js-cookie":4,"three":6}],14:[function(require,module,exports){
 module.exports = (function(){
     var level = {
         level: 1,
@@ -58454,16 +58887,51 @@ module.exports = (function(){
         way: {
             length: 1000,
             obstacles : [
-                /*
                 {
-                    type: 'ring',
+                    type: 'diamond',
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: 800,
-                        angle: 0
+                        distance: 200,
+                        angle: 40
                     }
-                },*/
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 400,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 600,
+                        angle: 40
+                    }
+                },
                 {
                     type: 'box',
                     size: {
@@ -58516,6 +58984,15 @@ module.exports = (function(){
                         distance: 800,
                         angle: -30
                     }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 300,
+                        angle: 0
+                    }
                 }
             ]
         }
@@ -58523,27 +59000,129 @@ module.exports = (function(){
 
     return level;
 })();
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
+module.exports = (function(){
+    var level = {
+        level: 2,
+        speed: 1,
+        way: {
+            length: 1000,
+            obstacles : [
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 500
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 500,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 500
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 270
+                    }
+                }
+            ]
+        }
+    };
+
+    return level;
+})();
+},{}],16:[function(require,module,exports){
+module.exports = (function(){
+    var level = {
+        level: 3,
+        speed: 1,
+        way: {
+            length: 1000,
+            obstacles : [
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 0
+                    }
+                }
+            ]
+        }
+    };
+
+    return level;
+})();
+},{}],17:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, CollisionDetector) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
     var mainScene;
-    var level = {
-        one: new Level(1)
-    };
-    var collisionDetector = null;
+    var level = [
+        {},
+        new Level(1),
+        new Level(2),
+        new Level(3)
+    ];
+    var currentLevel = 1;
+    var URLpath = '';
     window.initMe = 0;
 
     var main = function () {
 
         async.series([
+            function getCurrentLevelFromURL(next) {
+                console.log('main.getURL()');
+                var URL = window.location.href;
+                URLpath = URL.replace(/http:\/\/.+\//g, '');
+                next();
+            },
             function showLoadingIcon(next) {
                 console.log('main.showLoadingIcon()');
-                //align loading icon
                 var height = $('.sk-folding-cube').height() + $('.loading p').height();
                 $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
                 next();
@@ -58567,51 +59146,100 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 next();
             },
             function showIntro(next) {
-                console.log('main.showIntro()');
-                $('.game-name').fadeIn(3000);
-                $('.intro').fadeIn(3000);
-                mainScene.showIntro();
+                if (URLpath === "") {
+                    console.log('main.showIntro()');
+                    $('.game-name').fadeIn(3000);
+                    $('.intro').fadeIn(3000);
+                    mainScene.showIntro();
+                } else {
+                    //load simple intro
+                    console.log('main.simpleIntro()');
+                    mainScene.simpleIntro();
+                    //position the camera properly
+                }
                 render();
                 next();
             },
-            function preloadAndAddLevel1(next){
-                console.log('main.preloadAndAddLevel1');
-                level.one.prepare();
-                mainScene.addLevel(level.one);
+            function addLevel1(next) {
+                if (playThisLevel(1)) {
+                    console.log('main.addLevel1');
+                    addLevel();
+                }
                 next();
             },
             function waitForAnyKeyPress(next) {
-                console.log('main.waitForAnyKeyPress()');
-                Keybindings.bind('keydown', mainScene, function(){
-                    Keybindings.unbind('keydown');
+                if (URLpath === "") {
+                    console.log('main.waitForAnyKeyPress()');
+                    Keybindings.bind('keydown', mainScene, function () {
+                        Keybindings.unbind('keydown');
+                        next();
+                    });
+                } else {
                     next();
-                });
+                }
             },
-            function startingAnimation(next){
-                var fadeTime = 1000;
-                $('.game-name').fadeOut(fadeTime);
-                $('.intro').fadeOut(fadeTime);
-                setTimeout(function(){
-                    console.log('main.startingAnimation()');
-                    mainScene.startingAnimation(next);
-                }, fadeTime);
-            },
-            function startLevel1(next){
-                console.log('main.startLevel1()');
-                Keybindings.bind('keydown', mainScene, Scene.startTurning);
-                Keybindings.bind('keyup', mainScene, Scene.stopTurning);
-                //start moving way
-                mainScene.move.continue=true;
-                level.one.begin(function(){
-                    //level done
-                    mainScene.move.continue = false;
-                    Keybindings.unbind('keydown');
-                    Keybindings.unbind('keyup');
+            function startingAnimation(next) {
+                if (URLpath === "") {
+                    var fadeTime = 1000;
+                    $('.game-name').fadeOut(fadeTime);
+                    $('.intro').fadeOut(fadeTime);
+                    setTimeout(function () {
+                        console.log('main.startingAnimation()');
+                        mainScene.startingAnimation(next);
+                    }, fadeTime);
+                } else {
                     next();
-                });
+                }
             },
-            function levelOneSuccessScreen(next){
-                console.log('main.levelOneSuccessScreen()');
+            function startLevel1(next) {
+                if (playThisLevel(1)) {
+                    startLevel(next);
+                } else {
+                    next();
+                }
+            },
+            function levelOneScreen(next) {
+                if (playThisLevel(1)) {
+                    console.log('main.levelOneScreen()');
+                    showScreen();
+                }
+                next();
+            },
+            function addAndStartLevel2(next) {
+                if (playThisLevel(2)) {
+                    currentLevel = 2;
+                    console.log('main.addAndStartLevel2()');
+                    addLevel();
+                    startLevel(next);
+                } else {
+                    next();
+                }
+            },
+            function showScreenLevel2(next) {
+                if (playThisLevel(2)) {
+                    console.log('main.showScreenLevel2()');
+                    showScreen();
+                } else {
+                    next();
+                };
+            },
+            function addAndStartLevel3(next) {
+                if (playThisLevel(3)) {
+                    currentLevel = 3;
+                    console.log('main.addAndStartLevel3()');
+                    addLevel();
+                    startLevel(next);
+                } else {
+                    next();
+                }
+            },
+            function showScreenLevel3(next){
+                if (playThisLevel(3)) {
+                    console.log('main.showScreenLevel2()');
+                    showScreen();
+                } else {
+                    next();
+                };
             }
         ]);
 
@@ -58622,8 +59250,81 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             requestAnimationFrame(render);
             mainScene.render();
             mainScene.turn();
+            TWEEN.update();
+        }
+
+        /**
+         * adds current level to scene
+         */
+        function addLevel() {
+            level[currentLevel].prepare();
+            mainScene.addLevel(level[currentLevel]);
+        }
+
+        /**
+         * starts current level
+         * @param {Function} cb - callback function called when level is done
+         */
+        function startLevel(cb) {
+            Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
+            Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+            //start moving way
+            mainScene.move.continue = true;
+            level[currentLevel].begin(function () {
+                //level done
+                mainScene.move.continue = false;
+                Keybindings.unbind('keydown');
+                Keybindings.unbind('keyup');
+                cb();
+            }, mainScene.getProtagonist());
+        }
+
+
+        function showScreen() {
+            if (!level[currentLevel].gameOver) {
+                //success
+                level[currentLevel].setCookie(true);
+                level[currentLevel].showSuccessScreen();
+            } else {
+                //gameover
+                level[currentLevel].setCookie(false);
+                level[currentLevel].showGameOverScreen();
+            }
+        }
+
+        /**
+         * checks whether level is allowed to be played, if yes return true
+         * @param {number} level
+         * @returns {boolean}
+         */
+        function playThisLevel(level) {
+            switch (level) {
+                case 1:
+                    if (URLpath === "" || URLpath === "#1") {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                    break;
+                case 2:
+                    if (URLpath === "#2") {
+                        Level.canBePlayed(2);
+                        return true;
+                    }
+                    break;
+                case 3:
+                    if (URLpath === "#3") {
+                        Level.canBePlayed(3);
+                        return true;
+                    }
+                    break;
+            }
         }
     };
+
+    $(document).on('click', '.button.reload', function () {
+        location.reload();
+    });
 
 
     window.main = main;
@@ -58636,13 +59337,13 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./protagonist/Protagonist'),
     require('./level/Level'),
     require('./Keybindings'),
-    require('./protagonist/CollisionDetector')
+    require('tween.js')
 );
 
 
 
 
-},{"./Keybindings":7,"./Scene":9,"./level/Level":12,"./protagonist/CollisionDetector":16,"./protagonist/Protagonist":19,"async":1,"jquery":2,"three":4}],15:[function(require,module,exports){
+},{"./Keybindings":9,"./Scene":11,"./level/Level":13,"./protagonist/Protagonist":22,"async":1,"jquery":3,"three":6,"tween.js":7}],18:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -58658,6 +59359,23 @@ module.exports = (function(COLOR, THREE){
         this.mesh = new THREE.Mesh(Body.geometry, this.material);
     }
 
+    /**
+     * positions the body according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    Body.prototype.position = function (x, y, z) {
+        this.mesh.position.set(x, y, z);
+    };
+
+    /**
+     * adds the body to a group
+     * @param {THREE.Group} group
+     */
+    Body.prototype.addToGroup = function (group) {
+        group.add(this.mesh);
+    };
 
     /**
      * loads the body from json file (blender)
@@ -58676,12 +59394,10 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],16:[function(require,module,exports){
-module.exports = (function(){
-    function CollisionDetector(obstacles){
+},{"../COLOR":8,"three":6}],19:[function(require,module,exports){
+module.exports = (function () {
+    function CollisionDetector(obstacles) {
         this.obstacles = obstacles;
-        console.log('CollisionDetector.constructor(): this.obstacles:');
-        console.dir(this.obstacles);
     }
 
     /**
@@ -58690,76 +59406,82 @@ module.exports = (function(){
      * @returns {boolean} - when true, then collision was detected
      */
     CollisionDetector.prototype.collision = function (currentPosition) {
-        /*
-        Algorithmus:
-        mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
-        pro obstacle:
-            Ist die Distanz des Obstacles  um 0.01 größer als die der currentPosition?
-            wenn ja:
-                dann kann das obstacle eine collision verursachen
-                ist der winkel der currentposition derselbe wie der des obstacles?
-                    wenn ja:
-                        dann gibt es eine collision: return true
-                    wenn nein:
-                        keine collision: return false
 
-        ACHTUNG: sagen wir mal das männchen ist an der Position 0°, und ein obstacle 3°.
-        Dann gibt es trotzdem eine Collision, da die Breite des Männchens und des obstacles berücksichtigt werden müssen.
-        für jedes obstacle wird ein minimaler und maximaler WInkel angegeben.
-        genauso hat jedes obstacle eine minimale und maximale entfernung (berücksichtigung der länge eines objektes).
-        zwischen disen Winkeln und Entfernungen befindet sich das obstacle.
+        for (var i = 0; i < this.obstacles.length; i++) {
 
-        */
-        return false;
+            if (
+                (
+                    //ring collision
+                    this.obstacles[i].collisionData.type == "ring" &&
+                    this.obstacles[i].collisionData.distance == currentPosition.distance &&
+                    this.obstacles[i].collisionData.size.height > currentPosition.height
+                ) ||
+                (
+                    //other collision
+                    this.obstacles[i].collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < this.obstacles[i].collisionData.distance.max &&
+                    this.obstacles[i].collisionData.angle.min < currentPosition.angle &&
+                    currentPosition.angle < this.obstacles[i].collisionData.angle.max &&
+                    this.obstacles[i].collisionData.size.height > currentPosition.height
+                )
+            ) {
+                return {
+                    collision: true,
+                    type: this.obstacles[i].collisionData.type,
+                    mesh: this.obstacles[i].mesh
+                };
+            }
+        }
+        return {
+            collision: false,
+            type: null,
+            mesh: null
+        }
     };
-
-    /*
-
-     alter code:
-     var vector = new THREE.Vector3(0, -1, 0);
-     var rayCaster = new THREE.Raycaster(this.mesh.position, vector);
-     var forbiddenZones = [];
-
-     for(var i = 0; i < this.obstacles.length < 1; i++){
-
-     forbiddenZones.push(this.obstacles[i]);
-
-
-     }
-     co
-     var intersects = rayCaster.intersectObjects(forbiddenZones);
-     */
 
     return CollisionDetector;
 })();
-},{}],17:[function(require,module,exports){
-module.exports = (function(COLOR, THREE){
+},{}],20:[function(require,module,exports){
+module.exports = (function (COLOR, THREE) {
+
     /**
-     * Created by sarasteiert on 05/08/16.
+     * Represents head of protagonist
+     * @constructor
      */
-    function Head(){
-        this.mesh = null;
-        this.geometry = null;
-        this.init();
-    }
-
-
-    Head.prototype.init = function(){
-        // init head
-        var material = new THREE.MeshLambertMaterial({
+    function Head() {
+        this.material = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             transparent: false,
             opacity: 0.8
         });
-        this.mesh = new THREE.Mesh(Head.geometry, material);
-        //this.mesh.scale.x = this.mesh.scale.y = this.mesh.scale.z = 50;
-        //this.mesh.castShadow = true;
+        this.mesh = new THREE.Mesh(Head.geometry, this.material);
+    }
+
+    /**
+     * positions the head according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    Head.prototype.position = function (x, y, z) {
+        this.mesh.position.set(x, y, z);
     };
 
+    /**
+     * adds the head to a group
+     * @param {THREE.Group} group
+     */
+    Head.prototype.addToGroup = function (group) {
+        group.add(this.mesh);
+    };
 
-    Head.init = function(cb){
+    /**
+     * loads the head from json file (blender)
+     * @param {function} cb callback
+     */
+    Head.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/head.json', function(geometry, materials) {
+        loader.load('/js/blender/type1/head.json', function (geometry, materials) {
             Head.geometry = geometry;
             cb();
         });
@@ -58770,34 +59492,47 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],18:[function(require,module,exports){
-module.exports = (function(COLOR, THREE){
+},{"../COLOR":8,"three":6}],21:[function(require,module,exports){
+module.exports = (function (COLOR, THREE) {
+
     /**
-     * Created by sarasteiert on 05/08/16.
+     * Represents leg of protagonist
+     * @constructor
      */
-    function Leg(){
-        this.mesh = null;
-        this.geometry = null;
-        this.init();
-    }
-
-
-    Leg.prototype.init = function(){
-        // init head
-        var material = new THREE.MeshLambertMaterial({
+    function Leg() {
+        this.material = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             transparent: false,
             opacity: 0.8
         });
-        this.mesh = new THREE.Mesh(Leg.geometry, material);
-        //this.mesh.scale.x = this.mesh.scale.y = this.mesh.scale.z = 50;
-        //this.mesh.castShadow = true;
+        this.mesh = new THREE.Mesh(Leg.geometry, this.material);
+    }
+
+    /**
+     * positions the leg according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    Leg.prototype.position = function (x, y, z) {
+        this.mesh.position.set(x, y, z);
     };
 
+    /**
+     * adds the leg to a group
+     * @param {THREE.Group} group
+     */
+    Leg.prototype.addToGroup = function (group) {
+        group.add(this.mesh);
+    };
 
-    Leg.init = function(cb){
+    /**
+     * loads the leg from json file (blender)
+     * @param {function} cb callback
+     */
+    Leg.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/leg.json', function(geometry, materials) {
+        loader.load('/js/blender/type1/leg.json', function (geometry, materials) {
             Leg.geometry = geometry;
             cb();
         });
@@ -58808,91 +59543,147 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":6,"three":4}],19:[function(require,module,exports){
-module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
-
+},{"../COLOR":8,"three":6}],22:[function(require,module,exports){
+module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
 
     /**
      * Represents Protagonist
      * @constructor
      */
-    function Protagonist(){
+    function Protagonist() {
         //create an empty container
         this.group = new THREE.Object3D();
-
-        //add body to group
         this.body = new Body();
-        this.body.mesh.position.set(0,0,0);
-        this.group.add(this.body.mesh);
-
-        //add head to group
         this.head = new Head();
-        this.head.mesh.position.set(0,0.1,0);
-        this.group.add(this.head.mesh);
-
         this.left = {
-            leg: new Leg(),
-            arm: null
+            leg: new Leg()
         };
         this.right = {
-            leg: new Leg(),
-            arm: null
+            leg: new Leg()
         };
-        //add right leg to group
-        this.right.leg.mesh.position.set(0.5,0,0);
-        this.group.add(this.right.leg.mesh);
-        //add left leg to group
-        this.left.leg.mesh.position.set(0,0,0);
-        this.group.add(this.left.leg.mesh);
+        this.groupBodyParts();
 
         this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
+
+        this.isJumping = false;
     }
 
-
-
-    /*
-    Protagonist.prototype.standing = function(){
-        this.standing = true;
-        this.body.mesh.rotateZ(-Math.PI/16);
-        this.body.mesh.rotateZ(Math.PI/4);
-        this.standing();
-
+    /**
+     * groups the body parts of protagonist and positions them
+     */
+    Protagonist.prototype.groupBodyParts = function () {
+        this.body.position(0, 0, 0);
+        this.body.addToGroup(this.group);
+        this.head.position(0, 0.1, 0);
+        this.head.addToGroup(this.group);
+        this.right.leg.position(0.5, 0, 0);
+        this.right.leg.addToGroup(this.group);
+        this.left.leg.position(0, 0, 0);
+        this.left.leg.addToGroup(this.group);
     };
 
-    Protagonist.prototype.animateJump = function(){
-        console.log("JUMP");
-        //console.log(mainScene.objects.protagonist.head.position.y);
-        new TWEEN
-            .Tween({jump: 0})
-            .to({jump: Math.PI}, 500)
-            .onUpdate(function () {
-                console.log("Update");
-                //this.body.mesh.position.y = 2000 * Math.sin(this.jump);
-                mainScene.objects.protagonist.head.mesh.position.y = 2000 * Math.sin(this.jump);
-            })
-            .start();
-
-    };
-    */
-
-    Protagonist.prototype.animate = function(){
-        /*if(this.swing === "left"){
-         this.body.mesh.rotateZ(-Math.PI/16);
-         this.swing = "right";
-         }else{
-         this.body.mesh.rotateZ(Math.PI/16);
-         this.swing = "left";
-         }*/
-
+    /**
+     * Makes protagonist jump a given height
+     */
+    Protagonist.prototype.jump = function () {
+        var self = this;
+        if (!self.isJumping) {
+            self.isJumping = true;
+            var tween = new TWEEN
+                .Tween({jump: 0})
+                .to({jump: Math.PI}, 500)
+                .onUpdate(function () {
+                    self.group.position.y = 40 * Math.sin(this.jump);
+                })
+                .start();
+            tween.onComplete(function () {
+                self.isJumping = false;
+            });
+        }
     };
 
+    /**
+     * positions protagonist according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Protagonist.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
+    };
+
+    /**
+     * rotates the protagonist according to axis and angle
+     * @param {string} axis - "x", "y" or "z"
+     * @param {number} angle - in radians
+     */
+    Protagonist.prototype.rotate = function (axis, angle) {
+        switch (axis) {
+            case 'x':
+                this.group.rotateX(angle);
+                break;
+            case 'y':
+                this.group.rotateY(angle);
+                break;
+            case 'z':
+                this.group.rotateZ(angle);
+                break;
+        }
+    };
+
+    /**
+     * adds protagonist to given scene
+     * @param {THREE.Scene} scene - scene to which the protagonist will be added
+     */
+    Protagonist.prototype.addToScene = function (scene) {
+        scene.add(this.group);
+    };
+
+    /**
+     * returns the current position of the Protagonist
+     * @returns {Object}
+     */
+    Protagonist.prototype.getPosition = function () {
+        return this.group.position;
+    };
+
+    /**
+     * decreases the position of the protagonist according to given axis
+     * @param {string} axis - "x", "y" or "z"
+     */
+    Protagonist.prototype.decreasePosition = function (axis) {
+        switch (axis) {
+            case "x":
+                this.group.position.x--;
+                break;
+            case "y":
+                this.group.position.y--;
+                break;
+            case "z":
+                this.group.position.z--;
+                break;
+        }
+    };
+
+    /**
+     * returns the group of meshes of the protagonist
+     * @returns {THREE.Object3D}
+     */
+    Protagonist.prototype.returnGroup = function () {
+        return this.group;
+    };
+
+
+    Protagonist.prototype.animate = function () {
+        //TODO let dress move slightly
+    };
 
     /**
      * loads blender files for protagonist
      * @param {function} cb
      */
-    Protagonist.init = (function(cb){
+    Protagonist.init = (function (cb) {
         var initUs = [
             Leg,
             Body,
@@ -58916,9 +59707,14 @@ module.exports = (function(Head, Body, Leg, COLOR, $, THREE){
     require('./Leg'),
     require('../COLOR'),
     require('jquery'),
-    require('three')
+    require('three'),
+    require('tween.js')
 );
-},{"../COLOR":6,"./Body":15,"./Head":17,"./Leg":18,"jquery":2,"three":4}],20:[function(require,module,exports){
+},{"../COLOR":8,"./Body":18,"./Head":20,"./Leg":21,"jquery":3,"three":6,"tween.js":7}],23:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div>");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],24:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div>");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],25:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     /**
      * Represents way
@@ -58930,22 +59726,21 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
         this.length = length;
         this.speed = speed;
 
-        //create an empty container
         this.group = new THREE.Object3D();
 
-        //array with obstacles from level settings
         this.obstacles = [];
 
-        //add way
         this.radius = 80;
-        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, 1000);
+        this.segments = 1000;
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
         this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.group.add(this.mesh);
 
         this.currentPosition = {
             angle: 0,
-            distance: 50
+            distance: 50,
+            height: 0
         }
     }
 
@@ -58954,7 +59749,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function (y, z) {
+    Way.prototype.position = function () {
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = -this.radius-18;
         this.group.position.z = -this.length*0.5+50;
@@ -58984,22 +59779,23 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     Way.prototype.addObstacles = function (obstacles) {
         var self = this;
         //generate obstacles
-        self.obstacles = Obstacle.generateFromArray(obstacles);
+        self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
         //calculate positions
         self.obstacles.forEach(function (obstacle) {
             if(obstacle.distance<self.length){
-                obstacle.angle = -(obstacle.angle -90);
-                var angle = UTIL.convertDegreesToRadians(obstacle.angle);
-                var y = (self.length / 2) - obstacle.distance;
-                var x = self.radius * Math.cos(angle);
-                var z = -(self.radius * Math.sin(angle));
-                obstacle.mesh.rotation.y += angle;
-                obstacle.mesh.position.set(x,y,z);
                 self.group.add(obstacle.mesh);
             }else{
                 console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
             }
         });
+    };
+
+    /**
+     * adds way to given scene
+     * @param {THREE.Scene} scene - scene to which the way will be added
+     */
+    Way.prototype.addToScene = function(scene){
+        scene.add(this.group);
     };
 
     return Way;
@@ -59009,25 +59805,54 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     require('./obstacles/Obstacle'),
     require('../UTIL')
 );
-},{"../COLOR":6,"../UTIL":10,"./obstacles/Obstacle":22,"three":4}],21:[function(require,module,exports){
-module.exports=(function(THREE){
+},{"../COLOR":8,"../UTIL":12,"./obstacles/Obstacle":28,"three":6}],26:[function(require,module,exports){
+module.exports=(function(THREE, UTIL){
 
+    /**
+     * Represents the obstacle "Box"
+     * @param {Object} box - structure as in levelX.js
+     * @constructor
+     */
     function Box(box){
-        this.material = new THREE.MeshBasicMaterial({color: box.color});
-        this.geometry = new THREE.BoxGeometry(box.size.width, box.size.length, box.size.height);
+        this.material = new THREE.MeshLambertMaterial({color: box.color});
+        this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
     }
 
+    /**
+     * Positions the box on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+    Box.prototype.position = function(angle, distance, length, radius){
+        angle = -(angle -90);
+        angle = UTIL.convertDegreesToRadians(angle);
+        var y = (length / 2) - distance;
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y += angle;
+        this.mesh.position.set(x,y,z);
+    };
+
+    /**
+     * converts box object from levelX.js into a format that can be used for detecting collisions
+     * @param {Object} obstacle - with structure as in levelX.js
+     * @param radius - radius of way
+     * @returns {Object} ret - object ret that is fitted for detecting collisions
+     */
     Box.prepareForCollisionDetection = function(obstacle, radius){
         var a = radius - 0.5* obstacle.size.height;
         var b = obstacle.size.width*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
+            type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - angleRight,
-                max: obstacle.position.angle + angleRight
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
@@ -59038,36 +59863,102 @@ module.exports=(function(THREE){
         return ret;
     };
 
-
     return Box;
 })(
-    require('three')
+    require('three'),
+    require('../../UTIL')
 );
-},{"three":4}],22:[function(require,module,exports){
-module.exports = (function (Box, Ring) {
-    var obstacleTypes = {
-        box: Box,
-        ring: Ring
+},{"../../UTIL":12,"three":6}],27:[function(require,module,exports){
+module.exports = (function(THREE, UTIL){
+    var size = 10;
+    var heightFromWay = 20;
+
+    /**
+     * Represents the "obstacle" "diamond" (that can be collected)
+     * @param {Object} diamond - structure as in levelX.js
+     * @constructor
+     */
+    function Diamond(diamond){
+        this.geometry = new THREE.OctahedronGeometry(size, 0);
+        this.material = new THREE.MeshLambertMaterial({color: diamond.color});
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+    }
+
+    /**
+     * Positions the diamond on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+    Diamond.prototype.position = function(angle, distance, length, radius){
+        angle = -(angle -90);
+        angle = UTIL.convertDegreesToRadians(angle);
+        radius += heightFromWay;
+        var y = (length / 2) - distance;
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y += angle;
+        this.mesh.position.set(x,y,z);
     };
 
     /**
-     * Represents an Obstacle on the way
+     * converts diamond object from levelX.js into a format that can be used for detecting collisions
+     * @param {Object} obstacle - with structure as in levelX.js
+     * @param radius - radius of way
+     * @returns {Object} ret - object ret that is fitted for detecting collisions
+     */
+    Diamond.prepareForCollisionDetection =function(obstacle, radius){
+        var a = radius + heightFromWay - 0.5* size;
+        var b = size*0.5;
+        var angleRight = Math.atan(b/a);
+        var ret = {
+            type: 'diamond',
+            size: {
+                height: heightFromWay
+            },
+            angle: {
+                center: obstacle.position.angle,
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
+            },
+            distance: {
+                center: obstacle.position.distance,
+                min: obstacle.position.distance - (0.5*size),
+                max: obstacle.position.distance + (0.5*size)
+            }
+        };
+        return ret;
+    };
+
+    return Diamond;
+})(
+    require('three'),
+    require('../../UTIL')
+);
+},{"../../UTIL":12,"three":6}],28:[function(require,module,exports){
+module.exports = (function (Box, Ring, Diamond, Opponent) {
+    var obstacleTypes = {
+        box: Box,
+        ring: Ring,
+        diamond: Diamond,
+        opponent: Opponent
+    };
+
+    /**
+     * Represents an Obstacle on wthe way
      * @param {String} type - string like "cube"
      * @param {THREE.Mesh} mesh - mesh of obstacle
      * @param {number} distance - from starting point of way up to obstacle
      * @param {number} angle - in radiant, on which side the obstacle is positioned
      * @constructor
      */
-    function Obstacle(type, mesh, distance, angle) {
+    function Obstacle(type, mesh, distance, angle, collisionData) {
         this.type = type;
         this.mesh = mesh;
         this.distance = distance;
         this.angle = angle;
-        this.position = {
-            x: null,
-            y: null,
-            z: null
-        }
+        this.collisionData = collisionData;
     }
 
     /**
@@ -59075,26 +59966,20 @@ module.exports = (function (Box, Ring) {
      * @param {Array} obstacles - contains information to generate obstacles
      * @returns {Array} ret - containing obstacle objects
      */
-    Obstacle.generateFromArray = function (obstacles) {
+    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
         var ret = [];
         obstacles.forEach(function (o) {
             var obstacle = new obstacleTypes[o.type](o);
-            ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle));
-        });
-        return ret;
-    };
-
-    /**
-     * prepares the array from levelX.js to a proper form that can be used for collision detection
-     * @param {number} radius - radius of way
-     * @param {Array} obstacles - array from levelX.js with settings of obstacles
-     * @returns {Array} ret - array that was prepared for simple collision detection
-     */
-    Obstacle.prepareForCollisionDetection = function(radius, obstacles){
-        var ret = [];
-        obstacles.forEach(function(obstacle){
+            obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
+            var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
             ret.push(
-                obstacleTypes[obstacle.type].prepareForCollisionDetection(obstacle, radius)
+                new Obstacle(
+                    o.type,
+                    obstacle.mesh,
+                    o.position.distance,
+                    o.position.angle,
+                    collisionData
+                )
             );
         });
         return ret;
@@ -59103,32 +59988,105 @@ module.exports = (function (Box, Ring) {
     return Obstacle;
 })(
     require('./Box'),
-    require('./Ring')
+    require('./Ring'),
+    require('./Diamond'),
+    require('./Opponent')
 );
-},{"./Box":21,"./Ring":23}],23:[function(require,module,exports){
-module.exports = (function(){
-    var radius = 100;
+},{"./Box":26,"./Diamond":27,"./Opponent":29,"./Ring":30}],29:[function(require,module,exports){
+module.exports= (function(Protagonist, UTIL, THREE){
+    var heightFromWay = 20;
 
-    function Ring(ring){
-        this.material = new THREE.MeshBasicMaterial( { color: ring.color } );
-        this.geometry = new THREE.TorusGeometry( radius, 3, 16, 100 );
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.rotation.x += Math.PI/2;
+    function Opponent(){
+        this.opponent = new Protagonist();
+        this.opponent.body.mesh.material.color.setHex(0x000000);
+        this.opponent.head.mesh.material.color.setHex(0x000000);
+        this.opponent.left.leg.mesh.material.color.setHex(0x000000);
+        this.opponent.right.leg.mesh.material.color.setHex(0x000000);
+        this.mesh = null;
     }
 
-    Ring.prepareForCollisionDetection = function(obstacle, radius){
+    /**
+     * Positions the opponent on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+    Opponent.prototype.position = function(angle, distance, length, radius){
+        angle = -(angle -90);
+        angle = UTIL.convertDegreesToRadians(angle);
+        radius += heightFromWay;
+        var y = (length / 2) - distance;
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.opponent.group.rotation.y += angle;
+        this.opponent.group.position.set(x,y,z);
+        this.opponent.group.rotation.z = Math.PI;
+        this.mesh = this.opponent.group;
+    };
+
+    Opponent.prepareForCollisionDetection = function(){
         return {
-            type: obstacle.type,
-                size: obstacle.size,
+
+        };
+    };
+
+    return Opponent;
+})(
+    require('../../protagonist/Protagonist'),
+    require('../../UTIL'),
+    require('three')
+);
+
+},{"../../UTIL":12,"../../protagonist/Protagonist":22,"three":6}],30:[function(require,module,exports){
+module.exports = (function () {
+    //radius of all rings (has to be larger than radius of way!)
+    var radius = 100;
+
+    /**
+     * Represents the obstacle "Ring"
+     * @param {Object} ring - structure as in levelX.js
+     * @constructor
+     */
+    function Ring(ring) {
+        this.material = new THREE.MeshLambertMaterial({color: ring.color});
+        this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+    }
+
+    /**
+     * Positions the Ring on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+    Ring.prototype.position = function (angle, distance, length, radius) {
+        this.mesh.rotation.x += Math.PI / 2;
+        this.mesh.position.y = (length / 2) - distance;
+    };
+
+    /**
+     * converts ring object from levelX.js into a format that can be used for detecting collisions
+     * @param {Object} obstacle - with structure as in levelX.js
+     * @param radius - radius of way
+     * @returns {Object} ret - object ret that is fitted for detecting collisions
+     */
+    Ring.prepareForCollisionDetection = function (obstacle, r) {
+        return {
+            type: 'ring',
+            size: {
+                height: radius - 80
+            },
             angle: {
-            center: 0,
+                center: 0,
                 min: 0,
                 max: 360
-        },
-            distance: obstacle.position.distance
+            },
+            distance: obstacle.position.distance,
         };
     };
 
     return Ring;
 })();
-},{}]},{},[14]);
+},{}]},{},[17]);

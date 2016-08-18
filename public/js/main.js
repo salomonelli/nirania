@@ -8,7 +8,9 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var mainScene;
     var level = [
         {},
-        new Level(1)
+        new Level(1),
+        new Level(2),
+        new Level(3)
     ];
     var currentLevel = 1;
     var URLpath = '';
@@ -53,7 +55,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                     $('.game-name').fadeIn(3000);
                     $('.intro').fadeIn(3000);
                     mainScene.showIntro();
-                }else{
+                } else {
                     //load simple intro
                     console.log('main.simpleIntro()');
                     mainScene.simpleIntro();
@@ -62,11 +64,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 render();
                 next();
             },
-            function preloadAndAddLevel1(next) {
-                if(playThisLevel(1)){
-                    console.log('main.preloadAndAddLevel1');
-                    level[currentLevel].prepare();
-                    mainScene.addLevel(level[currentLevel]);
+            function addLevel1(next) {
+                if (playThisLevel(1)) {
+                    console.log('main.addLevel1');
+                    addLevel();
                 }
                 next();
             },
@@ -95,39 +96,54 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 }
             },
             function startLevel1(next) {
-                if(playThisLevel(1)){
-                    console.log('main.startLevel1()');
-                    Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
-                    Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
-                    //start moving way
-                    mainScene.move.continue = true;
-                    level[currentLevel].begin(function () {
-                        //level done
-                        mainScene.move.continue = false;
-                        Keybindings.unbind('keydown');
-                        Keybindings.unbind('keyup');
-                        next();
-                    }, mainScene.getProtagonist());
-                }else{
+                if (playThisLevel(1)) {
+                    startLevel(next);
+                } else {
                     next();
                 }
             },
             function levelOneScreen(next) {
-                if(playThisLevel(1)){
+                if (playThisLevel(1)) {
                     console.log('main.levelOneScreen()');
-                    if(!level[currentLevel].gameOver){
-                        //success
-                        level[currentLevel].showSuccessScreen();
-                    }else{
-                        //gameover
-                        level[currentLevel].showGameOverScreen();
-                    }
+                    showScreen();
                 }
                 next();
             },
-            function levelOneGameOver(next){
-                console.log('main.levelOneGameOver()');
-                next();
+            function addAndStartLevel2(next) {
+                if (playThisLevel(2)) {
+                    currentLevel = 2;
+                    console.log('main.addAndStartLevel2()');
+                    addLevel();
+                    startLevel(next);
+                } else {
+                    next();
+                }
+            },
+            function showScreenLevel2(next) {
+                if (playThisLevel(2)) {
+                    console.log('main.showScreenLevel2()');
+                    showScreen();
+                } else {
+                    next();
+                };
+            },
+            function addAndStartLevel3(next) {
+                if (playThisLevel(3)) {
+                    currentLevel = 3;
+                    console.log('main.addAndStartLevel3()');
+                    addLevel();
+                    startLevel(next);
+                } else {
+                    next();
+                }
+            },
+            function showScreenLevel3(next){
+                if (playThisLevel(3)) {
+                    console.log('main.showScreenLevel2()');
+                    showScreen();
+                } else {
+                    next();
+                };
             }
         ]);
 
@@ -141,26 +157,77 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             TWEEN.update();
         }
 
-        function playThisLevel(level){
-            switch (level){
+        /**
+         * adds current level to scene
+         */
+        function addLevel() {
+            level[currentLevel].prepare();
+            mainScene.addLevel(level[currentLevel]);
+        }
+
+        /**
+         * starts current level
+         * @param {Function} cb - callback function called when level is done
+         */
+        function startLevel(cb) {
+            Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
+            Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+            //start moving way
+            mainScene.move.continue = true;
+            level[currentLevel].begin(function () {
+                //level done
+                mainScene.move.continue = false;
+                Keybindings.unbind('keydown');
+                Keybindings.unbind('keyup');
+                cb();
+            }, mainScene.getProtagonist());
+        }
+
+
+        function showScreen() {
+            if (!level[currentLevel].gameOver) {
+                //success
+                level[currentLevel].setCookie(true);
+                level[currentLevel].showSuccessScreen();
+            } else {
+                //gameover
+                level[currentLevel].setCookie(false);
+                level[currentLevel].showGameOverScreen();
+            }
+        }
+
+        /**
+         * checks whether level is allowed to be played, if yes return true
+         * @param {number} level
+         * @returns {boolean}
+         */
+        function playThisLevel(level) {
+            switch (level) {
                 case 1:
-                    if(URLpath === "" || URLpath === "#1"){
+                    if (URLpath === "" || URLpath === "#1") {
                         return true;
-                    }else{
+                    } else {
                         return false;
                     }
                     break;
                 case 2:
-                    if(URLpath === "#2"){
-                        //and level 1 success
+                    if (URLpath === "#2") {
+                        Level.canBePlayed(2);
                         return true;
                     }
+                    break;
+                case 3:
+                    if (URLpath === "#3") {
+                        Level.canBePlayed(3);
+                        return true;
+                    }
+                    break;
             }
         }
     };
 
-    $(document).on('click', '.button.reload', function(){
-         location.reload();
+    $(document).on('click', '.button.reload', function () {
+        location.reload();
     });
 
 
