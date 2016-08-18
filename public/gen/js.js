@@ -58738,6 +58738,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         this.collisionDetector = null;
         this.gameOver = false;
         this.score = 0;
+        this.lastDiamond = null;
     }
 
     /**
@@ -58762,6 +58763,8 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      */
     Level.prototype.begin = function (cb, protagonist) {
         var self = this;
+        self.lastDiamond = null;
+        self.score = 0;
         var t = self.way.length - 80;
         var animate = function () {
             t--;
@@ -58778,8 +58781,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                         cb();
                         break;
                     case "diamond":
-                        //TODO let diamond fly away
-                        self.score++;
+                        self.hitDiamond(collObj);
                         if (t > 0) {
                             setTimeout(function () {
                                 animate();
@@ -58805,6 +58807,19 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         animate();
     };
 
+    Level.prototype.hitDiamond = function (collObj) {
+        var self = this;
+        if (self.lastDiamond){
+            if(collObj.mesh.id != self.lastDiamond.mesh.id){
+                //TODO let diamond fly away
+                self.lastDiamond = collObj;
+                self.score++;
+            }
+        }else{
+            self.lastDiamond = collObj;
+        }
+    };
+
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
      */
@@ -58816,7 +58831,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         };
         var html = successScreen.render(obj);
         $('body').append(html);
-        var marginTop = ($(document).height() - $('#successScreen div').height())/2;
+        var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
         $('#successScreen div').css('marginTop', marginTop);
     };
 
@@ -58830,20 +58845,20 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         };
         var html = gameoverScreen.render(obj);
         $('body').append(html);
-        var marginTop = ($(document).height() - $('#gameoverScreen div').height())/2;
-        $('#gameoverScreen div').css('marginTop',marginTop);
+        var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
+        $('#gameoverScreen div').css('marginTop', marginTop);
     };
 
     /**
      * stores the score and success in cookie
      * @param {boolean} success - whether current level has been ended with success
      */
-    Level.prototype.setCookie = function(success){
-        Cookies.set(this.current+'-success', success);
+    Level.prototype.setCookie = function (success) {
+        Cookies.set(this.current + '-success', success);
         Cookies.set(this.current, this.score);
         var all = Cookies.get();
         var sum = 0;
-        Object.keys(all).forEach(function(key,index) {
+        Object.keys(all).forEach(function (key, index) {
             sum += all[key]
         });
         Cookies.set('total', sum);
@@ -58854,11 +58869,11 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      * @param {number} level - that should be played
      * @returns {boolean}
      */
-    Level.canBePlayed = function(level){
+    Level.canBePlayed = function (level) {
         level--;
-        if(Cookies.get(level-'success')){
+        if (Cookies.get(level - 'success')) {
             return true;
-        }else{
+        } else {
             return false;
         }
     };
