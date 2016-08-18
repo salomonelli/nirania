@@ -5,16 +5,15 @@ module.exports = (function(){
         way: {
             length: 1000,
             obstacles : [
-                /*
                 {
-                    type: 'ring',
+                    type: 'diamond',
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: 800,
-                        angle: 0
+                        distance: 200,
+                        angle: 40
                     }
-                },*/
+                },
                 {
                     type: 'box',
                     size: {

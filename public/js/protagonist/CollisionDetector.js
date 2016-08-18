@@ -35,7 +35,10 @@ module.exports = (function () {
                 };
             }
         }
-        return false;
+        return{
+            collision: false,
+            type: null
+        }
     };
 
 
