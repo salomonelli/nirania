@@ -142,6 +142,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         }
     };
 
+    $(document).on('click', '.button.reload', function(){
+         location.reload();
+    });
+
 
     window.main = main;
 
