@@ -7,7 +7,7 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
     };
 
     /**
-     * Represents an Obstacle on the way
+     * Represents an Obstacle on wthe way
      * @param {String} type - string like "cube"
      * @param {THREE.Mesh} mesh - mesh of obstacle
      * @param {number} distance - from starting point of way up to obstacle

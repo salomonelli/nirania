@@ -113,10 +113,19 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                     next();
                 }
             },
-            function levelOneSuccessScreen(next) {
+            function levelOneScreen(next) {
                 if(URLpath === "" || URLpath === "#1"){
-                    console.log('main.levelOneSuccessScreen()');
+                    console.log('main.levelOneScreen()');
+                    if(!level[currentLevel].gameOver){
+                        //success
+                    }else{
+                        //gameover
+                    }
                 }
+                next();
+            },
+            function levelOneGameOver(next){
+                console.log('main.levelOneGameOver()');
                 next();
             }
         ]);
