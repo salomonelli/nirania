@@ -15,6 +15,42 @@ module.exports = (function(){
                     }
                 },
                 {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 400,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 600,
+                        angle: 40
+                    }
+                },
+                {
                     type: 'box',
                     size: {
                         width: 25,

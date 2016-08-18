@@ -118,6 +118,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                     console.log('main.levelOneScreen()');
                     if(!level[currentLevel].gameOver){
                         //success
+                        level[currentLevel].showSuccessScreen();
                     }else{
                         //gameover
                     }

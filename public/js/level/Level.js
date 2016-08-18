@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle) {
+module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle, $, successScreen) {
 
     var levels = [
         level1
@@ -16,6 +16,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         this.speed = speed;
         this.collisionDetector = null;
         this.gameOver = false;
+        this.score = 0;
     }
 
     /**
@@ -49,14 +50,16 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
             if (collObj.collision) {
-                switch(collObj.type){
+                switch (collObj.type) {
                     case "box":
                     case "ring":
                         self.gameOver = true;
                         cb();
                         break;
                     case "diamond":
-                        //TODO increase points and let diamond fly away
+                        //TODO let diamond fly away
+                        self.score++;
+                        console.log('aaaaa'+ self.score);
                         if (t > 0) {
                             setTimeout(function () {
                                 animate();
@@ -82,6 +85,21 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         animate();
     };
 
+    Level.prototype.showSuccessScreen = function () {
+        var obj = {
+            score: this.score,
+            level: this.current,
+            next: this.current + 1
+        };
+        var html = successScreen.render(obj);
+        $('body').append(html);
+        var marginTop = ($(document).height() - $('#successScreen div').height())/2;
+        $('#successScreen div').css('marginTop',marginTop);
+        //load hogan template and add obj to it
+
+        //show success screen
+    };
+
     return Level;
 })(
     require('three'),
@@ -89,5 +107,7 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     require('../way/Way'),
     require('./level1'),
     require('../protagonist/CollisionDetector'),
-    require('../way/obstacles/Obstacle')
+    require('../way/obstacles/Obstacle'),
+    require('jquery'),
+    require('../templates/success.mustache')
 );

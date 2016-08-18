@@ -21,6 +21,8 @@
     "jit-grunt": "^0.9.1",
     "jquery": "^2.2.0",
     "three": "*",
-    "tween.js": "*"
+    "tween.js": "*",
+    "hogan.js": "2.0.0",
+    "browserify-hogan": "^0.3.0"
   }
 }

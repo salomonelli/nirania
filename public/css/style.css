@@ -62,6 +62,21 @@ canvas { width: 100%; height: 100% }
   text-align: center;
 }
 
+#successScreen{
+  z-index: 1000;
+  background: rgba(0,0,0,0.5);
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  color: white;
+  font-family: Quicksand;
+  text-align: center;
+}
+
+
+
+
 .sk-folding-cube {
   margin: 20px auto;
   width: 40px;
@@ -71,7 +86,6 @@ canvas { width: 100%; height: 100% }
   transform: rotateZ(45deg);
   /*background: #39FFEB;*/
 }
-
 .sk-folding-cube .sk-cube {
   float: left;
   width: 50%;
@@ -134,7 +148,6 @@ canvas { width: 100%; height: 100% }
         opacity: 0;
       }
 }
-
 @keyframes sk-foldCubeAngle {
   0%, 10% {
     -webkit-transform: perspective(140px) rotateX(-180deg);
