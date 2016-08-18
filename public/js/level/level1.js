@@ -67,6 +67,15 @@ module.exports = (function(){
                         distance: 800,
                         angle: -30
                     }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 300,
+                        angle: 0
+                    }
                 }
             ]
         }

@@ -24,7 +24,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
 
         this.currentPosition = {
             angle: 0,
-            distance: 50
+            distance: 50,
+            height: 0
         }
     }
 

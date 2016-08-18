@@ -14,6 +14,17 @@ module.exports = (function(){
 
        for(var i = 0; i < this.obstacles.length; i++)
        {
+
+           if(this.obstacles[i].type == "ring")
+           {
+               if(this.obstacles[i].distance == currentPosition.distance)
+               {
+                   if(this.obstacles[i].size.height > currentPosition.height)
+                   {
+                      return true;
+                   }
+               }
+           }
            if(this.obstacles[i].distance.min < currentPosition.distance && currentPosition.distance < this.obstacles[i].distance.max ){
                if(this.obstacles[i].angle.min < currentPosition.angle && currentPosition.angle < this.obstacles[i].angle.max){
                    return true;
@@ -23,15 +34,7 @@ module.exports = (function(){
         return false;
     };
 
-    /*if ( this.obstacles[i].distance.min - currentPosition.distance > 0 && this.obstacles[i].distance.min - currentPosition.distance < 1  )
-     {
-     if(this.obstacles[i].angle.center == currentPosition.angle)
-     {
-     console.log("Potentielle Kollision");
-     }
-
-
-     }*/
+   
     /*
      Algorithmus:
      mit einer foreach schleife alle obstacles(this.obstacles) durchlaufen.
