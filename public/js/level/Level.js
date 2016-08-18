@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle, $, successScreen) {
+module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstacle, $, successScreen, gameoverScreen) {
 
     var levels = [
         level1
@@ -85,6 +85,9 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         animate();
     };
 
+    /**
+     * renders hogan tempalte success.mustache and adds it to html-body
+     */
     Level.prototype.showSuccessScreen = function () {
         var obj = {
             score: this.score,
@@ -95,9 +98,20 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
         $('body').append(html);
         var marginTop = ($(document).height() - $('#successScreen div').height())/2;
         $('#successScreen div').css('marginTop',marginTop);
-        //load hogan template and add obj to it
+    };
 
-        //show success screen
+    /**
+     * renders hogan tempalte gameover.mustache and adds it to html-body
+     */
+    Level.prototype.showGameOverScreen = function () {
+        var obj = {
+            score: this.score,
+            level: this.current
+        };
+        var html = gameoverScreen.render(obj);
+        $('body').append(html);
+        var marginTop = ($(document).height() - $('#gameoverScreen div').height())/2;
+        $('#gameoverScreen div').css('marginTop',marginTop);
     };
 
     return Level;
@@ -109,5 +123,6 @@ module.exports = (function (THREE, COLOR, Way, level1, CollisionDetector, Obstac
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
-    require('../templates/success.mustache')
+    require('../templates/success.mustache'),
+    require('../templates/gameover.mustache')
 );

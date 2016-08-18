@@ -17,7 +17,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var main = function () {
 
         async.series([
-            function getURL(next) {
+            function getCurrentLevelFromURL(next) {
                 console.log('main.getURL()');
                 var URL = window.location.href;
                 URLpath = URL.replace(/http:\/\/.+\//g, '');
@@ -25,7 +25,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             },
             function showLoadingIcon(next) {
                 console.log('main.showLoadingIcon()');
-                //align loading icon
                 var height = $('.sk-folding-cube').height() + $('.loading p').height();
                 $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
                 next();
@@ -64,7 +63,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 next();
             },
             function preloadAndAddLevel1(next) {
-                if(URLpath === "" || URLpath === "#1"){
+                if(playThisLevel(1)){
                     console.log('main.preloadAndAddLevel1');
                     level[currentLevel].prepare();
                     mainScene.addLevel(level[currentLevel]);
@@ -96,7 +95,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 }
             },
             function startLevel1(next) {
-                if(URLpath === "" || URLpath === "#1"){
+                if(playThisLevel(1)){
                     console.log('main.startLevel1()');
                     Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
                     Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
@@ -114,13 +113,14 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 }
             },
             function levelOneScreen(next) {
-                if(URLpath === "" || URLpath === "#1"){
+                if(playThisLevel(1)){
                     console.log('main.levelOneScreen()');
                     if(!level[currentLevel].gameOver){
                         //success
                         level[currentLevel].showSuccessScreen();
                     }else{
                         //gameover
+                        level[currentLevel].showGameOverScreen();
                     }
                 }
                 next();
@@ -139,6 +139,23 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             mainScene.render();
             mainScene.turn();
             TWEEN.update();
+        }
+
+        function playThisLevel(level){
+            switch (level){
+                case 1:
+                    if(URLpath === "" || URLpath === "#1"){
+                        return true;
+                    }else{
+                        return false;
+                    }
+                    break;
+                case 2:
+                    if(URLpath === "#2"){
+                        //and level 1 success
+                        return true;
+                    }
+            }
         }
     };
 
