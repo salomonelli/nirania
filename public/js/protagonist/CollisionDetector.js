@@ -26,7 +26,8 @@ module.exports = (function () {
                     this.obstacles[i].distance.min < currentPosition.distance &&
                     currentPosition.distance < this.obstacles[i].distance.max &&
                     this.obstacles[i].angle.min < currentPosition.angle &&
-                    currentPosition.angle < this.obstacles[i].angle.max
+                    currentPosition.angle < this.obstacles[i].angle.max &&
+                    this.obstacles[i].size.height > currentPosition.height
                 )
             ) {
                 return {
