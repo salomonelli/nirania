@@ -60,6 +60,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                     case "ring":
                         self.gameOver = true;
                         cb();
+                        return;
                         break;
                     case "diamond":
                         self.hitDiamond(collObj);
@@ -69,6 +70,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                             }, self.speed);
                         } else {
                             cb();
+                            return;
                         }
                         break;
                     default:
@@ -82,6 +84,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                     }, self.speed);
                 } else {
                     cb();
+                    return;
                 }
             }
         };
