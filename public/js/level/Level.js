@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
     var levels = [
         level1,
@@ -25,7 +25,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     /**
      * generates and positions meshes for the current level
      */
-    Level.prototype.prepare = function () {
+    Level.prototype.prepare = function() {
         var self = this;
         var current = levels[self.current - 1];
 
@@ -42,12 +42,12 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      * starts level
      * @param {function} cb - callback function
      */
-    Level.prototype.begin = function (cb, protagonist) {
+    Level.prototype.begin = function(cb, protagonist) {
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
-        var animate = function () {
+        var animate = function() {
             t--;
             //move way and obstacles
             self.way.moveForwardTillEnd();
@@ -64,7 +64,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                     case "diamond":
                         self.hitDiamond(collObj);
                         if (t > 0) {
-                            setTimeout(function () {
+                            setTimeout(function() {
                                 animate();
                             }, self.speed);
                         } else {
@@ -78,7 +78,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                 }
             } else {
                 if (t > 0) {
-                    setTimeout(function () {
+                    setTimeout(function() {
                         animate();
                     }, self.speed);
                 } else {
@@ -94,10 +94,10 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      * increases score on diamond hit and removes it
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
-    Level.prototype.hitDiamond = function (collObj) {
+    Level.prototype.hitDiamond = function(collObj) {
         var self = this;
-        if (self.lastDiamond){
-            if(collObj.mesh.id != self.lastDiamond.mesh.id){
+        if (self.lastDiamond) {
+            if (collObj.mesh.id != self.lastDiamond.mesh.id) {
                 //TODO let diamond fly away
                 self.lastDiamond = collObj;
                 self.diamonds++;
@@ -107,7 +107,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                 self.lastDiamond.mesh.position.x = -5000;
                 $('.anzeige .diamonds span').html(self.diamonds);
             }
-        }else{
+        } else {
             self.lastDiamond = collObj;
         }
     };
@@ -115,7 +115,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
      */
-    Level.prototype.showSuccessScreen = function () {
+    Level.prototype.showSuccessScreen = function() {
         var obj = {
             score: this.diamonds,
             level: this.current,
@@ -131,7 +131,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     /**
      * renders hogan tempalte gameover.mustache and adds it to html-body
      */
-    Level.prototype.showGameOverScreen = function () {
+    Level.prototype.showGameOverScreen = function() {
         var obj = {
             score: this.diamonds,
             level: this.current
@@ -146,45 +146,42 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     /**
      * adds shop screen
      */
-    Level.prototype.showShopScreen = function(){
-      var powerups = Powerups.getPowerups();
-      var self = this;
-      powerups.forEach(function(powerup){
-        if(powerup.diamonds <= Level.getTotalDiamonds()){
-          powerup.disabled = "";
-        }else{
-          powerup.disabled = "disabled";
-        }
-        powerup.end = "";
-      });
-      powerups[powerups.length-1].end = "end";
-      var html = shopScreen.render({
-        total: Level.getTotalDiamonds(),
-        powerups: powerups
-      });
-      $('div.shopScreen').append(html);
+    Level.prototype.showShopScreen = function() {
+        var powerups = Powerups.getPowerups();
+        var self = this;
+        powerups.forEach(function(powerup) {
+            if (Powerups.boughtAlready(powerup.id)) {
+                powerup.disabled = "hidden";
+            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
+                powerup.disabled = "";
+            } else {
+                powerup.disabled = "disabled";
+            }
+            powerup.end = "";
+        });
+        console.dir(Cookies.get());
+        powerups[powerups.length - 1].end = "end";
+        var html = shopScreen.render({
+            total: Level.getTotalDiamonds(),
+            powerups: powerups
+        });
+        $('div.shopScreen').append(html);
     };
 
     /**
      * stores the score and success in cookie
      * @param {boolean} success - whether current level has been ended with success
      */
-    Level.prototype.setCookie = function (success) {
+    Level.prototype.setCookie = function(success) {
         Cookies.set(this.current + '-success', success);
-        Cookies.set(this.current, this.diamonds);
         var obj = Cookies.get();
-        var sum = 0;
-        Cookies.set('total', sum);
-        for (var property in obj) {
-            if (obj.hasOwnProperty(property) && !isNaN(property)) {
-                  sum += parseInt(obj[property]);
-            }
-        }
+        var sum = parseInt(Cookies.get('total'));
+        sum += this.diamonds;
         Cookies.set('total', sum);
     };
 
-    Level.getTotalDiamonds = function(){
-      return Cookies.get('total');
+    Level.getTotalDiamonds = function() {
+        return Cookies.get('total');
     };
 
     /**
@@ -192,7 +189,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      * @param {number} level - that should be played
      * @returns {boolean}
      */
-    Level.canBePlayed = function (level) {
+    Level.canBePlayed = function(level) {
         level--;
         if (Cookies.get(level - 'success')) {
             return true;

@@ -90,6 +90,10 @@ canvas {
 background: rgba(0,0,0,0.8);
 }
 
+.hidden{
+  visibility: hidden;
+}
+
 .sk-folding-cube {
     margin: 20px auto;
     width: 40px;

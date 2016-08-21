@@ -1,14 +1,14 @@
 <div class="powerups row ">
   <div class="large-12 medium-12 small-12 total-diamonds">
     <b>Powerups</b></br>
-    <span>Total: {{total}} <i class="fa fa-diamond" aria-hidden="true"></i></span>
+    <span>Total: <span class="diamonds">{{total}}</span> <i class="fa fa-diamond" aria-hidden="true"></i></span>
   </div>
   <div class="large-centered medium-centered small-centered">
     {{#powerups}}
         <div class="powerup {{end}} large-2 medium-3 columns" id="powerup-{{id}}">
             <span class="description">{{description}}</span>
             </br>
-            <a href="#" class="button {{disabled}}" id="buy-powerup-{{id}}">
+            <a class="button secondary {{disabled}}" id="buy-powerup-{{id}}">
               Buy for
               {{diamonds}} <i class="fa fa-diamond" aria-hidden="true"></i>
             </a>
