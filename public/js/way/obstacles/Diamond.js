@@ -20,7 +20,7 @@ module.exports = (function(THREE, UTIL){
      * @param {number} length - length of way
      * @param {number} radius - radius of way
      */
-    Diamond.prototype.position = function(angle, distance, length, radius){
+    Diamond.prototype.position = function(angle, distance,  length, radius){
         angle = -(angle -90);
         angle = UTIL.convertDegreesToRadians(angle);
         radius += heightFromWay;

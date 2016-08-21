@@ -102,6 +102,11 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                 //TODO let diamond fly away
                 self.lastDiamond = collObj;
                 self.score++;
+                console.log("Getroffener Diamand");
+                self.lastDiamond.mesh.position.y = -5000;
+                self.lastDiamond.mesh.position.z = -5000;
+                self.lastDiamond.mesh.position.x = -5000;
+                $('.anzeige .diamonds span').html(self.score);
             }
         }else{
             self.lastDiamond = collObj;

@@ -11,7 +11,7 @@ module.exports = (function () {
     CollisionDetector.prototype.collision = function (currentPosition) {
 
         for (var i = 0; i < this.obstacles.length; i++) {
-
+            
             if (
                 (
                     //ring collision
@@ -20,11 +20,19 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 ) ||
                 (
-                    //other collision
+                    //other collision with left body half
                     this.obstacles[i].collisionData.distance.min < currentPosition.distance &&
                     currentPosition.distance < this.obstacles[i].collisionData.distance.max &&
-                    this.obstacles[i].collisionData.angle.min < currentPosition.angle &&
-                    currentPosition.angle < this.obstacles[i].collisionData.angle.max &&
+                    this.obstacles[i].collisionData.angle.min < currentPosition.anglemin &&
+                    currentPosition.anglemin < this.obstacles[i].collisionData.angle.max &&
+                    this.obstacles[i].collisionData.size.height > currentPosition.height
+                )||
+                (
+                    //other collisions from right body half.
+                    this.obstacles[i].collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < this.obstacles[i].collisionData.distance.max &&
+                    this.obstacles[i].collisionData.angle.min < currentPosition.anglemax &&
+                    currentPosition.anglemax < this.obstacles[i].collisionData.angle.max &&
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
