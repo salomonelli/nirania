@@ -1,16 +1,18 @@
-<div class="row">
-    <div class="powerups">
-        {{#powerups}}
-            <div class="powerup {{disabled}}" id="powerup-{{id}}">
-                <!--<img src="{{img}}" />-->
-                </br>
-                <span class="description">{{description}}</span>
-                </br>
-                <span class="diamonds">
-          <i class="fa fa-diamond" aria-hidden="true"></i>
-          {{diamonds}}
-        </span>
-            </div>
-        {{/powerups}}
-    </div>
+<div class="powerups row ">
+  <div class="large-12 medium-12 small-12 total-diamonds">
+    <b>Powerups</b></br>
+    <span>Total: {{total}} <i class="fa fa-diamond" aria-hidden="true"></i></span>
+  </div>
+  <div class="large-centered medium-centered small-centered">
+    {{#powerups}}
+        <div class="powerup {{end}} large-2 medium-3 columns" id="powerup-{{id}}">
+            <span class="description">{{description}}</span>
+            </br>
+            <a href="#" class="button {{disabled}}" id="buy-powerup-{{id}}">
+              Buy for
+              {{diamonds}} <i class="fa fa-diamond" aria-hidden="true"></i>
+            </a>
+        </div>
+    {{/powerups}}
+  </div>
 </div>

@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, Cookies) {
+module.exports = (function (THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
     var levels = [
         level1,
@@ -18,7 +18,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         this.speed = speed;
         this.collisionDetector = null;
         this.gameOver = false;
-        this.score = 0;
+        this.diamonds = 0;
         this.lastDiamond = null;
     }
 
@@ -45,7 +45,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     Level.prototype.begin = function (cb, protagonist) {
         var self = this;
         self.lastDiamond = null;
-        self.score = 0;
+        self.diamonds = 0;
         var t = self.way.length - 80;
         var animate = function () {
             t--;
@@ -61,7 +61,6 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
                         self.gameOver = true;
                         cb();
                         return;
-                        break;
                     case "diamond":
                         self.hitDiamond(collObj);
                         if (t > 0) {
@@ -101,12 +100,12 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
             if(collObj.mesh.id != self.lastDiamond.mesh.id){
                 //TODO let diamond fly away
                 self.lastDiamond = collObj;
-                self.score++;
+                self.diamonds++;
                 console.log("Getroffener Diamand");
                 self.lastDiamond.mesh.position.y = -5000;
                 self.lastDiamond.mesh.position.z = -5000;
                 self.lastDiamond.mesh.position.x = -5000;
-                $('.anzeige .diamonds span').html(self.score);
+                $('.anzeige .diamonds span').html(self.diamonds);
             }
         }else{
             self.lastDiamond = collObj;
@@ -118,14 +117,15 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      */
     Level.prototype.showSuccessScreen = function () {
         var obj = {
-            score: this.score,
+            score: this.diamonds,
             level: this.current,
             next: this.current + 1
         };
         var html = successScreen.render(obj);
         $('body').append(html);
+        this.showShopScreen();
         var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
-        $('#successScreen div').css('marginTop', marginTop);
+        $('#successScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
@@ -133,13 +133,36 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      */
     Level.prototype.showGameOverScreen = function () {
         var obj = {
-            score: this.score,
+            score: this.diamonds,
             level: this.current
         };
         var html = gameoverScreen.render(obj);
         $('body').append(html);
+        this.showShopScreen();
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
-        $('#gameoverScreen div').css('marginTop', marginTop);
+        $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
+    };
+
+    /**
+     * adds shop screen
+     */
+    Level.prototype.showShopScreen = function(){
+      var powerups = Powerups.getPowerups();
+      var self = this;
+      powerups.forEach(function(powerup){
+        if(powerup.diamonds <= Level.getTotalDiamonds()){
+          powerup.disabled = "";
+        }else{
+          powerup.disabled = "disabled";
+        }
+        powerup.end = "";
+      });
+      powerups[powerups.length-1].end = "end";
+      var html = shopScreen.render({
+        total: Level.getTotalDiamonds(),
+        powerups: powerups
+      });
+      $('div.shopScreen').append(html);
     };
 
     /**
@@ -148,19 +171,20 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
      */
     Level.prototype.setCookie = function (success) {
         Cookies.set(this.current + '-success', success);
-        Cookies.set(this.current, this.score);
-        var all = Cookies.get();
+        Cookies.set(this.current, this.diamonds);
+        var obj = Cookies.get();
         var sum = 0;
         Cookies.set('total', sum);
-        Object.keys(all).forEach(function (key, index) {
-            if(key.indexOf('-success') !== -1){
-                sum += all[key]
+        for (var property in obj) {
+            if (obj.hasOwnProperty(property) && !isNaN(property)) {
+                  sum += parseInt(obj[property]);
             }
-        });
-        console.log(sum);
+        }
         Cookies.set('total', sum);
-        console.log('cookies:');
-        console.dir(Cookies.get());
+    };
+
+    Level.getTotalDiamonds = function(){
+      return Cookies.get('total');
     };
 
     /**
@@ -191,5 +215,7 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
     require('jquery'),
     require('../templates/success.mustache'),
     require('../templates/gameover.mustache'),
-    require('js-cookie')
+    require('../templates/shop.mustache'),
+    require('js-cookie'),
+    require('./Powerups')
 );

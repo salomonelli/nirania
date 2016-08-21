@@ -21,6 +21,30 @@ module.exports = (function(){
                 description: "bblala",
                 diamonds: 7,
                 img: "/img/03.jpg"
+            },
+            {
+                id: 4,
+                description: "bblala",
+                diamonds: 7,
+                img: "/img/03.jpg"
+            },
+            {
+                id: 5,
+                description: "bblala",
+                diamonds: 7,
+                img: "/img/03.jpg"
+            },
+            {
+                id: 6,
+                description: "bblala",
+                diamonds: 7,
+                img: "/img/03.jpg"
+            },
+            {
+                id: 7,
+                description: "bblala",
+                diamonds: 7,
+                img: "/img/03.jpg"
             }
         ];
     };

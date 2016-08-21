@@ -38,9 +38,9 @@ module.exports = (function(THREE, UTIL){
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
     Diamond.prepareForCollisionDetection =function(obstacle, radius){
-        var a = radius + heightFromWay - 0.5* size;
-        var b = size*0.5;
-        var angleRight = Math.atan(b/a);
+        //var a = radius + heightFromWay - 0.5* size;
+        //var b = size*0.5;
+        //var angleRight = Math.atan(b/a);
         var ret = {
             type: 'diamond',
             size: {
@@ -48,13 +48,13 @@ module.exports = (function(THREE, UTIL){
             },
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
+                min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
-                min: obstacle.position.distance - (0.5*size),
-                max: obstacle.position.distance + (0.5*size)
+                min: obstacle.position.distance-10, /// - (0.5*size),
+                max: obstacle.position.distance+10// + (0.5*size)
             }
         };
         return ret;
