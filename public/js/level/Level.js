@@ -146,10 +146,16 @@ module.exports = (function (THREE, COLOR, Way, level1, level2, level3, Collision
         Cookies.set(this.current, this.score);
         var all = Cookies.get();
         var sum = 0;
-        Object.keys(all).forEach(function (key, index) {
-            sum += all[key]
-        });
         Cookies.set('total', sum);
+        Object.keys(all).forEach(function (key, index) {
+            if(key.indexOf('-success') !== -1){
+                sum += all[key]
+            }
+        });
+        console.log(sum);
+        Cookies.set('total', sum);
+        console.log('cookies:');
+        console.dir(Cookies.get());
     };
 
     /**

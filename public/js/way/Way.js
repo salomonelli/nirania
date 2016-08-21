@@ -1,4 +1,4 @@
-module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
+module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -44,6 +44,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     Way.prototype.moveForwardTillEnd = function () {
         this.group.position.z++;
         this.currentPosition.distance++;
+        //TODO remove this after finished programming
+        $('.anzeige .distance span').html(this.currentPosition.distance);
     };
 
     /**
@@ -53,6 +55,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     Way.prototype.rotate = function (angle) {
         this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        //TODO remove this after finished programming
+        $('.anzeige .angle span').html(Math.round(UTIL.convertRadiansToDegrees(this.group.rotation.y)));
     };
 
     /**
@@ -86,5 +90,6 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL) {
     require('three'),
     require('../COLOR'),
     require('./obstacles/Obstacle'),
-    require('../UTIL')
+    require('../UTIL'),
+    require('jquery')
 );
