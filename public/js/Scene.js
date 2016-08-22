@@ -12,7 +12,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
-        this.renderer = new THREE.WebGLRenderer({alpha: true});
+        this.renderer = new THREE.WebGLRenderer();
+        this.scene.background = new THREE.Color( COLOR.background );
         this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMapSoft = false;

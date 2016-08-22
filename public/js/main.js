@@ -1,5 +1,5 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
@@ -156,6 +156,16 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         location.reload();
     });
 
+    $(document).on('click', '.powerup .button', function(event){
+      if(!$(this).hasClass('disabled')){
+        var powerup = event.target.id.replace('buy-powerup-', '');
+        var total =  Powerups.buy(powerup);
+        //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
+        //$(this).addClass("hidden");
+        $('div.shopScreen').empty();
+        level[currentLevel].showShopScreen();
+      }
+    });
 
     window.main = main;
 
@@ -167,8 +177,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./protagonist/Protagonist'),
     require('./level/Level'),
     require('./Keybindings'),
-    require('tween.js')
+    require('tween.js'),
+    require('./level/Powerups')
 );
-
-
-

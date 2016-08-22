@@ -22,6 +22,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
 
         this.currentPosition = {
             angle: 0,
+            anglemin: -5,
+            anglemax: 5,
             distance: 50,
             height: 0
         }
@@ -46,6 +48,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
         this.currentPosition.distance++;
         //TODO remove this after finished programming
         $('.anzeige .distance span').html(this.currentPosition.distance);
+        $('.anzeige .anglemax span').html(this.currentPosition.anglemax);
+        $('.anzeige .anglemin span').html(this.currentPosition.anglemin);
     };
 
     /**
@@ -55,6 +59,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     Way.prototype.rotate = function (angle) {
         this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        this.currentPosition.anglemin = this.currentPosition.angle - 5;
+        this.currentPosition.anglemax = this.currentPosition.angle + 5;
         //TODO remove this after finished programming
         $('.anzeige .angle span').html(Math.round(UTIL.convertRadiansToDegrees(this.group.rotation.y)));
     };
