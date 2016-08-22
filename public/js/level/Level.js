@@ -230,6 +230,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     require('./level1'),
     require('./level2'),
     require('./level3'),
+    require('./level4'),
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
