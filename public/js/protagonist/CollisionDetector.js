@@ -37,7 +37,7 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
-                console.log(this.obstacles[i]);
+                
                 return {
 
                     collision: true,

@@ -97,10 +97,8 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
         if (self.lastDiamond == null){
-            console.log("Noch kein Diamand")
             self.lastDiamond = collObj;
             self.diamonds++;
-            console.log("Getroffener Diamand");
             self.lastDiamond.mesh.position.y = -5000;
             self.lastDiamond.mesh.position.z = -5000;
             self.lastDiamond.mesh.position.x = -5000;
@@ -110,7 +108,6 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
             if (collObj.mesh.id != self.lastDiamond.mesh.id) {
                 self.lastDiamond = collObj;
                 self.diamonds++;
-                console.log("Getroffener Diamand");
                 self.lastDiamond.mesh.position.y = -5000;
                 self.lastDiamond.mesh.position.z = -5000;
                 self.lastDiamond.mesh.position.x = -5000;

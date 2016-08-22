@@ -46,7 +46,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
             self.isJumping = true;
             var tween = new TWEEN
                 .Tween({jump: 0})
-                .to({jump: Math.PI}, 500)
+                .to({jump: Math.PI}, 700)
                 .onUpdate(function () {
                     self.group.position.y = 40 * Math.sin(this.jump);
                 })
