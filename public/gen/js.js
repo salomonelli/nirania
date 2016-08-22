@@ -5216,169 +5216,7 @@
 
 }));
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":2}],2:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-(function () {
-    try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
-        }
-    }
-    try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
-        }
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
-
-},{}],3:[function(require,module,exports){
+},{"_process":5}],2:[function(require,module,exports){
 /*
  *  Copyright 2011 Twitter, Inc.
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -5621,7 +5459,7 @@ var Hogan = {};
 })(typeof exports !== 'undefined' ? exports : Hogan);
 
 
-},{}],4:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -15437,7 +15275,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],5:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*!
  * JavaScript Cookie v2.1.2
  * https://github.com/js-cookie/js-cookie
@@ -15589,6 +15427,168 @@ return jQuery;
 
 	return init(function () {});
 }));
+
+},{}],5:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
+    }
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
 // File:src/Three.js
@@ -58227,19 +58227,70 @@ TWEEN.Interpolation = {
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":2}],8:[function(require,module,exports){
-module.exports = (function(){
+},{"_process":5}],8:[function(require,module,exports){
+module.exports = (function() {
     var COLOR = {
-        background: 0xFF7864,
-        particles: 0xffffff,//FD5C98
-        way: 0xDFD1E6,//0xCEBCA5,0x2598BA, //
+        background: 0x13BAAA,
+        particles: 0xffffff, //FD5C98
+        way: 0xC9B693, //0xCEBCA5,0x2598BA, //
         protagonist: {
             body: 0xffffff,
             head: 0xffffff
-        }
+        },
+        ring: 0x82BF45,
+        box: 0xF29C9E,
+        diamond: 0xffffff,
+        basic: {
+            red: 0xf25346,
+            white: 0xd8d0d1,
+            brown: 0x59332e,
+            pink: 0xF5986E,
+            brownDark: 0x23190f,
+            blue: 0x68c3c0,
+            beige: 0xE9DCB9,
+            orange: 0xF55A46,
+            grey: 0xD9D0D1,
+            lila: 0x311B92,
+            pink2: 0xFBAAB5,
+            green: 0x33691E,
+            darkred: 0x913334,
+            yellow: 0xECD078,
+            darkblue: 0x031634
+        },
+        palette: [
+          {
+            name: 'blue pink light',
+            background: 0x3E9598,
+            way: 0xC9B693,
+            box: 0xF29C9E,
+            ring: 0x82BF45
+          },
+          {
+            name: 'pink blue strong',
+            background: 0x781152,
+            way: 0x1CB4C5,
+            box: 0x096388,
+            ring: 0x096388
+          },
+          {
+            name: 'light brown',
+            background: 0xFDF1CD,
+            way: 0xE0C17E,
+            box: 0x9E614D,
+            ring: 0x7BAAB1
+          },
+          {
+            name: 'black',
+            background: 0x030303,
+            way: 0x878E9A,
+            box: 0xEEEEEE,
+            ring: 0xA6FDFD
+          }
+        ]
     };
     return COLOR;
 })();
+
 },{}],9:[function(require,module,exports){
 //require this anywhere
 module.exports = (function ($) {
@@ -58303,112 +58354,7 @@ module.exports = (function ($) {
 })(
     require('jquery')
 );
-},{"jquery":4}],10:[function(require,module,exports){
-module.exports = (function (THREE) {
-
-    /**
-     * Represents Particles
-     * @param {number} minX - minimum x value
-     * @param {number} maxX -maximum x value
-     * @param {number} minY - minimum y value
-     * @param {number} maxY - maximum y value
-     * @param {number} minZ - minimum z value
-     * @param {number} maxZ - maximum z value
-     * @param {number} amount - amount of particles distributed in given space
-     * @constructor
-     */
-    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
-        this.group = new THREE.Group();
-        this.particle = null;
-        this.amount = amount;
-        this.x = {
-            min: minX,
-            max: maxX
-        };
-        this.y = {
-            min: minY,
-            max: maxY
-        };
-        this.z = {
-            min: minZ,
-            max: maxZ
-        };
-        this.init();
-    }
-
-    /**
-     * adds the particles to the mainScene
-     */
-    Particles.prototype.init = function () {
-        var self = this;
-        for (var i = 0; i < self.amount; i++) {
-            self.particle = new THREE.Mesh(
-                new THREE.SphereGeometry(1, 32, 32),
-                new THREE.MeshBasicMaterial()
-            );
-            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
-            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
-            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
-            self.group.add(self.particle);
-        }
-    };
-
-    /**
-     * animates the particles in the mainScene
-     */
-    Particles.prototype.animate = function () {
-        this.group.rotation.z += 0.0004;
-    };
-
-    /**
-     * rotates the way around the z axis according to given angle
-     * @param {number} angle
-     */
-    Particles.prototype.rotate = function (angle) {
-        this.group.rotation.z += angle;
-    };
-
-    /**
-     * positions particles according to given coordinates
-     * @param {number} x - x position of particles group
-     * @param {number} y - y position of particles group
-     * @param {number} z - z position of particles group
-     */
-    Particles.prototype.position = function (x, y, z) {
-        this.group.position.set(x, y, z);
-    };
-
-    /**
-     * adds particles to given scene
-     * @param {THREE.Scene} scene - scene to which the particles will be added
-     */
-    Particles.prototype.addToScene = function (scene) {
-        scene.add(this.group);
-    };
-
-    /**
-     * removes particles from given scene
-     * @param {THREE.Scene} scene - scene from which the particles will be removed
-     */
-    Particles.prototype.removeFromScene = function (scene) {
-        scene.remove(this.group);
-    };
-
-    /**
-     * calculates random integer from interval
-     * @param {number} min
-     * @param {number} max
-     * @returns {number}
-     */
-    Particles.randomIntFromInterval = function (min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    };
-
-    return Particles;
-})(
-    require('three')
-);
-},{"three":6}],11:[function(require,module,exports){
+},{"jquery":3}],10:[function(require,module,exports){
 module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) {
 
     /**
@@ -58417,17 +58363,16 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
      * @param {number} height - height of browser window
      * @constructor
      */
-    function Scene(width, height) {
+    function Scene(width, height, background) {
         this.width = width;
         this.height = height;
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
         this.renderer = new THREE.WebGLRenderer();
-        this.scene.background = new THREE.Color( COLOR.background );
+        this.scene.background = new THREE.Color( background);
         this.renderer.setSize(this.width, this.height);
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMapSoft = false;
+        this.renderer.shadowMap.enabled = false;
 
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
@@ -58452,9 +58397,9 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
      * adds lights to scene
      */
     Scene.prototype.addLights = function () {
-        this.lights.hemisphere = new THREE.HemisphereLight(0xA73B63, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
+        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
 
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, .9);//0xffffff, 1);
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);//0xffffff, 1);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
         this.lights.shadow.position.y += 1000;
@@ -58462,19 +58407,20 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.lights.shadow.castShadow = true;
 
         //visible area of the projected shadow
-        this.lights.shadow.shadow.camera.left = -4000;
-        this.lights.shadow.shadow.camera.right = 4000;
-        this.lights.shadow.shadow.camera.top = 4000;
-        this.lights.shadow.shadow.camera.bottom = -4000;
+        this.lights.shadow.shadow.camera.left = -1000;
+        this.lights.shadow.shadow.camera.right = 1000;
+        this.lights.shadow.shadow.camera.top = 1000;
+        this.lights.shadow.shadow.camera.bottom = -1000;
         this.lights.shadow.shadow.camera.near = 1;
-        this.lights.shadow.shadow.camera.far = 4000;
+        this.lights.shadow.shadow.camera.far = 2000;
 
         //resolution
-        this.lights.shadow.shadow.mapSize.width = 1000;
-        this.lights.shadow.shadow.mapSize.height = 1000;
-
+        this.lights.shadow.shadow.mapSize.width = 2048;
+        this.lights.shadow.shadow.mapSize.height = 2048;
+        //this.lights.shadow.shadowDarkness = 0.1;
         this.scene.add(this.lights.hemisphere);
         this.scene.add(this.lights.shadow);
+        this.scene.add( new THREE.AmbientLight( 0xffffff, 0.3 ) );
     };
 
     /**
@@ -58688,7 +58634,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
     require('tween.js')
 );
 
-},{"./COLOR":8,"./Particles":10,"./protagonist/Protagonist":23,"async":1,"three":6,"tween.js":7}],12:[function(require,module,exports){
+},{"./COLOR":8,"./Particles":19,"./protagonist/Protagonist":24,"async":1,"three":6,"tween.js":7}],11:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58727,13 +58673,14 @@ module.exports = (function(){
     return UTIL;
 })();
 
-},{}],13:[function(require,module,exports){
-module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+},{}],12:[function(require,module,exports){
+module.exports = (function(THREE, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
     var levels = [
         level1,
         level2,
-        level3
+        level3,
+        level4
     ];
 
     /**
@@ -58750,6 +58697,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
+        console.log("Aktueller Speed: "+ this.speed);
     }
 
     /**
@@ -58758,8 +58706,8 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     Level.prototype.prepare = function() {
         var self = this;
         var current = levels[self.current - 1];
+        this.way = new Way(current.way.length, current.speed, current.way.color);
 
-        this.way = new Way(current.way.length, current.speed);
         this.way.addObstacles(current.way.obstacles);
 
         //var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles);
@@ -58776,11 +58724,20 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
-        var t = self.way.length - 80;
+        var t = self.way.length - 80 ;
         var animate = function() {
-            t--;
             //move way and obstacles
-            self.way.moveForwardTillEnd();
+
+            if(Cookies.get('powerup-1') == "bought") {
+                t--;
+                t--;
+                self.way.moveForwardTillEnd(self.speed* 2);
+
+            }
+            else{
+                t--;
+                self.way.moveForwardTillEnd(self.speed);
+            }
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
@@ -58807,14 +58764,19 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
                         break;
                 }
             } else {
-                if (t > 0) {
-                    setTimeout(function() {
-                        animate();
-                    }, self.speed);
-                } else {
-                    cb();
-                    return;
-                }
+
+
+                    if (t > 0) {
+                        setTimeout(function() {
+                            animate();
+                        }, 0.00001) ;
+                    } else {
+                        cb();
+                        return;
+                    }
+
+
+
             }
         };
         animate();
@@ -58826,19 +58788,23 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
-        if (self.lastDiamond) {
+        if (self.lastDiamond == null){
+            self.lastDiamond = collObj;
+            self.diamonds++;
+            self.lastDiamond.mesh.position.y = -5000;
+            self.lastDiamond.mesh.position.z = -5000;
+            self.lastDiamond.mesh.position.x = -5000;
+            $('.anzeige .diamonds span').html(self.diamonds);
+        }
+        else {
             if (collObj.mesh.id != self.lastDiamond.mesh.id) {
-                //TODO let diamond fly away
                 self.lastDiamond = collObj;
                 self.diamonds++;
-                console.log("Getroffener Diamand");
                 self.lastDiamond.mesh.position.y = -5000;
                 self.lastDiamond.mesh.position.z = -5000;
                 self.lastDiamond.mesh.position.x = -5000;
                 $('.anzeige .diamonds span').html(self.diamonds);
             }
-        } else {
-            self.lastDiamond = collObj;
         }
     };
 
@@ -58923,6 +58889,15 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
         }
     };
 
+    /**
+     * returns background color for level
+     * @returns {number} color as hexdecimal
+     */
+    Level.prototype.background = function(){
+      var current = levels[this.current - 1];
+      return current.background;
+    };
+
     Level.getTotalDiamonds = function() {
         return Cookies.get('total');
     };
@@ -58948,14 +58923,16 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     };
 
 
+
+
     return Level;
 })(
     require('three'),
-    require('../COLOR'),
     require('../way/Way'),
     require('./level1'),
     require('./level2'),
     require('./level3'),
+    require('./level4'),
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
@@ -58966,7 +58943,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     require('./Powerups')
 );
 
-},{"../COLOR":8,"../protagonist/CollisionDetector":20,"../templates/gameover.mustache":24,"../templates/shop.mustache":25,"../templates/success.mustache":26,"../way/Way":27,"../way/obstacles/Obstacle":30,"./Powerups":14,"./level1":15,"./level2":16,"./level3":17,"jquery":4,"js-cookie":5,"three":6}],14:[function(require,module,exports){
+},{"../protagonist/CollisionDetector":21,"../templates/gameover.mustache":25,"../templates/shop.mustache":26,"../templates/success.mustache":27,"../way/Way":28,"../way/obstacles/Obstacle":31,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"jquery":3,"js-cookie":4,"three":6}],13:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var powerups = [{
             id: 1,
@@ -59041,13 +59018,534 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":5}],15:[function(require,module,exports){
-module.exports = (function(){
+},{"js-cookie":4}],14:[function(require,module,exports){
+module.exports = (function(UTIL, COLOR) {
+    var boxColor = COLOR.palette[1].box;
+    var ringColor = COLOR.palette[1].ring;
+    var diamondColor = 0xffffff;
     var level = {
         level: 1,
         speed: 1,
+        background: COLOR.palette[1].background,
         way: {
-            length: 3200,
+            length: 2230,
+            color: COLOR.palette[1].way,
+            obstacles: [{
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 446,
+                        angle: 0
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 760,
+                        angle: 340
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 824,
+                        angle: 315
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 50,
+                        length: 25,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 863,
+                        angle: 71
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1068,
+                        angle: 282
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1162,
+                        angle: 37
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 324
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 190
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1532,
+                        angle: 25
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1550,
+                        angle: 0
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1625,
+                        angle: 271
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1635,
+                        angle: 206
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 5,
+                        height: 1
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1721,
+                        angle: 9
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 75,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1843,
+                        angle: 76
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1900,
+                        angle: 279
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2290,
+                        angle: 159
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1923,
+                        angle: 64
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1973,
+                        angle: 230
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2046,
+                        angle: 295
+                    }
+                },
+
+
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 350,
+                        angle: 42
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 400,
+                        angle: 44
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 450,
+                        angle: 46
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 500,
+                        angle: 48
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 550,
+                        angle: 50
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 700,
+                        angle: 270
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 770,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 800,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 950,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1000,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1050,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1225,
+                        angle: 30
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1300,
+                        angle: 25
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1375,
+                        angle: 20
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1450,
+                        angle: 15
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1700,
+                        angle: 345
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1750,
+                        angle: 340
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1800,
+                        angle: 335
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 1950,
+                        angle: 2
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2000,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2050,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2500,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2550,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2600,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2650,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2750,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2800,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 2900,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: diamondColor,
+                    position: {
+                        distance: 3000,
+                        angle: 310
+                    }
+                }
+
+            ]
+        }
+    };
+    return level;
+})(
+    require('../UTIL'),
+    require('../COLOR'));
+
+},{"../COLOR":8,"../UTIL":11}],15:[function(require,module,exports){
+module.exports = (function(UTIL, COLOR){
+    var boxColor = COLOR.palette[0].box;
+    var ringColor = COLOR.palette[0].ring;
+    var level = {
+        level: 2,
+        speed: 1,
+        background: COLOR.palette[0].background,
+        way: {
+            length: 3230,
+            color: COLOR.palette[0].way,
             obstacles : [
                 {
                     type: 'box',
@@ -59056,7 +59554,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 450,
                         angle: 60
@@ -59069,10 +59567,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 546,
-                        angle: -167
+                        angle: 193
                     }
                 },
                 {
@@ -59082,10 +59580,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 760,
-                        angle: -20
+                        angle: 340
                     }
                 },
                 {
@@ -59095,10 +59593,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 824,
-                        angle: -45
+                        angle: 315
                     }
                 },
                 {
@@ -59108,7 +59606,7 @@ module.exports = (function(){
                         length: 25,
                         height: 10
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 863,
                         angle: 71
@@ -59121,7 +59619,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 892,
                         angle: 180
@@ -59134,7 +59632,7 @@ module.exports = (function(){
                         length: 200,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1057,
                         angle: 152
@@ -59147,10 +59645,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1068,
-                        angle: -78
+                        angle: 282
                     }
                 },
                 {
@@ -59160,7 +59658,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1162,
                         angle: 37
@@ -59173,7 +59671,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1290,
                         angle: 159
@@ -59186,7 +59684,7 @@ module.exports = (function(){
                         length: 35,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1357,
                         angle: 20
@@ -59199,10 +59697,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1420,
-                        angle: -36
+                        angle: 324
                     }
                 },
                 {
@@ -59212,10 +59710,10 @@ module.exports = (function(){
                         length: 25,
                         height: 60
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1500,
-                        angle: -170
+                        angle: 190
                     }
                 },
                 {
@@ -59225,10 +59723,10 @@ module.exports = (function(){
                         length: 25,
                         height: 40
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1507,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -59238,10 +59736,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1532,
-                        angle: -102
+                        angle: 258
                     }
                 },
                 {
@@ -59251,10 +59749,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1625,
-                        angle: -89
+                        angle: 271
                     }
                 },
                 {
@@ -59264,10 +59762,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1635,
-                        angle: -154
+                        angle: 206
                     }
                 },
                 {
@@ -59277,7 +59775,7 @@ module.exports = (function(){
                         length: 5,
                         height: 1
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1721,
                         angle: 9
@@ -59290,7 +59788,7 @@ module.exports = (function(){
                         length: 75,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1843,
                         angle: 76
@@ -59303,10 +59801,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1900,
-                        angle: -81
+                        angle: 279
                     }
                 },
                 {
@@ -59316,7 +59814,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1923,
                         angle: 64
@@ -59329,10 +59827,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1973,
-                        angle: -130
+                        angle: 230
                     }
                 },
                 {
@@ -59342,10 +59840,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2046,
-                        angle: -65
+                        angle: 295
                     }
                 },
                 {
@@ -59355,10 +59853,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2298,
-                        angle: -76
+                        angle: 284
                     }
                 },
                 {
@@ -59368,10 +59866,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2438,
-                        angle: -91
+                        angle: 269
                     }
                 },
                 {
@@ -59381,7 +59879,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2567,
                         angle: 170
@@ -59394,10 +59892,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2675,
-                        angle: -95
+                        angle: 265
                     }
                 },
                 {
@@ -59407,10 +59905,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2750,
-                        angle: -153
+                        angle: 207
                     }
                 },
                 {
@@ -59420,7 +59918,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2865,
                         angle: 25
@@ -59433,10 +59931,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2964,
-                        angle: -27
+                        angle: 333
                     }
                 },
                 {
@@ -59446,7 +59944,7 @@ module.exports = (function(){
                         length: 100,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3050,
                         angle: 138
@@ -59459,7 +59957,7 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3100,
                         angle: 43
@@ -59470,9 +59968,880 @@ module.exports = (function(){
                 {
                     type: 'diamond',
                     size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 350,
+                        angle: 42
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 400,
+                        angle: 44
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 450,
+                        angle: 46
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 500,
+                        angle: 48
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 550,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 700,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 770,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 800,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 950,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1000,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1050,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1225,
+                        angle: 30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1300,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1375,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1450,
+                        angle: 15
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1700,
+                        angle: 345
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1750,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1800,
+                        angle: 335
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1950,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2000,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2050,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2500,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2550,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2600,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2650,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2750,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2800,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2900,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 3000,
+                        angle: 310
+                    }
+                },
+
+
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        angle: 0
+                    }
+                }
+
+            ]
+        }
+    };
+
+    return level;
+})(
+  require('../UTIL'),
+  require('../COLOR')
+);
+
+},{"../COLOR":8,"../UTIL":11}],16:[function(require,module,exports){
+module.exports = (function(UTIL, COLOR){
+  var boxColor = COLOR.palette[2].box;
+  var ringColor = COLOR.palette[2].ring;
+    var level = {
+        level: 3,
+        speed: 1,
+        background: COLOR.palette[2].background,
+        way: {
+            length: 4230,
+            color: COLOR.palette[2].way,
+            obstacles : [
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 350,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 450,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: -60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: -100
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 760,
+                        angle: -20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 824,
+                        angle: -45
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 50,
+                        length: 25,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 863,
+                        angle: 71
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 80,
+                        height: 50
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 934,
+                        angle: 83
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1068,
+                        angle: -78
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1162,
+                        angle: 37
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1357,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 30
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1447,
+                        angle: -79
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 20,
+                        length: 25,
+                        height: 40
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1457,
+                        angle: -50
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1625,
+                        angle: -89
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 5,
+                        height: 1
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1721,
+                        angle: 9
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 75,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1843,
+                        angle: 76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1900,
+                        angle: -81
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1973,
+                        angle: -70
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2000,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: -36
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: -90
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1532,
+                        angle: -102
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1635,
+                        angle: -154
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 546,
+                        angle: -167
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: -170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1923,
+                        angle: 64
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2046,
+                        angle: -65
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2298,
+                        angle: -76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2438,
+                        angle: -91
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2675,
+                        angle: -95
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2865,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2964,
+                        angle: -27
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2750,
+                        angle: -153
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 100,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3050,
+                        angle: 138
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 100,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2679,
+                        angle: -81
+                    }
+                },
+
+
+                {
+                    type: 'diamond',
+                    size: {},
                     color: 0xffffff,
                     position: {
-                        distance: -3000,
+                        distance: 300,
                         angle: 40
                     }
                 },
@@ -59737,76 +61106,188 @@ module.exports = (function(){
                         angle: -50
                     }
                 },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3100,
+                        angle: 38
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3500,
+                        angle: -177
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3600,
+                        angle: -168
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3700,
+                        angle: -150
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3140,
+                        angle: 45
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3240,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3300,
+                        angle: 55
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3650,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3675,
+                        angle: 0
+                    }
+                },
 
 
+
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (700 - 500)) + 500,
+                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
                     }
                 },
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (1400 - 1000)) + 1000,
+                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
                     }
                 },
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (1900 - 1500)) + 1500,
+                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
                         angle: 0
                     }
                 },
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (2400 - 2100)) + 2100,
+                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (2800 - 2600)) + 2600,
+                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
                     }
                 },
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(Math.random() * (3100 - 3000)) + 3000,
+                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
-                }
+                },/*
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(330,3500)),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: Math.round(UTIL.randomNumberInRange(3800,4000)),
+                        angle: 0
+                    }
+                }*/
+
 
             ]
         }
     };
 
     return level;
-})();
-},{}],16:[function(require,module,exports){
-module.exports = (function(){
+})(require('../UTIL'),
+require('../COLOR'));
+
+},{"../COLOR":8,"../UTIL":11}],17:[function(require,module,exports){
+module.exports = (function(UTIL){
     var level = {
-        level: 2,
+        level: 4,
         speed: 1,
         way: {
-            length: 4200,
+            length: 5230,
             obstacles : [
                 {
                     type: 'box',
@@ -60698,7 +62179,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (700 - 500)) + 500,
+                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
                     }
                 },
@@ -60707,7 +62188,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (1400 - 1000)) + 1000,
+                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
                     }
                 },
@@ -60716,7 +62197,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (1900 - 1500)) + 1500,
+                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
@@ -60725,7 +62206,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (2400 - 2100)) + 2100,
+                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
@@ -60734,7 +62215,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (2800 - 2600)) + 2600,
+                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
                     }
                 },
@@ -60743,7 +62224,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (3100 - 3000)) + 3000,
+                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
                 },
@@ -60752,7 +62233,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (3500 - 3300)) + 3300,
+                        distance: Math.round(UTIL.randomNumberInRange(3300,3500)),
                         angle: 0
                     }
                 },
@@ -60761,7 +62242,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: Math.round(Math.random() * (4100 - 3800)) + 3800,
+                        distance: Math.round(UTIL.randomNumberInRange(3800,4100)),
                         angle: 0
                     }
                 }
@@ -60772,35 +62253,8 @@ module.exports = (function(){
     };
 
     return level;
-})();
-},{}],17:[function(require,module,exports){
-module.exports = (function(){
-    var level = {
-        level: 3,
-        speed: 1,
-        way: {
-            length: 1000,
-            obstacles : [
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 500,
-                        angle: 0
-                    }
-                }
-            ]
-        }
-    };
-
-    return level;
-})();
-},{}],18:[function(require,module,exports){
+})(require("../UTIL.js"));
+},{"../UTIL.js":11}],18:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
     "use strict";
@@ -60811,9 +62265,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var mainScene;
     var level = [
         {},
-        new Level(1),
-        new Level(2),
-        new Level(3)
+        new Level(1, 1),
+        new Level(2, 1),
+        new Level(3, 1),
+        new Level(4, 1)
     ];
     var currentLevel = 1;
     var URLpath = '';
@@ -60934,7 +62389,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var height = $('.sk-folding-cube').height() + $('.loading p').height();
         $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
         Protagonist.init(function(){
-            mainScene = new Scene(window.innerWidth, window.innerHeight);
+            var background = level[currentLevel].background();
+            mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(mainScene.renderer.domElement);
             //remove loading icon
             $(".sk-folding-cube").remove();
@@ -60970,6 +62426,18 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       }
     });
 
+    var intro = function(){
+      $('.blackOverlay').fadeOut(1000);
+      var docHeight = window.innerHeight;
+      var introHeight = $('div.intro').height();
+      console.log('aaaaa');
+      console.log(docHeight);
+      console.log(introHeight);
+      console.log((docHeight-introHeight)/2);
+      $('div.intro').css('marginTop', (docHeight-introHeight)/2);
+    };
+
+    window.intro = intro;
     window.main = main;
 
 })(
@@ -60984,7 +62452,112 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Powerups')
 );
 
-},{"./Keybindings":9,"./Scene":11,"./level/Level":13,"./level/Powerups":14,"./protagonist/Protagonist":23,"async":1,"jquery":4,"three":6,"tween.js":7}],19:[function(require,module,exports){
+},{"./Keybindings":9,"./Scene":10,"./level/Level":12,"./level/Powerups":13,"./protagonist/Protagonist":24,"async":1,"jquery":3,"three":6,"tween.js":7}],19:[function(require,module,exports){
+module.exports = (function (THREE) {
+
+    /**
+     * Represents Particles
+     * @param {number} minX - minimum x value
+     * @param {number} maxX -maximum x value
+     * @param {number} minY - minimum y value
+     * @param {number} maxY - maximum y value
+     * @param {number} minZ - minimum z value
+     * @param {number} maxZ - maximum z value
+     * @param {number} amount - amount of particles distributed in given space
+     * @constructor
+     */
+    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
+        this.group = new THREE.Group();
+        this.particle = null;
+        this.amount = amount;
+        this.x = {
+            min: minX,
+            max: maxX
+        };
+        this.y = {
+            min: minY,
+            max: maxY
+        };
+        this.z = {
+            min: minZ,
+            max: maxZ
+        };
+        this.init();
+    }
+
+    /**
+     * adds the particles to the mainScene
+     */
+    Particles.prototype.init = function () {
+        var self = this;
+        for (var i = 0; i < self.amount; i++) {
+            self.particle = new THREE.Mesh(
+                new THREE.SphereGeometry(1, 32, 32),
+                new THREE.MeshBasicMaterial()
+            );
+            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
+            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
+            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
+            self.group.add(self.particle);
+        }
+    };
+
+    /**
+     * animates the particles in the mainScene
+     */
+    Particles.prototype.animate = function () {
+        this.group.rotation.z += 0.0004;
+    };
+
+    /**
+     * rotates the way around the z axis according to given angle
+     * @param {number} angle
+     */
+    Particles.prototype.rotate = function (angle) {
+        this.group.rotation.z += angle;
+    };
+
+    /**
+     * positions particles according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Particles.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
+    };
+
+    /**
+     * adds particles to given scene
+     * @param {THREE.Scene} scene - scene to which the particles will be added
+     */
+    Particles.prototype.addToScene = function (scene) {
+        scene.add(this.group);
+    };
+
+    /**
+     * removes particles from given scene
+     * @param {THREE.Scene} scene - scene from which the particles will be removed
+     */
+    Particles.prototype.removeFromScene = function (scene) {
+        scene.remove(this.group);
+    };
+
+    /**
+     * calculates random integer from interval
+     * @param {number} min
+     * @param {number} max
+     * @returns {number}
+     */
+    Particles.randomIntFromInterval = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    };
+
+    return Particles;
+})(
+    require('three')
+);
+},{"three":6}],20:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -61035,12 +62608,13 @@ module.exports = (function(COLOR, THREE){
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":8,"three":6}],20:[function(require,module,exports){
+
+},{"../COLOR":8,"three":6}],21:[function(require,module,exports){
 module.exports = (function () {
     function CollisionDetector(obstacles) {
         this.obstacles = obstacles;
     }
-
+    var removed = []
     /**
      *
      * @param {Object} currentPosition - contains the current distance and angle
@@ -61048,8 +62622,24 @@ module.exports = (function () {
      */
     CollisionDetector.prototype.collision = function (currentPosition) {
 
+
         for (var i = 0; i < this.obstacles.length; i++) {
-            
+
+            if (
+                (this.obstacles[i].collisionData.distance.max < currentPosition.distance)
+                ||
+                ( this.obstacles[i].collisionData.type == "ring" && this.obstacles[i].collisionData.distance < currentPosition.distance)
+            ){
+                var index = this.obstacles.indexOf(this.obstacles[i]);
+
+                if(index > -1){
+                    removed = this.obstacles.splice(index, 1);
+
+                }
+
+
+            }
+
             if (
                 (
                     //ring collision
@@ -61074,6 +62664,7 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
+
                 return {
                     collision: true,
                     type: this.obstacles[i].collisionData.type,
@@ -61090,7 +62681,7 @@ module.exports = (function () {
 
     return CollisionDetector;
 })();
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -61141,7 +62732,8 @@ module.exports = (function (COLOR, THREE) {
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":8,"three":6}],22:[function(require,module,exports){
+
+},{"../COLOR":8,"three":6}],23:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -61192,8 +62784,9 @@ module.exports = (function (COLOR, THREE) {
     require('../COLOR'),
     require('three')
 );
-},{"../COLOR":8,"three":6}],23:[function(require,module,exports){
-module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
+
+},{"../COLOR":8,"three":6}],24:[function(require,module,exports){
+module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
     /**
      * Represents Protagonist
@@ -61211,10 +62804,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
             leg: new Leg()
         };
         this.groupBodyParts();
-
-        this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
-
         this.isJumping = false;
     }
 
@@ -61236,20 +62826,41 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * Makes protagonist jump a given height
      */
     Protagonist.prototype.jump = function () {
-        var self = this;
-        if (!self.isJumping) {
-            self.isJumping = true;
-            var tween = new TWEEN
-                .Tween({jump: 0})
-                .to({jump: Math.PI}, 500)
-                .onUpdate(function () {
-                    self.group.position.y = 40 * Math.sin(this.jump);
-                })
-                .start();
-            tween.onComplete(function () {
-                self.isJumping = false;
-            });
+        if(Cookies.get('powerup-2') == "bought") {
+
+            var self = this;
+            if (!self.isJumping) {
+                self.isJumping = true;
+                var tween = new TWEEN
+                    .Tween({jump: 0})
+                    .to({jump: Math.PI}, 700)
+                    .onUpdate(function () {
+                        self.group.position.y = 70 * Math.sin(this.jump);
+                    })
+                    .start();
+                tween.onComplete(function () {
+                    self.isJumping = false;
+                });
+            }
+
         }
+        else{
+            var self = this;
+            if (!self.isJumping) {
+                self.isJumping = true;
+                var tween = new TWEEN
+                    .Tween({jump: 0})
+                    .to({jump: Math.PI}, 700)
+                    .onUpdate(function () {
+                        self.group.position.y = 40 * Math.sin(this.jump);
+                    })
+                    .start();
+                tween.onComplete(function () {
+                    self.isJumping = false;
+                });
+            }
+        }
+
     };
 
     /**
@@ -61357,15 +62968,17 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
     require('../COLOR'),
     require('jquery'),
     require('three'),
-    require('tween.js')
+    require('tween.js'),
+    require('js-cookie')
 );
-},{"../COLOR":8,"./Body":19,"./Head":21,"./Leg":22,"jquery":4,"three":6,"tween.js":7}],24:[function(require,module,exports){
+
+},{"../COLOR":8,"./Body":20,"./Head":22,"./Leg":23,"jquery":3,"js-cookie":4,"three":6,"tween.js":7}],25:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":3}],25:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],26:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"powerups row \">");_.b("\n" + i);_.b("  <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>Powerups</b></br>");_.b("\n" + i);_.b("    <span>Total: <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span> <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></span>");_.b("\n" + i);_.b("  </div>");_.b("\n" + i);_.b("  <div class=\"large-centered medium-centered small-centered\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,313,688,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            </br>");_.b("\n" + i);_.b("            <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("  </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":3}],26:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">\r");_.b("\n" + i);_.b("    <div class=\"wrapper\">\r");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>\r");_.b("\n" + i);_.b("        <br><br>\r");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>\r");_.b("\n" + i);_.b("        <br>\r");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">\r");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again\r");_.b("\n" + i);_.b("        </a>\r");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">\r");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level\r");_.b("\n" + i);_.b("        </a>\r");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>\r");_.b("\n" + i);_.b("    </div>\r");_.b("\n" + i);_.b("</div>\r");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":3}],27:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],27:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],28:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
      * Represents way
@@ -61373,7 +62986,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
      * @param {number} speed how fast the way should move
      * @constructor
      */
-    function Way(length, speed) {
+    function Way(length, speed, color) {
         this.length = length;
         this.speed = speed;
 
@@ -61384,8 +62997,10 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
         this.radius = 80;
         this.segments = 1000;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
-        this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
+        this.material = new THREE.MeshLambertMaterial({color: color});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
         this.group.add(this.mesh);
 
         this.currentPosition = {
@@ -61394,7 +63009,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
             anglemax: 5,
             distance: 50,
             height: 0
-        }
+        };
     }
 
     /**
@@ -61411,13 +63026,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
      * moves way direction z positive
      */
-    Way.prototype.moveForwardTillEnd = function () {
-        this.group.position.z++;
-        this.currentPosition.distance++;
+    Way.prototype.moveForwardTillEnd = function (speed) {
+        this.group.position.z = this.group.position.z + speed;
+        this.currentPosition.distance = this.currentPosition.distance + speed;
         //TODO remove this after finished programming
         $('.anzeige .distance span').html(this.currentPosition.distance);
-        $('.anzeige .anglemax span').html(this.currentPosition.anglemax);
-        $('.anzeige .anglemin span').html(this.currentPosition.anglemin);
     };
 
     /**
@@ -61425,12 +63038,20 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
      * @param {number} angle
      */
     Way.prototype.rotate = function (angle) {
+        if(UTIL.convertRadiansToDegrees(this.group.rotation.y)>= 360 )
+        {
+            this.group.rotation.y = 0;
+        }
+        else if(UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0 )
+        {
+            this.group.rotation.y = UTIL.convertDegreesToRadians(360);
+        }
         this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
         this.currentPosition.anglemax = this.currentPosition.angle + 5;
-        //TODO remove this after finished programming
-        $('.anzeige .angle span').html(Math.round(UTIL.convertRadiansToDegrees(this.group.rotation.y)));
+        $('.anzeige .angle span').html(this.currentPosition.angle);
+
     };
 
     /**
@@ -61467,7 +63088,8 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     require('../UTIL'),
     require('jquery')
 );
-},{"../COLOR":8,"../UTIL":12,"./obstacles/Obstacle":30,"jquery":4,"three":6}],28:[function(require,module,exports){
+
+},{"../COLOR":8,"../UTIL":11,"./obstacles/Obstacle":31,"jquery":3,"three":6}],29:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -61479,6 +63101,8 @@ module.exports=(function(THREE, UTIL){
         this.material = new THREE.MeshLambertMaterial({color: box.color});
         this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**
@@ -61530,8 +63154,9 @@ module.exports=(function(THREE, UTIL){
     require('three'),
     require('../../UTIL')
 );
-},{"../../UTIL":12,"three":6}],29:[function(require,module,exports){
-module.exports = (function(THREE, UTIL){
+
+},{"../../UTIL":11,"three":6}],30:[function(require,module,exports){
+module.exports = (function(THREE, UTIL, Cookies){
     var size = 10;
     var heightFromWay = 20;
 
@@ -61542,8 +63167,14 @@ module.exports = (function(THREE, UTIL){
      */
     function Diamond(diamond){
         this.geometry = new THREE.OctahedronGeometry(size, 0);
-        this.material = new THREE.MeshLambertMaterial({color: diamond.color});
+        this.material = new THREE.MeshLambertMaterial({
+          color: diamond.color,
+          transparent: true,
+          opacity: 0.6
+        });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        //this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**
@@ -61574,15 +63205,16 @@ module.exports = (function(THREE, UTIL){
         //var a = radius + heightFromWay - 0.5* size;
         //var b = size*0.5;
         //var angleRight = Math.atan(b/a);
-        var ret = {
+        if(Cookies.get('powerup-3') == "bought"){
+            var ret = {
             type: 'diamond',
             size: {
                 height: heightFromWay
             },
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
+                min: obstacle.position.angle - 25, //UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + 25 //UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
@@ -61590,16 +63222,38 @@ module.exports = (function(THREE, UTIL){
                 max: obstacle.position.distance+10// + (0.5*size)
             }
         };
-        return ret;
+            return ret;
+        }
+        else{
+            var ret = {
+                type: 'diamond',
+                size: {
+                    height: heightFromWay
+                },
+                angle: {
+                    center: obstacle.position.angle,
+                    min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
+                    max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
+                },
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance-10, /// - (0.5*size),
+                    max: obstacle.position.distance+10// + (0.5*size)
+                }
+            };
+            return ret;
+        }
+
     };
 
     return Diamond;
 })(
     require('three'),
-    require('../../UTIL')
+    require('../../UTIL'),
+    require('js-cookie')
 );
 
-},{"../../UTIL":12,"three":6}],30:[function(require,module,exports){
+},{"../../UTIL":11,"js-cookie":4,"three":6}],31:[function(require,module,exports){
 module.exports = (function (Box, Ring, Diamond, Opponent) {
     var obstacleTypes = {
         box: Box,
@@ -61655,7 +63309,7 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
     require('./Diamond'),
     require('./Opponent')
 );
-},{"./Box":28,"./Diamond":29,"./Opponent":31,"./Ring":32}],31:[function(require,module,exports){
+},{"./Box":29,"./Diamond":30,"./Opponent":32,"./Ring":33}],32:[function(require,module,exports){
 module.exports= (function(Protagonist, UTIL, THREE){
     var heightFromWay = 20;
 
@@ -61701,7 +63355,7 @@ module.exports= (function(Protagonist, UTIL, THREE){
     require('three')
 );
 
-},{"../../UTIL":12,"../../protagonist/Protagonist":23,"three":6}],32:[function(require,module,exports){
+},{"../../UTIL":11,"../../protagonist/Protagonist":24,"three":6}],33:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
     var radius = 100;
@@ -61715,6 +63369,8 @@ module.exports = (function () {
         this.material = new THREE.MeshLambertMaterial({color: ring.color});
         this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**
@@ -61752,4 +63408,5 @@ module.exports = (function () {
 
     return Ring;
 })();
+
 },{}]},{},[18]);

@@ -6,17 +6,16 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
      * @param {number} height - height of browser window
      * @constructor
      */
-    function Scene(width, height) {
+    function Scene(width, height, background) {
         this.width = width;
         this.height = height;
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
         this.renderer = new THREE.WebGLRenderer();
-        this.scene.background = new THREE.Color( COLOR.background );
+        this.scene.background = new THREE.Color( background);
         this.renderer.setSize(this.width, this.height);
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMapSoft = false;
+        this.renderer.shadowMap.enabled = false;
 
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
@@ -43,7 +42,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
     Scene.prototype.addLights = function () {
         this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
 
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.2);//0xffffff, 1);
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);//0xffffff, 1);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
         this.lights.shadow.position.y += 1000;
@@ -51,19 +50,20 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.lights.shadow.castShadow = true;
 
         //visible area of the projected shadow
-        this.lights.shadow.shadow.camera.left = -4000;
-        this.lights.shadow.shadow.camera.right = 4000;
-        this.lights.shadow.shadow.camera.top = 4000;
-        this.lights.shadow.shadow.camera.bottom = -4000;
+        this.lights.shadow.shadow.camera.left = -1000;
+        this.lights.shadow.shadow.camera.right = 1000;
+        this.lights.shadow.shadow.camera.top = 1000;
+        this.lights.shadow.shadow.camera.bottom = -1000;
         this.lights.shadow.shadow.camera.near = 1;
-        this.lights.shadow.shadow.camera.far = 4000;
+        this.lights.shadow.shadow.camera.far = 2000;
 
         //resolution
-        this.lights.shadow.shadow.mapSize.width = 1000;
-        this.lights.shadow.shadow.mapSize.height = 1000;
-
+        this.lights.shadow.shadow.mapSize.width = 2048;
+        this.lights.shadow.shadow.mapSize.height = 2048;
+        //this.lights.shadow.shadowDarkness = 0.1;
         this.scene.add(this.lights.hemisphere);
         this.scene.add(this.lights.shadow);
+        this.scene.add( new THREE.AmbientLight( 0xffffff, 0.3 ) );
     };
 
     /**

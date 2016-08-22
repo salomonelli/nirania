@@ -1,9 +1,13 @@
-module.exports = (function(UTIL){
+module.exports = (function(UTIL, COLOR){
+  var boxColor = COLOR.palette[2].box;
+  var ringColor = COLOR.palette[2].ring;
     var level = {
         level: 3,
         speed: 1,
+        background: COLOR.palette[2].background,
         way: {
             length: 4230,
+            color: COLOR.palette[2].way,
             obstacles : [
                 {
                     type: 'box',
@@ -12,7 +16,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 350,
                         angle: 20
@@ -25,7 +29,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 450,
                         angle: 60
@@ -38,7 +42,7 @@ module.exports = (function(UTIL){
                         length: 300,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 557,
                         angle: -60
@@ -51,7 +55,7 @@ module.exports = (function(UTIL){
                         length: 300,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 557,
                         angle: -100
@@ -64,7 +68,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 760,
                         angle: -20
@@ -77,7 +81,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 824,
                         angle: -45
@@ -90,7 +94,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 10
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 863,
                         angle: 71
@@ -103,7 +107,7 @@ module.exports = (function(UTIL){
                         length: 80,
                         height: 50
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 934,
                         angle: 83
@@ -116,7 +120,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1068,
                         angle: -78
@@ -129,7 +133,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1162,
                         angle: 37
@@ -142,7 +146,7 @@ module.exports = (function(UTIL){
                         length: 35,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1357,
                         angle: 20
@@ -155,7 +159,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 30
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1447,
                         angle: -79
@@ -168,7 +172,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 40
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1457,
                         angle: -50
@@ -181,7 +185,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1625,
                         angle: -89
@@ -194,7 +198,7 @@ module.exports = (function(UTIL){
                         length: 5,
                         height: 1
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1721,
                         angle: 9
@@ -207,7 +211,7 @@ module.exports = (function(UTIL){
                         length: 75,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1843,
                         angle: 76
@@ -220,7 +224,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1900,
                         angle: -81
@@ -233,7 +237,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1973,
                         angle: -70
@@ -246,7 +250,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xff0000,
+                    color: boxColor,
                     position: {
                         distance: 2000,
                         angle: 0
@@ -259,7 +263,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1420,
                         angle: -36
@@ -272,7 +276,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1420,
                         angle: -90
@@ -285,7 +289,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1532,
                         angle: -102
@@ -298,7 +302,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1635,
                         angle: -154
@@ -311,7 +315,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 546,
                         angle: -167
@@ -324,7 +328,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 892,
                         angle: 180
@@ -337,7 +341,7 @@ module.exports = (function(UTIL){
                         length: 200,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1057,
                         angle: 152
@@ -350,7 +354,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 60
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1500,
                         angle: -170
@@ -363,7 +367,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1290,
                         angle: 159
@@ -376,7 +380,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1923,
                         angle: 64
@@ -389,7 +393,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2046,
                         angle: -65
@@ -402,7 +406,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2298,
                         angle: -76
@@ -415,7 +419,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2438,
                         angle: -91
@@ -428,7 +432,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2675,
                         angle: -95
@@ -441,7 +445,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2865,
                         angle: 25
@@ -454,7 +458,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2964,
                         angle: -27
@@ -467,7 +471,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3100,
                         angle: 43
@@ -480,7 +484,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2567,
                         angle: 170
@@ -493,7 +497,7 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2750,
                         angle: -153
@@ -506,7 +510,7 @@ module.exports = (function(UTIL){
                         length: 100,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3050,
                         angle: 138
@@ -519,7 +523,7 @@ module.exports = (function(UTIL){
                         length: 100,
                         height: 10
                     },
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2679,
                         angle: -81
@@ -893,7 +897,7 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
@@ -902,7 +906,7 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
@@ -911,7 +915,7 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
                         angle: 0
@@ -920,7 +924,7 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
@@ -929,7 +933,7 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
@@ -938,16 +942,16 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
-                },
+                },/*
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
                         distance: Math.round(UTIL.randomNumberInRange(330,3500)),
                         angle: 0
@@ -956,12 +960,12 @@ module.exports = (function(UTIL){
                 {
                     type: 'ring',
                     size: {},
-                    color: 0xffffff,
+                    color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3800,4200)),
+                        distance: Math.round(UTIL.randomNumberInRange(3800,4000)),
                         angle: 0
                     }
-                }
+                }*/
 
 
             ]
@@ -969,4 +973,5 @@ module.exports = (function(UTIL){
     };
 
     return level;
-})(require("../UTIL.js"));
+})(require('../UTIL'),
+require('../COLOR'));

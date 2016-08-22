@@ -132,7 +132,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var height = $('.sk-folding-cube').height() + $('.loading p').height();
         $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
         Protagonist.init(function(){
-            mainScene = new Scene(window.innerWidth, window.innerHeight);
+            var background = level[currentLevel].background();
+            mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(mainScene.renderer.domElement);
             //remove loading icon
             $(".sk-folding-cube").remove();
@@ -172,7 +173,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       $('.blackOverlay').fadeOut(1000);
       var docHeight = window.innerHeight;
       var introHeight = $('div.intro').height();
-      console.log('aaaaa'); 
+      console.log('aaaaa');
       console.log(docHeight);
       console.log(introHeight);
       console.log((docHeight-introHeight)/2);

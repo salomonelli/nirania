@@ -1,4 +1,4 @@
-module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+module.exports = (function(THREE, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
     var levels = [
         level1,
@@ -30,8 +30,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
     Level.prototype.prepare = function() {
         var self = this;
         var current = levels[self.current - 1];
-        this.way = new Way(current.way.length, current.speed);
-
+        this.way = new Way(current.way.length, current.speed, current.way.color);
 
         this.way.addObstacles(current.way.obstacles);
 
@@ -89,7 +88,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
                         break;
                 }
             } else {
-               
+
 
                     if (t > 0) {
                         setTimeout(function() {
@@ -99,8 +98,8 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
                         cb();
                         return;
                     }
-                
-                    
+
+
 
             }
         };
@@ -214,6 +213,15 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
         }
     };
 
+    /**
+     * returns background color for level
+     * @returns {number} color as hexdecimal
+     */
+    Level.prototype.background = function(){
+      var current = levels[this.current - 1];
+      return current.background;
+    };
+
     Level.getTotalDiamonds = function() {
         return Cookies.get('total');
     };
@@ -239,10 +247,11 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
     };
 
 
+
+
     return Level;
 })(
     require('three'),
-    require('../COLOR'),
     require('../way/Way'),
     require('./level1'),
     require('./level2'),

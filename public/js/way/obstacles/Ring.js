@@ -11,6 +11,8 @@ module.exports = (function () {
         this.material = new THREE.MeshLambertMaterial({color: ring.color});
         this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**

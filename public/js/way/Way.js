@@ -5,7 +5,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
      * @param {number} speed how fast the way should move
      * @constructor
      */
-    function Way(length, speed) {
+    function Way(length, speed, color) {
         this.length = length;
         this.speed = speed;
 
@@ -16,8 +16,10 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
         this.radius = 80;
         this.segments = 1000;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
-        this.material = new THREE.MeshLambertMaterial({color: COLOR.way});
+        this.material = new THREE.MeshLambertMaterial({color: color});
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
         this.group.add(this.mesh);
 
         this.currentPosition = {

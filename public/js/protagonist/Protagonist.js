@@ -16,10 +16,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
             leg: new Leg()
         };
         this.groupBodyParts();
-
-        this.group.castShadow = true;
         this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
-
         this.isJumping = false;
     }
 

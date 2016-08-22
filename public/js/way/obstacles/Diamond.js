@@ -9,8 +9,14 @@ module.exports = (function(THREE, UTIL, Cookies){
      */
     function Diamond(diamond){
         this.geometry = new THREE.OctahedronGeometry(size, 0);
-        this.material = new THREE.MeshLambertMaterial({color: diamond.color});
+        this.material = new THREE.MeshLambertMaterial({
+          color: diamond.color,
+          transparent: true,
+          opacity: 0.6
+        });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        //this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**

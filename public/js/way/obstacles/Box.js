@@ -9,6 +9,8 @@ module.exports=(function(THREE, UTIL){
         this.material = new THREE.MeshLambertMaterial({color: box.color});
         this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
     }
 
     /**
