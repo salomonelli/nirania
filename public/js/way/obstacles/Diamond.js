@@ -1,4 +1,4 @@
-module.exports = (function(THREE, UTIL){
+module.exports = (function(THREE, UTIL, Cookies){
     var size = 10;
     var heightFromWay = 20;
 
@@ -41,15 +41,16 @@ module.exports = (function(THREE, UTIL){
         //var a = radius + heightFromWay - 0.5* size;
         //var b = size*0.5;
         //var angleRight = Math.atan(b/a);
-        var ret = {
+        if(Cookies.get('powerup-3') == "bought"){
+            var ret = {
             type: 'diamond',
             size: {
                 height: heightFromWay
             },
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
+                min: obstacle.position.angle - 25, //UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + 25 //UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
@@ -57,11 +58,33 @@ module.exports = (function(THREE, UTIL){
                 max: obstacle.position.distance+10// + (0.5*size)
             }
         };
-        return ret;
+            return ret;
+        }
+        else{
+            var ret = {
+                type: 'diamond',
+                size: {
+                    height: heightFromWay
+                },
+                angle: {
+                    center: obstacle.position.angle,
+                    min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
+                    max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
+                },
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance-10, /// - (0.5*size),
+                    max: obstacle.position.distance+10// + (0.5*size)
+                }
+            };
+            return ret;
+        }
+
     };
 
     return Diamond;
 })(
     require('three'),
-    require('../../UTIL')
+    require('../../UTIL'),
+    require('js-cookie')
 );

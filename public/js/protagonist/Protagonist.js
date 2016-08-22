@@ -1,4 +1,4 @@
-module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
+module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
     /**
      * Represents Protagonist
@@ -41,20 +41,41 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
      * Makes protagonist jump a given height
      */
     Protagonist.prototype.jump = function () {
-        var self = this;
-        if (!self.isJumping) {
-            self.isJumping = true;
-            var tween = new TWEEN
-                .Tween({jump: 0})
-                .to({jump: Math.PI}, 700)
-                .onUpdate(function () {
-                    self.group.position.y = 40 * Math.sin(this.jump);
-                })
-                .start();
-            tween.onComplete(function () {
-                self.isJumping = false;
-            });
+        if(Cookies.get('powerup-2') == "bought") {
+
+            var self = this;
+            if (!self.isJumping) {
+                self.isJumping = true;
+                var tween = new TWEEN
+                    .Tween({jump: 0})
+                    .to({jump: Math.PI}, 700)
+                    .onUpdate(function () {
+                        self.group.position.y = 70 * Math.sin(this.jump);
+                    })
+                    .start();
+                tween.onComplete(function () {
+                    self.isJumping = false;
+                });
+            }
+
         }
+        else{
+            var self = this;
+            if (!self.isJumping) {
+                self.isJumping = true;
+                var tween = new TWEEN
+                    .Tween({jump: 0})
+                    .to({jump: Math.PI}, 700)
+                    .onUpdate(function () {
+                        self.group.position.y = 40 * Math.sin(this.jump);
+                    })
+                    .start();
+                tween.onComplete(function () {
+                    self.isJumping = false;
+                });
+            }
+        }
+
     };
 
     /**
@@ -162,5 +183,6 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
     require('../COLOR'),
     require('jquery'),
     require('three'),
-    require('tween.js')
+    require('tween.js'),
+    require('js-cookie')
 );
