@@ -55,8 +55,6 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
      * @param {number} angle
      */
     Way.prototype.rotate = function (angle) {
-
-        console.log(this.group.rotation.y);
         if(UTIL.convertRadiansToDegrees(this.group.rotation.y)>= 360 )
         {
             this.group.rotation.y = 0;

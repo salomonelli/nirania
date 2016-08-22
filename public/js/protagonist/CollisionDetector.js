@@ -12,7 +12,7 @@ module.exports = (function () {
 
         for (var i = 0; i < this.obstacles.length; i++) {
 
-
+          
             if (
                 (
                     //ring collision
@@ -37,9 +37,7 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
-                
                 return {
-
                     collision: true,
                     type: this.obstacles[i].collisionData.type,
                     mesh: this.obstacles[i].mesh
