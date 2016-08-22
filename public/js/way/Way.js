@@ -61,15 +61,14 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
         {
             this.group.rotation.y = 0;
         }
-        else if(UTIL.convertRadiansToDegrees(this.group.rotation.y)<= -360 )
+        else if(UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0 )
         {
-            this.group.rotation.y = 0;
+            this.group.rotation.y = UTIL.convertDegreesToRadians(360);
         }
         this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
         this.currentPosition.anglemax = this.currentPosition.angle + 5;
-
         $('.anzeige .angle span').html(this.currentPosition.angle);
 
     };

@@ -28,7 +28,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 760,
-                        angle: -20
+                        angle: 340
                     }
                 },
                 {
@@ -41,7 +41,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 824,
-                        angle: -45
+                        angle: 315
                     }
                 },
                 {
@@ -93,7 +93,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1068,
-                        angle: -78
+                        angle: 282
                     }
                 },
                 {
@@ -145,7 +145,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1420,
-                        angle: -36
+                        angle: 324
                     }
                 },
                 {
@@ -158,7 +158,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1500,
-                        angle: -170
+                        angle: 190
                     }
                 },
                 {
@@ -171,7 +171,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1507,
-                        angle: -50
+                        angle: 210
                     }
                 },
                 {
@@ -184,7 +184,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1532,
-                        angle: -102
+                        angle: 258
                     }
                 },
                 {
@@ -197,7 +197,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1625,
-                        angle: -89
+                        angle: 271
                     }
                 },
                 {
@@ -210,7 +210,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1635,
-                        angle: -154
+                        angle: 206
                     }
                 },
                 {
@@ -249,7 +249,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1900,
-                        angle: -81
+                        angle: 279
                     }
                 },
                 {
@@ -275,7 +275,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1973,
-                        angle: -130
+                        angle: 230
                     }
                 },
                 {
@@ -288,7 +288,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2046,
-                        angle: -65
+                        angle: 295
                     }
                 },
 
@@ -353,7 +353,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 700,
-                        angle: -90
+                        angle: 270
                     }
                 },
                 {
@@ -362,7 +362,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 770,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -371,7 +371,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 800,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -380,7 +380,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 950,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -389,7 +389,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1000,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -398,7 +398,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1050,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -443,7 +443,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1700,
-                        angle: -15
+                        angle: 345
                     }
                 },
                 {
@@ -452,7 +452,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1750,
-                        angle: -20
+                        angle: 340
                     }
                 },
                 {
@@ -461,7 +461,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1800,
-                        angle: -25
+                        angle: 335
                     }
                 },
                 {
@@ -470,7 +470,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1950,
-                        angle: -30
+                        angle: 2
                     }
                 },
                 {
@@ -479,7 +479,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2000,
-                        angle: -30
+                        angle: 330
                     }
                 },
                 {
@@ -488,7 +488,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2050,
-                        angle: -30
+                        angle: 330
                     }
                 },
                 {
@@ -497,7 +497,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2500,
-                        angle: -40
+                        angle: 330
                     }
                 },
                 {
@@ -506,7 +506,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2550,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -515,7 +515,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2600,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -524,7 +524,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2650,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -533,7 +533,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2750,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -542,7 +542,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2800,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -551,7 +551,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 2900,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -560,7 +560,7 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 3000,
-                        angle: -50
+                        angle: 310
                     }
                 }
 
