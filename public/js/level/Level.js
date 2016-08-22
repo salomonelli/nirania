@@ -1,11 +1,17 @@
-module.exports = (function(THREE, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
 
     var levels = [
-        level1,
-        level2,
-        level3,
-        level4
+        require('./level1'),
+        require('./level2'),
+        require('./level3'),
+        require('./level4')
     ];
+
+    var _templates = {
+        successScreen: require('../templates/success.mustache'),
+        gameoverScreen: require('../templates/gameover.mustache'),
+        shopScreen: require('../templates/shop.mustache')
+    };
 
     /**
      * Represents Level
@@ -21,7 +27,7 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        console.log("Aktueller Speed: "+ this.speed);
+        console.log("Aktueller Speed: " + this.speed);
     }
 
     /**
@@ -48,62 +54,42 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
-        var t = self.way.length - 80 ;
+        var t = self.way.length - 80;
+
+        var speedMulti = 1;
+        if (Cookies.get('powerup-1') == "bought") speedMulti = 2;
+
         var animate = function() {
             //move way and obstacles
+            t = t - speedMulti;
+            self.way.moveForwardTillEnd(self.speed * speedMulti);
 
-            if(Cookies.get('powerup-1') == "bought") {
-                t--;
-                t--;
-                self.way.moveForwardTillEnd(self.speed* 2);
+            if (t <= 0) {
+                //end is reached
+                cb();
+                return;
+            }
 
-            }
-            else{
-                t--;
-                self.way.moveForwardTillEnd(self.speed);
-            }
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
-            if (collObj.collision) {
-                switch (collObj.type) {
-                    case "box":
-                    case "ring":
-                        self.gameOver = true;
-                        cb();
-                        return;
-                    case "diamond":
-                        self.hitDiamond(collObj);
-                        if (t > 0) {
-                            setTimeout(function() {
-                                animate();
-                            }, self.speed);
-                        } else {
-                            cb();
-                            return;
-                        }
-                        break;
-                    default:
-                        console.log('Level.prototype.begin(): Obstacle type is unknown.');
-                        break;
-                }
-            } else {
-
-
-                    if (t > 0) {
-                        setTimeout(function() {
-                            animate();
-                        }, 0.00001) ;
-                    } else {
-                        cb();
-                        return;
-                    }
-
-
+            switch (collObj.type) {
+                case "box":
+                case "ring":
+                    self.gameOver = true;
+                    cb();
+                    return;
+                case "diamond":
+                    self.hitDiamond(collObj);
+                    break;
 
             }
+            setTimeout(function() {
+                animate();
+            }, self.speed);
         };
-        animate();
+
+        animate(); //once
     };
 
     /**
@@ -112,23 +98,11 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
-        if (self.lastDiamond == null){
+        if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
             self.lastDiamond = collObj;
             self.diamonds++;
-            self.lastDiamond.mesh.position.y = -5000;
-            self.lastDiamond.mesh.position.z = -5000;
-            self.lastDiamond.mesh.position.x = -5000;
+            self.lastDiamond.mesh.visible = false;
             $('.anzeige .diamonds span').html(self.diamonds);
-        }
-        else {
-            if (collObj.mesh.id != self.lastDiamond.mesh.id) {
-                self.lastDiamond = collObj;
-                self.diamonds++;
-                self.lastDiamond.mesh.position.y = -5000;
-                self.lastDiamond.mesh.position.z = -5000;
-                self.lastDiamond.mesh.position.x = -5000;
-                $('.anzeige .diamonds span').html(self.diamonds);
-            }
         }
     };
 
@@ -136,36 +110,37 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * renders hogan tempalte success.mustache and adds it to html-body
      */
     Level.prototype.showSuccessScreen = function() {
-        var last;
-        if (this.current === levels.length) {
-            last = "gone";
-        } else {
-            last = "";
-        }
-        var obj = {
+        var last = '';
+        if (this.current === levels.length) last = "gone";
+
+
+        var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
             last: last
-        };
-        var html = successScreen.render(obj);
+        });
         $('body').append(html);
         this.showShopScreen();
+
+        //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
         $('#successScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
-     * renders hogan tempalte gameover.mustache and adds it to html-body
+     * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-        var obj = {
+
+        var html = _templates.gameoverScreen.render({
             score: this.diamonds,
             level: this.current
-        };
-        var html = gameoverScreen.render(obj);
+        });
+
         $('body').append(html);
         this.showShopScreen();
+        //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
     };
@@ -174,21 +149,17 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * adds shop screen
      */
     Level.prototype.showShopScreen = function() {
-        var powerups = Powerups.getPowerups();
         var self = this;
+        var powerups = Powerups.getPowerups();
         powerups.forEach(function(powerup) {
+            powerup.disabled = "disabled";
             if (Powerups.boughtAlready(powerup.id)) {
                 powerup.disabled = "hidden";
             } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
                 powerup.disabled = "";
-            } else {
-                powerup.disabled = "disabled";
             }
-            powerup.end = "";
         });
-        console.dir(Cookies.get());
-        powerups[powerups.length - 1].end = "end";
-        var html = shopScreen.render({
+        var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
@@ -217,9 +188,9 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * returns background color for level
      * @returns {number} color as hexdecimal
      */
-    Level.prototype.background = function(){
-      var current = levels[this.current - 1];
-      return current.background;
+    Level.prototype.background = function() {
+        var current = levels[this.current - 1];
+        return current.background;
     };
 
     Level.getTotalDiamonds = function() {
@@ -251,18 +222,10 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
 
     return Level;
 })(
-    require('three'),
     require('../way/Way'),
-    require('./level1'),
-    require('./level2'),
-    require('./level3'),
-    require('./level4'),
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
-    require('../templates/success.mustache'),
-    require('../templates/gameover.mustache'),
-    require('../templates/shop.mustache'),
     require('js-cookie'),
     require('./Powerups')
 );

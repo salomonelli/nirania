@@ -58674,14 +58674,20 @@ module.exports = (function(){
 })();
 
 },{}],12:[function(require,module,exports){
-module.exports = (function(THREE, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
 
     var levels = [
-        level1,
-        level2,
-        level3,
-        level4
+        require('./level1'),
+        require('./level2'),
+        require('./level3'),
+        require('./level4')
     ];
+
+    var _templates = {
+        successScreen: require('../templates/success.mustache'),
+        gameoverScreen: require('../templates/gameover.mustache'),
+        shopScreen: require('../templates/shop.mustache')
+    };
 
     /**
      * Represents Level
@@ -58697,7 +58703,7 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        console.log("Aktueller Speed: "+ this.speed);
+        console.log("Aktueller Speed: " + this.speed);
     }
 
     /**
@@ -58724,62 +58730,42 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
-        var t = self.way.length - 80 ;
+        var t = self.way.length - 80;
+
+        var speedMulti = 1;
+        if (Cookies.get('powerup-1') == "bought") speedMulti = 2;
+
         var animate = function() {
             //move way and obstacles
+            t = t - speedMulti;
+            self.way.moveForwardTillEnd(self.speed * speedMulti);
 
-            if(Cookies.get('powerup-1') == "bought") {
-                t--;
-                t--;
-                self.way.moveForwardTillEnd(self.speed* 2);
+            if (t <= 0) {
+                //end is reached
+                cb();
+                return;
+            }
 
-            }
-            else{
-                t--;
-                self.way.moveForwardTillEnd(self.speed);
-            }
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
-            if (collObj.collision) {
-                switch (collObj.type) {
-                    case "box":
-                    case "ring":
-                        self.gameOver = true;
-                        cb();
-                        return;
-                    case "diamond":
-                        self.hitDiamond(collObj);
-                        if (t > 0) {
-                            setTimeout(function() {
-                                animate();
-                            }, self.speed);
-                        } else {
-                            cb();
-                            return;
-                        }
-                        break;
-                    default:
-                        console.log('Level.prototype.begin(): Obstacle type is unknown.');
-                        break;
-                }
-            } else {
-
-
-                    if (t > 0) {
-                        setTimeout(function() {
-                            animate();
-                        }, 0.00001) ;
-                    } else {
-                        cb();
-                        return;
-                    }
-
-
+            switch (collObj.type) {
+                case "box":
+                case "ring":
+                    self.gameOver = true;
+                    cb();
+                    return;
+                case "diamond":
+                    self.hitDiamond(collObj);
+                    break;
 
             }
+            setTimeout(function() {
+                animate();
+            }, self.speed);
         };
-        animate();
+
+        animate(); //once
     };
 
     /**
@@ -58788,23 +58774,11 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
-        if (self.lastDiamond == null){
+        if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
             self.lastDiamond = collObj;
             self.diamonds++;
-            self.lastDiamond.mesh.position.y = -5000;
-            self.lastDiamond.mesh.position.z = -5000;
-            self.lastDiamond.mesh.position.x = -5000;
+            self.lastDiamond.mesh.visible = false;
             $('.anzeige .diamonds span').html(self.diamonds);
-        }
-        else {
-            if (collObj.mesh.id != self.lastDiamond.mesh.id) {
-                self.lastDiamond = collObj;
-                self.diamonds++;
-                self.lastDiamond.mesh.position.y = -5000;
-                self.lastDiamond.mesh.position.z = -5000;
-                self.lastDiamond.mesh.position.x = -5000;
-                $('.anzeige .diamonds span').html(self.diamonds);
-            }
         }
     };
 
@@ -58812,36 +58786,37 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * renders hogan tempalte success.mustache and adds it to html-body
      */
     Level.prototype.showSuccessScreen = function() {
-        var last;
-        if (this.current === levels.length) {
-            last = "gone";
-        } else {
-            last = "";
-        }
-        var obj = {
+        var last = '';
+        if (this.current === levels.length) last = "gone";
+
+
+        var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
             last: last
-        };
-        var html = successScreen.render(obj);
+        });
         $('body').append(html);
         this.showShopScreen();
+
+        //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
         $('#successScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
-     * renders hogan tempalte gameover.mustache and adds it to html-body
+     * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-        var obj = {
+
+        var html = _templates.gameoverScreen.render({
             score: this.diamonds,
             level: this.current
-        };
-        var html = gameoverScreen.render(obj);
+        });
+
         $('body').append(html);
         this.showShopScreen();
+        //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
     };
@@ -58850,21 +58825,17 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * adds shop screen
      */
     Level.prototype.showShopScreen = function() {
-        var powerups = Powerups.getPowerups();
         var self = this;
+        var powerups = Powerups.getPowerups();
         powerups.forEach(function(powerup) {
+            powerup.disabled = "disabled";
             if (Powerups.boughtAlready(powerup.id)) {
                 powerup.disabled = "hidden";
             } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
                 powerup.disabled = "";
-            } else {
-                powerup.disabled = "disabled";
             }
-            powerup.end = "";
         });
-        console.dir(Cookies.get());
-        powerups[powerups.length - 1].end = "end";
-        var html = shopScreen.render({
+        var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
@@ -58893,9 +58864,9 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
      * returns background color for level
      * @returns {number} color as hexdecimal
      */
-    Level.prototype.background = function(){
-      var current = levels[this.current - 1];
-      return current.background;
+    Level.prototype.background = function() {
+        var current = levels[this.current - 1];
+        return current.background;
     };
 
     Level.getTotalDiamonds = function() {
@@ -58927,23 +58898,15 @@ module.exports = (function(THREE, Way, level1, level2, level3, level4, Collision
 
     return Level;
 })(
-    require('three'),
     require('../way/Way'),
-    require('./level1'),
-    require('./level2'),
-    require('./level3'),
-    require('./level4'),
     require('../protagonist/CollisionDetector'),
     require('../way/obstacles/Obstacle'),
     require('jquery'),
-    require('../templates/success.mustache'),
-    require('../templates/gameover.mustache'),
-    require('../templates/shop.mustache'),
     require('js-cookie'),
     require('./Powerups')
 );
 
-},{"../protagonist/CollisionDetector":21,"../templates/gameover.mustache":25,"../templates/shop.mustache":26,"../templates/success.mustache":27,"../way/Way":28,"../way/obstacles/Obstacle":31,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"jquery":3,"js-cookie":4,"three":6}],13:[function(require,module,exports){
+},{"../protagonist/CollisionDetector":21,"../templates/gameover.mustache":25,"../templates/shop.mustache":26,"../templates/success.mustache":27,"../way/Way":28,"../way/obstacles/Obstacle":31,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"jquery":3,"js-cookie":4}],13:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var powerups = [{
             id: 1,
@@ -60242,7 +60205,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
+                        distance: 500, //Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
                     }
                 },
@@ -60251,7 +60214,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        distance: 1000, //Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
                     }
                 },
@@ -60260,7 +60223,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
+                        distance: 1500, //Math.round(UTIL.randomNumberInRange(1500,1900)),
                         angle: 0
                     }
                 },
@@ -60269,7 +60232,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        distance: 2200,//Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
@@ -60278,7 +60241,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        distance: 2600,// Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
                     }
                 },
@@ -60287,7 +60250,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        distance: 2800,//Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
                 }
@@ -62610,77 +62573,96 @@ module.exports = (function(COLOR, THREE){
 );
 
 },{"../COLOR":8,"three":6}],21:[function(require,module,exports){
-module.exports = (function () {
+module.exports = (function() {
+
+    /**
+     * @param {Obstacle} obstacle
+     * @return {number}
+     * @private
+     */
+    var _getMaxDistance = function(obstacle) {
+        if (obstacle.type == 'ring') return obstacle.collisionData.distance;
+        return obstacle.collisionData.distance.max;
+    };
+
+    /**
+     * @param {Obstacle[]} obstacles
+     * @constructor
+     */
     function CollisionDetector(obstacles) {
+        //sort by distance to save performance
+        obstacles = obstacles.sort(function(a, b) {
+            var keyA = _getMaxDistance(a);
+            keyB = _getMaxDistance(b);
+            // Compare the 2 keys
+            if (keyA < keyB) return -1;
+            if (keyA > keyB) return 1;
+            return 0;
+        });
         this.obstacles = obstacles;
     }
-    var removed = []
+
     /**
-     *
-     * @param {Object} currentPosition - contains the current distance and angle
-     * @returns {boolean} - when true, then collision was detected
+     * @param {{distance: number}} currentPosition - contains the current distance and angle
+     * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
      */
-    CollisionDetector.prototype.collision = function (currentPosition) {
-
-
-        for (var i = 0; i < this.obstacles.length; i++) {
-
-            if (
-                (this.obstacles[i].collisionData.distance.max < currentPosition.distance)
-                ||
-                ( this.obstacles[i].collisionData.type == "ring" && this.obstacles[i].collisionData.distance < currentPosition.distance)
-            ){
-                var index = this.obstacles.indexOf(this.obstacles[i]);
-
-                if(index > -1){
-                    removed = this.obstacles.splice(index, 1);
-
-                }
-
-
-            }
-
-            if (
-                (
-                    //ring collision
-                    this.obstacles[i].collisionData.type == "ring" &&
-                    this.obstacles[i].collisionData.distance == currentPosition.distance &&
-                    this.obstacles[i].collisionData.size.height > currentPosition.height
-                ) ||
-                (
-                    //other collision with left body half
-                    this.obstacles[i].collisionData.distance.min < currentPosition.distance &&
-                    currentPosition.distance < this.obstacles[i].collisionData.distance.max &&
-                    this.obstacles[i].collisionData.angle.min < currentPosition.anglemin &&
-                    currentPosition.anglemin < this.obstacles[i].collisionData.angle.max &&
-                    this.obstacles[i].collisionData.size.height > currentPosition.height
-                )||
-                (
-                    //other collisions from right body half.
-                    this.obstacles[i].collisionData.distance.min < currentPosition.distance &&
-                    currentPosition.distance < this.obstacles[i].collisionData.distance.max &&
-                    this.obstacles[i].collisionData.angle.min < currentPosition.anglemax &&
-                    currentPosition.anglemax < this.obstacles[i].collisionData.angle.max &&
-                    this.obstacles[i].collisionData.size.height > currentPosition.height
-                )
-            ) {
-
-                return {
-                    collision: true,
-                    type: this.obstacles[i].collisionData.type,
-                    mesh: this.obstacles[i].mesh
-                };
-            }
-        }
-        return {
+    CollisionDetector.prototype.collision = function(currentPosition) {
+        var self = this;
+        var ret = {
             collision: false,
             type: null,
             mesh: null
-        }
-    };
+        };
+        self.obstacles.forEach(function(obstacle, i) {
+            if (ret.collision) return;
 
+            //check if obstacle should not be checked anymore
+            if (_getMaxDistance(obstacle) < currentPosition.distance) {
+                delete self.obstacles[i]; //remove from array with the next garbage-collection
+            }
+
+            if(obstacle.collisionData.angle.min <0 || obstacle.collisionData.angle.max <0 || currentPosition.anglemin<0  || currentPosition.anglemax<0){
+              //console.dir(obstacle.collisionData);
+              //console.dir(currentPosition); //TODO bug: anglemin is -5 but angles should always be positive
+              //throw 'aaaa2';
+            }
+
+            if (
+                (
+                    //other collision with left body half
+                    obstacle.collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    obstacle.collisionData.angle.min < currentPosition.anglemin &&
+                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                    obstacle.collisionData.size.height > currentPosition.height
+                ) ||
+                (
+                    //other collisions from right body half.
+                    obstacle.collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    obstacle.collisionData.angle.min < currentPosition.anglemax &&
+                    currentPosition.anglemax < obstacle.collisionData.angle.max &&
+                    obstacle.collisionData.size.height > currentPosition.height
+                ) ||
+                (
+                    //ring collision
+                    obstacle.collisionData.type == "ring" &&
+                    _getMaxDistance(obstacle) == currentPosition.distance &&
+                    obstacle.collisionData.size.height > currentPosition.height
+                )
+            ) {
+                ret = {
+                    collision: true,
+                    type: obstacle.collisionData.type,
+                    mesh: obstacle.mesh
+                };
+            }
+        });
+        return ret;
+    };
     return CollisionDetector;
 })();
+
 },{}],22:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
@@ -62973,9 +62955,9 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 );
 
 },{"../COLOR":8,"./Body":20,"./Head":22,"./Leg":23,"jquery":3,"js-cookie":4,"three":6,"tween.js":7}],25:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("\n" + i);_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],26:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"powerups row \">");_.b("\n" + i);_.b("  <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>Powerups</b></br>");_.b("\n" + i);_.b("    <span>Total: <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span> <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></span>");_.b("\n" + i);_.b("  </div>");_.b("\n" + i);_.b("  <div class=\"large-centered medium-centered small-centered\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,313,688,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            </br>");_.b("\n" + i);_.b("            <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("  </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1694,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"https://tourneau.scene7.com/is/image/tourneau/ZEN0101011?hei=450&wid=300&fmt=png-alpha&resMode=bicub&op_sharpen=1\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("\n" + i);_.b("            <!--");_.b("\n" + i);_.b("\n" + i);_.b("\n" + i);_.b("            <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("                </br>");_.b("\n" + i);_.b("                <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("\n" + i);_.b("          -->");_.b("\n" + i);_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],27:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],28:[function(require,module,exports){

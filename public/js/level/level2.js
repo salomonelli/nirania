@@ -704,7 +704,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
+                        distance: 500, //Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
                     }
                 },
@@ -713,7 +713,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        distance: 1000, //Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
                     }
                 },
@@ -722,7 +722,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
+                        distance: 1500, //Math.round(UTIL.randomNumberInRange(1500,1900)),
                         angle: 0
                     }
                 },
@@ -731,7 +731,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        distance: 2200,//Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
@@ -740,7 +740,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        distance: 2600,// Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
                     }
                 },
@@ -749,7 +749,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        distance: 2800,//Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
                 }
