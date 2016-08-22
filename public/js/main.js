@@ -163,7 +163,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
         //$(this).addClass("hidden");
         $('div.shopScreen').empty();
-        Level.showShopScreen();
+        level[currentLevel].showShopScreen();
       }
     });
 

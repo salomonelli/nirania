@@ -58894,9 +58894,13 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     Level.prototype.setCookie = function(success) {
         Cookies.set(this.current + '-success', success);
         var obj = Cookies.get();
-        var sum = parseInt(Cookies.get('total'));
-        sum += this.diamonds;
-        Cookies.set('total', sum);
+        if(isNaN(Cookies.get('total'))){
+          Cookies.set('total', this.diamonds);
+        }else{
+          var sum = parseInt(Cookies.get('total'));
+          sum += this.diamonds;
+          Cookies.set('total', sum);
+        }
     };
 
     Level.getTotalDiamonds = function() {
@@ -60319,7 +60323,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
         //$(this).addClass("hidden");
         $('div.shopScreen').empty();
-        Level.showShopScreen();
+        level[currentLevel].showShopScreen();
       }
     });
 
