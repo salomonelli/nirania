@@ -58714,8 +58714,17 @@ module.exports = (function(){
         return radians *(180/Math.PI);
     };
 
+    /**
+     * Returns a random number between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    UTIL.randomNumberInRange = function(min, max) {
+        return Math.random() * (max - min) + min;
+    };
+
     return UTIL;
 })();
+
 },{}],13:[function(require,module,exports){
 module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
@@ -58892,14 +58901,16 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * @param {boolean} success - whether current level has been ended with success
      */
     Level.prototype.setCookie = function(success) {
-        Cookies.set(this.current + '-success', success);
+        if (Cookies.get(this.current + '-success') !== "true") {
+            Cookies.set(this.current + '-success', success);
+        }
         var obj = Cookies.get();
-        if(isNaN(Cookies.get('total'))){
-          Cookies.set('total', this.diamonds);
-        }else{
-          var sum = parseInt(Cookies.get('total'));
-          sum += this.diamonds;
-          Cookies.set('total', sum);
+        if (isNaN(Cookies.get('total'))) {
+            Cookies.set('total', this.diamonds);
+        } else {
+            var sum = parseInt(Cookies.get('total'));
+            sum += this.diamonds;
+            Cookies.set('total', sum);
         }
     };
 
@@ -58913,12 +58924,18 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
+      if(level==1){
+        return true;
+      }else{
         level--;
-        if (Cookies.get(level - 'success')) {
+        console.dir(Cookies.get(level + '-success'));
+        if (Cookies.get(level + '-success') == "true") {
             return true;
         } else {
             return false;
         }
+      }
+
     };
 
 
