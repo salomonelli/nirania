@@ -11,7 +11,8 @@ module.exports = (function () {
     CollisionDetector.prototype.collision = function (currentPosition) {
 
         for (var i = 0; i < this.obstacles.length; i++) {
-            
+
+
             if (
                 (
                     //ring collision
@@ -36,7 +37,9 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
+                console.log(this.obstacles[i]);
                 return {
+
                     collision: true,
                     type: this.obstacles[i].collisionData.type,
                     mesh: this.obstacles[i].mesh
