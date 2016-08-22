@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name of the Game</title>
+
+    <!-- Foundation -->
+    <link rel="stylesheet" href="/foundation-6.2.3-complete/css/foundation.css">
+    <link rel="stylesheet" href="/foundation-6.2.3-complete/css/app.css">
+
+    <!-- Livereload -->
+    <!-- <script src="//192.168.0.52:35729/livereload.js"></script> -->
+    <!--<script src="//127.0.0.1:35729/livereload.js"></script>-->
+
+    <!-- Font awesome -->
+    <link href="/font-awesome-4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href='https://fonts.googleapis.com/css?family=Quicksand:400,300' rel='stylesheet' type='text/css'>
+</head>
+
+<body class="intro">
+
+    <div class="blackOverlay"></div>
+
+    <div class="intro">
+        <div class="orbit" role="region" aria-label="Favorite Space Pictures" data-orbit>
+            <ul class="orbit-container">
+                <button class="orbit-previous"><span class="show-for-sr">Previous Slide</span>&#9664;&#xFE0E;</button>
+                <button class="orbit-next"><span class="show-for-sr">Next Slide</span>&#9654;&#xFE0E;</button>
+                <li class="is-active orbit-slide">
+                    <img class="orbit-image" src="/img/story/01.jpg" alt="Space">
+                    <figcaption class="orbit-caption">Space, the final frontier.</figcaption>
+                </li>
+                <li class="orbit-slide">
+                    <img class="orbit-image" src="/img/story/02.jpg" alt="Space">
+                    <figcaption class="orbit-caption">Lets Rocket!</figcaption>
+                </li>
+                <li class="orbit-slide">
+                    <img class="orbit-image" src="/img/story/03.jpg" alt="Space">
+                    <figcaption class="orbit-caption">Encapsulating</figcaption>
+                </li>
+                <li class="orbit-slide">
+                    <img class="orbit-image" src="/img/story/04.jpg" alt="Space">
+                    <figcaption class="orbit-caption">Outta This World</figcaption>
+                </li>
+            </ul>
+        </div>
+        <br>
+        <a href="/" class="button">Skip Intro</a>
+
+
+    </div>
+
+
+
+
+    <script src="/gen/js.js"></script>
+
+    <!-- Foundation -->
+    <script src="/foundation-6.2.3-complete/js/vendor/jquery.js"></script>
+    <script src="/foundation-6.2.3-complete/js/vendor/what-input.js"></script>
+    <script src="/foundation-6.2.3-complete/js/vendor/foundation.js"></script>
+    <script src="/foundation-6.2.3-complete/js/app.js"></script>
+
+
+    <script>
+        window.intro();
+    </script>
+</body>
+
+</html>

@@ -13,6 +13,7 @@ body {
   background: linear-gradient(to bottom, rgba(64, 35, 97, 1) 0%, rgba(64, 35, 97, 1) 45%, rgba(119, 51, 158, 1) 100%);
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#402361', endColorstr='#77339e', GradientType=0 );
   */
+  /*
     background: rgba(70, 0, 71, 1);
     background: -moz-linear-gradient(top, rgba(70, 0, 71, 1) 0%, rgba(104, 8, 79, 1) 22%, rgba(167, 59, 99, 1) 48%, rgba(210, 118, 124, 1) 65%, rgba(238, 162, 149, 1) 85%, rgba(210, 118, 124, 1) 96%, rgba(205, 116, 112, 1) 100%);
     background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(70, 0, 71, 1)), color-stop(22%, rgba(104, 8, 79, 1)), color-stop(48%, rgba(167, 59, 99, 1)), color-stop(65%, rgba(210, 118, 124, 1)), color-stop(85%, rgba(238, 162, 149, 1)), color-stop(96%, rgba(210, 118, 124, 1)), color-stop(100%, rgba(205, 116, 112, 1)));
@@ -21,7 +22,10 @@ body {
     background: -ms-linear-gradient(top, rgba(70, 0, 71, 1) 0%, rgba(104, 8, 79, 1) 22%, rgba(167, 59, 99, 1) 48%, rgba(210, 118, 124, 1) 65%, rgba(238, 162, 149, 1) 85%, rgba(210, 118, 124, 1) 96%, rgba(205, 116, 112, 1) 100%);
     background: linear-gradient(to bottom, rgba(70, 0, 71, 1) 0%, rgba(104, 8, 79, 1) 22%, rgba(167, 59, 99, 1) 48%, rgba(210, 118, 124, 1) 65%, rgba(238, 162, 149, 1) 85%, rgba(210, 118, 124, 1) 96%, rgba(205, 116, 112, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#460047', endColorstr='#cd7470', GradientType=0);
+*/
 }
+
+
 canvas {
     width: 100%;
     height: 100%
@@ -42,7 +46,7 @@ canvas {
     background: linear-gradient(to bottom, rgba(70, 0, 71, 1) 0%, rgba(104, 8, 79, 1) 22%, rgba(167, 59, 99, 1) 48%, rgba(210, 118, 124, 1) 65%, rgba(238, 162, 149, 1) 85%, rgba(210, 118, 124, 1) 96%, rgba(205, 116, 112, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#460047', endColorstr='#cd7470', GradientType=0);
 }
-.intro {
+body .intro {
     color: white;
     position: absolute;
     bottom: 10%;
@@ -187,4 +191,19 @@ background: rgba(0,0,0,0.8);
         transform: perspective(140px) rotateY(180deg);
         opacity: 0;
     }
+}
+
+
+
+/*******INTRO********/
+
+body.intro{
+  background: black;
+}
+body.intro .blackOverlay{
+  position: absolute;
+background: black;
+width: 100%;
+height: 100%;
+z-index: 2000;
 }

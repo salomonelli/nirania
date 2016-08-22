@@ -26,7 +26,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
             anglemax: 5,
             distance: 50,
             height: 0
-        }
+        };
     }
 
     /**

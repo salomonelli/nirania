@@ -41,9 +41,9 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
      * adds lights to scene
      */
     Scene.prototype.addLights = function () {
-        this.lights.hemisphere = new THREE.HemisphereLight(0xA73B63, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
+        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
 
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, .9);//0xffffff, 1);
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.2);//0xffffff, 1);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
         this.lights.shadow.position.y += 1000;
