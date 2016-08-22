@@ -1,9 +1,10 @@
-module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
+module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, CollisionDetector, Obstacle, $, successScreen, gameoverScreen, shopScreen, Cookies, Powerups) {
 
     var levels = [
         level1,
         level2,
-        level3
+        level3,
+        level4
     ];
 
     /**
