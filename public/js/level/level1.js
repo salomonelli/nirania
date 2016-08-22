@@ -1,4 +1,4 @@
-module.exports = (function(){
+module.exports = (function(UTIL){
     var level = {
         level: 1,
         speed: 1,
@@ -12,10 +12,10 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xffffff,
+                    color: 0xff0000,
                     position: {
-                        distance: 546,
-                        angle: -167
+                        distance: UTIL.randomNumberInRange(400,500),
+                        angle: 0
                     }
                 },
                 {
@@ -298,7 +298,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: -3000,
+                        distance: 300,
                         angle: 40
                     }
                 },
@@ -569,4 +569,4 @@ module.exports = (function(){
     };
 
     return level;
-})();
+})(require("../UTIL.js"));
