@@ -5216,7 +5216,169 @@
 
 }));
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":5}],2:[function(require,module,exports){
+},{"_process":2}],2:[function(require,module,exports){
+// shim for using process in browser
+var process = module.exports = {};
+
+// cached from whatever global is present so that test runners that stub it
+// don't break things.  But we need to wrap it in a try catch in case it is
+// wrapped in strict mode code which doesn't define any globals.  It's inside a
+// function because try/catches deoptimize in certain engines.
+
+var cachedSetTimeout;
+var cachedClearTimeout;
+
+(function () {
+    try {
+        cachedSetTimeout = setTimeout;
+    } catch (e) {
+        cachedSetTimeout = function () {
+            throw new Error('setTimeout is not defined');
+        }
+    }
+    try {
+        cachedClearTimeout = clearTimeout;
+    } catch (e) {
+        cachedClearTimeout = function () {
+            throw new Error('clearTimeout is not defined');
+        }
+    }
+} ())
+function runTimeout(fun) {
+    if (cachedSetTimeout === setTimeout) {
+        //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedSetTimeout(fun, 0);
+    } catch(e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+            return cachedSetTimeout.call(null, fun, 0);
+        } catch(e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+            return cachedSetTimeout.call(this, fun, 0);
+        }
+    }
+
+
+}
+function runClearTimeout(marker) {
+    if (cachedClearTimeout === clearTimeout) {
+        //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    try {
+        // when when somebody has screwed with setTimeout but no I.E. maddness
+        return cachedClearTimeout(marker);
+    } catch (e){
+        try {
+            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+            return cachedClearTimeout.call(null, marker);
+        } catch (e){
+            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+            return cachedClearTimeout.call(this, marker);
+        }
+    }
+
+
+
+}
+var queue = [];
+var draining = false;
+var currentQueue;
+var queueIndex = -1;
+
+function cleanUpNextTick() {
+    if (!draining || !currentQueue) {
+        return;
+    }
+    draining = false;
+    if (currentQueue.length) {
+        queue = currentQueue.concat(queue);
+    } else {
+        queueIndex = -1;
+    }
+    if (queue.length) {
+        drainQueue();
+    }
+}
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    var timeout = runTimeout(cleanUpNextTick);
+    draining = true;
+
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        while (++queueIndex < len) {
+            if (currentQueue) {
+                currentQueue[queueIndex].run();
+            }
+        }
+        queueIndex = -1;
+        len = queue.length;
+    }
+    currentQueue = null;
+    draining = false;
+    runClearTimeout(timeout);
+}
+
+process.nextTick = function (fun) {
+    var args = new Array(arguments.length - 1);
+    if (arguments.length > 1) {
+        for (var i = 1; i < arguments.length; i++) {
+            args[i - 1] = arguments[i];
+        }
+    }
+    queue.push(new Item(fun, args));
+    if (queue.length === 1 && !draining) {
+        runTimeout(drainQueue);
+    }
+};
+
+// v8 likes predictible objects
+function Item(fun, array) {
+    this.fun = fun;
+    this.array = array;
+}
+Item.prototype.run = function () {
+    this.fun.apply(null, this.array);
+};
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],3:[function(require,module,exports){
 /*
  *  Copyright 2011 Twitter, Inc.
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -5459,7 +5621,7 @@ var Hogan = {};
 })(typeof exports !== 'undefined' ? exports : Hogan);
 
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -15275,7 +15437,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 /*!
  * JavaScript Cookie v2.1.2
  * https://github.com/js-cookie/js-cookie
@@ -15427,168 +15589,6 @@ return jQuery;
 
 	return init(function () {});
 }));
-
-},{}],5:[function(require,module,exports){
-// shim for using process in browser
-var process = module.exports = {};
-
-// cached from whatever global is present so that test runners that stub it
-// don't break things.  But we need to wrap it in a try catch in case it is
-// wrapped in strict mode code which doesn't define any globals.  It's inside a
-// function because try/catches deoptimize in certain engines.
-
-var cachedSetTimeout;
-var cachedClearTimeout;
-
-(function () {
-    try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
-        }
-    }
-    try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
-        }
-    }
-} ())
-function runTimeout(fun) {
-    if (cachedSetTimeout === setTimeout) {
-        //normal enviroments in sane situations
-        return setTimeout(fun, 0);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedSetTimeout(fun, 0);
-    } catch(e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
-            return cachedSetTimeout.call(null, fun, 0);
-        } catch(e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
-            return cachedSetTimeout.call(this, fun, 0);
-        }
-    }
-
-
-}
-function runClearTimeout(marker) {
-    if (cachedClearTimeout === clearTimeout) {
-        //normal enviroments in sane situations
-        return clearTimeout(marker);
-    }
-    try {
-        // when when somebody has screwed with setTimeout but no I.E. maddness
-        return cachedClearTimeout(marker);
-    } catch (e){
-        try {
-            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
-            return cachedClearTimeout.call(null, marker);
-        } catch (e){
-            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
-            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
-            return cachedClearTimeout.call(this, marker);
-        }
-    }
-
-
-
-}
-var queue = [];
-var draining = false;
-var currentQueue;
-var queueIndex = -1;
-
-function cleanUpNextTick() {
-    if (!draining || !currentQueue) {
-        return;
-    }
-    draining = false;
-    if (currentQueue.length) {
-        queue = currentQueue.concat(queue);
-    } else {
-        queueIndex = -1;
-    }
-    if (queue.length) {
-        drainQueue();
-    }
-}
-
-function drainQueue() {
-    if (draining) {
-        return;
-    }
-    var timeout = runTimeout(cleanUpNextTick);
-    draining = true;
-
-    var len = queue.length;
-    while(len) {
-        currentQueue = queue;
-        queue = [];
-        while (++queueIndex < len) {
-            if (currentQueue) {
-                currentQueue[queueIndex].run();
-            }
-        }
-        queueIndex = -1;
-        len = queue.length;
-    }
-    currentQueue = null;
-    draining = false;
-    runClearTimeout(timeout);
-}
-
-process.nextTick = function (fun) {
-    var args = new Array(arguments.length - 1);
-    if (arguments.length > 1) {
-        for (var i = 1; i < arguments.length; i++) {
-            args[i - 1] = arguments[i];
-        }
-    }
-    queue.push(new Item(fun, args));
-    if (queue.length === 1 && !draining) {
-        runTimeout(drainQueue);
-    }
-};
-
-// v8 likes predictible objects
-function Item(fun, array) {
-    this.fun = fun;
-    this.array = array;
-}
-Item.prototype.run = function () {
-    this.fun.apply(null, this.array);
-};
-process.title = 'browser';
-process.browser = true;
-process.env = {};
-process.argv = [];
-process.version = ''; // empty string to avoid regexp issues
-process.versions = {};
-
-function noop() {}
-
-process.on = noop;
-process.addListener = noop;
-process.once = noop;
-process.off = noop;
-process.removeListener = noop;
-process.removeAllListeners = noop;
-process.emit = noop;
-
-process.binding = function (name) {
-    throw new Error('process.binding is not supported');
-};
-
-process.cwd = function () { return '/' };
-process.chdir = function (dir) {
-    throw new Error('process.chdir is not supported');
-};
-process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
 // File:src/Three.js
@@ -58227,7 +58227,7 @@ TWEEN.Interpolation = {
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":5}],8:[function(require,module,exports){
+},{"_process":2}],8:[function(require,module,exports){
 module.exports = (function(){
     var COLOR = {
         background: 0xFF7864,
@@ -58303,7 +58303,7 @@ module.exports = (function ($) {
 })(
     require('jquery')
 );
-},{"jquery":3}],10:[function(require,module,exports){
+},{"jquery":4}],10:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -58423,7 +58423,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
 
-        this.renderer = new THREE.WebGLRenderer({alpha: true});
+        this.renderer = new THREE.WebGLRenderer();
+        this.scene.background = new THREE.Color( COLOR.background );
         this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMapSoft = false;
@@ -58686,6 +58687,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
     require('async'),
     require('tween.js')
 );
+
 },{"./COLOR":8,"./Particles":10,"./protagonist/Protagonist":23,"async":1,"three":6,"tween.js":7}],12:[function(require,module,exports){
 module.exports = (function(){
     /**
@@ -58964,44 +58966,32 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
     require('./Powerups')
 );
 
-},{"../COLOR":8,"../protagonist/CollisionDetector":20,"../templates/gameover.mustache":24,"../templates/shop.mustache":25,"../templates/success.mustache":26,"../way/Way":27,"../way/obstacles/Obstacle":30,"./Powerups":14,"./level1":15,"./level2":16,"./level3":17,"jquery":3,"js-cookie":4,"three":6}],14:[function(require,module,exports){
+},{"../COLOR":8,"../protagonist/CollisionDetector":20,"../templates/gameover.mustache":24,"../templates/shop.mustache":25,"../templates/success.mustache":26,"../way/Way":27,"../way/obstacles/Obstacle":30,"./Powerups":14,"./level1":15,"./level2":16,"./level3":17,"jquery":4,"js-cookie":5,"three":6}],14:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var powerups = [{
-        id: 1,
-        description: "boosts speed",
-        diamonds: 3,
-        img: "/img/01.jpg"
-    }, {
-        id: 2,
-        description: "jump higher",
-        diamonds: 5,
-        img: "/img/02.jpg"
-    }, {
-        id: 3,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 4,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 5,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 6,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 7,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }];
+            id: 1,
+            description: "boosts speed",
+            diamonds: 15,
+            img: "/img/01.jpg"
+        },
+        {
+            id: 2,
+            description: "jump higher",
+            diamonds: 20,
+            img: "/img/02.jpg"
+        },
+        {
+            id: 3,
+            description: "diamond magnet",
+            diamonds: 40,
+            img: "/img/03.jpg"
+        },
+        {
+            id: 4,
+            description: "invulnerable",
+            diamonds: 50,
+            img: "/img/04.jpg"
+        }];
 
     /**
      * Represents powerups
@@ -59051,66 +59041,25 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":4}],15:[function(require,module,exports){
+},{"js-cookie":5}],15:[function(require,module,exports){
 module.exports = (function(){
     var level = {
         level: 1,
         speed: 1,
         way: {
-            length: 1000,
+            length: 3200,
             obstacles : [
                 {
-                    type: 'diamond',
-                    size: {},
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
                     color: 0xffffff,
                     position: {
-                        distance: 200,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 200,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 300,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 400,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 500,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 600,
-                        angle: 40
+                        distance: 450,
+                        angle: 60
                     }
                 },
                 {
@@ -59122,8 +59071,8 @@ module.exports = (function(){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 500,
-                        angle: 0
+                        distance: 546,
+                        angle: -167
                     }
                 },
                 {
@@ -59133,23 +59082,9 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0x000000,
+                    color: 0xffffff,
                     position: {
-                        distance: 500,
-                        angle: 90
-                    }
-                }
-                ,
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0x000000,
-                    position: {
-                        distance: 800,
+                        distance: 760,
                         angle: -20
                     }
                 },
@@ -59160,10 +59095,657 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0x000000,
+                    color: 0xffffff,
+                    position: {
+                        distance: 824,
+                        angle: -45
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 50,
+                        length: 25,
+                        height: 10
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 863,
+                        angle: 71
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1068,
+                        angle: -78
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1162,
+                        angle: 37
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1357,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1420,
+                        angle: -36
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1500,
+                        angle: -170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 20,
+                        length: 25,
+                        height: 40
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1507,
+                        angle: -50
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1532,
+                        angle: -102
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1625,
+                        angle: -89
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1635,
+                        angle: -154
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 5,
+                        height: 1
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1721,
+                        angle: 9
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 75,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1843,
+                        angle: 76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1900,
+                        angle: -81
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1923,
+                        angle: 64
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1973,
+                        angle: -130
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2046,
+                        angle: -65
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2298,
+                        angle: -76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2438,
+                        angle: -91
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2675,
+                        angle: -95
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2750,
+                        angle: -153
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2865,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2964,
+                        angle: -27
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 100,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 3050,
+                        angle: 138
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+
+
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: -3000,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 350,
+                        angle: 42
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 400,
+                        angle: 44
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 450,
+                        angle: 46
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 500,
+                        angle: 48
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 550,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 700,
+                        angle: -90
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 770,
+                        angle: -80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
                     position: {
                         distance: 800,
+                        angle: -80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 950,
+                        angle: -80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1000,
+                        angle: -80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1050,
+                        angle: -80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1225,
+                        angle: 30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1300,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1375,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1450,
+                        angle: 15
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1700,
+                        angle: -15
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1750,
+                        angle: -20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1800,
+                        angle: -25
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 1950,
                         angle: -30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2000,
+                        angle: -30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2050,
+                        angle: -30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2500,
+                        angle: -40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2550,
+                        angle: -40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2600,
+                        angle: -40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2650,
+                        angle: -40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2750,
+                        angle: -50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2800,
+                        angle: -50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 2900,
+                        angle: -50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3000,
+                        angle: -50
+                    }
+                },
+
+
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: Math.round(Math.random() * (700 - 500)) + 500,
+                        angle: 0
                     }
                 },
                 {
@@ -59171,10 +59753,47 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: 300,
+                        distance: Math.round(Math.random() * (1400 - 1000)) + 1000,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: Math.round(Math.random() * (1900 - 1500)) + 1500,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: Math.round(Math.random() * (2400 - 2100)) + 2100,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: Math.round(Math.random() * (2800 - 2600)) + 2600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: Math.round(Math.random() * (3100 - 3000)) + 3000,
                         angle: 0
                     }
                 }
+
             ]
         }
     };
@@ -60365,7 +60984,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Powerups')
 );
 
-},{"./Keybindings":9,"./Scene":11,"./level/Level":13,"./level/Powerups":14,"./protagonist/Protagonist":23,"async":1,"jquery":3,"three":6,"tween.js":7}],19:[function(require,module,exports){
+},{"./Keybindings":9,"./Scene":11,"./level/Level":13,"./level/Powerups":14,"./protagonist/Protagonist":23,"async":1,"jquery":4,"three":6,"tween.js":7}],19:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -60740,13 +61359,13 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN) {
     require('three'),
     require('tween.js')
 );
-},{"../COLOR":8,"./Body":19,"./Head":21,"./Leg":22,"jquery":3,"three":6,"tween.js":7}],24:[function(require,module,exports){
+},{"../COLOR":8,"./Body":19,"./Head":21,"./Leg":22,"jquery":4,"three":6,"tween.js":7}],24:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],25:[function(require,module,exports){
+},{"hogan.js/lib/template":3}],25:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"powerups row \">");_.b("\n" + i);_.b("  <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>Powerups</b></br>");_.b("\n" + i);_.b("    <span>Total: <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span> <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></span>");_.b("\n" + i);_.b("  </div>");_.b("\n" + i);_.b("  <div class=\"large-centered medium-centered small-centered\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,313,688,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            </br>");_.b("\n" + i);_.b("            <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("  </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],26:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],27:[function(require,module,exports){
+},{"hogan.js/lib/template":3}],26:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">\r");_.b("\n" + i);_.b("    <div class=\"wrapper\">\r");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>\r");_.b("\n" + i);_.b("        <br><br>\r");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>\r");_.b("\n" + i);_.b("        <br>\r");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">\r");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again\r");_.b("\n" + i);_.b("        </a>\r");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">\r");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level\r");_.b("\n" + i);_.b("        </a>\r");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>\r");_.b("\n" + i);_.b("    </div>\r");_.b("\n" + i);_.b("</div>\r");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":3}],27:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
      * Represents way
@@ -60848,7 +61467,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     require('../UTIL'),
     require('jquery')
 );
-},{"../COLOR":8,"../UTIL":12,"./obstacles/Obstacle":30,"jquery":3,"three":6}],28:[function(require,module,exports){
+},{"../COLOR":8,"../UTIL":12,"./obstacles/Obstacle":30,"jquery":4,"three":6}],28:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**

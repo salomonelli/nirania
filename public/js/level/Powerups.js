@@ -1,40 +1,28 @@
 module.exports = (function(Cookies) {
     var powerups = [{
-        id: 1,
-        description: "boosts speed",
-        diamonds: 3,
-        img: "/img/01.jpg"
-    }, {
-        id: 2,
-        description: "jump higher",
-        diamonds: 5,
-        img: "/img/02.jpg"
-    }, {
-        id: 3,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 4,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 5,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 6,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }, {
-        id: 7,
-        description: "bblala",
-        diamonds: 7,
-        img: "/img/03.jpg"
-    }];
+            id: 1,
+            description: "boosts speed",
+            diamonds: 15,
+            img: "/img/01.jpg"
+        },
+        {
+            id: 2,
+            description: "jump higher",
+            diamonds: 20,
+            img: "/img/02.jpg"
+        },
+        {
+            id: 3,
+            description: "diamond magnet",
+            diamonds: 40,
+            img: "/img/03.jpg"
+        },
+        {
+            id: 4,
+            description: "invulnerable",
+            diamonds: 50,
+            img: "/img/04.jpg"
+        }];
 
     /**
      * Represents powerups

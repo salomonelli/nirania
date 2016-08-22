@@ -1,23 +1,10 @@
 module.exports = (function(){
     var level = {
-        level: 2,
+        level: 1,
         speed: 1,
         way: {
-            length: 4200,
+            length: 3200,
             obstacles : [
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 350,
-                        angle: 20
-                    }
-                },
                 {
                     type: 'box',
                     size: {
@@ -42,32 +29,6 @@ module.exports = (function(){
                     position: {
                         distance: 546,
                         angle: -167
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 557,
-                        angle: -60
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 557,
-                        angle: -100
                     }
                 },
                 {
@@ -120,19 +81,6 @@ module.exports = (function(){
                     position: {
                         distance: 892,
                         angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 10,
-                        length: 80,
-                        height: 50
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 934,
-                        angle: 83
                     }
                 },
                 {
@@ -211,19 +159,6 @@ module.exports = (function(){
                     position: {
                         distance: 1420,
                         angle: -36
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1420,
-                        angle: -90
                     }
                 },
                 {
@@ -363,19 +298,6 @@ module.exports = (function(){
                         length: 25,
                         height: 25
                     },
-                    color: 0xff0000,
-                    position: {
-                        distance: 2000,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
                     color: 0xffffff,
                     position: {
                         distance: 2046,
@@ -506,7 +428,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: 300,
+                        distance: -3000,
                         angle: 40
                     }
                 },
