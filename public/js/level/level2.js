@@ -428,7 +428,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: -3000,
+                        distance: 300,
                         angle: 40
                     }
                 },
@@ -718,7 +718,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(2100,2400),
+                        distance: UTIL.randomNumberInRange(1500,1900),
                         angle: 0
                     }
                 },
@@ -746,24 +746,6 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: UTIL.randomNumberInRange(3000,3100),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: UTIL.randomNumberInRange(3300,3500),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: UTIL.randomNumberInRange(3800,4100),
                         angle: 0
                     }
                 }

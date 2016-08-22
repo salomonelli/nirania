@@ -913,7 +913,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(2100,2400),
+                        distance: UTIL.randomNumberInRange(1500,1900),
                         angle: 0
                     }
                 },
@@ -949,7 +949,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(3300,3500),
+                        distance: UTIL.randomNumberInRange(330,3500),
                         angle: 0
                     }
                 },
@@ -958,7 +958,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(3800,4100),
+                        distance: UTIL.randomNumberInRange(3800,4200),
                         angle: 0
                     }
                 }

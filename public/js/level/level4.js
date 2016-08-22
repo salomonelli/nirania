@@ -1,6 +1,6 @@
 module.exports = (function(UTIL){
     var level = {
-        level: 5,
+        level: 4,
         speed: 1,
         way: {
             length: 5230,
