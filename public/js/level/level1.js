@@ -12,9 +12,9 @@ module.exports = (function(UTIL){
                         length: 25,
                         height: 25
                     },
-                    color: 0xff0000,
+                    color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(400,500),
+                        distance: 446,
                         angle: 0
                     }
                 },
@@ -118,32 +118,6 @@ module.exports = (function(UTIL){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 1290,
-                        angle: 159
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 35,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1357,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
                         distance: 1420,
                         angle: 324
                     }
@@ -164,19 +138,6 @@ module.exports = (function(UTIL){
                 {
                     type: 'box',
                     size: {
-                        width: 20,
-                        length: 25,
-                        height: 40
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1507,
-                        angle: 210
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
                         width: 25,
                         length: 25,
                         height: 25
@@ -184,7 +145,20 @@ module.exports = (function(UTIL){
                     color: 0xffffff,
                     position: {
                         distance: 1532,
-                        angle: 258
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1550,
+                        angle: 0
                     }
                 },
                 {
@@ -250,6 +224,19 @@ module.exports = (function(UTIL){
                     position: {
                         distance: 1900,
                         angle: 279
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2290,
+                        angle: 159
                     }
                 },
                 {
@@ -567,6 +554,5 @@ module.exports = (function(UTIL){
             ]
         }
     };
-
     return level;
 })(require("../UTIL.js"));

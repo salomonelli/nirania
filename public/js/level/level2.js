@@ -700,7 +700,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(500,700),
+                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
                         angle: 0
                     }
                 },
@@ -709,7 +709,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(1000,1400),
+                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
                         angle: 0
                     }
                 },
@@ -718,7 +718,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(1500,1900),
+                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
                         angle: 0
                     }
                 },
@@ -727,7 +727,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(2100,2400),
+                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
                         angle: 0
                     }
                 },
@@ -736,7 +736,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(2600,2800),
+                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
                         angle: 0
                     }
                 },
@@ -745,7 +745,7 @@ module.exports = (function(UTIL){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: UTIL.randomNumberInRange(3000,3100),
+                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
                 }
