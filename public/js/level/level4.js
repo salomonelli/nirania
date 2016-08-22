@@ -1,11 +1,11 @@
-module.exports = (function(){
+module.exports = (function(UTIL){
     var level = {
-        level: 1,
+        level: 5,
         speed: 1,
         way: {
-            length: 2230,
+            length: 5230,
             obstacles : [
-                                {
+                {
                     type: 'box',
                     size: {
                         width: 25,
@@ -14,8 +14,47 @@ module.exports = (function(){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 546,
-                        angle: -167
+                        distance: 350,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 450,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 557,
+                        angle: -60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 557,
+                        angle: -100
                     }
                 },
                 {
@@ -60,27 +99,14 @@ module.exports = (function(){
                 {
                     type: 'box',
                     size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
+                        width: 10,
+                        length: 80,
+                        height: 50
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 892,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 200,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1057,
-                        angle: 152
+                        distance: 934,
+                        angle: 83
                     }
                 },
                 {
@@ -113,19 +139,6 @@ module.exports = (function(){
                     type: 'box',
                     size: {
                         width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1290,
-                        angle: 159
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
                         length: 35,
                         height: 25
                     },
@@ -140,25 +153,12 @@ module.exports = (function(){
                     size: {
                         width: 25,
                         length: 25,
-                        height: 25
+                        height: 30
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 1420,
-                        angle: -36
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
-                        height: 60
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1500,
-                        angle: -170
+                        distance: 1447,
+                        angle: -79
                     }
                 },
                 {
@@ -170,21 +170,8 @@ module.exports = (function(){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 1507,
+                        distance: 1457,
                         angle: -50
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1532,
-                        angle: -102
                     }
                 },
                 {
@@ -198,19 +185,6 @@ module.exports = (function(){
                     position: {
                         distance: 1625,
                         angle: -89
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0xffffff,
-                    position: {
-                        distance: 1635,
-                        angle: -154
                     }
                 },
                 {
@@ -261,8 +235,21 @@ module.exports = (function(){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 1923,
-                        angle: 64
+                        distance: 1973,
+                        angle: -70
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xff0000,
+                    position: {
+                        distance: 2000,
+                        angle: 0
                     }
                 },
                 {
@@ -274,8 +261,125 @@ module.exports = (function(){
                     },
                     color: 0xffffff,
                     position: {
-                        distance: 1973,
-                        angle: -130
+                        distance: 1420,
+                        angle: -36
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1420,
+                        angle: -90
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1532,
+                        angle: -102
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1635,
+                        angle: -154
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 546,
+                        angle: -167
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1500,
+                        angle: -170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 1923,
+                        angle: 64
                     }
                 },
                 {
@@ -291,6 +395,136 @@ module.exports = (function(){
                         angle: -65
                     }
                 },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2298,
+                        angle: -76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2438,
+                        angle: -91
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2675,
+                        angle: -95
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2865,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2964,
+                        angle: -27
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2750,
+                        angle: -153
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 100,
+                        height: 25
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 3050,
+                        angle: 138
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 100,
+                        height: 10
+                    },
+                    color: 0xffffff,
+                    position: {
+                        distance: 2679,
+                        angle: -81
+                    }
+                },
 
 
                 {
@@ -298,7 +532,7 @@ module.exports = (function(){
                     size: {},
                     color: 0xffffff,
                     position: {
-                        distance: -3000,
+                        distance: 300,
                         angle: 40
                     }
                 },
@@ -562,11 +796,177 @@ module.exports = (function(){
                         distance: 3000,
                         angle: -50
                     }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3100,
+                        angle: 38
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3500,
+                        angle: -177
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3600,
+                        angle: -168
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3700,
+                        angle: -150
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3140,
+                        angle: 45
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3240,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3300,
+                        angle: 55
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3650,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: 3675,
+                        angle: 0
+                    }
+                },
+
+
+
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(500,700),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(1000,1400),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(2100,2400),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(2100,2400),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(2600,2800),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(3000,3100),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(3300,3500),
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: 0xffffff,
+                    position: {
+                        distance: UTIL.randomNumberInRange(3800,4100),
+                        angle: 0
+                    }
                 }
+
 
             ]
         }
     };
 
     return level;
-})();
+})(require("../UTIL.js"));
