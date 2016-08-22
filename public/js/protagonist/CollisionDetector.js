@@ -2,7 +2,7 @@ module.exports = (function () {
     function CollisionDetector(obstacles) {
         this.obstacles = obstacles;
     }
-
+    var removed = []
     /**
      *
      * @param {Object} currentPosition - contains the current distance and angle
@@ -10,9 +10,24 @@ module.exports = (function () {
      */
     CollisionDetector.prototype.collision = function (currentPosition) {
 
+
         for (var i = 0; i < this.obstacles.length; i++) {
 
-          
+            if (
+                (this.obstacles[i].collisionData.distance.max < currentPosition.distance)
+                ||
+                ( this.obstacles[i].collisionData.type == "ring" && this.obstacles[i].collisionData.distance < currentPosition.distance)
+            ){
+                var index = this.obstacles.indexOf(this.obstacles[i]);
+
+                if(index > -1){
+                    removed = this.obstacles.splice(index, 1);
+
+                }
+
+
+            }
+
             if (
                 (
                     //ring collision
@@ -37,6 +52,7 @@ module.exports = (function () {
                     this.obstacles[i].collisionData.size.height > currentPosition.height
                 )
             ) {
+
                 return {
                     collision: true,
                     type: this.obstacles[i].collisionData.type,

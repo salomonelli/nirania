@@ -8,10 +8,10 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var mainScene;
     var level = [
         {},
-        new Level(1),
-        new Level(2),
-        new Level(3),
-        new Level(4)
+        new Level(1, 1),
+        new Level(2, 1),
+        new Level(3, 1),
+        new Level(4, 1)
     ];
     var currentLevel = 1;
     var URLpath = '';

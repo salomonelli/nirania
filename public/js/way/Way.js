@@ -43,9 +43,9 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
      * moves way direction z positive
      */
-    Way.prototype.moveForwardTillEnd = function () {
-        this.group.position.z++;
-        this.currentPosition.distance++;
+    Way.prototype.moveForwardTillEnd = function (speed) {
+        this.group.position.z = this.group.position.z + speed;
+        this.currentPosition.distance = this.currentPosition.distance + speed;
         //TODO remove this after finished programming
         $('.anzeige .distance span').html(this.currentPosition.distance);
     };

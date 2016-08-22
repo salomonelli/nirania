@@ -21,6 +21,7 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
+        console.log("Aktueller Speed: "+ this.speed);
     }
 
     /**
@@ -29,8 +30,9 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
     Level.prototype.prepare = function() {
         var self = this;
         var current = levels[self.current - 1];
-
         this.way = new Way(current.way.length, current.speed);
+
+
         this.way.addObstacles(current.way.obstacles);
 
         //var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles);
@@ -47,11 +49,20 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
-        var t = self.way.length - 80;
+        var t = self.way.length - 80 ;
         var animate = function() {
-            t--;
             //move way and obstacles
-            self.way.moveForwardTillEnd();
+
+            if(Cookies.get('powerup-1') == "bought") {
+                t--;
+                t--;
+                self.way.moveForwardTillEnd(self.speed* 2);
+
+            }
+            else{
+                t--;
+                self.way.moveForwardTillEnd(self.speed);
+            }
             //check whether collision
             self.way.currentPosition.height = protagonist.position.y;
             var collObj = self.collisionDetector.collision(self.way.currentPosition);
@@ -78,14 +89,19 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, level4, Co
                         break;
                 }
             } else {
-                if (t > 0) {
-                    setTimeout(function() {
-                        animate();
-                    }, self.speed);
-                } else {
-                    cb();
-                    return;
-                }
+               
+
+                    if (t > 0) {
+                        setTimeout(function() {
+                            animate();
+                        }, 0.00001) ;
+                    } else {
+                        cb();
+                        return;
+                    }
+                
+                    
+
             }
         };
         animate();
