@@ -25,5 +25,13 @@ module.exports = (function(){
         return radians *(180/Math.PI);
     };
 
+    /**
+     * Returns a random number between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    UTIL.randomNumberInRange = function(min, max) {
+        return Math.random() * (max - min) + min;
+    };
+
     return UTIL;
 })();
