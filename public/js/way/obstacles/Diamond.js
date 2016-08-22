@@ -10,7 +10,7 @@ module.exports = (function(THREE, UTIL, Cookies){
     function Diamond(diamond){
         this.geometry = new THREE.OctahedronGeometry(size, 0);
         this.material = new THREE.MeshLambertMaterial({
-          color: diamond.color,
+          color: 0xffffff,
           transparent: true,
           opacity: 0.6
         });
