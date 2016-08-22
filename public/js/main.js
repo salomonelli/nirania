@@ -168,6 +168,18 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       }
     });
 
+    var intro = function(){
+      $('.blackOverlay').fadeOut(1000);
+      var docHeight = window.innerHeight;
+      var introHeight = $('div.intro').height();
+      console.log('aaaaa'); 
+      console.log(docHeight);
+      console.log(introHeight);
+      console.log((docHeight-introHeight)/2);
+      $('div.intro').css('marginTop', (docHeight-introHeight)/2);
+    };
+
+    window.intro = intro;
     window.main = main;
 
 })(
