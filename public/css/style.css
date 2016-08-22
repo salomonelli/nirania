@@ -94,6 +94,10 @@ background: rgba(0,0,0,0.8);
   visibility: hidden;
 }
 
+.gone{
+  display: none;
+}
+
 .sk-folding-cube {
     margin: 20px auto;
     width: 40px;

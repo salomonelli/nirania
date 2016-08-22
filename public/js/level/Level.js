@@ -116,10 +116,17 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * renders hogan tempalte success.mustache and adds it to html-body
      */
     Level.prototype.showSuccessScreen = function() {
+        var last;
+        if (this.current === levels.length) {
+            last = "gone";
+        } else {
+            last = "";
+        }
         var obj = {
             score: this.diamonds,
             level: this.current,
-            next: this.current + 1
+            next: this.current + 1,
+            last: last
         };
         var html = successScreen.render(obj);
         $('body').append(html);
@@ -196,17 +203,17 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-      if(level==1){
-        return true;
-      }else{
-        level--;
-        console.dir(Cookies.get(level + '-success'));
-        if (Cookies.get(level + '-success') == "true") {
+        if (level == 1) {
             return true;
         } else {
-            return false;
+            level--;
+            console.dir(Cookies.get(level + '-success'));
+            if (Cookies.get(level + '-success') == "true") {
+                return true;
+            } else {
+                return false;
+            }
         }
-      }
 
     };
 

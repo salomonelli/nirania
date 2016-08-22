@@ -58844,10 +58844,17 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * renders hogan tempalte success.mustache and adds it to html-body
      */
     Level.prototype.showSuccessScreen = function() {
+        var last;
+        if (this.current === levels.length) {
+            last = "gone";
+        } else {
+            last = "";
+        }
         var obj = {
             score: this.diamonds,
             level: this.current,
-            next: this.current + 1
+            next: this.current + 1,
+            last: last
         };
         var html = successScreen.render(obj);
         $('body').append(html);
@@ -58924,17 +58931,17 @@ module.exports = (function(THREE, COLOR, Way, level1, level2, level3, CollisionD
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-      if(level==1){
-        return true;
-      }else{
-        level--;
-        console.dir(Cookies.get(level + '-success'));
-        if (Cookies.get(level + '-success') == "true") {
+        if (level == 1) {
             return true;
         } else {
-            return false;
+            level--;
+            console.dir(Cookies.get(level + '-success'));
+            if (Cookies.get(level + '-success') == "true") {
+                return true;
+            } else {
+                return false;
+            }
         }
-      }
 
     };
 
@@ -60738,7 +60745,7 @@ var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=th
 },{"hogan.js/lib/template":2}],25:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"powerups row \">");_.b("\n" + i);_.b("  <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>Powerups</b></br>");_.b("\n" + i);_.b("    <span>Total: <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span> <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></span>");_.b("\n" + i);_.b("  </div>");_.b("\n" + i);_.b("  <div class=\"large-centered medium-centered small-centered\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,313,688,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            </br>");_.b("\n" + i);_.b("            <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("  </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],26:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],27:[function(require,module,exports){
 module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     /**
