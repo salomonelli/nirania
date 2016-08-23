@@ -68,9 +68,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             //move way and obstacles
             // checks for active powerup 4
 
-            position = Math.sin(clock.getElapsedTime()*10)*0.1;
-            protagonist.children[3].position.z = position +0.3;
-            protagonist.children[2].position.z = position -0,2;
+            position = Math.sin(clock.getElapsedTime()*10)* 1;
+            protagonist.children[3].position.z = position * 1;
+            protagonist.children[2].position.z = position * -1;
 
             console.log(self.powerupActive) ;
             console.log(self.powerupActiveDuration);
