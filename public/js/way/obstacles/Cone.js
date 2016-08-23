@@ -19,6 +19,7 @@ module.exports = (function(THREE, UTIL) {
         this.mesh.position.set(x,y,z);
     };
 
+
     Cone.prepareForCollisionDetection = function(obstacle, radius){
         var a = radius - 0.5* 30;
         var b = 30*0.5;
@@ -38,6 +39,10 @@ module.exports = (function(THREE, UTIL) {
             }
         };
         return ret;
+    };
+
+    Cone.prototype.reposition = function(){
+
     };
 
     return Cone;

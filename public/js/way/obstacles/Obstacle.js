@@ -1,4 +1,4 @@
-module.exports = (function (Box, Ring, Diamond, Cone) {
+module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     var obstacleTypes = {
         box: Box,
         ring: Ring,
@@ -20,6 +20,14 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
         this.distance = distance;
         this.angle = angle;
         this.collisionData = collisionData;
+        this.randomMoving = false;
+
+        //used if moving obstacle
+        if (type == 'cone') {
+            this.randomMoving = true;
+            this.directionChangeIndex = 0;
+            this.direction = true; //true == 'right', false == 'left'
+        }
     }
 
     /**
@@ -27,9 +35,9 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
      * @param {Array} obstacles - contains information to generate obstacles
      * @returns {Array} ret - containing obstacle objects
      */
-    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
+    Obstacle.generateFromArray = function(obstacles, wayLength, radius) {
         var ret = [];
-        obstacles.forEach(function (o) {
+        obstacles.forEach(function(o) {
             var obstacle = new obstacleTypes[o.type](o);
             obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
             var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
@@ -44,7 +52,33 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
             );
         });
         return ret;
-        console.dir(ret);
+    };
+
+    Obstacle.prototype.move = function(direction) {
+        if (direction) {
+            //turn right
+            this.angle += 1;
+            if (this.angle === 360) this.angle = 0;
+        } else {
+            this.angle -= 1;
+            if (this.angle === -1) this.angle = 359;
+        }
+        var radius = 80 + 15;
+        //var angle = -(angle -90);
+        var angle = UTIL.convertDegreesToRadians(this.angle);
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y = angle;
+        this.mesh.position.x = x;
+        this.mesh.position.z = z;
+
+
+        var a = radius - 0.5* 30;
+        var b = 30*0.5;
+        var angleRight = Math.atan(b/a);
+        this.collisionData.angle.center = this.angle;
+        this.collisionData.angle.min = Math.round(this.angle - UTIL.convertRadiansToDegrees(angleRight));
+        this.collisionData.angle.max = Math.round(this.angle + UTIL.convertRadiansToDegrees(angleRight));
     };
 
     return Obstacle;
@@ -52,5 +86,6 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
     require('./Box'),
     require('./Ring'),
     require('./Diamond'),
-    require('./Cone')
+    require('./Cone'),
+    require('../../UTIL')
 );

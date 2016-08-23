@@ -25,6 +25,6 @@
     "hogan.js": "2.0.0",
     "browserify-hogan": "^0.3.0",
     "js-cookie": "*",
-    "random-material-color": "*"
+    "random-boolean": "*"
   }
 }

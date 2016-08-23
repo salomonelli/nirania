@@ -73,9 +73,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             protagonist.children[3].position.z = position * 1;
             protagonist.children[2].position.z = position * -1;
 
-            
             if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                
+
                 for(var i = 0; i < protagonist.children.length; i++){
                     // makes protagonist transparent
                     protagonist.children[i].material.transparent = true;
@@ -107,7 +106,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "ring":
                     // no collsion detection, if powerup 4 is active
                     if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                        
                             break;
                     }
                     self.gameOver = true;
@@ -122,7 +120,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 animate();
             }, self.speed);
         };
-
         animate(); //once
     };
 

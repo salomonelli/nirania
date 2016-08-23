@@ -17,11 +17,13 @@ module.exports = (function() {
     function CollisionDetector(obstacles) {
         //sort by distance to save performance
         obstacles = obstacles.sort(function(a, b) {
+          try{
             var keyA = _getMaxDistance(a);
             keyB = _getMaxDistance(b);
             // Compare the 2 keys
             if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
+            if (keyA > keyB) return 1;            
+          }catch(e){}
             return 0;
         });
         this.obstacles = obstacles;

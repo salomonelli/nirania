@@ -15591,6 +15591,12 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],6:[function(require,module,exports){
+'use strict';
+module.exports = function () {
+	return Math.random() >= 0.5;
+};
+
+},{}],7:[function(require,module,exports){
 // File:src/Three.js
 
 /**
@@ -57353,7 +57359,7 @@ THREE.MorphBlendMesh.prototype.update = function ( delta ) {
 };
 
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 (function (process){
 /**
  * Tween.js - Licensed under the MIT license
@@ -58227,7 +58233,7 @@ TWEEN.Interpolation = {
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":5}],8:[function(require,module,exports){
+},{"_process":5}],9:[function(require,module,exports){
 module.exports = (function() {
     var COLOR = {
         background: 0x13BAAA,
@@ -58291,7 +58297,7 @@ module.exports = (function() {
     return COLOR;
 })();
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 //require this anywhere
 module.exports = (function ($) {
 
@@ -58357,7 +58363,7 @@ module.exports = (function ($) {
 })(
     require('jquery')
 );
-},{"jquery":3}],10:[function(require,module,exports){
+},{"jquery":3}],11:[function(require,module,exports){
 module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
 
     /**
@@ -58668,7 +58674,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     require('js-cookie')
 );
 
-},{"./COLOR":8,"./Particles":20,"./protagonist/Protagonist":25,"async":1,"js-cookie":4,"three":6,"tween.js":7}],11:[function(require,module,exports){
+},{"./COLOR":9,"./Particles":21,"./protagonist/Protagonist":26,"async":1,"js-cookie":4,"three":7,"tween.js":8}],12:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58715,7 +58721,7 @@ module.exports = (function(){
     return UTIL;
 })();
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
 
     var levels = [
@@ -58791,9 +58797,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             protagonist.children[3].position.z = position * 1;
             protagonist.children[2].position.z = position * -1;
 
-            
             if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                
+
                 for(var i = 0; i < protagonist.children.length; i++){
                     // makes protagonist transparent
                     protagonist.children[i].material.transparent = true;
@@ -58825,7 +58830,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "ring":
                     // no collsion detection, if powerup 4 is active
                     if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                        
                             break;
                     }
                     self.gameOver = true;
@@ -58840,7 +58844,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 animate();
             }, self.speed);
         };
-
         animate(); //once
     };
 
@@ -58999,7 +59002,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../protagonist/Protagonist')
 );
 
-},{"../protagonist/CollisionDetector":22,"../protagonist/Protagonist":25,"../templates/gameover.mustache":26,"../templates/shop.mustache":27,"../templates/shopModalContent.mustache":28,"../templates/success.mustache":29,"../way/Way":30,"../way/obstacles/Obstacle":34,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"./level5":18,"jquery":3,"js-cookie":4}],13:[function(require,module,exports){
+},{"../protagonist/CollisionDetector":23,"../protagonist/Protagonist":26,"../templates/gameover.mustache":27,"../templates/shop.mustache":28,"../templates/shopModalContent.mustache":29,"../templates/success.mustache":30,"../way/Way":31,"../way/obstacles/Obstacle":35,"./Powerups":14,"./level1":15,"./level2":16,"./level3":17,"./level4":18,"./level5":19,"jquery":3,"js-cookie":4}],14:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _powerups = [{
             id: 1,
@@ -59088,7 +59091,7 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":4}],14:[function(require,module,exports){
+},{"js-cookie":4}],15:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[1].box;
     var diamondColor = 0xffffff;
@@ -59607,7 +59610,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../UTIL'),
     require('../COLOR'));
 
-},{"../COLOR":8,"../UTIL":11}],15:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12}],16:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[0].box;
     var ringColor = COLOR.palette[0].ring;
@@ -60321,7 +60324,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../COLOR')
 );
 
-},{"../COLOR":8,"../UTIL":11}],16:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12}],17:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[2].box;
   var ringColor = COLOR.palette[2].ring;
@@ -61302,7 +61305,7 @@ module.exports = (function(UTIL, COLOR){
 require('../COLOR')
 );
 
-},{"../COLOR":8,"../UTIL":11}],17:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12}],18:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[3].box;
   var ringColor = COLOR.palette[3].ring;
@@ -62614,7 +62617,7 @@ module.exports = (function(UTIL, COLOR){
   require('../COLOR')
 );
 
-},{"../COLOR":8,"../UTIL":11}],18:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12}],19:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
     var boxColor = COLOR.palette[3].box;
     var ringColor = COLOR.palette[3].ring;
@@ -63622,7 +63625,7 @@ module.exports = (function(UTIL, COLOR){
     require('../COLOR')
 );
 
-},{"../COLOR":8,"../UTIL":11}],19:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12}],20:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
     "use strict";
@@ -63828,7 +63831,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Powerups')
 );
 
-},{"./Keybindings":9,"./Scene":10,"./level/Level":12,"./level/Powerups":13,"./protagonist/Protagonist":25,"async":1,"jquery":3,"three":6,"tween.js":7}],20:[function(require,module,exports){
+},{"./Keybindings":10,"./Scene":11,"./level/Level":13,"./level/Powerups":14,"./protagonist/Protagonist":26,"async":1,"jquery":3,"three":7,"tween.js":8}],21:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -63933,7 +63936,7 @@ module.exports = (function (THREE) {
 })(
     require('three')
 );
-},{"three":6}],21:[function(require,module,exports){
+},{"three":7}],22:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -63985,7 +63988,7 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],22:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],23:[function(require,module,exports){
 module.exports = (function() {
 
     /**
@@ -64005,11 +64008,13 @@ module.exports = (function() {
     function CollisionDetector(obstacles) {
         //sort by distance to save performance
         obstacles = obstacles.sort(function(a, b) {
+          try{
             var keyA = _getMaxDistance(a);
             keyB = _getMaxDistance(b);
             // Compare the 2 keys
             if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
+            if (keyA > keyB) return 1;            
+          }catch(e){}
             return 0;
         });
         this.obstacles = obstacles;
@@ -64076,7 +64081,7 @@ module.exports = (function() {
     return CollisionDetector;
 })();
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64128,7 +64133,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],24:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],25:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64180,7 +64185,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],25:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],26:[function(require,module,exports){
 module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
     /**
@@ -64367,16 +64372,16 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
     require('js-cookie')
 );
 
-},{"../COLOR":8,"./Body":21,"./Head":23,"./Leg":24,"jquery":3,"js-cookie":4,"three":6,"tween.js":7}],26:[function(require,module,exports){
+},{"../COLOR":9,"./Body":22,"./Head":24,"./Leg":25,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],27:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],27:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1154,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],28:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,455,996,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Buy for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1154,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],29:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,582,761,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,455,996,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Buy for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],30:[function(require,module,exports){
-module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,582,761,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],31:[function(require,module,exports){
+module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -64390,11 +64395,14 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
         this.group = new THREE.Object3D();
 
         this.obstacles = [];
+        this.randomObstacles = [];
 
         this.radius = 80;
         this.segments = 1000;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
-        this.material = new THREE.MeshLambertMaterial({color: color});
+        this.material = new THREE.MeshLambertMaterial({
+            color: color
+        });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
@@ -64414,19 +64422,19 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function () {
+    Way.prototype.position = function() {
         this.group.rotation.x = Math.PI / 2;
-        this.group.position.y = -this.radius-18;
-        this.group.position.z = -this.length*0.5+50;
+        this.group.position.y = -this.radius - 18;
+        this.group.position.z = -this.length * 0.5 + 50;
     };
 
     /**
      * moves way direction z positive
      */
-    Way.prototype.moveForwardTillEnd = function (speed) {
-        
+    Way.prototype.moveForwardTillEnd = function(speed) {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
+        this.moveRandomObstacles();
         //TODO remove this after finished programming
         $('.scores .distance span').html(this.currentPosition.distance);
     };
@@ -64435,43 +64443,53 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
      * rotates the way around the y axis according to given angle
      * @param {number} angle
      */
-    Way.prototype.rotate = function (angle) {
-        if(UTIL.convertRadiansToDegrees(this.group.rotation.y)>= 360 )
-        {
+    Way.prototype.rotate = function(angle) {
+        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) >= 360) {
             this.group.rotation.y = 0;
-        }
-        else if(UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0 )
-        {
+        } else if (UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0) {
             this.group.rotation.y = UTIL.convertDegreesToRadians(360);
         }
         var speedRotation = angle;
         // roatates faster with powerup 1
-        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation*2;
+        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation * 2;
         this.group.rotation.y += speedRotation;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
         // anglemin and anglemax are hitbox for protagonist
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
-        if(this.currentPosition.anglemin <0) this.currentPosition.anglemin = this.currentPosition.anglemin +360;
-        if(this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax -360;
+        if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
+        if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
         this.currentPosition.anglemax = this.currentPosition.angle + 5;
-       
-
     };
+
+    Way.prototype.moveRandomObstacles = function() {
+        //this.obstacles
+        this.obstacles.forEach(function(obstacle) {
+            if (!obstacle.randomMoving) return;
+            obstacle.directionChangeIndex++;
+            if (obstacle.directionChangeIndex == 15) {
+                obstacle.directionChangeIndex = 0;
+                obstacle.direction = randomBoolean();
+            }
+            //move it
+            obstacle.move(obstacle.direction);
+        });
+    };
+
 
     /**
      * creates Obstacles out of array and adds them to the way
      * @param {[{}]} obstacles
      */
-    Way.prototype.addObstacles = function (obstacles) {
+    Way.prototype.addObstacles = function(obstacles) {
         var self = this;
         //generate obstacles
         self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
         //calculate positions
-        self.obstacles.forEach(function (obstacle) {
-            if(obstacle.distance<self.length){
+        self.obstacles.forEach(function(obstacle) {
+            if (obstacle.distance < self.length) {
                 self.group.add(obstacle.mesh);
-            }else{
-                console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.')
+            } else {
+                console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
             }
         });
     };
@@ -64480,7 +64498,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
      * adds way to given scene
      * @param {THREE.Scene} scene - scene to which the way will be added
      */
-    Way.prototype.addToScene = function(scene){
+    Way.prototype.addToScene = function(scene) {
         scene.add(this.group);
     };
 
@@ -64491,10 +64509,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
     require('./obstacles/Obstacle'),
     require('../UTIL'),
     require('jquery'),
-    require('js-cookie')
+    require('js-cookie'),
+    require('random-boolean')
 );
 
-},{"../COLOR":8,"../UTIL":11,"./obstacles/Obstacle":34,"jquery":3,"js-cookie":4,"three":6}],31:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":12,"./obstacles/Obstacle":35,"jquery":3,"js-cookie":4,"random-boolean":6,"three":7}],32:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -64560,7 +64579,7 @@ module.exports=(function(THREE, UTIL){
     require('../../UTIL')
 );
 
-},{"../../UTIL":11,"three":6}],32:[function(require,module,exports){
+},{"../../UTIL":12,"three":7}],33:[function(require,module,exports){
 module.exports = (function(THREE, UTIL) {
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
@@ -64581,6 +64600,7 @@ module.exports = (function(THREE, UTIL) {
         this.mesh.rotation.y += angle;
         this.mesh.position.set(x,y,z);
     };
+
 
     Cone.prepareForCollisionDetection = function(obstacle, radius){
         var a = radius - 0.5* 30;
@@ -64603,13 +64623,17 @@ module.exports = (function(THREE, UTIL) {
         return ret;
     };
 
+    Cone.prototype.reposition = function(){
+
+    };
+
     return Cone;
 })(
     require('three'),
     require('../../UTIL')
 );
 
-},{"../../UTIL":11,"three":6}],33:[function(require,module,exports){
+},{"../../UTIL":12,"three":7}],34:[function(require,module,exports){
 module.exports = (function(THREE, UTIL, Cookies){
     var size = 10;
     var heightFromWay = 20;
@@ -64707,8 +64731,8 @@ module.exports = (function(THREE, UTIL, Cookies){
     require('js-cookie')
 );
 
-},{"../../UTIL":11,"js-cookie":4,"three":6}],34:[function(require,module,exports){
-module.exports = (function (Box, Ring, Diamond, Cone) {
+},{"../../UTIL":12,"js-cookie":4,"three":7}],35:[function(require,module,exports){
+module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     var obstacleTypes = {
         box: Box,
         ring: Ring,
@@ -64730,6 +64754,14 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
         this.distance = distance;
         this.angle = angle;
         this.collisionData = collisionData;
+        this.randomMoving = false;
+
+        //used if moving obstacle
+        if (type == 'cone') {
+            this.randomMoving = true;
+            this.directionChangeIndex = 0;
+            this.direction = true; //true == 'right', false == 'left'
+        }
     }
 
     /**
@@ -64737,9 +64769,9 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
      * @param {Array} obstacles - contains information to generate obstacles
      * @returns {Array} ret - containing obstacle objects
      */
-    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
+    Obstacle.generateFromArray = function(obstacles, wayLength, radius) {
         var ret = [];
-        obstacles.forEach(function (o) {
+        obstacles.forEach(function(o) {
             var obstacle = new obstacleTypes[o.type](o);
             obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
             var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
@@ -64754,7 +64786,34 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
             );
         });
         return ret;
-        console.dir(ret);
+    };
+
+    Obstacle.prototype.move = function(direction) {
+        if (direction) {
+            //turn right
+            this.angle += 1;
+            if (this.angle === 360) this.angle = 0;
+        } else {
+            this.angle -= 1;
+            if (this.angle === -1) this.angle = 359;
+        }
+        var radius = 80 + 15;
+        //var angle = -(angle -90);
+        var angle = UTIL.convertDegreesToRadians(this.angle);
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y = angle;
+        this.mesh.position.x = x;
+        this.mesh.position.z = z;
+
+
+        var a = radius - 0.5* 30;
+        var b = 30*0.5;
+        var angleRight = Math.atan(b/a);
+        this.collisionData.angle.center = this.angle;
+        this.collisionData.angle.min = Math.round(this.angle - UTIL.convertRadiansToDegrees(angleRight));
+        this.collisionData.angle.max = Math.round(this.angle + UTIL.convertRadiansToDegrees(angleRight));
+        console.log('angle: '+this.collisionData.angle.center);
     };
 
     return Obstacle;
@@ -64762,10 +64821,11 @@ module.exports = (function (Box, Ring, Diamond, Cone) {
     require('./Box'),
     require('./Ring'),
     require('./Diamond'),
-    require('./Cone')
+    require('./Cone'),
+    require('../../UTIL')
 );
 
-},{"./Box":31,"./Cone":32,"./Diamond":33,"./Ring":35}],35:[function(require,module,exports){
+},{"../../UTIL":12,"./Box":32,"./Cone":33,"./Diamond":34,"./Ring":36}],36:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
     var radius = 100;
@@ -64819,4 +64879,4 @@ module.exports = (function () {
     return Ring;
 })();
 
-},{}]},{},[19]);
+},{}]},{},[20]);
