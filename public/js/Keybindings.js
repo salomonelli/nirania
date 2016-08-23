@@ -28,6 +28,9 @@ module.exports = (function ($) {
             case 38:
                 return 'up';
                 break;
+            case 40:
+                return 'powerup';
+                break;
             default:
                 return 'anyKey';
                 break;

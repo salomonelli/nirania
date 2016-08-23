@@ -67,6 +67,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         requestAnimationFrame(render);
         mainScene.render();
         mainScene.turn();
+        mainScene.boost(mainScene.getProtagonist(),level[currentLevel]);
         TWEEN.update();
     }
 
@@ -85,6 +86,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function startLevel(cb) {
         Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+        
         //start moving way
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
