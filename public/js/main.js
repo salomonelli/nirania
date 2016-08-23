@@ -164,8 +164,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var total =  Powerups.buy(powerup);
         //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
         //$(this).addClass("hidden");
-        $('div.shopScreen').empty();
-        level[currentLevel].showShopScreen();
+        level[currentLevel].updateShopScreen();
       }
     });
 

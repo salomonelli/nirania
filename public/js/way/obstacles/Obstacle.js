@@ -1,9 +1,8 @@
-module.exports = (function (Box, Ring, Diamond, Opponent) {
+module.exports = (function (Box, Ring, Diamond) {
     var obstacleTypes = {
         box: Box,
         ring: Ring,
-        diamond: Diamond,
-        opponent: Opponent
+        diamond: Diamond
     };
 
     /**
@@ -50,6 +49,5 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
 })(
     require('./Box'),
     require('./Ring'),
-    require('./Diamond'),
-    require('./Opponent')
+    require('./Diamond')
 );

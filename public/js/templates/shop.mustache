@@ -12,9 +12,9 @@
     <br><br>
     <div class="large-12 medium-12 small-12">
         {{#powerups}}
-            <div class="small-12 medium-3 large-3 columns powerup {{disabled}}">
+            <div class="small-12 medium-3 large-3 columns powerup">
                 <div class="image-wrapper overlay-slide-in-left">
-                    <img src="https://www.artundform.de/shop/bilder/produkte/gross/Magnet-Spielfigur-blau.jpg" />
+                    <img src="/img/toy.jpg" />
                     <div class="image-overlay-content">
                         <h3>{{description}}</h3>
                         <a class="button secondary {{disabled}}" id="buy-powerup-{{id}}">
@@ -24,21 +24,6 @@
                     </div>
                 </div>
             </div>
-
-            <!--
-
-
-            <div class="powerup {{end}} large-2 medium-3 columns" id="powerup-{{id}}">
-                <span class="description">{{description}}</span>
-                </br>
-                <a class="button secondary {{disabled}}" id="buy-powerup-{{id}}">
-              Buy for
-              {{diamonds}} <i class="fa fa-diamond" aria-hidden="true"></i>
-            </a>
-            </div>
-
-          -->
-
         {{/powerups}}
     </div>
     <button class="close-button" data-close aria-label="Close modal" type="button">

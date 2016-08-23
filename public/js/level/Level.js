@@ -11,7 +11,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     var _templates = {
         successScreen: require('../templates/success.mustache'),
         gameoverScreen: require('../templates/gameover.mustache'),
-        shopScreen: require('../templates/shop.mustache')
+        shopScreen: require('../templates/shop.mustache'),
+        modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
     /**
@@ -56,10 +57,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
-
-        var speedMulti = 1;
-        if (Cookies.get('powerup-1') == "bought") speedMulti = 2;
-
+        var speedMulti = 2;
         var animate = function() {
             //move way and obstacles
             t = t - speedMulti;
@@ -77,6 +75,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             switch (collObj.type) {
                 case "box":
                 case "ring":
+                    // if powerup 4 is active, no collsion detection for the first 500
+                    if (Cookies.get('powerup-4') == "bought" && self.way.length - 80 - t <=500){
+                            console.log("Powerup 4 aktiv!!!!!");
+                            break;
+                    }
                     self.gameOver = true;
                     cb();
                     return;
@@ -151,20 +154,23 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showShopScreen = function() {
         var self = this;
-        var powerups = Powerups.getPowerups();
-        powerups.forEach(function(powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
-                powerup.disabled = "";
-            }
-        });
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
         $('div.shopScreen').append(html);
+    };
+
+    Level.prototype.updateShopScreen = function() {
+        var self = this;
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+        var html = _templates.modalContentShopScreen.render({
+            total: Level.getTotalDiamonds(),
+            powerups: powerups
+        });
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
     };
 
     /**
