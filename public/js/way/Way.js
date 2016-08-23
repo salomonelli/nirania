@@ -66,9 +66,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
             this.group.rotation.y = UTIL.convertDegreesToRadians(360);
         }
         var speedRotation = angle;
-        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation*50;
+        // roatates faster with powerup 1
+        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation*2;
         this.group.rotation.y += speedRotation;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        // anglemin and anglemax are hitbox for protagonist
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
         if(this.currentPosition.anglemin <0) this.currentPosition.anglemin = this.currentPosition.anglemin +360;
         if(this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax -360;
