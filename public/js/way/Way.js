@@ -50,7 +50,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         //TODO remove this after finished programming
-        $('.anzeige .distance span').html(this.currentPosition.distance);
+        $('.scores .distance span').html(this.currentPosition.distance);
     };
 
     /**
@@ -76,7 +76,7 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
         if(this.currentPosition.anglemin <0) this.currentPosition.anglemin = this.currentPosition.anglemin +360;
         if(this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax -360;
         this.currentPosition.anglemax = this.currentPosition.angle + 5;
-        $('.anzeige .angle span').html(this.currentPosition.angle);
+       
 
     };
 

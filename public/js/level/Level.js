@@ -5,6 +5,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         require('./level2'),
         require('./level3'),
         require('./level4'),
+        require('./level4'),
         require('./level5')
     ];
 
@@ -126,7 +127,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
-            $('.anzeige .diamonds span').html(self.diamonds);
+            $('.scores .diamonds span').html(self.diamonds);
         }
     };
 
