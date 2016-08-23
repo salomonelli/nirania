@@ -30,7 +30,7 @@ module.exports = (function (COLOR, THREE) {
     Head.prototype.addToGroup = function (group) {
         group.add(this.mesh);
     };
-
+    
     /**
      * loads the head from json file (blender)
      * @param {function} cb callback

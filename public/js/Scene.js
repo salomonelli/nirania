@@ -1,4 +1,4 @@
-module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) {
+module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
 
     /**
      * Represents Scene
@@ -11,12 +11,12 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.height = height;
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
-
+        this.powerupUsed = false;
         this.renderer = new THREE.WebGLRenderer();
         this.scene.background = new THREE.Color( background);
         this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = false;
-
+        this.boostNotUsed = true;
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
@@ -31,7 +31,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
             left: false,
             right: false,
             up: false,
-            continue: false
+            continue: false,
+            powerup: false
         };
         this.addLights();
     }
@@ -203,6 +204,21 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.objects.way.addToScene(this.scene);
     };
 
+    Scene.prototype.boost = function (mainProtagonist, level) {
+        var self = this;
+        if (Cookies.get('powerup-4') == "bought"){
+        if(self.move.powerup){
+            if(self.boostNotUsed) {
+                level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+                level.powerupActive = true;
+                console.log(level.powerupActiveDuration);
+                console.log(level.powerupActive);
+                self.boostNotUsed = false;
+            }
+        }
+    }
+
+    }
     /**
      * turns camera and protagonist until told to stop
      */
@@ -274,5 +290,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
     require('./COLOR'),
     require('three'),
     require('async'),
-    require('tween.js')
+    require('tween.js'),
+    require('js-cookie')
 );

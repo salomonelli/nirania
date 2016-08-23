@@ -29,7 +29,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        console.log("Aktueller Speed: " + this.speed);
+        this.powerupActive = false;
+        this.powerupActiveDuration = 0;
+        this.powerUpDistance = 0;
     }
 
     /**
@@ -60,6 +62,23 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         var speedMulti = 2;
         var animate = function() {
             //move way and obstacles
+            console.log(self.powerupActive) ;
+            console.log(self.powerupActiveDuration);
+            if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                console.log("Methode offfen!!!!!!!!!!!!!!!!!!!!!!");
+                for(var i = 0; i < protagonist.children.length; i++){
+                    protagonist.children[i].material.transparent = true;
+                    protagonist.children[i].material.opacity = 0.3;
+                }
+                self.powerUpDistance = self.powerUpDistance +speedMulti;
+            }
+            else{
+                for(var i = 0; i < protagonist.children.length; i++){
+                    protagonist.children[i].material.transparent = false;
+                    protagonist.children[i].material.opacity = 0.8;
+                }
+            }
+
             t = t - speedMulti;
             self.way.moveForwardTillEnd(self.speed * speedMulti);
 
@@ -76,8 +95,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "box":
                 case "ring":
                     // if powerup 4 is active, no collsion detection for the first 500
-                    if (Cookies.get('powerup-4') == "bought" && self.way.length - 80 - t <=500){
-                            console.log("Powerup 4 aktiv!!!!!");
+                    if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                        console.log(protagonist.children[1].material);
+                        console.log("Powerup 4 aktiv!!!!!");
                             break;
                     }
                     self.gameOver = true;
@@ -116,13 +136,18 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         if (this.current === levels.length) last = "gone";
-
-
+        var canNotBePlayed, disableNextLevel;
+        if (!Level.canBePlayed(this.current + 1)) {
+            canNotBePlayed = "true";
+            disableNextLevel = "disabled";
+        }
         var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
-            last: last
+            last: last,
+            canNotBePlayed: canNotBePlayed,
+            disableNextLevel: disableNextLevel
         });
         $('body').append(html);
         this.showShopScreen();
@@ -136,14 +161,12 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-
         var html = _templates.gameoverScreen.render({
             score: this.diamonds,
             level: this.current
         });
 
         $('body').append(html);
-        this.showShopScreen();
         //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
@@ -210,17 +233,27 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-        if (level == 1) {
-            return true;
-        } else {
-            level--;
-            console.dir(Cookies.get(level + '-success'));
-            if (Cookies.get(level + '-success') == "true") {
-                return true;
+        console.log('level: ' + level);
+        if (level == 1) return true;
+        level--;
+        if (Cookies.get(level + '-success') == "true") {
+            //managed level
+            if (level <= Powerups.amount()) {
+                //powerup exists
+                if (Cookies.get('powerup-' + level) == "bought") {
+                    //powerup is bought
+                    return true;
+                } else {
+                    //powerup is not bought
+                    return false;
+                }
             } else {
-                return false;
+                //no powerup exist
+                return true;
             }
         }
+        return false;
+
 
     };
 
@@ -234,5 +267,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../way/obstacles/Obstacle'),
     require('jquery'),
     require('js-cookie'),
-    require('./Powerups')
+    require('./Powerups'),
+    require('../protagonist/Protagonist')
 );

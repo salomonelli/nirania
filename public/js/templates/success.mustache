@@ -7,12 +7,20 @@
         <a href="/#{{level}}" class="button reload">
             <i class="fa fa-repeat" aria-hidden="true"></i>  Run again
         </a>
-        <a href="/#{{next}}" class="button success reload {{last}}">
+        <a href="/#{{next}}" class="button success reload {{last}} {{disableNextLevel}}">
             <i class="fa fa-check" aria-hidden="true"></i>  Next Level
         </a>
         <a data-open="shopModal" class="button">
             Free family members
         </a>
+        {{#canNotBePlayed}}
+        <div class="callout alert">
+          <h5>Free your Family!</h5>
+          <p>Next Level can only be played by freeing the next family member.</p>
+        </div>
+        {{/canNotBePlayed}}
+
         <div class="shopScreen"></div>
+
     </div>
 </div>

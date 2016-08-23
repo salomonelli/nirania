@@ -11,7 +11,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         new Level(1, 1),
         new Level(2, 1),
         new Level(3, 1),
-        new Level(4, 1)
+        new Level(4, 1),
+        new Level(5, 1)
     ];
     var currentLevel = 1;
     var URLpath = '';
@@ -67,6 +68,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         requestAnimationFrame(render);
         mainScene.render();
         mainScene.turn();
+        mainScene.boost(mainScene.getProtagonist(),level[currentLevel]);
         TWEEN.update();
     }
 
@@ -85,6 +87,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function startLevel(cb) {
         Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+
         //start moving way
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
@@ -162,9 +165,15 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       if(!$(this).hasClass('disabled')){
         var powerup = event.target.id.replace('buy-powerup-', '');
         var total =  Powerups.buy(powerup);
-        //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
-        //$(this).addClass("hidden");
         level[currentLevel].updateShopScreen();
+        console.log('length: '+ $('.button.success.reload').length);
+        console.log('can: '+ Level.canBePlayed(currentLevel+1));
+        if($('.button.success.reload').length){
+          if(Level.canBePlayed(parseInt(currentLevel)+1)){
+            $('.button.success.reload').removeClass('disabled');
+            $('.callout.alert').remove();
+          }
+        }
       }
     });
 
