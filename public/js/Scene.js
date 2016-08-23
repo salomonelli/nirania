@@ -104,13 +104,19 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.startingAnimation = function (cb) {
         var self = this;
+        var position;
+        var clock = new THREE.Clock(true);
+        console.log(self.objects.protagonist);
         //protagonist and cube fall
         async.series([
             function animation1(next) {
                 var t = 150;
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
+
                     t--;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -126,6 +132,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
                     self.camera.position.y--;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     t--;
                     if (t > 0) {
                         setTimeout(function () {
@@ -141,7 +149,9 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var t = 150;
                 var fall = function () {
                     self.camera.position.y--;
-                    t--;
+                    t--;position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
+
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -158,6 +168,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var fall = function () {
                     self.camera.position.x--;
                     self.camera.position.z += 0.5;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     self.camera.lookAt(self.objects.protagonist.getPosition());
                     t--;
                     if (t > 0) {
@@ -176,6 +188,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var zoom = function () {
                     self.camera.position.z--;
                     self.camera.lookAt(self.objects.protagonist.getPosition());
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     t--;
                     if (t > 0) {
                         setTimeout(function () {

@@ -69,13 +69,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             // checks for active powerup 4
 
             position = Math.sin(clock.getElapsedTime()*10)* 1;
+            protagonist.children[0].position.x = position * - 0.05;
             protagonist.children[3].position.z = position * 1;
             protagonist.children[2].position.z = position * -1;
 
-            console.log(self.powerupActive) ;
-            console.log(self.powerupActiveDuration);
+            
             if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                console.log("Methode offfen!!!!!!!!!!!!!!!!!!!!!!");
+                
                 for(var i = 0; i < protagonist.children.length; i++){
                     // makes protagonist transparent
                     protagonist.children[i].material.transparent = true;
@@ -107,8 +107,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "ring":
                     // no collsion detection, if powerup 4 is active
                     if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                        console.log(protagonist.children[1].material);
-                        console.log("Powerup 4 aktiv!!!!!");
+                        
                             break;
                     }
                     self.gameOver = true;
