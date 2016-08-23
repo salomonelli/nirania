@@ -98,7 +98,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                     // if powerup 4 is active, no collsion detection for the first 500
                     if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
                         console.log(protagonist.children[1].material);
-                        console.log("Powerup 4 aktiv!!!!!")
+                        console.log("Powerup 4 aktiv!!!!!");
                             break;
                     }
                     self.gameOver = true;
@@ -137,14 +137,18 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         if (this.current === levels.length) last = "gone";
-
-
+        var canNotBePlayed, disableNextLevel;
+        if (!Level.canBePlayed(this.current + 1)) {
+            canNotBePlayed = "true";
+            disableNextLevel = "disabled";
+        }
         var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
             last: last,
-            canBePlayed: Level.canBePlayed(this.current +1)
+            canNotBePlayed: canNotBePlayed,
+            disableNextLevel: disableNextLevel
         });
         $('body').append(html);
         this.showShopScreen();
@@ -158,14 +162,12 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-
         var html = _templates.gameoverScreen.render({
             score: this.diamonds,
             level: this.current
         });
 
         $('body').append(html);
-        this.showShopScreen();
         //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
@@ -232,20 +234,27 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-        if (level == 1) {
-            return true;
-        } else {
-            level--;
-            console.dir(Cookies.get(level + '-success'));
-            console.log('asdasdads');
-            console.log(Powerups.amount());
-            if(Cookies.get('powerup-'+level) == "bought" || level <= Powerups.amount()){
-              if(Cookies.get(level + '-success') == "true"){
+        console.log('level: ' + level);
+        if (level == 1) return true;
+        level--;
+        if (Cookies.get(level + '-success') == "true") {
+            //managed level
+            if (level <= Powerups.amount()) {
+                //powerup exists
+                if (Cookies.get('powerup-' + level) == "bought") {
+                    //powerup is bought
+                    return true;
+                } else {
+                    //powerup is not bought
+                    return false;
+                }
+            } else {
+                //no powerup exist
                 return true;
-              }
             }
-            return false;
         }
+        return false;
+
 
     };
 
