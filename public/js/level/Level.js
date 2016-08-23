@@ -10,7 +10,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     var _templates = {
         successScreen: require('../templates/success.mustache'),
         gameoverScreen: require('../templates/gameover.mustache'),
-        shopScreen: require('../templates/shop.mustache')
+        shopScreen: require('../templates/shop.mustache'),
+        modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
     /**
@@ -161,6 +162,25 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             powerups: powerups
         });
         $('div.shopScreen').append(html);
+    };
+
+    Level.prototype.updateShopScreen = function() {
+        var self = this;
+        var powerups = Powerups.getPowerups();
+        powerups.forEach(function(powerup) {
+            powerup.disabled = "disabled";
+            if (Powerups.boughtAlready(powerup.id)) {
+                powerup.disabled = "hidden";
+            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
+                powerup.disabled = "";
+            }
+        });
+        var html = _templates.modalContentShopScreen.render({
+            total: Level.getTotalDiamonds(),
+            powerups: powerups
+        });
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
     };
 
     /**
