@@ -11,7 +11,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         new Level(1, 1),
         new Level(2, 1),
         new Level(3, 1),
-        new Level(4, 1)
+        new Level(4, 1),
+        new Level(5, 1)
     ];
     var currentLevel = 1;
     var URLpath = '';
@@ -166,8 +167,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var total =  Powerups.buy(powerup);
         //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
         //$(this).addClass("hidden");
-        $('div.shopScreen').empty();
-        level[currentLevel].showShopScreen();
+        level[currentLevel].updateShopScreen();
       }
     });
 

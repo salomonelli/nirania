@@ -1,5 +1,5 @@
 module.exports = (function(Cookies) {
-    var powerups = [{
+    var _powerups = [{
             id: 1,
             description: "boosts speed",
             diamonds: 10,
@@ -31,10 +31,10 @@ module.exports = (function(Cookies) {
 
     /**
      * returns array with all powerups
-     * @return {Array} powerups - array with all powerups
+     * @return {Array} _powerups - array with all powerups
      */
     Powerups.getPowerups = function() {
-        return powerups;
+        return _powerups;
     };
 
     /**
@@ -42,14 +42,13 @@ module.exports = (function(Cookies) {
      * @param {number} id - id of powerup
      */
     Powerups.buy = function(id) {
-        powerups.forEach(function(powerup){
+        _powerups.forEach(function(powerup){
           if(powerup.id == id){
             var total = Cookies.get('total');
             Cookies.set('powerup-'+powerup.id, 'bought');
             total -= powerup.diamonds;
+            console.log('total: '+total);
             Cookies.set('total', total);
-            console.log('TOTOAL');
-            console.log(total);
             return total;
           }
         });
@@ -67,6 +66,21 @@ module.exports = (function(Cookies) {
       }
     };
 
+    Powerups.getPowerupsForTemplate = function(totalDiamonds){
+      _powerups.forEach(function(powerup) {
+          powerup.disabled = "disabled";
+          if (Powerups.boughtAlready(powerup.id)) {
+              powerup.disabled = "hidden";
+          } else if (powerup.diamonds <= totalDiamonds) {
+              powerup.disabled = "";
+          }
+      });
+      return _powerups;
+    };
+
+    Powerups.amount = function(){
+      return _powerups.length;
+    };
     return Powerups;
 })(
   require('js-cookie')

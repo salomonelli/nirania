@@ -1,16 +1,18 @@
-module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist) {
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
 
     var levels = [
         require('./level1'),
         require('./level2'),
         require('./level3'),
-        require('./level4')
+        require('./level4'),
+        require('./level5')
     ];
 
     var _templates = {
         successScreen: require('../templates/success.mustache'),
         gameoverScreen: require('../templates/gameover.mustache'),
-        shopScreen: require('../templates/shop.mustache')
+        shopScreen: require('../templates/shop.mustache'),
+        modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
     /**
@@ -58,7 +60,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         self.diamonds = 0;
         var t = self.way.length - 80;
         var speedMulti = 2;
-
         var animate = function() {
             //move way and obstacles
             console.log(self.powerupActive) ;
@@ -132,7 +133,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
      */
-    
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         if (this.current === levels.length) last = "gone";
@@ -142,7 +142,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
-            last: last
+            last: last,
+            canBePlayed: Level.canBePlayed(this.current +1)
         });
         $('body').append(html);
         this.showShopScreen();
@@ -174,20 +175,23 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showShopScreen = function() {
         var self = this;
-        var powerups = Powerups.getPowerups();
-        powerups.forEach(function(powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
-                powerup.disabled = "";
-            }
-        });
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
         $('div.shopScreen').append(html);
+    };
+
+    Level.prototype.updateShopScreen = function() {
+        var self = this;
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+        var html = _templates.modalContentShopScreen.render({
+            total: Level.getTotalDiamonds(),
+            powerups: powerups
+        });
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
     };
 
     /**
@@ -232,11 +236,14 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         } else {
             level--;
             console.dir(Cookies.get(level + '-success'));
-            if (Cookies.get(level + '-success') == "true") {
+            console.log('asdasdads');
+            console.log(Powerups.amount());
+            if(Cookies.get('powerup-'+level) == "bought" || level <= Powerups.amount()){
+              if(Cookies.get(level + '-success') == "true"){
                 return true;
-            } else {
-                return false;
+              }
             }
+            return false;
         }
 
     };
