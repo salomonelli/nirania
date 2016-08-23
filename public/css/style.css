@@ -14,6 +14,13 @@ canvas {
     height: 100%
 }
 
+ .scores .distance  {
+    text-align: right;
+}
+.scores .diamonds  {
+    text-align: right;
+}
+
 .loading {
     width: 100%;
     height: 100%;
@@ -50,7 +57,7 @@ body .intro {
     font-family: Quicksand;
     text-align: center;
 }
-.anzeige {
+.scores {
     position: absolute;
     width: 200px;
     right: 0;
