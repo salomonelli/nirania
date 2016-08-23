@@ -543,58 +543,7 @@ module.exports = (function(UTIL, COLOR){
                         angle: 43
                     }
                 },
-                {
-                    type: 'box',
-                    size: {
-                        width: 15,
-                        length: 5,
-                        height: 500
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2930,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 15,
-                        length: 5,
-                        height: 500
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2730,
-                        angle: 90
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 15,
-                        length: 5,
-                        height: 500
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2730,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 15,
-                        length: 5,
-                        height: 500
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2730,
-                        angle: 270
-                    }
-                },
+
 
 
 
