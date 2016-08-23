@@ -56,7 +56,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
-        var speedMulti = 1;
+        var speedMulti = 2;
         var animate = function() {
             //move way and obstacles
             t = t - speedMulti;
@@ -74,6 +74,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             switch (collObj.type) {
                 case "box":
                 case "ring":
+                    // if powerup 4 is active, no collsion detection for the first 500
+                    if (Cookies.get('powerup-4') == "bought" && self.way.length - 80 - t <=500){
+                            console.log("Powerup 4 aktiv!!!!!")
+                            break;
+                    }
                     self.gameOver = true;
                     cb();
                     return;
