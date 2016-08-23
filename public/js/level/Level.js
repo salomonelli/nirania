@@ -146,7 +146,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             level: this.current,
             next: this.current + 1,
             last: last,
-            canBePlayed: canNotBePlayed,
+            canNotBePlayed: canNotBePlayed,
             disableNextLevel: disableNextLevel
         });
         $('body').append(html);
@@ -167,7 +167,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         });
 
         $('body').append(html);
-        this.showShopScreen();
         //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);

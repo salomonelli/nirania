@@ -87,7 +87,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function startLevel(cb) {
         Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
-        
+
         //start moving way
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
@@ -171,6 +171,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         if($('.button.success.reload').length){
           if(Level.canBePlayed(parseInt(currentLevel)+1)){
             $('.button.success.reload').removeClass('disabled');
+            $('.callout.alert').remove();
           }
         }
       }
