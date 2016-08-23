@@ -33,5 +33,13 @@ module.exports = (function(){
         return Math.random() * (max - min) + min;
     };
 
+    /**
+     * Returns a random int between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    UTIL.randomIntInRange = function(min, max) {
+        return Math.round(UTIL.randomNumberInRange(min, max));
+    };
+
     return UTIL;
 })();
