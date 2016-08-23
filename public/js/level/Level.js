@@ -55,10 +55,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
-
         var speedMulti = 1;
-        if (Cookies.get('powerup-1') == "bought") speedMulti = 2;
-
         var animate = function() {
             //move way and obstacles
             t = t - speedMulti;
