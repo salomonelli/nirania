@@ -76,7 +76,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "ring":
                     // if powerup 4 is active, no collsion detection for the first 500
                     if (Cookies.get('powerup-4') == "bought" && self.way.length - 80 - t <=500){
-                            console.log("Powerup 4 aktiv!!!!!")
+                            console.log("Powerup 4 aktiv!!!!!");
                             break;
                     }
                     self.gameOver = true;
@@ -153,15 +153,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showShopScreen = function() {
         var self = this;
-        var powerups = Powerups.getPowerups();
-        powerups.forEach(function(powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
-                powerup.disabled = "";
-            }
-        });
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
@@ -171,15 +163,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
 
     Level.prototype.updateShopScreen = function() {
         var self = this;
-        var powerups = Powerups.getPowerups();
-        powerups.forEach(function(powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
-                powerup.disabled = "";
-            }
-        });
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         var html = _templates.modalContentShopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
