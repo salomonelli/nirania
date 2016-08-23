@@ -58322,6 +58322,9 @@ module.exports = (function ($) {
             case 38:
                 return 'up';
                 break;
+            case 40:
+                return 'powerup';
+                break;
             default:
                 return 'anyKey';
                 break;
@@ -58355,7 +58358,7 @@ module.exports = (function ($) {
     require('jquery')
 );
 },{"jquery":3}],10:[function(require,module,exports){
-module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) {
+module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
 
     /**
      * Represents Scene
@@ -58368,12 +58371,12 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.height = height;
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
-
+        this.powerupUsed = false;
         this.renderer = new THREE.WebGLRenderer();
         this.scene.background = new THREE.Color( background);
         this.renderer.setSize(this.width, this.height);
         this.renderer.shadowMap.enabled = false;
-
+        this.boostNotUsed = true;
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
@@ -58388,7 +58391,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
             left: false,
             right: false,
             up: false,
-            continue: false
+            continue: false,
+            powerup: false
         };
         this.addLights();
     }
@@ -58460,13 +58464,19 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
      */
     Scene.prototype.startingAnimation = function (cb) {
         var self = this;
+        var position;
+        var clock = new THREE.Clock(true);
+        console.log(self.objects.protagonist);
         //protagonist and cube fall
         async.series([
             function animation1(next) {
                 var t = 150;
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
+
                     t--;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -58482,6 +58492,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
                     self.camera.position.y--;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     t--;
                     if (t > 0) {
                         setTimeout(function () {
@@ -58497,7 +58509,9 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
                 var t = 150;
                 var fall = function () {
                     self.camera.position.y--;
-                    t--;
+                    t--;position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
+
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -58514,6 +58528,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
                 var fall = function () {
                     self.camera.position.x--;
                     self.camera.position.z += 0.5;
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     self.camera.lookAt(self.objects.protagonist.getPosition());
                     t--;
                     if (t > 0) {
@@ -58532,6 +58548,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
                 var zoom = function () {
                     self.camera.position.z--;
                     self.camera.lookAt(self.objects.protagonist.getPosition());
+                    position = Math.sin(clock.getElapsedTime()*10)* 1;
+                    self.objects.protagonist.body.position.x = position * - 5;
                     t--;
                     if (t > 0) {
                         setTimeout(function () {
@@ -58560,6 +58578,21 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
         this.objects.way.addToScene(this.scene);
     };
 
+    Scene.prototype.boost = function (mainProtagonist, level) {
+        var self = this;
+        if (Cookies.get('powerup-4') == "bought"){
+        if(self.move.powerup){
+            if(self.boostNotUsed) {
+                level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+                level.powerupActive = true;
+                console.log(level.powerupActiveDuration);
+                console.log(level.powerupActive);
+                self.boostNotUsed = false;
+            }
+        }
+    }
+
+    }
     /**
      * turns camera and protagonist until told to stop
      */
@@ -58631,10 +58664,11 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN) 
     require('./COLOR'),
     require('three'),
     require('async'),
-    require('tween.js')
+    require('tween.js'),
+    require('js-cookie')
 );
 
-},{"./COLOR":8,"./Particles":19,"./protagonist/Protagonist":24,"async":1,"three":6,"tween.js":7}],11:[function(require,module,exports){
+},{"./COLOR":8,"./Particles":20,"./protagonist/Protagonist":25,"async":1,"js-cookie":4,"three":6,"tween.js":7}],11:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58670,6 +58704,14 @@ module.exports = (function(){
         return Math.random() * (max - min) + min;
     };
 
+    /**
+     * Returns a random int between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    UTIL.randomIntInRange = function(min, max) {
+        return Math.round(UTIL.randomNumberInRange(min, max));
+    };
+
     return UTIL;
 })();
 
@@ -58680,13 +58722,16 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         require('./level1'),
         require('./level2'),
         require('./level3'),
-        require('./level4')
+        require('./level4'),
+        require('./level4'),
+        require('./level5')
     ];
 
     var _templates = {
         successScreen: require('../templates/success.mustache'),
         gameoverScreen: require('../templates/gameover.mustache'),
-        shopScreen: require('../templates/shop.mustache')
+        shopScreen: require('../templates/shop.mustache'),
+        modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
     /**
@@ -58703,7 +58748,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        console.log("Aktueller Speed: " + this.speed);
+        this.powerupActive = false;
+        this.powerupActiveDuration = 0;
+        this.powerUpDistance = 0;
     }
 
     /**
@@ -58727,16 +58774,40 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {function} cb - callback function
      */
     Level.prototype.begin = function(cb, protagonist) {
+        console.log(protagonist);
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
-
-        var speedMulti = 1;
-        if (Cookies.get('powerup-1') == "bought") speedMulti = 2;
-
+        var speedMulti = 2;
+        var position;
+        var clock = new THREE.Clock(true);
         var animate = function() {
             //move way and obstacles
+            // checks for active powerup 4
+
+            position = Math.sin(clock.getElapsedTime()*10)* 1;
+            protagonist.children[0].position.x = position * - 0.05;
+            protagonist.children[3].position.z = position * 1;
+            protagonist.children[2].position.z = position * -1;
+
+            
+            if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                
+                for(var i = 0; i < protagonist.children.length; i++){
+                    // makes protagonist transparent
+                    protagonist.children[i].material.transparent = true;
+                    protagonist.children[i].material.opacity = 0.3;
+                }
+                self.powerUpDistance = self.powerUpDistance +speedMulti;
+            }
+            else{
+                for(var i = 0; i < protagonist.children.length; i++){
+                    protagonist.children[i].material.transparent = false;
+                    protagonist.children[i].material.opacity = 0.8;
+                }
+            }
+
             t = t - speedMulti;
             self.way.moveForwardTillEnd(self.speed * speedMulti);
 
@@ -58752,6 +58823,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             switch (collObj.type) {
                 case "box":
                 case "ring":
+                    // no collsion detection, if powerup 4 is active
+                    if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                        
+                            break;
+                    }
                     self.gameOver = true;
                     cb();
                     return;
@@ -58778,7 +58854,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
-            $('.anzeige .diamonds span').html(self.diamonds);
+            $('.scores .diamonds span').html(self.diamonds);
         }
     };
 
@@ -58788,13 +58864,18 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         if (this.current === levels.length) last = "gone";
-
-
+        var canNotBePlayed, disableNextLevel;
+        if (!Level.canBePlayed(this.current + 1)) {
+            canNotBePlayed = "true";
+            disableNextLevel = "disabled";
+        }
         var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
-            last: last
+            last: last,
+            canNotBePlayed: canNotBePlayed,
+            disableNextLevel: disableNextLevel
         });
         $('body').append(html);
         this.showShopScreen();
@@ -58808,14 +58889,12 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-
         var html = _templates.gameoverScreen.render({
             score: this.diamonds,
             level: this.current
         });
 
         $('body').append(html);
-        this.showShopScreen();
         //TODO use css-class .vertical-center
         var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
         $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
@@ -58826,20 +58905,23 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showShopScreen = function() {
         var self = this;
-        var powerups = Powerups.getPowerups();
-        powerups.forEach(function(powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= Level.getTotalDiamonds()) {
-                powerup.disabled = "";
-            }
-        });
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         var html = _templates.shopScreen.render({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
         $('div.shopScreen').append(html);
+    };
+
+    Level.prototype.updateShopScreen = function() {
+        var self = this;
+        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+        var html = _templates.modalContentShopScreen.render({
+            total: Level.getTotalDiamonds(),
+            powerups: powerups
+        });
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
     };
 
     /**
@@ -58879,17 +58961,27 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-        if (level == 1) {
-            return true;
-        } else {
-            level--;
-            console.dir(Cookies.get(level + '-success'));
-            if (Cookies.get(level + '-success') == "true") {
-                return true;
+        console.log('level: ' + level);
+        if (level == 1) return true;
+        level--;
+        if (Cookies.get(level + '-success') == "true") {
+            //managed level
+            if (level <= Powerups.amount()) {
+                //powerup exists
+                if (Cookies.get('powerup-' + level) == "bought") {
+                    //powerup is bought
+                    return true;
+                } else {
+                    //powerup is not bought
+                    return false;
+                }
             } else {
-                return false;
+                //no powerup exist
+                return true;
             }
         }
+        return false;
+
 
     };
 
@@ -58903,15 +58995,16 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../way/obstacles/Obstacle'),
     require('jquery'),
     require('js-cookie'),
-    require('./Powerups')
+    require('./Powerups'),
+    require('../protagonist/Protagonist')
 );
 
-},{"../protagonist/CollisionDetector":21,"../templates/gameover.mustache":25,"../templates/shop.mustache":26,"../templates/success.mustache":27,"../way/Way":28,"../way/obstacles/Obstacle":31,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"jquery":3,"js-cookie":4}],13:[function(require,module,exports){
+},{"../protagonist/CollisionDetector":22,"../protagonist/Protagonist":25,"../templates/gameover.mustache":26,"../templates/shop.mustache":27,"../templates/shopModalContent.mustache":28,"../templates/success.mustache":29,"../way/Way":30,"../way/obstacles/Obstacle":34,"./Powerups":13,"./level1":14,"./level2":15,"./level3":16,"./level4":17,"./level5":18,"jquery":3,"js-cookie":4}],13:[function(require,module,exports){
 module.exports = (function(Cookies) {
-    var powerups = [{
+    var _powerups = [{
             id: 1,
             description: "boosts speed",
-            diamonds: 15,
+            diamonds: 10,
             img: "/img/01.jpg"
         },
         {
@@ -58923,13 +59016,13 @@ module.exports = (function(Cookies) {
         {
             id: 3,
             description: "diamond magnet",
-            diamonds: 40,
+            diamonds: 30,
             img: "/img/03.jpg"
         },
         {
             id: 4,
             description: "invulnerable",
-            diamonds: 50,
+            diamonds: 40,
             img: "/img/04.jpg"
         }];
 
@@ -58940,10 +59033,10 @@ module.exports = (function(Cookies) {
 
     /**
      * returns array with all powerups
-     * @return {Array} powerups - array with all powerups
+     * @return {Array} _powerups - array with all powerups
      */
     Powerups.getPowerups = function() {
-        return powerups;
+        return _powerups;
     };
 
     /**
@@ -58951,14 +59044,13 @@ module.exports = (function(Cookies) {
      * @param {number} id - id of powerup
      */
     Powerups.buy = function(id) {
-        powerups.forEach(function(powerup){
+        _powerups.forEach(function(powerup){
           if(powerup.id == id){
             var total = Cookies.get('total');
             Cookies.set('powerup-'+powerup.id, 'bought');
             total -= powerup.diamonds;
+            console.log('total: '+total);
             Cookies.set('total', total);
-            console.log('TOTOAL');
-            console.log(total);
             return total;
           }
         });
@@ -58976,6 +59068,21 @@ module.exports = (function(Cookies) {
       }
     };
 
+    Powerups.getPowerupsForTemplate = function(totalDiamonds){
+      _powerups.forEach(function(powerup) {
+          powerup.disabled = "disabled";
+          if (Powerups.boughtAlready(powerup.id)) {
+              powerup.disabled = "hidden";
+          } else if (powerup.diamonds <= totalDiamonds) {
+              powerup.disabled = "";
+          }
+      });
+      return _powerups;
+    };
+
+    Powerups.amount = function(){
+      return _powerups.length;
+    };
     return Powerups;
 })(
   require('js-cookie')
@@ -58984,7 +59091,6 @@ module.exports = (function(Cookies) {
 },{"js-cookie":4}],14:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[1].box;
-    var ringColor = COLOR.palette[1].ring;
     var diamondColor = 0xffffff;
     var level = {
         level: 1,
@@ -59197,19 +59303,8 @@ module.exports = (function(UTIL, COLOR) {
                         distance: 1900,
                         angle: 279
                     }
-                }, {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2290,
-                        angle: 159
-                    }
-                }, {
+                },
+                {
                     type: 'box',
                     size: {
                         width: 25,
@@ -59233,7 +59328,8 @@ module.exports = (function(UTIL, COLOR) {
                         distance: 1973,
                         angle: 230
                     }
-                }, {
+                },
+                {
                     type: 'box',
                     size: {
                         width: 25,
@@ -59246,7 +59342,84 @@ module.exports = (function(UTIL, COLOR) {
                         angle: 295
                     }
                 },
-
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 10,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 300
+                    }
+                },
 
                 {
                     type: 'diamond',
@@ -59424,70 +59597,6 @@ module.exports = (function(UTIL, COLOR) {
                         distance: 2050,
                         angle: 330
                     }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2500,
-                        angle: 330
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2550,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2600,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2650,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2750,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2800,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2900,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 3000,
-                        angle: 310
-                    }
                 }
 
             ]
@@ -59499,7 +59608,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../COLOR'));
 
 },{"../COLOR":8,"../UTIL":11}],15:[function(require,module,exports){
-module.exports = (function(UTIL, COLOR){
+module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[0].box;
     var ringColor = COLOR.palette[0].ring;
     var level = {
@@ -59509,7 +59618,734 @@ module.exports = (function(UTIL, COLOR){
         way: {
             length: 3230,
             color: COLOR.palette[0].way,
+            obstacles: [
+              {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: 0x000000,
+                    position: {
+                        distance: 600,
+                        angle: 340
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 450,
+                        angle: 60
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 546,
+                        angle: 193
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 760,
+                        angle: 340
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 824,
+                        angle: 315
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 50,
+                        length: 25,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 863,
+                        angle: 71
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1068,
+                        angle: 282
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1162,
+                        angle: 37
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1357,
+                        angle: 20
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 324
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 190
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 20,
+                        length: 25,
+                        height: 40
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1507,
+                        angle: 310
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1532,
+                        angle: 258
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1625,
+                        angle: 271
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1635,
+                        angle: 206
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 5,
+                        height: 1
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1721,
+                        angle: 9
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 75,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1843,
+                        angle: 76
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1900,
+                        angle: 279
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1923,
+                        angle: 64
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1973,
+                        angle: 230
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2046,
+                        angle: 295
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2298,
+                        angle: 284
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2438,
+                        angle: 269
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2675,
+                        angle: 265
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2750,
+                        angle: 207
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2865,
+                        angle: 25
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2964,
+                        angle: 333
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 100,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3050,
+                        angle: 138
+                    }
+                }, {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+
+
+                {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 350,
+                        angle: 42
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 400,
+                        angle: 44
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 450,
+                        angle: 46
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 500,
+                        angle: 48
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 550,
+                        angle: 50
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 700,
+                        angle: 270
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 770,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 800,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 950,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1000,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1050,
+                        angle: 280
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1225,
+                        angle: 30
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1300,
+                        angle: 25
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1375,
+                        angle: 20
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1450,
+                        angle: 15
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1700,
+                        angle: 345
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1750,
+                        angle: 340
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1800,
+                        angle: 335
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 1950,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2000,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2050,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2500,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2550,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2600,
+                        angle: 330
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2650,
+                        angle: 320
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2750,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2800,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 2900,
+                        angle: 310
+                    }
+                }, {
+                    type: 'diamond',
+                    size: {},
+                    color: COLOR.diamond,
+                    position: {
+                        distance: 3000,
+                        angle: 310
+                    }
+                },
+
+
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 500, //Math.round(UTIL.randomNumberInRange(500,700)),
+                        angle: 0
+                    }
+                }, {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 1000, //Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        angle: 0
+                    }
+                }, {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 1500, //Math.round(UTIL.randomNumberInRange(1500,1900)),
+                        angle: 0
+                    }
+                }, {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 2200, //Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        angle: 0
+                    }
+                }, {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 2600, // Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        angle: 0
+                    }
+                }, {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: 2800, //Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        angle: 0
+                    }
+                }
+
+            ]
+        }
+    };
+
+    return level;
+})(
+    require('../UTIL'),
+    require('../COLOR')
+);
+
+},{"../COLOR":8,"../UTIL":11}],16:[function(require,module,exports){
+module.exports = (function(UTIL, COLOR){
+  var boxColor = COLOR.palette[2].box;
+  var ringColor = COLOR.palette[2].ring;
+    var level = {
+        level: 3,
+        speed: 1,
+        background: COLOR.palette[2].background,
+        way: {
+            length: 4230,
+            color: COLOR.palette[2].way,
             obstacles : [
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 350,
+                        angle: 20
+                    }
+                },
                 {
                     type: 'box',
                     size: {
@@ -59534,6 +60370,32 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: 546,
                         angle: 193
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: 0
                     }
                 },
                 {
@@ -59586,6 +60448,19 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: 892,
                         angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 80,
+                        height: 50
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 934,
+                        angle: 20
                     }
                 },
                 {
@@ -59669,14 +60544,27 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'box',
                     size: {
-                        width: 37,
+                        width: 25,
                         length: 25,
-                        height: 60
+                        height: 25
                     },
                     color: boxColor,
                     position: {
-                        distance: 1500,
-                        angle: 190
+                        distance: 1420,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 30
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1447,
+                        angle: 281
                     }
                 },
                 {
@@ -59688,8 +60576,21 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 1507,
+                        distance: 1457,
                         angle: 310
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 190
                     }
                 },
                 {
@@ -59793,7 +60694,20 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1973,
-                        angle: 230
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2000,
+                        angle: 0
                     }
                 },
                 {
@@ -59859,6 +60773,19 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: 2675,
                         angle: 265
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 100,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2679,
+                        angle: 310
                     }
                 },
                 {
@@ -59931,7 +60858,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 300,
                         angle: 40
@@ -59940,7 +60867,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 350,
                         angle: 42
@@ -59949,7 +60876,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 400,
                         angle: 44
@@ -59958,7 +60885,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 450,
                         angle: 46
@@ -59967,7 +60894,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 500,
                         angle: 48
@@ -59976,7 +60903,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 550,
                         angle: 50
@@ -59985,7 +60912,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 700,
                         angle: 270
@@ -59994,7 +60921,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 770,
                         angle: 280
@@ -60003,7 +60930,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 800,
                         angle: 280
@@ -60012,7 +60939,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 950,
                         angle: 280
@@ -60021,7 +60948,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1000,
                         angle: 280
@@ -60030,7 +60957,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1050,
                         angle: 280
@@ -60039,7 +60966,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1225,
                         angle: 30
@@ -60048,7 +60975,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1300,
                         angle: 25
@@ -60057,7 +60984,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1375,
                         angle: 20
@@ -60066,7 +60993,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1450,
                         angle: 15
@@ -60075,7 +61002,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1700,
                         angle: 345
@@ -60084,7 +61011,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1750,
                         angle: 340
@@ -60093,7 +61020,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1800,
                         angle: 335
@@ -60102,7 +61029,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 1950,
                         angle: 330
@@ -60111,7 +61038,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2000,
                         angle: 330
@@ -60120,7 +61047,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2050,
                         angle: 330
@@ -60129,7 +61056,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2500,
                         angle: 320
@@ -60138,7 +61065,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2550,
                         angle: 320
@@ -60147,16 +61074,16 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2600,
-                        angle: 330
+                        angle: 320
                     }
                 },
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2650,
                         angle: 320
@@ -60165,7 +61092,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2750,
                         angle: 310
@@ -60174,7 +61101,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2800,
                         angle: 310
@@ -60183,7 +61110,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 2900,
                         angle: 310
@@ -60192,881 +61119,10 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: COLOR.diamond,
+                    color: 0xffffff,
                     position: {
                         distance: 3000,
                         angle: 310
-                    }
-                },
-
-
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 500, //Math.round(UTIL.randomNumberInRange(500,700)),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 1000, //Math.round(UTIL.randomNumberInRange(1000,1400)),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 1500, //Math.round(UTIL.randomNumberInRange(1500,1900)),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 2200,//Math.round(UTIL.randomNumberInRange(2100,2400)),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 2600,// Math.round(UTIL.randomNumberInRange(2600,2800)),
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: 2800,//Math.round(UTIL.randomNumberInRange(3000,3100)),
-                        angle: 0
-                    }
-                }
-
-            ]
-        }
-    };
-
-    return level;
-})(
-  require('../UTIL'),
-  require('../COLOR')
-);
-
-},{"../COLOR":8,"../UTIL":11}],16:[function(require,module,exports){
-module.exports = (function(UTIL, COLOR){
-  var boxColor = COLOR.palette[2].box;
-  var ringColor = COLOR.palette[2].ring;
-    var level = {
-        level: 3,
-        speed: 1,
-        background: COLOR.palette[2].background,
-        way: {
-            length: 4230,
-            color: COLOR.palette[2].way,
-            obstacles : [
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 350,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 450,
-                        angle: 60
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 557,
-                        angle: -60
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 557,
-                        angle: -100
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 760,
-                        angle: -20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 824,
-                        angle: -45
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 50,
-                        length: 25,
-                        height: 10
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 863,
-                        angle: 71
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 10,
-                        length: 80,
-                        height: 50
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 934,
-                        angle: 83
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1068,
-                        angle: -78
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1162,
-                        angle: 37
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 35,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1357,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 30
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1447,
-                        angle: -79
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 20,
-                        length: 25,
-                        height: 40
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1457,
-                        angle: -50
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1625,
-                        angle: -89
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 5,
-                        length: 5,
-                        height: 1
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1721,
-                        angle: 9
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 10,
-                        length: 75,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1843,
-                        angle: 76
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1900,
-                        angle: -81
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1973,
-                        angle: -70
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2000,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: -36
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: -90
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1532,
-                        angle: -102
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1635,
-                        angle: -154
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 546,
-                        angle: -167
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 892,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 200,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1057,
-                        angle: 152
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
-                        height: 60
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1500,
-                        angle: -170
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1290,
-                        angle: 159
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1923,
-                        angle: 64
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2046,
-                        angle: -65
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2298,
-                        angle: -76
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2438,
-                        angle: -91
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2675,
-                        angle: -95
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2865,
-                        angle: 25
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2964,
-                        angle: -27
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3100,
-                        angle: 43
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2567,
-                        angle: 170
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2750,
-                        angle: -153
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 100,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3050,
-                        angle: 138
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 5,
-                        length: 100,
-                        height: 10
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2679,
-                        angle: -81
-                    }
-                },
-
-
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 300,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 350,
-                        angle: 42
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 400,
-                        angle: 44
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 450,
-                        angle: 46
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 500,
-                        angle: 48
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 550,
-                        angle: 50
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 700,
-                        angle: -90
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 770,
-                        angle: -80
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 800,
-                        angle: -80
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 950,
-                        angle: -80
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1000,
-                        angle: -80
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1050,
-                        angle: -80
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1225,
-                        angle: 30
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1300,
-                        angle: 25
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1375,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1450,
-                        angle: 15
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1700,
-                        angle: -15
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1750,
-                        angle: -20
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1800,
-                        angle: -25
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 1950,
-                        angle: -30
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2000,
-                        angle: -30
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2050,
-                        angle: -30
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2500,
-                        angle: -40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2550,
-                        angle: -40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2600,
-                        angle: -40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2650,
-                        angle: -40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2750,
-                        angle: -50
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2800,
-                        angle: -50
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 2900,
-                        angle: -50
-                    }
-                },
-                {
-                    type: 'diamond',
-                    size: {},
-                    color: 0xffffff,
-                    position: {
-                        distance: 3000,
-                        angle: -50
                     }
                 },
                 {
@@ -61084,7 +61140,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3500,
-                        angle: -177
+                        angle: 183
                     }
                 },
                 {
@@ -61093,7 +61149,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3600,
-                        angle: -168
+                        angle: 192
                     }
                 },
                 {
@@ -61102,7 +61158,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3700,
-                        angle: -150
+                        angle: 210
                     }
                 },
                 {
@@ -61138,7 +61194,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3600,
-                        angle: 0
+                        angle: 10
                     }
                 },
                 {
@@ -61147,7 +61203,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3650,
-                        angle: 0
+                        angle: 10
                     }
                 },
                 {
@@ -61156,7 +61212,7 @@ module.exports = (function(UTIL, COLOR){
                     color: 0xffffff,
                     position: {
                         distance: 3675,
-                        angle: 0
+                        angle: 10
                     }
                 },
 
@@ -61167,7 +61223,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
+                        distance: UTIL.randomIntInRange(250,350)*2,
                         angle: 0
                     }
                 },
@@ -61176,7 +61232,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        distance: UTIL.randomIntInRange(500,700)*2,
                         angle: 0
                     }
                 },
@@ -61185,7 +61241,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1500,1900)),
+                        distance: UTIL.randomIntInRange(750,950)*2,
                         angle: 0
                     }
                 },
@@ -61194,7 +61250,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        distance: UTIL.randomIntInRange(1050,1200)*2,
                         angle: 0
                     }
                 },
@@ -61203,7 +61259,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        distance: UTIL.randomIntInRange(1300,1400)*2,
                         angle: 0
                     }
                 },
@@ -61212,16 +61268,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
-                        angle: 0
-                    }
-                },/*
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: Math.round(UTIL.randomNumberInRange(330,3500)),
+                        distance: UTIL.randomIntInRange(1500,1550)*2,
                         angle: 0
                     }
                 },
@@ -61230,10 +61277,19 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3800,4000)),
+                        distance: UTIL.randomIntInRange(1650,1750)*2,
                         angle: 0
                     }
-                }*/
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1900,2000)*2,
+                        angle: 0
+                    }
+                }
 
 
             ]
@@ -61241,8 +61297,10 @@ module.exports = (function(UTIL, COLOR){
     };
 
     return level;
-})(require('../UTIL'),
-require('../COLOR'));
+})
+(require('../UTIL'),
+require('../COLOR')
+);
 
 },{"../COLOR":8,"../UTIL":11}],17:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
@@ -61292,7 +61350,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 557,
-                        angle: -60
+                        angle: 300
                     }
                 },
                 {
@@ -61305,7 +61363,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 557,
-                        angle: -100
+                        angle: 260
                     }
                 },
                 {
@@ -61318,7 +61376,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 760,
-                        angle: -20
+                        angle: 340
                     }
                 },
                 {
@@ -61331,7 +61389,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 824,
-                        angle: -45
+                        angle: 315
                     }
                 },
                 {
@@ -61370,7 +61428,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1068,
-                        angle: -78
+                        angle: 282
                     }
                 },
                 {
@@ -61409,7 +61467,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1447,
-                        angle: -79
+                        angle: 281
                     }
                 },
                 {
@@ -61422,7 +61480,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1457,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -61435,7 +61493,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1625,
-                        angle: -89
+                        angle: 271
                     }
                 },
                 {
@@ -61474,7 +61532,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1900,
-                        angle: -81
+                        angle: 279
                     }
                 },
                 {
@@ -61487,7 +61545,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1973,
-                        angle: -70
+                        angle: 290
                     }
                 },
                 {
@@ -61513,7 +61571,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1420,
-                        angle: -36
+                        angle: 324
                     }
                 },
                 {
@@ -61526,7 +61584,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1420,
-                        angle: -90
+                        angle: 270
                     }
                 },
                 {
@@ -61539,7 +61597,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1532,
-                        angle: -102
+                        angle: 258
                     }
                 },
                 {
@@ -61552,7 +61610,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1635,
-                        angle: -154
+                        angle: 206
                     }
                 },
                 {
@@ -61565,7 +61623,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 546,
-                        angle: -167
+                        angle: 193
                     }
                 },
                 {
@@ -61604,7 +61662,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1500,
-                        angle: -170
+                        angle: 190
                     }
                 },
                 {
@@ -61643,7 +61701,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2046,
-                        angle: -65
+                        angle: 295
                     }
                 },
                 {
@@ -61656,7 +61714,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2298,
-                        angle: -76
+                        angle: 284
                     }
                 },
                 {
@@ -61669,7 +61727,20 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2438,
-                        angle: -91
+                        angle: 269
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2567,
+                        angle: 170
                     }
                 },
                 {
@@ -61682,7 +61753,33 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2675,
-                        angle: -95
+                        angle: 265
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 100,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2679,
+                        angle: 279
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2750,
+                        angle: 207
                     }
                 },
                 {
@@ -61708,7 +61805,1280 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2964,
-                        angle: -27
+                        angle: 333
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 100,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3050,
+                        angle: 138
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+
+
+
+
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 300,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 350,
+                        angle: 42
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 400,
+                        angle: 44
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 450,
+                        angle: 46
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 500,
+                        angle: 48
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 550,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 700,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 770,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 800,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 950,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1000,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1050,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1225,
+                        angle: 30
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1300,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1375,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1450,
+                        angle: 15
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1700,
+                        angle: 345
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1750,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1800,
+                        angle: 335
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1950,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2000,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2050,
+                        angle: 330
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2500,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2550,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2600,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2650,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2750,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2800,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2900,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3000,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3100,
+                        angle: 38
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3500,
+                        angle: 183
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3600,
+                        angle: 192
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3700,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3140,
+                        angle: 45
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3240,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3300,
+                        angle: 55
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3600,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3650,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3675,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 4050,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 4200,
+                        angle: 30
+                    }
+                },
+
+
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 300
+                    }
+                },{
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 280
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 260
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 260
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 260
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 220
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 220
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 220
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 160
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 160
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 160
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 140
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 140
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 140
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 100
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 100
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 100
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 80
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3800,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3850,
+                        angle: 320
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 3900,
+                        angle: 320
+                    }
+                },
+
+
+
+
+
+
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(250,350)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(500,700)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(800,900)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1050,1200)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1300,1400)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1500,1550)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1650,1750)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(1900,2100)*2
+                    }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2250,2300)*2
+                    }
+                }
+
+
+
+            ]
+        }
+    };
+
+    return level;
+})(
+  require('../UTIL'),
+  require('../COLOR')
+);
+
+},{"../COLOR":8,"../UTIL":11}],18:[function(require,module,exports){
+module.exports = (function(UTIL, COLOR){
+    var boxColor = COLOR.palette[3].box;
+    var ringColor = COLOR.palette[3].ring;
+    var level = {
+        level: 5,
+        speed: 1,
+        background: COLOR.palette[3].background,
+        way: {
+            length: 6230,
+            color: COLOR.palette[3].way,
+            obstacles : [
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 350,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 450,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 300,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 557,
+                        angle: 260
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 760,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 824,
+                        angle: 315
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 50,
+                        length: 25,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 863,
+                        angle: 71
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 80,
+                        height: 50
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 934,
+                        angle: 83
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1068,
+                        angle: 282
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1162,
+                        angle: 37
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 35,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1357,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 30
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1447,
+                        angle: 281
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 20,
+                        length: 25,
+                        height: 40
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1457,
+                        angle: 310
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1625,
+                        angle: 271
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 5,
+                        height: 1
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1721,
+                        angle: 9
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 10,
+                        length: 75,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1843,
+                        angle: 76
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1900,
+                        angle: 279
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1973,
+                        angle: 290
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2000,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 324
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1532,
+                        angle: 258
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1635,
+                        angle: 206
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 546,
+                        angle: 193
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 190
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1923,
+                        angle: 64
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2046,
+                        angle: 295
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2298,
+                        angle: 284
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2438,
+                        angle: 269
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2675,
+                        angle: 265
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2865,
+                        angle: 25
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2964,
+                        angle: 333
                     }
                 },
                 {
@@ -61747,7 +63117,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2750,
-                        angle: -153
+                        angle: 207
                     }
                 },
                 {
@@ -61773,7 +63143,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2679,
-                        angle: -81
+                        angle: 279
                     }
                 },
 
@@ -61838,7 +63208,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 700,
-                        angle: -90
+                        angle: 270
                     }
                 },
                 {
@@ -61847,7 +63217,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 770,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -61856,7 +63226,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 800,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -61865,7 +63235,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 950,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -61874,7 +63244,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1000,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -61883,7 +63253,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1050,
-                        angle: -80
+                        angle: 280
                     }
                 },
                 {
@@ -61928,7 +63298,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1700,
-                        angle: -15
+                        angle: 345
                     }
                 },
                 {
@@ -61937,7 +63307,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1750,
-                        angle: -20
+                        angle: 340
                     }
                 },
                 {
@@ -61946,7 +63316,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1800,
-                        angle: -25
+                        angle: 335
                     }
                 },
                 {
@@ -61955,7 +63325,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 1950,
-                        angle: -30
+                        angle: 330
                     }
                 },
                 {
@@ -61964,7 +63334,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2000,
-                        angle: -30
+                        angle: 330
                     }
                 },
                 {
@@ -61973,7 +63343,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2050,
-                        angle: -30
+                        angle: 330
                     }
                 },
                 {
@@ -61982,7 +63352,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2500,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -61991,7 +63361,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2550,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -62000,7 +63370,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2600,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -62009,7 +63379,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2650,
-                        angle: -40
+                        angle: 320
                     }
                 },
                 {
@@ -62018,7 +63388,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2750,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -62027,7 +63397,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2800,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -62036,7 +63406,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 2900,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -62045,7 +63415,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 3000,
-                        angle: -50
+                        angle: 310
                     }
                 },
                 {
@@ -62063,7 +63433,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 3500,
-                        angle: -177
+                        angle: 183
                     }
                 },
                 {
@@ -62072,7 +63442,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 3600,
-                        angle: -168
+                        angle: 192
                     }
                 },
                 {
@@ -62081,7 +63451,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 3700,
-                        angle: -150
+                        angle: 170
                     }
                 },
                 {
@@ -62146,7 +63516,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(500,700)),
+                        distance: UTIL.randomIntInRange(250,350)*2,
                         angle: 0
                     }
                 },
@@ -62155,7 +63525,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(1000,1400)),
+                        distance: UTIL.randomIntInRange(500,700)*2,
                         angle: 0
                     }
                 },
@@ -62164,7 +63534,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        distance: UTIL.randomIntInRange(1050,1200)*2,
                         angle: 0
                     }
                 },
@@ -62173,7 +63543,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2100,2400)),
+                        distance: UTIL.randomIntInRange(1300,1400)*2,
                         angle: 0
                     }
                 },
@@ -62182,7 +63552,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(2600,2800)),
+                        distance: UTIL.randomIntInRange(1500,1550)*2,
                         angle: 0
                     }
                 },
@@ -62191,7 +63561,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        distance: UTIL.randomIntInRange(1650,1750)*2,
                         angle: 0
                     }
                 },
@@ -62200,7 +63570,7 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3300,3500)),
+                        distance: UTIL.randomIntInRange(1900,2100)*2,
                         angle: 0
                     }
                 },
@@ -62209,7 +63579,34 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: Math.round(UTIL.randomNumberInRange(3800,4100)),
+                        distance: UTIL.randomIntInRange(2250,2300)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2450,2500)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2650,2700)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2900,3000)*2,
                         angle: 0
                     }
                 }
@@ -62221,11 +63618,11 @@ module.exports = (function(UTIL, COLOR){
 
     return level;
 })(
-  require('../UTIL'),
-  require('../COLOR')
+    require('../UTIL'),
+    require('../COLOR')
 );
 
-},{"../COLOR":8,"../UTIL":11}],18:[function(require,module,exports){
+},{"../COLOR":8,"../UTIL":11}],19:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
     "use strict";
@@ -62239,7 +63636,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         new Level(1, 1),
         new Level(2, 1),
         new Level(3, 1),
-        new Level(4, 1)
+        new Level(4, 1),
+        new Level(5, 1)
     ];
     var currentLevel = 1;
     var URLpath = '';
@@ -62295,6 +63693,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         requestAnimationFrame(render);
         mainScene.render();
         mainScene.turn();
+        mainScene.boost(mainScene.getProtagonist(),level[currentLevel]);
         TWEEN.update();
     }
 
@@ -62313,6 +63712,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function startLevel(cb) {
         Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+
         //start moving way
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
@@ -62390,10 +63790,15 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       if(!$(this).hasClass('disabled')){
         var powerup = event.target.id.replace('buy-powerup-', '');
         var total =  Powerups.buy(powerup);
-        //$('.total-diamonds span').html('Total: '+total+' <i class="fa fa-diamond" aria-hidden="true"></i>');
-        //$(this).addClass("hidden");
-        $('div.shopScreen').empty();
-        level[currentLevel].showShopScreen();
+        level[currentLevel].updateShopScreen();
+        console.log('length: '+ $('.button.success.reload').length);
+        console.log('can: '+ Level.canBePlayed(currentLevel+1));
+        if($('.button.success.reload').length){
+          if(Level.canBePlayed(parseInt(currentLevel)+1)){
+            $('.button.success.reload').removeClass('disabled');
+            $('.callout.alert').remove();
+          }
+        }
       }
     });
 
@@ -62423,7 +63828,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Powerups')
 );
 
-},{"./Keybindings":9,"./Scene":10,"./level/Level":12,"./level/Powerups":13,"./protagonist/Protagonist":24,"async":1,"jquery":3,"three":6,"tween.js":7}],19:[function(require,module,exports){
+},{"./Keybindings":9,"./Scene":10,"./level/Level":12,"./level/Powerups":13,"./protagonist/Protagonist":25,"async":1,"jquery":3,"three":6,"tween.js":7}],20:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -62528,7 +63933,7 @@ module.exports = (function (THREE) {
 })(
     require('three')
 );
-},{"three":6}],20:[function(require,module,exports){
+},{"three":6}],21:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -62580,7 +63985,7 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],21:[function(require,module,exports){
+},{"../COLOR":8,"three":6}],22:[function(require,module,exports){
 module.exports = (function() {
 
     /**
@@ -62671,7 +64076,7 @@ module.exports = (function() {
     return CollisionDetector;
 })();
 
-},{}],22:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -62704,7 +64109,7 @@ module.exports = (function (COLOR, THREE) {
     Head.prototype.addToGroup = function (group) {
         group.add(this.mesh);
     };
-
+    
     /**
      * loads the head from json file (blender)
      * @param {function} cb callback
@@ -62723,7 +64128,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],23:[function(require,module,exports){
+},{"../COLOR":8,"three":6}],24:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -62775,7 +64180,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":8,"three":6}],24:[function(require,module,exports){
+},{"../COLOR":8,"three":6}],25:[function(require,module,exports){
 module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
     /**
@@ -62852,7 +64257,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         }
 
     };
-
+    
     /**
      * positions protagonist according to given coordinates
      * @param {number} x - x position of particles group
@@ -62962,14 +64367,16 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
     require('js-cookie')
 );
 
-},{"../COLOR":8,"./Body":20,"./Head":22,"./Leg":23,"jquery":3,"js-cookie":4,"three":6,"tween.js":7}],25:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("\n" + i);_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],26:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1694,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"https://tourneau.scene7.com/is/image/tourneau/ZEN0101011?hei=450&wid=300&fmt=png-alpha&resMode=bicub&op_sharpen=1\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("\n" + i);_.b("            <!--");_.b("\n" + i);_.b("\n" + i);_.b("\n" + i);_.b("            <div class=\"powerup ");_.b(_.v(_.f("end",c,p,0)));_.b(" large-2 medium-3 columns\" id=\"powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                <span class=\"description\">");_.b(_.v(_.f("description",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("                </br>");_.b("\n" + i);_.b("                <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("              Buy for");_.b("\n" + i);_.b("              ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("            </a>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("\n" + i);_.b("          -->");_.b("\n" + i);_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"../COLOR":8,"./Body":21,"./Head":23,"./Leg":24,"jquery":3,"js-cookie":4,"three":6,"tween.js":7}],26:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],27:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1154,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],28:[function(require,module,exports){
-module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,455,996,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Buy for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],29:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,582,761,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],30:[function(require,module,exports){
+module.exports = (function (THREE, COLOR, Obstacle, UTIL, $, Cookies) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -63017,10 +64424,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
      * moves way direction z positive
      */
     Way.prototype.moveForwardTillEnd = function (speed) {
+        
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         //TODO remove this after finished programming
-        $('.anzeige .distance span').html(this.currentPosition.distance);
+        $('.scores .distance span').html(this.currentPosition.distance);
     };
 
     /**
@@ -63036,11 +64444,17 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
         {
             this.group.rotation.y = UTIL.convertDegreesToRadians(360);
         }
-        this.group.rotation.y += angle;
+        var speedRotation = angle;
+        // roatates faster with powerup 1
+        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation*2;
+        this.group.rotation.y += speedRotation;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        // anglemin and anglemax are hitbox for protagonist
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
+        if(this.currentPosition.anglemin <0) this.currentPosition.anglemin = this.currentPosition.anglemin +360;
+        if(this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax -360;
         this.currentPosition.anglemax = this.currentPosition.angle + 5;
-        $('.anzeige .angle span').html(this.currentPosition.angle);
+       
 
     };
 
@@ -63076,10 +64490,11 @@ module.exports = (function (THREE, COLOR, Obstacle, UTIL, $) {
     require('../COLOR'),
     require('./obstacles/Obstacle'),
     require('../UTIL'),
-    require('jquery')
+    require('jquery'),
+    require('js-cookie')
 );
 
-},{"../COLOR":8,"../UTIL":11,"./obstacles/Obstacle":31,"jquery":3,"three":6}],29:[function(require,module,exports){
+},{"../COLOR":8,"../UTIL":11,"./obstacles/Obstacle":34,"jquery":3,"js-cookie":4,"three":6}],31:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -63145,7 +64560,56 @@ module.exports=(function(THREE, UTIL){
     require('../../UTIL')
 );
 
-},{"../../UTIL":11,"three":6}],30:[function(require,module,exports){
+},{"../../UTIL":11,"three":6}],32:[function(require,module,exports){
+module.exports = (function(THREE, UTIL) {
+    function Cone(cone) {
+        this.material = new THREE.MeshLambertMaterial({color: cone.color});
+        this.geometry = new THREE.ConeGeometry(15, 30, 100, 100);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+    }
+
+    Cone.prototype.position = function(angle, distance, length, radius){
+        radius += 15;
+        this.mesh.rotation.z -= Math.PI/2;
+        angle = -(angle -90);
+        angle = UTIL.convertDegreesToRadians(angle);
+        var y = (length / 2) - distance;
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y += angle;
+        this.mesh.position.set(x,y,z);
+    };
+
+    Cone.prepareForCollisionDetection = function(obstacle, radius){
+        var a = radius - 0.5* 30;
+        var b = 30*0.5;
+        var angleRight = Math.atan(b/a);
+        var ret = {
+            type: 'box',
+            size: obstacle.size,
+            angle: {
+                center: obstacle.position.angle,
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
+            },
+            distance: {
+                center: obstacle.position.distance,
+                min: obstacle.position.distance - (0.5*obstacle.size.length),
+                max: obstacle.position.distance + (0.5*obstacle.size.length)
+            }
+        };
+        return ret;
+    };
+
+    return Cone;
+})(
+    require('three'),
+    require('../../UTIL')
+);
+
+},{"../../UTIL":11,"three":6}],33:[function(require,module,exports){
 module.exports = (function(THREE, UTIL, Cookies){
     var size = 10;
     var heightFromWay = 20;
@@ -63158,7 +64622,7 @@ module.exports = (function(THREE, UTIL, Cookies){
     function Diamond(diamond){
         this.geometry = new THREE.OctahedronGeometry(size, 0);
         this.material = new THREE.MeshLambertMaterial({
-          color: diamond.color,
+          color: 0xffffff,
           transparent: true,
           opacity: 0.6
         });
@@ -63243,13 +64707,13 @@ module.exports = (function(THREE, UTIL, Cookies){
     require('js-cookie')
 );
 
-},{"../../UTIL":11,"js-cookie":4,"three":6}],31:[function(require,module,exports){
-module.exports = (function (Box, Ring, Diamond, Opponent) {
+},{"../../UTIL":11,"js-cookie":4,"three":6}],34:[function(require,module,exports){
+module.exports = (function (Box, Ring, Diamond, Cone) {
     var obstacleTypes = {
         box: Box,
         ring: Ring,
         diamond: Diamond,
-        opponent: Opponent
+        cone: Cone
     };
 
     /**
@@ -63290,6 +64754,7 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
             );
         });
         return ret;
+        console.dir(ret);
     };
 
     return Obstacle;
@@ -63297,55 +64762,10 @@ module.exports = (function (Box, Ring, Diamond, Opponent) {
     require('./Box'),
     require('./Ring'),
     require('./Diamond'),
-    require('./Opponent')
-);
-},{"./Box":29,"./Diamond":30,"./Opponent":32,"./Ring":33}],32:[function(require,module,exports){
-module.exports= (function(Protagonist, UTIL, THREE){
-    var heightFromWay = 20;
-
-    function Opponent(){
-        this.opponent = new Protagonist();
-        this.opponent.body.mesh.material.color.setHex(0x000000);
-        this.opponent.head.mesh.material.color.setHex(0x000000);
-        this.opponent.left.leg.mesh.material.color.setHex(0x000000);
-        this.opponent.right.leg.mesh.material.color.setHex(0x000000);
-        this.mesh = null;
-    }
-
-    /**
-     * Positions the opponent on way
-     * @param {number} angle - angle of position in degrees
-     * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of way
-     * @param {number} radius - radius of way
-     */
-    Opponent.prototype.position = function(angle, distance, length, radius){
-        angle = -(angle -90);
-        angle = UTIL.convertDegreesToRadians(angle);
-        radius += heightFromWay;
-        var y = (length / 2) - distance;
-        var x = radius * Math.cos(angle);
-        var z = -(radius * Math.sin(angle));
-        this.opponent.group.rotation.y += angle;
-        this.opponent.group.position.set(x,y,z);
-        this.opponent.group.rotation.z = Math.PI;
-        this.mesh = this.opponent.group;
-    };
-
-    Opponent.prepareForCollisionDetection = function(){
-        return {
-
-        };
-    };
-
-    return Opponent;
-})(
-    require('../../protagonist/Protagonist'),
-    require('../../UTIL'),
-    require('three')
+    require('./Cone')
 );
 
-},{"../../UTIL":11,"../../protagonist/Protagonist":24,"three":6}],33:[function(require,module,exports){
+},{"./Box":31,"./Cone":32,"./Diamond":33,"./Ring":35}],35:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
     var radius = 100;
@@ -63399,4 +64819,4 @@ module.exports = (function () {
     return Ring;
 })();
 
-},{}]},{},[18]);
+},{}]},{},[19]);
