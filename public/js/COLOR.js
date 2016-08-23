@@ -47,14 +47,24 @@ module.exports = (function() {
             background: 0xFDF1CD,
             way: 0xE0C17E,
             box: 0x9E614D,
-            ring: 0x7BAAB1
+            ring: 0x7BAAB1,
+            cone: 0xEA9C00
           },
           {
             name: 'black',
             background: 0x030303,
             way: 0x878E9A,
             box: 0xEEEEEE,
-            ring: 0xA6FDFD
+            ring: 0xA6FDFD,
+            cone: 0x808282
+          },
+          {
+            name: 'orange black',
+            background: 0x140F0C,
+            way: 0xFF9056,
+            box: 0xFD6E4E,
+            ring: 0x8A5C45,
+            cone: 0x463F2F
           }
         ]
     };

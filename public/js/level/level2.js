@@ -10,18 +10,6 @@ module.exports = (function(UTIL, COLOR) {
             color: COLOR.palette[0].way,
             obstacles: [
               {
-                    type: 'cone',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0x000000,
-                    position: {
-                        distance: 600,
-                        angle: 340
-                    }
-                }, {
                     type: 'box',
                     size: {
                         width: 25,

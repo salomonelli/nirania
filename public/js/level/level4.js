@@ -1,6 +1,7 @@
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[3].box;
   var ringColor = COLOR.palette[3].ring;
+  var coneColor = COLOR.palette[3].cone;
     var level = {
         level: 4,
         speed: 1,
@@ -9,6 +10,19 @@ module.exports = (function(UTIL, COLOR){
             length: 5230,
             color: COLOR.palette[3].way,
             obstacles : [
+              {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: coneColor,
+                    position: {
+                        distance: 400,
+                        angle: 340
+                    }
+                },
                 {
                     type: 'box',
                     size: {

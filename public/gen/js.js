@@ -58283,14 +58283,24 @@ module.exports = (function() {
             background: 0xFDF1CD,
             way: 0xE0C17E,
             box: 0x9E614D,
-            ring: 0x7BAAB1
+            ring: 0x7BAAB1,
+            cone: 0xEA9C00
           },
           {
             name: 'black',
             background: 0x030303,
             way: 0x878E9A,
             box: 0xEEEEEE,
-            ring: 0xA6FDFD
+            ring: 0xA6FDFD,
+            cone: 0x808282
+          },
+          {
+            name: 'orange black',
+            background: 0x140F0C,
+            way: 0xFF9056,
+            box: 0xFD6E4E,
+            ring: 0x8A5C45,
+            cone: 0x463F2F
           }
         ]
     };
@@ -58772,7 +58782,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         require('./level1'),
         require('./level2'),
         require('./level3'),
-        require('./level4'),
         require('./level4'),
         require('./level5')
     ];
@@ -59650,18 +59659,6 @@ module.exports = (function(UTIL, COLOR) {
             color: COLOR.palette[0].way,
             obstacles: [
               {
-                    type: 'cone',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: 0x000000,
-                    position: {
-                        distance: 600,
-                        angle: 340
-                    }
-                }, {
                     type: 'box',
                     size: {
                         width: 25,
@@ -60355,6 +60352,7 @@ module.exports = (function(UTIL, COLOR) {
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[2].box;
   var ringColor = COLOR.palette[2].ring;
+  var coneColor = COLOR.palette[2].cone;
     var level = {
         level: 3,
         speed: 1,
@@ -60363,6 +60361,19 @@ module.exports = (function(UTIL, COLOR){
             length: 4230,
             color: COLOR.palette[2].way,
             obstacles : [
+              {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: coneColor,
+                    position: {
+                        distance: 400,
+                        angle: 340
+                    }
+                },
                 {
                     type: 'box',
                     size: {
@@ -61336,6 +61347,7 @@ require('../COLOR')
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[3].box;
   var ringColor = COLOR.palette[3].ring;
+  var coneColor = COLOR.palette[3].cone;
     var level = {
         level: 4,
         speed: 1,
@@ -61344,6 +61356,19 @@ module.exports = (function(UTIL, COLOR){
             length: 5230,
             color: COLOR.palette[3].way,
             obstacles : [
+              {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: coneColor,
+                    position: {
+                        distance: 400,
+                        angle: 340
+                    }
+                },
                 {
                     type: 'box',
                     size: {
@@ -62646,16 +62671,43 @@ module.exports = (function(UTIL, COLOR){
 
 },{"../COLOR":9,"../UTIL":13}],20:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
-    var boxColor = COLOR.palette[3].box;
-    var ringColor = COLOR.palette[3].ring;
+    var boxColor = COLOR.palette[4].box;
+    var ringColor = COLOR.palette[4].ring;
+    var coneColor = COLOR.palette[4].cone;
     var level = {
         level: 5,
         speed: 1,
-        background: COLOR.palette[3].background,
+        background: COLOR.palette[4].background,
         way: {
             length: 6230,
-            color: COLOR.palette[3].way,
+            color: COLOR.palette[4].way,
             obstacles : [
+              {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: coneColor,
+                    position: {
+                        distance: 400,
+                        angle: 340
+                    }
+                },
+                {
+                    type: 'cone',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: coneColor,
+                    position: {
+                        distance: 1500,
+                        angle: 90
+                    }
+                },
                 {
                     type: 'box',
                     size: {
