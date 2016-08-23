@@ -29,7 +29,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        console.log("Aktueller Speed: " + this.speed);
+        this.powerupActive = false;
+        this.powerupActiveDuration = 0;
+        this.powerUpDistance = 0;
     }
 
     /**
@@ -60,6 +62,23 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         var speedMulti = 2;
         var animate = function() {
             //move way and obstacles
+            console.log(self.powerupActive) ;
+            console.log(self.powerupActiveDuration);
+            if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                console.log("Methode offfen!!!!!!!!!!!!!!!!!!!!!!");
+                for(var i = 0; i < protagonist.children.length; i++){
+                    protagonist.children[i].material.transparent = true;
+                    protagonist.children[i].material.opacity = 0.3;
+                }
+                self.powerUpDistance = self.powerUpDistance +speedMulti;
+            }
+            else{
+                for(var i = 0; i < protagonist.children.length; i++){
+                    protagonist.children[i].material.transparent = false;
+                    protagonist.children[i].material.opacity = 0.8;
+                }
+            }
+
             t = t - speedMulti;
             self.way.moveForwardTillEnd(self.speed * speedMulti);
 
@@ -76,9 +95,10 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 case "box":
                 case "ring":
                     // if powerup 4 is active, no collsion detection for the first 500
-                    if (Cookies.get('powerup-4') == "bought" && self.way.length - 80 - t <= 500) {
+                    if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
+                        console.log(protagonist.children[1].material);
                         console.log("Powerup 4 aktiv!!!!!");
-                        break;
+                            break;
                     }
                     self.gameOver = true;
                     cb();
@@ -248,5 +268,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../way/obstacles/Obstacle'),
     require('jquery'),
     require('js-cookie'),
-    require('./Powerups')
+    require('./Powerups'),
+    require('../protagonist/Protagonist')
 );

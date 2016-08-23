@@ -74,7 +74,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         }
 
     };
-
+    
     /**
      * positions protagonist according to given coordinates
      * @param {number} x - x position of particles group
