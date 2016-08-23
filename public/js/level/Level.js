@@ -56,18 +56,28 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {function} cb - callback function
      */
     Level.prototype.begin = function(cb, protagonist) {
+        console.log(protagonist);
         var self = this;
         self.lastDiamond = null;
         self.diamonds = 0;
         var t = self.way.length - 80;
         var speedMulti = 2;
+        var position;
+        var clock = new THREE.Clock(true);
         var animate = function() {
             //move way and obstacles
+            // checks for active powerup 4
+
+            position = Math.sin(clock.getElapsedTime()*10)*0.1;
+            protagonist.children[3].position.z = position +0.3;
+            protagonist.children[2].position.z = position -0,2;
+
             console.log(self.powerupActive) ;
             console.log(self.powerupActiveDuration);
             if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
                 console.log("Methode offfen!!!!!!!!!!!!!!!!!!!!!!");
                 for(var i = 0; i < protagonist.children.length; i++){
+                    // makes protagonist transparent
                     protagonist.children[i].material.transparent = true;
                     protagonist.children[i].material.opacity = 0.3;
                 }
@@ -95,7 +105,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             switch (collObj.type) {
                 case "box":
                 case "ring":
-                    // if powerup 4 is active, no collsion detection for the first 500
+                    // no collsion detection, if powerup 4 is active
                     if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
                         console.log(protagonist.children[1].material);
                         console.log("Powerup 4 aktiv!!!!!");
