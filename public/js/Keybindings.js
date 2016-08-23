@@ -18,22 +18,17 @@ module.exports = (function ($) {
             case 37:
             case 65:
                 return 'left';
-                break;
             case 39:
             case 68:
                 return 'right';
-                break;
             case 32:
             case 87:
             case 38:
                 return 'up';
-                break;
             case 40:
-                return 'powerup';
-                break;
+                return 'boost';
             default:
                 return 'anyKey';
-                break;
         }
     };
 

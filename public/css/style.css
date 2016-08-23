@@ -57,6 +57,12 @@ body .intro {
     font-family: Quicksand;
     text-align: center;
 }
+
+#successScreen .wrapper, #gameoverScreen .wrapper{
+  position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
 .scores {
     position: absolute;
     width: 200px;

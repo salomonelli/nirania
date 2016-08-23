@@ -1,6 +1,6 @@
-module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI) {
 
-    var levels = [
+    var _levels = [
         require('./level1'),
         require('./level2'),
         require('./level3'),
@@ -40,7 +40,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.prepare = function() {
         var self = this;
-        var current = levels[self.current - 1];
+        var current = _levels[self.current - 1];
         this.way = new Way(current.way.length, current.speed, current.way.color);
 
         this.way.addObstacles(current.way.obstacles);
@@ -52,69 +52,67 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     };
 
     /**
+     * calls collision detector and returns true if game needs to be ended
+     * @param {THREE.Object3D} protagonist
+     * @returns {boolean} - true if gameover (collision with box or ring)
+     */
+    Level.prototype.checkCollision = function(protagonist) {
+        //check whether collision
+        this.way.currentPosition.height = protagonist.position.y;
+        var collObj = this.collisionDetector.collision(this.way.currentPosition);
+        switch (collObj.type) {
+            case "box":
+            case "ring":
+                // no collsion detection, if powerup 4 is active
+                if (self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0) return false;
+                this.gameOver = true;
+                return true;
+            case "diamond":
+                this.hitDiamond(collObj);
+                return false;
+        }
+    };
+
+    /**
+     * calls animation functions of protagonist
+     * @param {THREE.Object3D} protagonist
+     * @param {THREE.Clock} clock
+     * @param {number} speedMulti
+     */
+    Level.prototype.animateProtagonist = function(protagonist, clock, speedMulti) {
+        var position = Math.sin(clock.getElapsedTime() * 10) * 1;
+        Protagonist.move(protagonist, position);
+        if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
+            //make protagonist transparent
+            Protagonist.makeGroupTransparent(protagonist, 0.3);
+            this.powerUpDistance += speedMulti;
+        } else {
+            Protagonist.makeGroupTransparent(protagonist, 1);
+        }
+    };
+
+    /**
      * starts level
      * @param {function} cb - callback function
+     * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
     Level.prototype.begin = function(cb, protagonist) {
-        console.log(protagonist);
         var self = this;
+        //reset diamonds
         self.lastDiamond = null;
         self.diamonds = 0;
+        //reset way
         var t = self.way.length - 80;
         var speedMulti = 2;
-        var position;
+
         var clock = new THREE.Clock(true);
         var animate = function() {
-            //move way and obstacles
-            // checks for active powerup 4
-
-            position = Math.sin(clock.getElapsedTime()*10)* 1;
-            protagonist.children[0].position.x = position * - 0.05;
-            protagonist.children[3].position.z = position * 1;
-            protagonist.children[2].position.z = position * -1;
-
-            if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-
-                for(var i = 0; i < protagonist.children.length; i++){
-                    // makes protagonist transparent
-                    protagonist.children[i].material.transparent = true;
-                    protagonist.children[i].material.opacity = 0.3;
-                }
-                self.powerUpDistance = self.powerUpDistance +speedMulti;
-            }
-            else{
-                for(var i = 0; i < protagonist.children.length; i++){
-                    protagonist.children[i].material.transparent = false;
-                    protagonist.children[i].material.opacity = 0.8;
-                }
-            }
-
-            t = t - speedMulti;
+            t -= speedMulti;
+            self.animateProtagonist(protagonist, clock, speedMulti);
             self.way.moveForwardTillEnd(self.speed * speedMulti);
-
-            if (t <= 0) {
-                //end is reached
+            if (t <= 0 || self.checkCollision(protagonist)) {
                 cb();
                 return;
-            }
-
-            //check whether collision
-            self.way.currentPosition.height = protagonist.position.y;
-            var collObj = self.collisionDetector.collision(self.way.currentPosition);
-            switch (collObj.type) {
-                case "box":
-                case "ring":
-                    // no collsion detection, if powerup 4 is active
-                    if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                            break;
-                    }
-                    self.gameOver = true;
-                    cb();
-                    return;
-                case "diamond":
-                    self.hitDiamond(collObj);
-                    break;
-
             }
             setTimeout(function() {
                 animate();
@@ -133,7 +131,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
-            $('.scores .diamonds span').html(self.diamonds);
+            GUI.setDiamondsInScoreBoard(self.diamonds);
         }
     };
 
@@ -142,13 +140,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showSuccessScreen = function() {
         var last = '';
-        if (this.current === levels.length) last = "gone";
+        if (this.current === _levels.length) last = "gone";
         var canNotBePlayed, disableNextLevel;
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
             disableNextLevel = "disabled";
         }
-        var html = _templates.successScreen.render({
+        GUI.showSuccessScreen({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
@@ -156,27 +154,17 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             canNotBePlayed: canNotBePlayed,
             disableNextLevel: disableNextLevel
         });
-        $('body').append(html);
         this.showShopScreen();
-
-        //TODO use css-class .vertical-center
-        var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
-        $('#successScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-        var html = _templates.gameoverScreen.render({
+        GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.current
         });
-
-        $('body').append(html);
-        //TODO use css-class .vertical-center
-        var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
-        $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
@@ -185,22 +173,19 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        var html = _templates.shopScreen.render({
+        GUI.showShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
-        $('div.shopScreen').append(html);
     };
 
     Level.prototype.updateShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        var html = _templates.modalContentShopScreen.render({
+        GUI.updateShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
-        $('#shopModal').empty();
-        $('#shopModal').append(html);
     };
 
     /**
@@ -208,9 +193,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {boolean} success - whether current level has been ended with success
      */
     Level.prototype.setCookie = function(success) {
-        if (Cookies.get(this.current + '-success') !== "true") {
-            Cookies.set(this.current + '-success', success);
-        }
+        if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
         var obj = Cookies.get();
         if (isNaN(Cookies.get('total'))) {
             Cookies.set('total', this.diamonds);
@@ -226,10 +209,14 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {number} color as hexdecimal
      */
     Level.prototype.background = function() {
-        var current = levels[this.current - 1];
+        var current = _levels[this.current - 1];
         return current.background;
     };
 
+    /**
+     * returns total amount of diamonds
+     * @returns {number}
+     */
     Level.getTotalDiamonds = function() {
         return Cookies.get('total');
     };
@@ -240,7 +227,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-        console.log('level: ' + level);
         if (level == 1) return true;
         level--;
         if (Cookies.get(level + '-success') == "true") {
@@ -261,11 +247,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         }
         return false;
 
-
     };
-
-
-
 
     return Level;
 })(
@@ -275,5 +257,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('jquery'),
     require('js-cookie'),
     require('./Powerups'),
-    require('../protagonist/Protagonist')
+    require('../protagonist/Protagonist'),
+    require('../GUI')
 );

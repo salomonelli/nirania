@@ -32,7 +32,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             right: false,
             up: false,
             continue: false,
-            powerup: false
+            boost: false
         };
         this.addLights();
     }
@@ -106,7 +106,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         var self = this;
         var position;
         var clock = new THREE.Clock(true);
-        console.log(self.objects.protagonist);
         //protagonist and cube fall
         async.series([
             function animation1(next) {
@@ -218,25 +217,10 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         this.objects.way.addToScene(this.scene);
     };
 
-    Scene.prototype.boost = function (mainProtagonist, level) {
-        var self = this;
-        if (Cookies.get('powerup-4') == "bought"){
-        if(self.move.powerup){
-            if(self.boostNotUsed) {
-                level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
-                level.powerupActive = true;
-                console.log(level.powerupActiveDuration);
-                console.log(level.powerupActive);
-                self.boostNotUsed = false;
-            }
-        }
-    }
-
-    }
     /**
      * turns camera and protagonist until told to stop
      */
-    Scene.prototype.turn = function () {
+    Scene.prototype.turn = function (level) {
         var self = this;
         if (self.move.continue) {
             if (self.move.left) {
@@ -249,6 +233,11 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             }
             if (self.move.up) {
                 self.objects.protagonist.jump();
+            }
+            if(self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought"){
+              level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+              level.powerupActive = true;
+              self.boostNotUsed = false;
             }
         }
     };

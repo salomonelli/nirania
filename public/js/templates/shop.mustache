@@ -1,34 +1,5 @@
 <div class="reveal large" id="shopModal" data-reveal>
-    <h3>Free family members</h3>
-    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>
-    <div class="large-12 medium-12 small-12 total-diamonds">
-        <b>
-          <span>Total:
-            <span class="diamonds">{{total}}</span>
-            <i class="fa fa-diamond" aria-hidden="true"></i>
-          </span>
-        </b>
-    </div>
-    <br><br>
-    <div class="large-12 medium-12 small-12">
-        {{#powerups}}
-            <div class="small-12 medium-3 large-3 columns powerup">
-                <div class="image-wrapper overlay-slide-in-left">
-                    <img src="/img/toy.jpg" />
-                    <div class="image-overlay-content">
-                        <h3>{{description}}</h3>
-                        <a class="button secondary {{disabled}}" id="buy-powerup-{{id}}">
-                      Buy for
-                      {{diamonds}} <i class="fa fa-diamond" aria-hidden="true"></i>
-                    </a>
-                    </div>
-                </div>
-            </div>
-        {{/powerups}}
-    </div>
-    <button class="close-button" data-close aria-label="Close modal" type="button">
-        <span aria-hidden="true">&times;</span>
-    </button>
+    {{{content}}}
 </div>
 <script>
     $(document).foundation();

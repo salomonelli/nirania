@@ -74,7 +74,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         }
 
     };
-    
+
     /**
      * positions protagonist according to given coordinates
      * @param {number} x - x position of particles group
@@ -171,6 +171,29 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
             });
         });
     });
+
+    /**
+     * changes opacity of protagonist
+     * @param {THREE.Object3D} group - contains meshes of protagonist
+     * @param {number} opacity - from 0 to 1
+     */
+    Protagonist.makeGroupTransparent = function(group, opacity){
+      group.children.forEach(function(parts){
+        parts.material.transparent = true;
+        parts.material.opacity = opacity;
+      });
+    };
+
+    /**
+     * moves group of protagonist
+     * @param {THREE.Object3D} group - contains meshes of protagonist
+     *
+     */
+    Protagonist.move = function(group, position){
+      group.children[0].position.x = position * -0.05;
+      group.children[3].position.z = position * 1;
+      group.children[2].position.z = position * -1;
+    };
 
     return Protagonist;
 })(

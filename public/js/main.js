@@ -39,7 +39,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 $('.game-name').fadeOut(fadeTime);
                 $('.intro').fadeOut(fadeTime);
                 setTimeout(function () {
-                    console.log('main.startingAnimation()');
                     mainScene.startingAnimation(next);
                 }, fadeTime);
             },
@@ -67,8 +66,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function render() {
         requestAnimationFrame(render);
         mainScene.render();
-        mainScene.turn();
-        mainScene.boost(mainScene.getProtagonist(),level[currentLevel]);
+        mainScene.turn(level[currentLevel]);
         TWEEN.update();
     }
 
@@ -92,7 +90,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
             //level done
-
             mainScene.move.continue = false;
             Keybindings.unbind('keydown');
             Keybindings.unbind('keyup');
@@ -166,8 +163,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var powerup = event.target.id.replace('buy-powerup-', '');
         var total =  Powerups.buy(powerup);
         level[currentLevel].updateShopScreen();
-        console.log('length: '+ $('.button.success.reload').length);
-        console.log('can: '+ Level.canBePlayed(currentLevel+1));
         if($('.button.success.reload').length){
           if(Level.canBePlayed(parseInt(currentLevel)+1)){
             $('.button.success.reload').removeClass('disabled');
@@ -181,10 +176,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       $('.blackOverlay').fadeOut(1000);
       var docHeight = window.innerHeight;
       var introHeight = $('div.intro').height();
-      console.log('aaaaa');
-      console.log(docHeight);
-      console.log(introHeight);
-      console.log((docHeight-introHeight)/2);
       $('div.intro').css('marginTop', (docHeight-introHeight)/2);
     };
 

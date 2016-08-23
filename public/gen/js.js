@@ -58298,6 +58298,65 @@ module.exports = (function() {
 })();
 
 },{}],10:[function(require,module,exports){
+module.exports = (function($){
+  var _templates = {
+      successScreen: require('./templates/success.mustache'),
+      gameoverScreen: require('./templates/gameover.mustache'),
+      shopScreen: require('./templates/shop.mustache'),
+      modalContentShopScreen: require('./templates/shopModalContent.mustache')
+  };
+
+  function GUI(){}
+
+  /**
+   * updates amount of diamonds in scoreboard
+   * @param {number} diamonds
+   */
+  GUI.setDiamondsInScoreBoard = function(diamonds){
+    $('.scores .diamonds span').html(diamonds);
+  };
+
+  /**
+   * shows screen on successful end of level
+   * @param {Object} obj - obj to render template successScreen
+   */
+  GUI.showSuccessScreen = function(obj){
+    var html = _templates.successScreen.render(obj);
+    $('body').append(html);
+  };
+
+  /**
+   * shows screen on game over
+   * @param {Object} obj - obj to render template gameoverScreen
+   */
+  GUI.showGameOverScreen = function(obj){
+    var html = _templates.gameoverScreen.render(obj);
+    $('body').append(html);
+  };
+
+  GUI.fillShopModal = function(obj){
+    return _templates.modalContentShopScreen.render(obj);
+  };
+
+  GUI.showShopScreen = function(obj){
+    var html = _templates.shopScreen.render({
+      content: GUI.fillShopModal(obj)
+    });
+    $('div.shopScreen').append(html);
+  };
+
+  GUI.updateShopScreen = function(obj){
+    var html = _templates.modalContentShopScreen.render(obj);
+    $('#shopModal').empty();
+    $('#shopModal').append(html);
+  };
+
+  return GUI;
+})(
+  require('jquery')
+);
+
+},{"./templates/gameover.mustache":28,"./templates/shop.mustache":29,"./templates/shopModalContent.mustache":30,"./templates/success.mustache":31,"jquery":3}],11:[function(require,module,exports){
 //require this anywhere
 module.exports = (function ($) {
 
@@ -58318,22 +58377,17 @@ module.exports = (function ($) {
             case 37:
             case 65:
                 return 'left';
-                break;
             case 39:
             case 68:
                 return 'right';
-                break;
             case 32:
             case 87:
             case 38:
                 return 'up';
-                break;
             case 40:
-                return 'powerup';
-                break;
+                return 'boost';
             default:
                 return 'anyKey';
-                break;
         }
     };
 
@@ -58363,7 +58417,8 @@ module.exports = (function ($) {
 })(
     require('jquery')
 );
-},{"jquery":3}],11:[function(require,module,exports){
+
+},{"jquery":3}],12:[function(require,module,exports){
 module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
 
     /**
@@ -58398,7 +58453,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             right: false,
             up: false,
             continue: false,
-            powerup: false
+            boost: false
         };
         this.addLights();
     }
@@ -58472,7 +58527,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         var self = this;
         var position;
         var clock = new THREE.Clock(true);
-        console.log(self.objects.protagonist);
         //protagonist and cube fall
         async.series([
             function animation1(next) {
@@ -58584,25 +58638,10 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         this.objects.way.addToScene(this.scene);
     };
 
-    Scene.prototype.boost = function (mainProtagonist, level) {
-        var self = this;
-        if (Cookies.get('powerup-4') == "bought"){
-        if(self.move.powerup){
-            if(self.boostNotUsed) {
-                level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
-                level.powerupActive = true;
-                console.log(level.powerupActiveDuration);
-                console.log(level.powerupActive);
-                self.boostNotUsed = false;
-            }
-        }
-    }
-
-    }
     /**
      * turns camera and protagonist until told to stop
      */
-    Scene.prototype.turn = function () {
+    Scene.prototype.turn = function (level) {
         var self = this;
         if (self.move.continue) {
             if (self.move.left) {
@@ -58615,6 +58654,11 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             }
             if (self.move.up) {
                 self.objects.protagonist.jump();
+            }
+            if(self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought"){
+              level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+              level.powerupActive = true;
+              self.boostNotUsed = false;
             }
         }
     };
@@ -58674,7 +58718,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     require('js-cookie')
 );
 
-},{"./COLOR":9,"./Particles":21,"./protagonist/Protagonist":26,"async":1,"js-cookie":4,"three":7,"tween.js":8}],12:[function(require,module,exports){
+},{"./COLOR":9,"./Particles":22,"./protagonist/Protagonist":27,"async":1,"js-cookie":4,"three":7,"tween.js":8}],13:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58721,10 +58765,10 @@ module.exports = (function(){
     return UTIL;
 })();
 
-},{}],13:[function(require,module,exports){
-module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups) {
+},{}],14:[function(require,module,exports){
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI) {
 
-    var levels = [
+    var _levels = [
         require('./level1'),
         require('./level2'),
         require('./level3'),
@@ -58764,7 +58808,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.prepare = function() {
         var self = this;
-        var current = levels[self.current - 1];
+        var current = _levels[self.current - 1];
         this.way = new Way(current.way.length, current.speed, current.way.color);
 
         this.way.addObstacles(current.way.obstacles);
@@ -58776,69 +58820,67 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     };
 
     /**
+     * calls collision detector and returns true if game needs to be ended
+     * @param {THREE.Object3D} protagonist
+     * @returns {boolean} - true if gameover (collision with box or ring)
+     */
+    Level.prototype.checkCollision = function(protagonist) {
+        //check whether collision
+        this.way.currentPosition.height = protagonist.position.y;
+        var collObj = this.collisionDetector.collision(this.way.currentPosition);
+        switch (collObj.type) {
+            case "box":
+            case "ring":
+                // no collsion detection, if powerup 4 is active
+                if (self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0) return false;
+                this.gameOver = true;
+                return true;
+            case "diamond":
+                this.hitDiamond(collObj);
+                return false;
+        }
+    };
+
+    /**
+     * calls animation functions of protagonist
+     * @param {THREE.Object3D} protagonist
+     * @param {THREE.Clock} clock
+     * @param {number} speedMulti
+     */
+    Level.prototype.animateProtagonist = function(protagonist, clock, speedMulti) {
+        var position = Math.sin(clock.getElapsedTime() * 10) * 1;
+        Protagonist.move(protagonist, position);
+        if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
+            //make protagonist transparent
+            Protagonist.makeGroupTransparent(protagonist, 0.3);
+            this.powerUpDistance += speedMulti;
+        } else {
+            Protagonist.makeGroupTransparent(protagonist, 1);
+        }
+    };
+
+    /**
      * starts level
      * @param {function} cb - callback function
+     * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
     Level.prototype.begin = function(cb, protagonist) {
-        console.log(protagonist);
         var self = this;
+        //reset diamonds
         self.lastDiamond = null;
         self.diamonds = 0;
+        //reset way
         var t = self.way.length - 80;
         var speedMulti = 2;
-        var position;
+
         var clock = new THREE.Clock(true);
         var animate = function() {
-            //move way and obstacles
-            // checks for active powerup 4
-
-            position = Math.sin(clock.getElapsedTime()*10)* 1;
-            protagonist.children[0].position.x = position * - 0.05;
-            protagonist.children[3].position.z = position * 1;
-            protagonist.children[2].position.z = position * -1;
-
-            if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-
-                for(var i = 0; i < protagonist.children.length; i++){
-                    // makes protagonist transparent
-                    protagonist.children[i].material.transparent = true;
-                    protagonist.children[i].material.opacity = 0.3;
-                }
-                self.powerUpDistance = self.powerUpDistance +speedMulti;
-            }
-            else{
-                for(var i = 0; i < protagonist.children.length; i++){
-                    protagonist.children[i].material.transparent = false;
-                    protagonist.children[i].material.opacity = 0.8;
-                }
-            }
-
-            t = t - speedMulti;
+            t -= speedMulti;
+            self.animateProtagonist(protagonist, clock, speedMulti);
             self.way.moveForwardTillEnd(self.speed * speedMulti);
-
-            if (t <= 0) {
-                //end is reached
+            if (t <= 0 || self.checkCollision(protagonist)) {
                 cb();
                 return;
-            }
-
-            //check whether collision
-            self.way.currentPosition.height = protagonist.position.y;
-            var collObj = self.collisionDetector.collision(self.way.currentPosition);
-            switch (collObj.type) {
-                case "box":
-                case "ring":
-                    // no collsion detection, if powerup 4 is active
-                    if(self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0){
-                            break;
-                    }
-                    self.gameOver = true;
-                    cb();
-                    return;
-                case "diamond":
-                    self.hitDiamond(collObj);
-                    break;
-
             }
             setTimeout(function() {
                 animate();
@@ -58857,7 +58899,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
-            $('.scores .diamonds span').html(self.diamonds);
+            GUI.setDiamondsInScoreBoard(self.diamonds);
         }
     };
 
@@ -58866,13 +58908,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showSuccessScreen = function() {
         var last = '';
-        if (this.current === levels.length) last = "gone";
+        if (this.current === _levels.length) last = "gone";
         var canNotBePlayed, disableNextLevel;
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
             disableNextLevel = "disabled";
         }
-        var html = _templates.successScreen.render({
+        GUI.showSuccessScreen({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
@@ -58880,27 +58922,17 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             canNotBePlayed: canNotBePlayed,
             disableNextLevel: disableNextLevel
         });
-        $('body').append(html);
         this.showShopScreen();
-
-        //TODO use css-class .vertical-center
-        var marginTop = ($(document).height() - $('#successScreen div').height()) / 2;
-        $('#successScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
     Level.prototype.showGameOverScreen = function() {
-        var html = _templates.gameoverScreen.render({
+        GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.current
         });
-
-        $('body').append(html);
-        //TODO use css-class .vertical-center
-        var marginTop = ($(document).height() - $('#gameoverScreen div').height()) / 2;
-        $('#gameoverScreen div.wrapper').css('marginTop', marginTop);
     };
 
     /**
@@ -58909,22 +58941,19 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        var html = _templates.shopScreen.render({
+        GUI.showShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
-        $('div.shopScreen').append(html);
     };
 
     Level.prototype.updateShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        var html = _templates.modalContentShopScreen.render({
+        GUI.updateShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
         });
-        $('#shopModal').empty();
-        $('#shopModal').append(html);
     };
 
     /**
@@ -58932,9 +58961,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {boolean} success - whether current level has been ended with success
      */
     Level.prototype.setCookie = function(success) {
-        if (Cookies.get(this.current + '-success') !== "true") {
-            Cookies.set(this.current + '-success', success);
-        }
+        if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
         var obj = Cookies.get();
         if (isNaN(Cookies.get('total'))) {
             Cookies.set('total', this.diamonds);
@@ -58950,10 +58977,14 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {number} color as hexdecimal
      */
     Level.prototype.background = function() {
-        var current = levels[this.current - 1];
+        var current = _levels[this.current - 1];
         return current.background;
     };
 
+    /**
+     * returns total amount of diamonds
+     * @returns {number}
+     */
     Level.getTotalDiamonds = function() {
         return Cookies.get('total');
     };
@@ -58964,7 +58995,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @returns {boolean}
      */
     Level.canBePlayed = function(level) {
-        console.log('level: ' + level);
         if (level == 1) return true;
         level--;
         if (Cookies.get(level + '-success') == "true") {
@@ -58985,11 +59015,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         }
         return false;
 
-
     };
-
-
-
 
     return Level;
 })(
@@ -58999,10 +59025,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('jquery'),
     require('js-cookie'),
     require('./Powerups'),
-    require('../protagonist/Protagonist')
+    require('../protagonist/Protagonist'),
+    require('../GUI')
 );
 
-},{"../protagonist/CollisionDetector":23,"../protagonist/Protagonist":26,"../templates/gameover.mustache":27,"../templates/shop.mustache":28,"../templates/shopModalContent.mustache":29,"../templates/success.mustache":30,"../way/Way":31,"../way/obstacles/Obstacle":35,"./Powerups":14,"./level1":15,"./level2":16,"./level3":17,"./level4":18,"./level5":19,"jquery":3,"js-cookie":4}],14:[function(require,module,exports){
+},{"../GUI":10,"../protagonist/CollisionDetector":24,"../protagonist/Protagonist":27,"../templates/gameover.mustache":28,"../templates/shop.mustache":29,"../templates/shopModalContent.mustache":30,"../templates/success.mustache":31,"../way/Way":32,"../way/obstacles/Obstacle":36,"./Powerups":15,"./level1":16,"./level2":17,"./level3":18,"./level4":19,"./level5":20,"jquery":3,"js-cookie":4}],15:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _powerups = [{
             id: 1,
@@ -59091,7 +59118,7 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":4}],15:[function(require,module,exports){
+},{"js-cookie":4}],16:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[1].box;
     var diamondColor = 0xffffff;
@@ -59610,7 +59637,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../UTIL'),
     require('../COLOR'));
 
-},{"../COLOR":9,"../UTIL":12}],16:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13}],17:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[0].box;
     var ringColor = COLOR.palette[0].ring;
@@ -60324,7 +60351,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":12}],17:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13}],18:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[2].box;
   var ringColor = COLOR.palette[2].ring;
@@ -61305,7 +61332,7 @@ module.exports = (function(UTIL, COLOR){
 require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":12}],18:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13}],19:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[3].box;
   var ringColor = COLOR.palette[3].ring;
@@ -62617,7 +62644,7 @@ module.exports = (function(UTIL, COLOR){
   require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":12}],19:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13}],20:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
     var boxColor = COLOR.palette[3].box;
     var ringColor = COLOR.palette[3].ring;
@@ -63625,7 +63652,7 @@ module.exports = (function(UTIL, COLOR){
     require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":12}],20:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13}],21:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
     "use strict";
@@ -63667,7 +63694,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 $('.game-name').fadeOut(fadeTime);
                 $('.intro').fadeOut(fadeTime);
                 setTimeout(function () {
-                    console.log('main.startingAnimation()');
                     mainScene.startingAnimation(next);
                 }, fadeTime);
             },
@@ -63695,8 +63721,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     function render() {
         requestAnimationFrame(render);
         mainScene.render();
-        mainScene.turn();
-        mainScene.boost(mainScene.getProtagonist(),level[currentLevel]);
+        mainScene.turn(level[currentLevel]);
         TWEEN.update();
     }
 
@@ -63720,7 +63745,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         mainScene.move.continue = true;
         level[currentLevel].begin(function () {
             //level done
-
             mainScene.move.continue = false;
             Keybindings.unbind('keydown');
             Keybindings.unbind('keyup');
@@ -63794,8 +63818,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         var powerup = event.target.id.replace('buy-powerup-', '');
         var total =  Powerups.buy(powerup);
         level[currentLevel].updateShopScreen();
-        console.log('length: '+ $('.button.success.reload').length);
-        console.log('can: '+ Level.canBePlayed(currentLevel+1));
         if($('.button.success.reload').length){
           if(Level.canBePlayed(parseInt(currentLevel)+1)){
             $('.button.success.reload').removeClass('disabled');
@@ -63809,10 +63831,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       $('.blackOverlay').fadeOut(1000);
       var docHeight = window.innerHeight;
       var introHeight = $('div.intro').height();
-      console.log('aaaaa');
-      console.log(docHeight);
-      console.log(introHeight);
-      console.log((docHeight-introHeight)/2);
       $('div.intro').css('marginTop', (docHeight-introHeight)/2);
     };
 
@@ -63831,7 +63849,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Powerups')
 );
 
-},{"./Keybindings":10,"./Scene":11,"./level/Level":13,"./level/Powerups":14,"./protagonist/Protagonist":26,"async":1,"jquery":3,"three":7,"tween.js":8}],21:[function(require,module,exports){
+},{"./Keybindings":11,"./Scene":12,"./level/Level":14,"./level/Powerups":15,"./protagonist/Protagonist":27,"async":1,"jquery":3,"three":7,"tween.js":8}],22:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -63936,7 +63954,7 @@ module.exports = (function (THREE) {
 })(
     require('three')
 );
-},{"three":7}],22:[function(require,module,exports){
+},{"three":7}],23:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -63988,7 +64006,7 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],23:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],24:[function(require,module,exports){
 module.exports = (function() {
 
     /**
@@ -64081,7 +64099,7 @@ module.exports = (function() {
     return CollisionDetector;
 })();
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64133,7 +64151,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],25:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],26:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64185,7 +64203,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],26:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],27:[function(require,module,exports){
 module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
     /**
@@ -64262,7 +64280,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         }
 
     };
-    
+
     /**
      * positions protagonist according to given coordinates
      * @param {number} x - x position of particles group
@@ -64360,6 +64378,29 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         });
     });
 
+    /**
+     * changes opacity of protagonist
+     * @param {THREE.Object3D} group - contains meshes of protagonist
+     * @param {number} opacity - from 0 to 1
+     */
+    Protagonist.makeGroupTransparent = function(group, opacity){
+      group.children.forEach(function(parts){
+        parts.material.transparent = true;
+        parts.material.opacity = opacity;
+      });
+    };
+
+    /**
+     * moves group of protagonist
+     * @param {THREE.Object3D} group - contains meshes of protagonist
+     *
+     */
+    Protagonist.move = function(group, position){
+      group.children[0].position.x = position * -0.05;
+      group.children[3].position.z = position * 1;
+      group.children[2].position.z = position * -1;
+    };
+
     return Protagonist;
 })(
     require('./Head'),
@@ -64372,15 +64413,15 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
     require('js-cookie')
 );
 
-},{"../COLOR":9,"./Body":22,"./Head":24,"./Leg":25,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],27:[function(require,module,exports){
+},{"../COLOR":9,"./Body":23,"./Head":25,"./Leg":26,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],28:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],28:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    <h3>Free family members</h3>");_.b("\n" + i);_.b("    <p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("        <b>");_.b("\n" + i);_.b("          <span>Total:");_.b("\n" + i);_.b("            <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("            <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("          </span>");_.b("\n" + i);_.b("        </b>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("    <br><br>");_.b("\n" + i);_.b("    <div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,561,1154,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("                <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                    <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                    <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                        <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                      Buy for");_.b("\n" + i);_.b("                      ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                    </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("    </div>");_.b("\n" + i);_.b("    <button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("        <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("    </button>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],29:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,455,996,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Buy for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    ");_.b(_.t(_.f("content",c,p,0)));_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],30:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,582,761,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,455,996,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-12 medium-3 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"/img/toy.jpg\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <h3>");_.b(_.v(_.f("description",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Buy for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],31:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,582,761,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":2}],32:[function(require,module,exports){
 module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean) {
     /**
      * Represents way
@@ -64513,7 +64554,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
     require('random-boolean')
 );
 
-},{"../COLOR":9,"../UTIL":12,"./obstacles/Obstacle":35,"jquery":3,"js-cookie":4,"random-boolean":6,"three":7}],32:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":13,"./obstacles/Obstacle":36,"jquery":3,"js-cookie":4,"random-boolean":6,"three":7}],33:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -64579,7 +64620,7 @@ module.exports=(function(THREE, UTIL){
     require('../../UTIL')
 );
 
-},{"../../UTIL":12,"three":7}],33:[function(require,module,exports){
+},{"../../UTIL":13,"three":7}],34:[function(require,module,exports){
 module.exports = (function(THREE, UTIL) {
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
@@ -64633,7 +64674,7 @@ module.exports = (function(THREE, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":12,"three":7}],34:[function(require,module,exports){
+},{"../../UTIL":13,"three":7}],35:[function(require,module,exports){
 module.exports = (function(THREE, UTIL, Cookies){
     var size = 10;
     var heightFromWay = 20;
@@ -64731,7 +64772,7 @@ module.exports = (function(THREE, UTIL, Cookies){
     require('js-cookie')
 );
 
-},{"../../UTIL":12,"js-cookie":4,"three":7}],35:[function(require,module,exports){
+},{"../../UTIL":13,"js-cookie":4,"three":7}],36:[function(require,module,exports){
 module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     var obstacleTypes = {
         box: Box,
@@ -64813,7 +64854,6 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
         this.collisionData.angle.center = this.angle;
         this.collisionData.angle.min = Math.round(this.angle - UTIL.convertRadiansToDegrees(angleRight));
         this.collisionData.angle.max = Math.round(this.angle + UTIL.convertRadiansToDegrees(angleRight));
-        console.log('angle: '+this.collisionData.angle.center);
     };
 
     return Obstacle;
@@ -64825,7 +64865,7 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":12,"./Box":32,"./Cone":33,"./Diamond":34,"./Ring":36}],36:[function(require,module,exports){
+},{"../../UTIL":13,"./Box":33,"./Cone":34,"./Diamond":35,"./Ring":37}],37:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
     var radius = 100;
@@ -64879,4 +64919,4 @@ module.exports = (function () {
     return Ring;
 })();
 
-},{}]},{},[20]);
+},{}]},{},[21]);
