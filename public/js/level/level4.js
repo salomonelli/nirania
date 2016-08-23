@@ -434,8 +434,47 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
                         distance: 2675,
                         angle: 265
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 5,
+                        length: 100,
+                        height: 10
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2679,
+                        angle: 279
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2750,
+                        angle: 207
                     }
                 },
                 {
@@ -468,45 +507,6 @@ module.exports = (function(UTIL, COLOR){
                     type: 'box',
                     size: {
                         width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3100,
-                        angle: 43
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2567,
-                        angle: 170
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2750,
-                        angle: 207
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
                         length: 100,
                         height: 25
                     },
@@ -519,16 +519,83 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'box',
                     size: {
-                        width: 5,
-                        length: 100,
-                        height: 10
+                        width: 25,
+                        length: 25,
+                        height: 25
                     },
                     color: boxColor,
                     position: {
-                        distance: 2679,
-                        angle: 279
+                        distance: 3100,
+                        angle: 43
                     }
                 },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 5,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2930,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 5,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2730,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 5,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2730,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 15,
+                        length: 5,
+                        height: 500
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2730,
+                        angle: 270
+                    }
+                },
+
 
 
                 {

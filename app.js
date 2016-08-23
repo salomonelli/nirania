@@ -15,6 +15,10 @@ app.get('/intro', function(req, res){
     res.sendFile(__dirname +'/intro.html');
 });
 
+app.get('/intro-ger', function(req, res){
+    res.sendFile(__dirname +'/intro-ger.html');
+});
+
 app.listen(3000, '0.0.0.0', function(){
     console.log('Listening on localhost:3000');
 });
