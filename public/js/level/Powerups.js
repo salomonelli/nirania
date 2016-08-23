@@ -78,6 +78,9 @@ module.exports = (function(Cookies) {
       return _powerups;
     };
 
+    Powerups.amount = function(){
+      return _powerups.length;
+    };
     return Powerups;
 })(
   require('js-cookie')

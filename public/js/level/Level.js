@@ -115,13 +115,12 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         if (this.current === levels.length) last = "gone";
-
-
         var html = _templates.successScreen.render({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
-            last: last
+            last: last,
+            canBePlayed: Level.canBePlayed(this.current +1)
         });
         $('body').append(html);
         this.showShopScreen();
@@ -214,11 +213,14 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         } else {
             level--;
             console.dir(Cookies.get(level + '-success'));
-            if (Cookies.get(level + '-success') == "true") {
+            console.log('asdasdads');
+            console.log(Powerups.amount());
+            if(Cookies.get('powerup-'+level) == "bought" || level <= Powerups.amount()){
+              if(Cookies.get(level + '-success') == "true"){
                 return true;
-            } else {
-                return false;
+              }
             }
+            return false;
         }
 
     };
