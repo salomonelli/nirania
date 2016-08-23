@@ -2,7 +2,7 @@ module.exports = (function(Cookies) {
     var powerups = [{
             id: 1,
             description: "boosts speed",
-            diamonds: 15,
+            diamonds: 10,
             img: "/img/01.jpg"
         },
         {
@@ -14,13 +14,13 @@ module.exports = (function(Cookies) {
         {
             id: 3,
             description: "diamond magnet",
-            diamonds: 40,
+            diamonds: 30,
             img: "/img/03.jpg"
         },
         {
             id: 4,
             description: "invulnerable",
-            diamonds: 50,
+            diamonds: 40,
             img: "/img/04.jpg"
         }];
 

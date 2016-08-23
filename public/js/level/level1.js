@@ -1,6 +1,5 @@
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[1].box;
-    var ringColor = COLOR.palette[1].ring;
     var diamondColor = 0xffffff;
     var level = {
         level: 1,
@@ -213,19 +212,8 @@ module.exports = (function(UTIL, COLOR) {
                         distance: 1900,
                         angle: 279
                     }
-                }, {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2290,
-                        angle: 159
-                    }
-                }, {
+                },
+                {
                     type: 'box',
                     size: {
                         width: 25,
@@ -439,70 +427,6 @@ module.exports = (function(UTIL, COLOR) {
                     position: {
                         distance: 2050,
                         angle: 330
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2500,
-                        angle: 330
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2550,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2600,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2650,
-                        angle: 320
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2750,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2800,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 2900,
-                        angle: 310
-                    }
-                }, {
-                    type: 'diamond',
-                    size: {},
-                    color: diamondColor,
-                    position: {
-                        distance: 3000,
-                        angle: 310
                     }
                 }
 
