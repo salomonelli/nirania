@@ -1,13 +1,13 @@
 module.exports = (function(UTIL, COLOR){
-  var boxColor = COLOR.palette[2].box;
-  var ringColor = COLOR.palette[2].ring;
+    var boxColor = COLOR.palette[3].box;
+    var ringColor = COLOR.palette[3].ring;
     var level = {
-        level: 3,
+        level: 5,
         speed: 1,
-        background: COLOR.palette[2].background,
+        background: COLOR.palette[3].background,
         way: {
-            length: 4230,
-            color: COLOR.palette[2].way,
+            length: 6230,
+            color: COLOR.palette[3].way,
             obstacles : [
                 {
                     type: 'box',
@@ -39,19 +39,6 @@ module.exports = (function(UTIL, COLOR){
                     type: 'box',
                     size: {
                         width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 546,
-                        angle: 193
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
                         length: 300,
                         height: 25
                     },
@@ -71,7 +58,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 557,
-                        angle: 0
+                        angle: 260
                     }
                 },
                 {
@@ -116,19 +103,6 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'box',
                     size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 892,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
                         width: 10,
                         length: 80,
                         height: 50
@@ -136,20 +110,7 @@ module.exports = (function(UTIL, COLOR){
                     color: boxColor,
                     position: {
                         distance: 934,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 200,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1057,
-                        angle: 152
+                        angle: 83
                     }
                 },
                 {
@@ -182,19 +143,6 @@ module.exports = (function(UTIL, COLOR){
                     type: 'box',
                     size: {
                         width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1290,
-                        angle: 159
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
                         length: 35,
                         height: 25
                     },
@@ -202,32 +150,6 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: 1357,
                         angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: 324
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: 270
                     }
                 },
                 {
@@ -261,51 +183,12 @@ module.exports = (function(UTIL, COLOR){
                     size: {
                         width: 37,
                         length: 25,
-                        height: 60
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1500,
-                        angle: 190
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1532,
-                        angle: 258
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
                         height: 25
                     },
                     color: boxColor,
                     position: {
                         distance: 1625,
                         angle: 271
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1635,
-                        angle: 206
                     }
                 },
                 {
@@ -356,21 +239,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 1923,
-                        angle: 64
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
                         distance: 1973,
-                        angle: 320
+                        angle: 290
                     }
                 },
                 {
@@ -384,6 +254,136 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: 2000,
                         angle: 0
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 324
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1420,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1532,
+                        angle: 258
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1635,
+                        angle: 206
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 546,
+                        angle: 193
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 892,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1057,
+                        angle: 152
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 37,
+                        length: 25,
+                        height: 60
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 190
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1290,
+                        angle: 159
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1923,
+                        angle: 64
                     }
                 },
                 {
@@ -434,47 +434,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2567,
-                        angle: 170
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
                         distance: 2675,
                         angle: 265
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 5,
-                        length: 100,
-                        height: 10
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2679,
-                        angle: 310
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2750,
-                        angle: 207
                     }
                 },
                 {
@@ -507,6 +468,45 @@ module.exports = (function(UTIL, COLOR){
                     type: 'box',
                     size: {
                         width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3100,
+                        angle: 43
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2567,
+                        angle: 170
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2750,
+                        angle: 207
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
                         length: 100,
                         height: 25
                     },
@@ -519,14 +519,14 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'box',
                     size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
+                        width: 5,
+                        length: 100,
+                        height: 10
                     },
                     color: boxColor,
                     position: {
-                        distance: 3100,
-                        angle: 43
+                        distance: 2679,
+                        angle: 279
                     }
                 },
 
@@ -534,7 +534,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 300,
                         angle: 40
@@ -543,7 +543,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 350,
                         angle: 42
@@ -552,7 +552,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 400,
                         angle: 44
@@ -561,7 +561,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 450,
                         angle: 46
@@ -570,7 +570,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 500,
                         angle: 48
@@ -579,7 +579,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 550,
                         angle: 50
@@ -588,7 +588,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 700,
                         angle: 270
@@ -597,7 +597,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 770,
                         angle: 280
@@ -606,7 +606,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 800,
                         angle: 280
@@ -615,7 +615,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 950,
                         angle: 280
@@ -624,7 +624,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1000,
                         angle: 280
@@ -633,7 +633,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1050,
                         angle: 280
@@ -642,7 +642,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1225,
                         angle: 30
@@ -651,7 +651,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1300,
                         angle: 25
@@ -660,7 +660,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1375,
                         angle: 20
@@ -669,7 +669,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1450,
                         angle: 15
@@ -678,7 +678,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1700,
                         angle: 345
@@ -687,7 +687,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1750,
                         angle: 340
@@ -696,7 +696,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1800,
                         angle: 335
@@ -705,7 +705,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 1950,
                         angle: 330
@@ -714,7 +714,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2000,
                         angle: 330
@@ -723,7 +723,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2050,
                         angle: 330
@@ -732,7 +732,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2500,
                         angle: 320
@@ -741,7 +741,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2550,
                         angle: 320
@@ -750,7 +750,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2600,
                         angle: 320
@@ -759,7 +759,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2650,
                         angle: 320
@@ -768,7 +768,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2750,
                         angle: 310
@@ -777,7 +777,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2800,
                         angle: 310
@@ -786,7 +786,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 2900,
                         angle: 310
@@ -795,7 +795,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3000,
                         angle: 310
@@ -804,7 +804,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3100,
                         angle: 38
@@ -813,7 +813,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3500,
                         angle: 183
@@ -822,7 +822,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3600,
                         angle: 192
@@ -831,16 +831,16 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3700,
-                        angle: 210
+                        angle: 170
                     }
                 },
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3140,
                         angle: 45
@@ -849,7 +849,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3240,
                         angle: 50
@@ -858,7 +858,7 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3300,
                         angle: 55
@@ -867,28 +867,28 @@ module.exports = (function(UTIL, COLOR){
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3600,
-                        angle: 10
+                        angle: 0
                     }
                 },
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3650,
-                        angle: 10
+                        angle: 0
                     }
                 },
                 {
                     type: 'diamond',
                     size: {},
-                    color: 0xffffff,
+                    color: boxColor,
                     position: {
                         distance: 3675,
-                        angle: 10
+                        angle: 0
                     }
                 },
 
@@ -909,15 +909,6 @@ module.exports = (function(UTIL, COLOR){
                     color: ringColor,
                     position: {
                         distance: UTIL.randomIntInRange(500,700)*2,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'ring',
-                    size: {},
-                    color: ringColor,
-                    position: {
-                        distance: UTIL.randomIntInRange(750,950)*2,
                         angle: 0
                     }
                 },
@@ -962,7 +953,43 @@ module.exports = (function(UTIL, COLOR){
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(1900,2000)*2,
+                        distance: UTIL.randomIntInRange(1900,2100)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2250,2300)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2450,2500)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2650,2700)*2,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'ring',
+                    size: {},
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2900,3000)*2,
                         angle: 0
                     }
                 }
@@ -973,7 +1000,7 @@ module.exports = (function(UTIL, COLOR){
     };
 
     return level;
-})
-(require('../UTIL'),
-require('../COLOR')
+})(
+    require('../UTIL'),
+    require('../COLOR')
 );
