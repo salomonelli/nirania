@@ -8,14 +8,14 @@ var app = express();
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
-    res.sendFile(__dirname +'/index.html');
-});
-
-app.get('/intro', function(req, res){
     res.sendFile(__dirname +'/intro.html');
+}); 
+
+app.get('/game', function(req, res){
+  res.sendFile(__dirname +'/index.html');
 });
 
-app.get('/intro-ger', function(req, res){
+app.get('/de', function(req, res){
     res.sendFile(__dirname +'/intro-ger.html');
 });
 
@@ -30,4 +30,3 @@ app.get('/outro-ger', function(req, res){
 app.listen(3000, '0.0.0.0', function(){
     console.log('Listening on localhost:3000');
 });
-  

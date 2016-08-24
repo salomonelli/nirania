@@ -22,7 +22,7 @@ module.exports = (function() {
             keyB = _getMaxDistance(b);
             // Compare the 2 keys
             if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;            
+            if (keyA > keyB) return 1;
           }catch(e){}
             return 0;
         });
@@ -42,7 +42,6 @@ module.exports = (function() {
         };
         self.obstacles.forEach(function(obstacle, i) {
             if (ret.collision) return;
-
             //check if obstacle should not be checked anymore
             if (_getMaxDistance(obstacle) < currentPosition.distance) {
                 delete self.obstacles[i]; //remove from array with the next garbage-collection
@@ -53,7 +52,6 @@ module.exports = (function() {
               //console.dir(currentPosition); //TODO bug: anglemin is -5 but angles should always be positive
               //throw 'aaaa2';
             }
-
             if (
                 (
                     //other collision with left body half
@@ -78,6 +76,7 @@ module.exports = (function() {
                     obstacle.collisionData.size.height > currentPosition.height
                 )
             ) {
+
                 ret = {
                     collision: true,
                     type: obstacle.collisionData.type,

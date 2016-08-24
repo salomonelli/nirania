@@ -24,6 +24,45 @@ module.exports = (function(UTIL, COLOR){
                     }
                 },
                 {
+                      type: 'cone',
+                      size: {
+                          width: 25,
+                          length: 25,
+                          height: 25
+                      },
+                      color: coneColor,
+                      position: {
+                          distance: 900,
+                          angle: 340
+                      }
+                  },
+                  {
+                        type: 'cone',
+                        size: {
+                            width: 25,
+                            length: 25,
+                            height: 25
+                        },
+                        color: coneColor,
+                        position: {
+                            distance: 700,
+                            angle: 340
+                        }
+                    },
+                    {
+                          type: 'cone',
+                          size: {
+                              width: 25,
+                              length: 25,
+                              height: 25
+                          },
+                          color: coneColor,
+                          position: {
+                              distance: 1000,
+                              angle: 340
+                          }
+                      },
+                {
                     type: 'box',
                     size: {
                         width: 25,

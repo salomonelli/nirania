@@ -32,6 +32,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.powerupActive = false;
         this.powerupActiveDuration = 0;
         this.powerUpDistance = 0;
+        this.opacityHelper = -375;
     }
 
     /**
@@ -62,8 +63,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         switch (collObj.type) {
             case "box":
             case "ring":
+            case "cone":
                 // no collsion detection, if powerup 4 is active
-                if (self.powerupActive && self.powerupActiveDuration - self.powerUpDistance > 0) return false;
+                if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;
                 return true;
             case "diamond":
@@ -82,11 +84,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         var position = Math.sin(clock.getElapsedTime() * 10) * 1;
         Protagonist.move(protagonist, position);
         if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
-            //make protagonist transparent
-            Protagonist.makeGroupTransparent(protagonist, 0.3);
+            var opacity = 0.3;
+            if(this.opacityHelper >= 0){
+              opacity = (0.7/149625)* (this.opacityHelper*this.opacityHelper)+0.3;
+            }
+            this.opacityHelper += speedMulti;
+            Protagonist.makeGroupTransparent(protagonist, opacity);
             this.powerUpDistance += speedMulti;
-        } else {
-            Protagonist.makeGroupTransparent(protagonist, 1);
         }
     };
 
@@ -232,13 +236,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             //managed level
             if (level <= Powerups.amount()) {
                 //powerup exists
-                if (Cookies.get('powerup-' + level) == "bought") {
-                    //powerup is bought
-                    return true;
-                } else {
-                    //powerup is not bought
-                    return false;
-                }
+                if(level <= Powerups.amountOfBought()) return true;
+                return false;
             } else {
                 //no powerup exist
                 return true;
