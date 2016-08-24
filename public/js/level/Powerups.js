@@ -81,6 +81,14 @@ module.exports = (function(Cookies) {
     Powerups.amount = function(){
       return _powerups.length;
     };
+
+    Powerups.amountOfBought = function(){
+      var bought = 0;
+      for(var i = 1; i <= _powerups.length; i++){
+        if(Cookies.get('powerup-'+i) === "bought") bought++;
+      }
+      return bought;
+    };
     return Powerups;
 })(
   require('js-cookie')
