@@ -58863,6 +58863,16 @@ module.exports = (function(){
         return Math.round(UTIL.randomNumberInRange(min, max));
     };
 
+    /**
+     * normalizes angle
+     * @param {number} angle - in degrees
+     */
+    UTIL.normalizeAngle = function(angle){
+      //if (angle < 0) angle = angle + 360; //always positive
+      angle = angle % 360; //always <360
+      return angle;
+    };
+
     return UTIL;
 })();
 
@@ -63855,17 +63865,15 @@ module.exports = (function(UTIL, COLOR) {
             color: COLOR.palette[4].way,
             obstacles: [{
                 type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
+                size: {},
                 color: coneColor,
                 position: {
-                    distance: 400,
+                    distance: 950,
                     angle: 0
                 }
-            }, {
+            }
+
+            /*, {
                 type: 'cone',
                 size: {
                     width: 25,
@@ -63913,7 +63921,11 @@ module.exports = (function(UTIL, COLOR) {
                     distance: 800,
                     angle: 0
                 }
-            }]
+            }
+
+          */
+
+        ]
         }
     };
 
@@ -64289,13 +64301,13 @@ module.exports = (function() {
     function CollisionDetector(obstacles) {
         //sort by distance to save performance
         obstacles = obstacles.sort(function(a, b) {
-          try{
-            var keyA = _getMaxDistance(a);
-            keyB = _getMaxDistance(b);
-            // Compare the 2 keys
-            if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
-          }catch(e){}
+            try {
+                var keyA = _getMaxDistance(a);
+                keyB = _getMaxDistance(b);
+                // Compare the 2 keys
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+            } catch (e) {}
             return 0;
         });
         this.obstacles = obstacles;
@@ -64319,11 +64331,7 @@ module.exports = (function() {
                 delete self.obstacles[i]; //remove from array with the next garbage-collection
             }
 
-            if(obstacle.collisionData.angle.min <0 || obstacle.collisionData.angle.max <0 || currentPosition.anglemin<0  || currentPosition.anglemax<0){
-              //console.dir(obstacle.collisionData);
-              //console.dir(currentPosition); //TODO bug: anglemin is -5 but angles should always be positive
-              //throw 'aaaa2';
-            }
+
             if (
                 (
                     //other collision with left body half
@@ -64354,6 +64362,30 @@ module.exports = (function() {
                     type: obstacle.collisionData.type,
                     mesh: obstacle.mesh
                 };
+            }
+            if (
+                (
+                    //cone
+                    obstacle.collisionData.type == "cone" &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    currentPosition.distance > obstacle.collisionData.distance.min &&
+                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                    currentPosition.anglemin > obstacle.collisionData.angle.min
+                ) ||
+                (
+                    //cone
+                    obstacle.collisionData.type == "cone" &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    currentPosition.distance > obstacle.collisionData.distance.min &&
+                    currentPosition.anglemax < obstacle.collisionData.angle.max &&
+                    currentPosition.anglemax > obstacle.collisionData.angle.min
+                )
+            ) {
+              ret = {
+                  collision: true,
+                  type: obstacle.collisionData.type,
+                  mesh: obstacle.mesh
+              };
             }
         });
         return ret;
@@ -64910,13 +64942,15 @@ module.exports = (function(THREE, UTIL) {
 
 
     Cone.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius - 0.5* 30;
-        var b = 30*0.5;
+        var a = radius - 0.5* _height;
+        var b = _height*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
             type: 'cone',
             size: {
-              height: 30
+              width: _height,
+              length: _height,
+              height: _height
             },
             angle: {
                 center: obstacle.position.angle,
@@ -64925,8 +64959,8 @@ module.exports = (function(THREE, UTIL) {
             },
             distance: {
                 center: obstacle.position.distance,
-                min: obstacle.position.distance - (0.5*obstacle.size.length),
-                max: obstacle.position.distance + (0.5*obstacle.size.length)
+                min: obstacle.position.distance - (0.5*_height),
+                max: obstacle.position.distance + (0.5*_height)
             }
         };
         return ret;
@@ -65094,29 +65128,27 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     };
 
     Obstacle.prototype.move = function(direction) {
-        if (direction) {
-            //turn right
-            this.angle += 1;
-            if (this.angle === 360) this.angle = 0;
-        } else {
-            // turn left
-            this.angle -= 1;
-            if (this.angle === -1) this.angle = 359;
-        }
+        if (direction) this.angle += 1;
+        else this.angle -= 1;
+
+        this.angle = UTIL.normalizeAngle(this.angle);
+
         var radius = 80 + 15;
-        var angle = UTIL.convertDegreesToRadians(this.angle);
+        var angle = -(this.angle -90);
+        angle  = UTIL.convertDegreesToRadians(angle);
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
         this.mesh.rotation.y = angle;
         this.mesh.position.x = x;
         this.mesh.position.z = z;
 
-        var a = radius - 0.5* 30;
-        var b = 30*0.5;
-        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b/a));
+        //neue angle ist this.angle
+        var a = radius - 0.5 * 30;
+        var b = 30 * 0.5;
+        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b / a));
         this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = Math.round(this.angle - angleRight);
-        this.collisionData.angle.max = Math.round(this.angle + angleRight);
+        this.collisionData.angle.min = UTIL.normalizeAngle(this.angle - angleRight);
+        this.collisionData.angle.max = UTIL.normalizeAngle(this.angle + angleRight);
     };
 
     return Obstacle;

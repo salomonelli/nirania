@@ -9,11 +9,15 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
     res.sendFile(__dirname +'/intro.html');
-}); 
+});
 
 app.get('/game', function(req, res){
   res.sendFile(__dirname +'/index.html');
 });
+
+
+
+
 
 app.get('/de', function(req, res){
     res.sendFile(__dirname +'/intro-ger.html');

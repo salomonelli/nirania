@@ -17,13 +17,13 @@ module.exports = (function() {
     function CollisionDetector(obstacles) {
         //sort by distance to save performance
         obstacles = obstacles.sort(function(a, b) {
-          try{
-            var keyA = _getMaxDistance(a);
-            keyB = _getMaxDistance(b);
-            // Compare the 2 keys
-            if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;
-          }catch(e){}
+            try {
+                var keyA = _getMaxDistance(a);
+                keyB = _getMaxDistance(b);
+                // Compare the 2 keys
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+            } catch (e) {}
             return 0;
         });
         this.obstacles = obstacles;
@@ -47,11 +47,7 @@ module.exports = (function() {
                 delete self.obstacles[i]; //remove from array with the next garbage-collection
             }
 
-            if(obstacle.collisionData.angle.min <0 || obstacle.collisionData.angle.max <0 || currentPosition.anglemin<0  || currentPosition.anglemax<0){
-              //console.dir(obstacle.collisionData);
-              //console.dir(currentPosition); //TODO bug: anglemin is -5 but angles should always be positive
-              //throw 'aaaa2';
-            }
+
             if (
                 (
                     //other collision with left body half
@@ -82,6 +78,30 @@ module.exports = (function() {
                     type: obstacle.collisionData.type,
                     mesh: obstacle.mesh
                 };
+            }
+            if (
+                (
+                    //cone
+                    obstacle.collisionData.type == "cone" &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    currentPosition.distance > obstacle.collisionData.distance.min &&
+                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                    currentPosition.anglemin > obstacle.collisionData.angle.min
+                ) ||
+                (
+                    //cone
+                    obstacle.collisionData.type == "cone" &&
+                    currentPosition.distance < _getMaxDistance(obstacle) &&
+                    currentPosition.distance > obstacle.collisionData.distance.min &&
+                    currentPosition.anglemax < obstacle.collisionData.angle.max &&
+                    currentPosition.anglemax > obstacle.collisionData.angle.min
+                )
+            ) {
+              ret = {
+                  collision: true,
+                  type: obstacle.collisionData.type,
+                  mesh: obstacle.mesh
+              };
             }
         });
         return ret;

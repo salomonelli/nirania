@@ -55,29 +55,27 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     };
 
     Obstacle.prototype.move = function(direction) {
-        if (direction) {
-            //turn right
-            this.angle += 1;
-            if (this.angle === 360) this.angle = 0;
-        } else {
-            // turn left
-            this.angle -= 1;
-            if (this.angle === -1) this.angle = 359;
-        }
+        if (direction) this.angle += 1;
+        else this.angle -= 1;
+
+        this.angle = UTIL.normalizeAngle(this.angle);
+
         var radius = 80 + 15;
-        var angle = UTIL.convertDegreesToRadians(this.angle);
+        var angle = -(this.angle -90);
+        angle  = UTIL.convertDegreesToRadians(angle);
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
         this.mesh.rotation.y = angle;
         this.mesh.position.x = x;
         this.mesh.position.z = z;
 
-        var a = radius - 0.5* 30;
-        var b = 30*0.5;
-        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b/a));
+        //neue angle ist this.angle
+        var a = radius - 0.5 * 30;
+        var b = 30 * 0.5;
+        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b / a));
         this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = Math.round(this.angle - angleRight);
-        this.collisionData.angle.max = Math.round(this.angle + angleRight);
+        this.collisionData.angle.min = UTIL.normalizeAngle(this.angle - angleRight);
+        this.collisionData.angle.max = UTIL.normalizeAngle(this.angle + angleRight);
     };
 
     return Obstacle;

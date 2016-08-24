@@ -11,17 +11,15 @@ module.exports = (function(UTIL, COLOR) {
             color: COLOR.palette[4].way,
             obstacles: [{
                 type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
+                size: {},
                 color: coneColor,
                 position: {
-                    distance: 400,
+                    distance: 950,
                     angle: 0
                 }
-            }, {
+            }
+
+            /*, {
                 type: 'cone',
                 size: {
                     width: 25,
@@ -69,7 +67,11 @@ module.exports = (function(UTIL, COLOR) {
                     distance: 800,
                     angle: 0
                 }
-            }]
+            }
+
+          */
+
+        ]
         }
     };
 

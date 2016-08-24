@@ -23,13 +23,15 @@ module.exports = (function(THREE, UTIL) {
 
 
     Cone.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius - 0.5* 30;
-        var b = 30*0.5;
+        var a = radius - 0.5* _height;
+        var b = _height*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
             type: 'cone',
             size: {
-              height: 30
+              width: _height,
+              length: _height,
+              height: _height
             },
             angle: {
                 center: obstacle.position.angle,
@@ -38,8 +40,8 @@ module.exports = (function(THREE, UTIL) {
             },
             distance: {
                 center: obstacle.position.distance,
-                min: obstacle.position.distance - (0.5*obstacle.size.length),
-                max: obstacle.position.distance + (0.5*obstacle.size.length)
+                min: obstacle.position.distance - (0.5*_height),
+                max: obstacle.position.distance + (0.5*_height)
             }
         };
         return ret;

@@ -41,5 +41,15 @@ module.exports = (function(){
         return Math.round(UTIL.randomNumberInRange(min, max));
     };
 
+    /**
+     * normalizes angle
+     * @param {number} angle - in degrees
+     */
+    UTIL.normalizeAngle = function(angle){
+      //if (angle < 0) angle = angle + 360; //always positive
+      angle = angle % 360; //always <360
+      return angle;
+    };
+
     return UTIL;
 })();
