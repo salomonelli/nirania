@@ -97,11 +97,11 @@ module.exports = (function() {
                     currentPosition.anglemax > obstacle.collisionData.angle.min
                 )
             ) {
-              ret = {
-                  collision: true,
-                  type: obstacle.collisionData.type,
-                  mesh: obstacle.mesh
-              };
+                ret = {
+                    collision: true,
+                    type: obstacle.collisionData.type,
+                    mesh: obstacle.mesh
+                };
             }
         });
         return ret;

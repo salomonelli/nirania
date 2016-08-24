@@ -37,16 +37,19 @@ module.exports=(function(THREE, UTIL){
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
     Box.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius - 0.5* obstacle.size.height;
+        var a = radius;
         var b = obstacle.size.width*0.5;
         var angleRight = Math.atan(b/a);
+        var minAngle = obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight);
+        var maxAngle = obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight);
+
         var ret = {
             type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
+                min: minAngle,
+                max: maxAngle
             },
             distance: {
                 center: obstacle.position.distance,

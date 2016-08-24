@@ -63863,67 +63863,21 @@ module.exports = (function(UTIL, COLOR) {
         way: {
             length: 1000,
             color: COLOR.palette[4].way,
-            obstacles: [{
-                type: 'cone',
-                size: {},
-                color: coneColor,
-                position: {
-                    distance: 950,
-                    angle: 0
-                }
-            }
+            obstacles: [
 
-            /*, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 500,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 600,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 700,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 800,
-                    angle: 0
-                }
-            }
-
-          */
+                    {
+                          type: 'box',
+                          size: {
+                              width: 25,
+                              length: 25,
+                              height: 500
+                          },
+                          color: boxColor,
+                          position: {
+                              distance: 450,
+                              angle: 0
+                          }
+                      }
 
         ]
         }
@@ -64381,11 +64335,11 @@ module.exports = (function() {
                     currentPosition.anglemax > obstacle.collisionData.angle.min
                 )
             ) {
-              ret = {
-                  collision: true,
-                  type: obstacle.collisionData.type,
-                  mesh: obstacle.mesh
-              };
+                ret = {
+                    collision: true,
+                    type: obstacle.collisionData.type,
+                    mesh: obstacle.mesh
+                };
             }
         });
         return ret;
@@ -64890,16 +64844,19 @@ module.exports=(function(THREE, UTIL){
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
     Box.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius - 0.5* obstacle.size.height;
+        var a = radius;
         var b = obstacle.size.width*0.5;
         var angleRight = Math.atan(b/a);
+        var minAngle = obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight);
+        var maxAngle = obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight);
+
         var ret = {
             type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
+                min: minAngle,
+                max: maxAngle
             },
             distance: {
                 center: obstacle.position.distance,

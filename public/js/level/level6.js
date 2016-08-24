@@ -9,67 +9,21 @@ module.exports = (function(UTIL, COLOR) {
         way: {
             length: 1000,
             color: COLOR.palette[4].way,
-            obstacles: [{
-                type: 'cone',
-                size: {},
-                color: coneColor,
-                position: {
-                    distance: 950,
-                    angle: 0
-                }
-            }
+            obstacles: [
 
-            /*, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 500,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 600,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 700,
-                    angle: 0
-                }
-            }, {
-                type: 'cone',
-                size: {
-                    width: 25,
-                    length: 25,
-                    height: 25
-                },
-                color: coneColor,
-                position: {
-                    distance: 800,
-                    angle: 0
-                }
-            }
-
-          */
+                    {
+                          type: 'box',
+                          size: {
+                              width: 25,
+                              length: 25,
+                              height: 500
+                          },
+                          color: boxColor,
+                          position: {
+                              distance: 450,
+                              angle: 0
+                          }
+                      }
 
         ]
         }
