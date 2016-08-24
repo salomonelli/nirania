@@ -58841,6 +58841,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         switch (collObj.type) {
             case "box":
             case "ring":
+            case "cone":
                 // no collsion detection, if powerup 4 is active
                 if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;
@@ -61376,6 +61377,45 @@ module.exports = (function(UTIL, COLOR){
                     }
                 },
                 {
+                      type: 'cone',
+                      size: {
+                          width: 25,
+                          length: 25,
+                          height: 25
+                      },
+                      color: coneColor,
+                      position: {
+                          distance: 900,
+                          angle: 340
+                      }
+                  },
+                  {
+                        type: 'cone',
+                        size: {
+                            width: 25,
+                            length: 25,
+                            height: 25
+                        },
+                        color: coneColor,
+                        position: {
+                            distance: 700,
+                            angle: 340
+                        }
+                    },
+                    {
+                          type: 'cone',
+                          size: {
+                              width: 25,
+                              length: 25,
+                              height: 25
+                          },
+                          color: coneColor,
+                          position: {
+                              distance: 1000,
+                              angle: 340
+                          }
+                      },
+                {
                     type: 'box',
                     size: {
                         width: 25,
@@ -63712,14 +63752,14 @@ module.exports = (function(UTIL, COLOR){
 
 },{"../COLOR":9,"../UTIL":13}],21:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups) {
+module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups, GUI) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
-    var mainScene;
-    var level = [
+    var _mainScene;
+    var _level = [
         {},
         new Level(1, 1),
         new Level(2, 1),
@@ -63727,8 +63767,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         new Level(4, 1),
         new Level(5, 1)
     ];
-    var currentLevel = 1;
-    var URLpath = '';
+    var _currentLevel = 1;
+    var _URLpath = '';
     window.initMe = 0;
 
     function gameWithIntro(){
@@ -63736,13 +63776,13 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
             function setup(next){
                 $('.game-name').fadeIn(3000);
                 $('.intro').fadeIn(3000);
-                mainScene.showIntro();
+                _mainScene.showIntro();
                 render();
                 addLevel();
                 next();
             },
             function waitForAnyKeyPress(next){
-                Keybindings.bind('keydown', mainScene, function () {
+                Keybindings.bind('keydown', _mainScene, function () {
                     Keybindings.unbind('keydown');
                     next();
                 });
@@ -63752,7 +63792,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
                 $('.game-name').fadeOut(fadeTime);
                 $('.intro').fadeOut(fadeTime);
                 setTimeout(function () {
-                    mainScene.startingAnimation(next);
+                    _mainScene.startingAnimation(next);
                 }, fadeTime);
             },
             function startGame(next){
@@ -63765,7 +63805,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     }
 
     function gameWithoutIntro(){
-        mainScene.simpleIntro();
+        _mainScene.simpleIntro();
         render();
         addLevel();
         startLevel(function(){
@@ -63778,8 +63818,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      */
     function render() {
         requestAnimationFrame(render);
-        mainScene.render();
-        mainScene.turn(level[currentLevel]);
+        _mainScene.render();
+        _mainScene.turn(_level[_currentLevel]);
         TWEEN.update();
     }
 
@@ -63787,8 +63827,8 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      * adds current level to scene
      */
     function addLevel() {
-        level[currentLevel].prepare();
-        mainScene.addLevel(level[currentLevel]);
+        _level[_currentLevel].prepare();
+        _mainScene.addLevel(_level[_currentLevel]);
     }
 
     /**
@@ -63796,29 +63836,29 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      * @param {Function} cb - callback function called when level is done
      */
     function startLevel(cb) {
-        Keybindings.bind('keydown', mainScene, Scene.startMovingProtagonist);
-        Keybindings.bind('keyup', mainScene, Scene.stopMovingProtagonist);
+        Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
+        Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
 
         //start moving way
-        mainScene.move.continue = true;
-        level[currentLevel].begin(function () {
+        _mainScene.move.continue = true;
+        _level[_currentLevel].begin(function () {
             //level done
-            mainScene.move.continue = false;
+            _mainScene.move.continue = false;
             Keybindings.unbind('keydown');
             Keybindings.unbind('keyup');
             cb();
-        }, mainScene.getProtagonist());
+        }, _mainScene.getProtagonist());
     }
 
     function showScreen() {
-        if (!level[currentLevel].gameOver) {
+        if (!_level[_currentLevel].gameOver) {
             //success
-            level[currentLevel].setCookie(true);
-            level[currentLevel].showSuccessScreen();
+            _level[_currentLevel].setCookie(true);
+            _level[_currentLevel].showSuccessScreen();
         } else {
             //gameover
-            level[currentLevel].setCookie(false);
-            level[currentLevel].showGameOverScreen();
+            _level[_currentLevel].setCookie(false);
+            _level[_currentLevel].showGameOverScreen();
         }
     }
 
@@ -63828,32 +63868,32 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      * @returns {boolean}
      */
     function playThisLevel() {
-        if(currentLevel===1){
+        if(_currentLevel===1){
             return true;
         }else{
-            return Level.canBePlayed(currentLevel);
+            return Level.canBePlayed(_currentLevel);
         }
     }
 
     var main = function () {
         var URL = window.location.href;
-        URLpath = URL.replace(/http:\/\/.+\//g, '');
-        if(URLpath){
-            currentLevel = URLpath.replace('#','');
+        _URLpath = URL.replace(/http:\/\/.+\//g, '');
+        if(_URLpath !== "game"){
+            _currentLevel = _URLpath.replace('#','');
         }
         //show loading icon
         var height = $('.sk-folding-cube').height() + $('.loading p').height();
         $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
         Protagonist.init(function(){
-            var background = level[currentLevel].background();
-            mainScene = new Scene(window.innerWidth, window.innerHeight, background);
-            document.body.appendChild(mainScene.renderer.domElement);
+            var background = _level[_currentLevel].background();
+            _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
+            document.body.appendChild(_mainScene.renderer.domElement);
             //remove loading icon
             $(".sk-folding-cube").remove();
             $(".loading p").remove();
             var fadeTime = 3000;
             $(".loading").fadeOut(fadeTime);
-            if(URLpath){
+            if(_URLpath){
                 if(playThisLevel()){
                     gameWithoutIntro();
                 }else{
@@ -63875,9 +63915,9 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
       if(!$(this).hasClass('disabled')){
         var powerup = event.target.id.replace('buy-powerup-', '');
         var total =  Powerups.buy(powerup);
-        level[currentLevel].updateShopScreen();
+        _level[_currentLevel].updateShopScreen();
         if($('.button.success.reload').length){
-          if(Level.canBePlayed(parseInt(currentLevel)+1)){
+          if(Level.canBePlayed(parseInt(_currentLevel)+1)){
             $('.button.success.reload').removeClass('disabled');
             $('.callout.alert').remove();
           }
@@ -63887,9 +63927,6 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
 
     var intro = function(){
       $('.blackOverlay').fadeOut(1000);
-      var docHeight = window.innerHeight;
-      var introHeight = $('div.intro').height();
-      $('div.intro').css('marginTop', (docHeight-introHeight)/2);
     };
 
     window.intro = intro;
@@ -63904,10 +63941,11 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     require('./level/Level'),
     require('./Keybindings'),
     require('tween.js'),
-    require('./level/Powerups')
+    require('./level/Powerups'),
+    require('./GUI')
 );
 
-},{"./Keybindings":11,"./Scene":12,"./level/Level":14,"./level/Powerups":15,"./protagonist/Protagonist":27,"async":1,"jquery":3,"three":7,"tween.js":8}],22:[function(require,module,exports){
+},{"./GUI":10,"./Keybindings":11,"./Scene":12,"./level/Level":14,"./level/Powerups":15,"./protagonist/Protagonist":27,"async":1,"jquery":3,"three":7,"tween.js":8}],22:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -64089,7 +64127,7 @@ module.exports = (function() {
             keyB = _getMaxDistance(b);
             // Compare the 2 keys
             if (keyA < keyB) return -1;
-            if (keyA > keyB) return 1;            
+            if (keyA > keyB) return 1;
           }catch(e){}
             return 0;
         });
@@ -64109,7 +64147,6 @@ module.exports = (function() {
         };
         self.obstacles.forEach(function(obstacle, i) {
             if (ret.collision) return;
-
             //check if obstacle should not be checked anymore
             if (_getMaxDistance(obstacle) < currentPosition.distance) {
                 delete self.obstacles[i]; //remove from array with the next garbage-collection
@@ -64120,7 +64157,6 @@ module.exports = (function() {
               //console.dir(currentPosition); //TODO bug: anglemin is -5 but angles should always be positive
               //throw 'aaaa2';
             }
-
             if (
                 (
                     //other collision with left body half
@@ -64145,6 +64181,7 @@ module.exports = (function() {
                     obstacle.collisionData.size.height > currentPosition.height
                 )
             ) {
+
                 ret = {
                     collision: true,
                     type: obstacle.collisionData.type,
@@ -64548,11 +64585,14 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
         } else if (UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0) {
             this.group.rotation.y = UTIL.convertDegreesToRadians(360);
         }
+
         var speedRotation = angle;
         // roatates faster with powerup 1
         if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation * 2;
         this.group.rotation.y += speedRotation;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        //TODO remove this
+        $('td.angle').html(Math.round(this.currentPosition.angle));
         // anglemin and anglemax are hitbox for protagonist
         this.currentPosition.anglemin = this.currentPosition.angle - 5;
         if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
@@ -64680,16 +64720,18 @@ module.exports=(function(THREE, UTIL){
 
 },{"../../UTIL":13,"three":7}],34:[function(require,module,exports){
 module.exports = (function(THREE, UTIL) {
+    var _height = 30;
+    var _radius = 15;
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
-        this.geometry = new THREE.ConeGeometry(15, 30, 100, 100);
+        this.geometry = new THREE.ConeGeometry(_radius, _height, 100, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
     }
 
     Cone.prototype.position = function(angle, distance, length, radius){
-        radius += 15;
+        radius += _height*0.5;
         this.mesh.rotation.z -= Math.PI/2;
         angle = -(angle -90);
         angle = UTIL.convertDegreesToRadians(angle);
@@ -64706,8 +64748,10 @@ module.exports = (function(THREE, UTIL) {
         var b = 30*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
-            type: 'box',
-            size: obstacle.size,
+            type: 'cone',
+            size: {
+              height: 30
+            },
             angle: {
                 center: obstacle.position.angle,
                 min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
@@ -64720,10 +64764,6 @@ module.exports = (function(THREE, UTIL) {
             }
         };
         return ret;
-    };
-
-    Cone.prototype.reposition = function(){
-
     };
 
     return Cone;
@@ -64893,11 +64933,11 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
             this.angle += 1;
             if (this.angle === 360) this.angle = 0;
         } else {
+            // turn left
             this.angle -= 1;
             if (this.angle === -1) this.angle = 359;
         }
         var radius = 80 + 15;
-        //var angle = -(angle -90);
         var angle = UTIL.convertDegreesToRadians(this.angle);
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
@@ -64905,13 +64945,12 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
         this.mesh.position.x = x;
         this.mesh.position.z = z;
 
-
         var a = radius - 0.5* 30;
         var b = 30*0.5;
-        var angleRight = Math.atan(b/a);
+        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b/a));
         this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = Math.round(this.angle - UTIL.convertRadiansToDegrees(angleRight));
-        this.collisionData.angle.max = Math.round(this.angle + UTIL.convertRadiansToDegrees(angleRight));
+        this.collisionData.angle.min = Math.round(this.angle - angleRight);
+        this.collisionData.angle.max = Math.round(this.angle + angleRight);
     };
 
     return Obstacle;

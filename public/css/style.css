@@ -58,7 +58,7 @@ body .intro {
     text-align: center;
 }
 
-#successScreen .wrapper, #gameoverScreen .wrapper{
+#successScreen .wrapper, #gameoverScreen .wrapper, .intro .intro{
   position: relative;
     top: 50%;
     transform: translateY(-50%);

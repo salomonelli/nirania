@@ -63,6 +63,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         switch (collObj.type) {
             case "box":
             case "ring":
+            case "cone":
                 // no collsion detection, if powerup 4 is active
                 if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;

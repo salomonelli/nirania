@@ -1,14 +1,16 @@
 module.exports = (function(THREE, UTIL) {
+    var _height = 30;
+    var _radius = 15;
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
-        this.geometry = new THREE.ConeGeometry(15, 30, 100, 100);
+        this.geometry = new THREE.ConeGeometry(_radius, _height, 100, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
     }
 
     Cone.prototype.position = function(angle, distance, length, radius){
-        radius += 15;
+        radius += _height*0.5;
         this.mesh.rotation.z -= Math.PI/2;
         angle = -(angle -90);
         angle = UTIL.convertDegreesToRadians(angle);
@@ -25,8 +27,10 @@ module.exports = (function(THREE, UTIL) {
         var b = 30*0.5;
         var angleRight = Math.atan(b/a);
         var ret = {
-            type: 'box',
-            size: obstacle.size,
+            type: 'cone',
+            size: {
+              height: 30
+            },
             angle: {
                 center: obstacle.position.angle,
                 min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
@@ -39,10 +43,6 @@ module.exports = (function(THREE, UTIL) {
             }
         };
         return ret;
-    };
-
-    Cone.prototype.reposition = function(){
-
     };
 
     return Cone;
