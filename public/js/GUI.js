@@ -34,10 +34,18 @@ module.exports = (function($) {
         $('body').append(html);
     };
 
+    /**
+     * renders modal for shop screen
+     * @param {Object} - render object
+     */
     GUI.fillShopModal = function(obj) {
         return _templates.modalContentShopScreen.render(obj);
     };
 
+    /**
+     * renders shop screen and adds it
+     * @param {Object} - render object
+     */
     GUI.showShopScreen = function(obj) {
         var html = _templates.shopScreen.render({
             content: GUI.fillShopModal(obj)
@@ -45,10 +53,22 @@ module.exports = (function($) {
         $('div.shopScreen').append(html);
     };
 
+    /**
+     * updates shop shopScreen
+     * @param {Object} - render Object
+     */
     GUI.updateShopScreen = function(obj) {
         var html = _templates.modalContentShopScreen.render(obj);
         $('#shopModal').empty();
         $('#shopModal').append(html);
+    };
+
+    /**
+     * fades in game name
+     */
+    GUI.startingAnimationFadeIn = function(){
+          $('.game-name').fadeIn(3000);
+          $('.intro').fadeIn(3000);
     };
 
     /**
@@ -105,6 +125,13 @@ module.exports = (function($) {
             $('.button.success.reload').removeClass('disabled');
             $('.callout.alert').remove();
         }
+    };
+
+    /**
+     * fades in intro slide show
+     */
+    GUI.introFadeIn = function(){
+      $('.blackOverlay').fadeOut(1000);
     };
 
     return GUI;

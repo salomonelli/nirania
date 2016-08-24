@@ -17,11 +17,13 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     var _URLpath = '';
     window.initMe = 0;
 
+    /**
+     * game with intro
+     */
     function _gameWithIntro() {
         async.series([
             function setup(next) {
-                $('.game-name').fadeIn(3000);
-                $('.intro').fadeIn(3000);
+                GUI.startingAnimationFadeIn();
                 _mainScene.showIntro();
                 _render();
                 _addLevel();
@@ -48,6 +50,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         ]);
     }
 
+    /**
+     * game begins directly
+     */
     function _gameWithoutIntro() {
         _mainScene.simpleIntro();
         _render();
@@ -93,6 +98,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         }, _mainScene.getProtagonist());
     }
 
+    /**
+     * shows gameover or successcreen at the end of the level and updates Cookies
+     */
     function _showScreen() {
         if (!_level[_currentLevel].gameOver) {
             //success
@@ -115,6 +123,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         return Level.canBePlayed(_currentLevel);
     }
 
+    /**
+     * main function for /game
+     */
     var _main = function() {
         var URL = window.location.href;
         _URLpath = URL.replace(/http:\/\/.+\//g, '');
@@ -133,14 +144,21 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
                 _gameWithIntro();
             }
         });
-
-
     };
 
+    /**
+     * main function of /
+     */
+    var _intro = function() {
+        GUI.introFadeIn();
+    };
+
+    //reloads page
     $(document).on('click', '.button.reload', function() {
         location.reload();
     });
 
+    //buys powerup on click
     $(document).on('click', '.powerup .button', function(event) {
         if (GUI.buttonIsEnabled($(this))) {
             var powerup = GUI.getPowerupIdFromButton(event);
@@ -150,10 +168,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         }
     });
 
-    var _intro = function() {
-        $('.blackOverlay').fadeOut(1000);
-    };
-
+    //store functions to window
     window.intro = _intro;
     window.main = _main;
 
