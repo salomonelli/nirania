@@ -73,12 +73,12 @@
     transition: all 0.3s ease-in-out;
 }
 .overlay-slide-in-left .image-overlay-content {
-    background-image: url(http://www.awwwards.com/awards/images/2015/04/pattern.jpg);
-    background-color: rgba(0, 0, 0, 0.3);
+    background-color: #FEF2D0;
     transform: translateX(-110%);
     opacity: 1;
     transition: all 0.4s ease-in-out;
     box-shadow: 0 0 7px #ccc;
+    font-size: 12px;
 }
 .overlay-slide-in-left h2 {
     font-size: 1.8rem;
@@ -173,4 +173,12 @@
 }
 .overlay-fade-in-new-background:hover .button {
     transition-delay: 0.2s;
+}
+
+/********/
+
+.image-overlay-content .content{
+  position: relative;
+    top: 50%;
+    transform: translateY(-50%);
 }

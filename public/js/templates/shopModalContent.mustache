@@ -1,5 +1,6 @@
 <h3>Free family members</h3>
-<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like running faster.</p>
+<p>With your collected diamonds you are able to free family members.
+  Freeing your family enlarges your skill set, like turning faster.</p>
 <div class="large-12 medium-12 small-12 total-diamonds">
     <b>
       <span>Total:
@@ -13,13 +14,15 @@
     {{#powerups}}
         <div class="small-12 medium-3 large-3 columns powerup">
             <div class="image-wrapper overlay-slide-in-left">
-                <img src="/img/toy.jpg" />
+                <img src="{{img}}" />
                 <div class="image-overlay-content">
-                    <h3>{{description}}</h3>
+                  <div class="content">
+                    <p>{{{description}}}</p>
                     <a class="button secondary {{disabled}}" id="buy-powerup-{{id}}">
-                  Buy for
+                  Free for
                   {{diamonds}} <i class="fa fa-diamond" aria-hidden="true"></i>
                 </a>
+              </div>
                 </div>
             </div>
         </div>
