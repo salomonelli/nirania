@@ -1,27 +1,27 @@
 module.exports = (function(Cookies) {
     var _powerups = [{
             id: 1,
-            description: "boosts speed",
+            description: 'Sister Alice has very wide legs. Free her and you will be able to <b>dodge faster</b>.',
             diamonds: 10,
-            img: "/img/01.jpg"
+            img: '/img/powerups/wideleg.jpg'
         },
         {
             id: 2,
-            description: "jump higher",
+            description: 'With his very long legs, Bob can jump very high. To <b>jump higher</b> free him.',
             diamonds: 20,
-            img: "/img/02.jpg"
+            img: '/img/powerups/longleg.jpg'
         },
         {
             id: 3,
-            description: "diamond magnet",
+            description: 'Mother Carol likes her magnet hat. Free her and <b>collecting diamonds</b> will be easier.',
             diamonds: 30,
-            img: "/img/03.jpg"
+            img: '/img/powerups/magnet.jpg'
         },
         {
             id: 4,
-            description: "invulnerable",
+            description: 'Father Dave is a doc. During a run you can activate him with <i class="fa fa-long-arrow-down" aria-hidden="true"></i>. That will make you <b>invulnerable</b> for a certain distance. ',
             diamonds: 40,
-            img: "/img/04.jpg"
+            img: '/img/powerups/invulnerable.jpg'
         }];
 
     /**
