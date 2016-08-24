@@ -7,7 +7,11 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "hjs": "*",
+    "hogan-express": "^0.5.2",
+    "mustache": "^2.2.1",
+    "mustache-express": "^1.2.2"
   },
   "license": "ISC",
   "devDependencies": {

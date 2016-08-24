@@ -58383,9 +58383,9 @@ module.exports = (function($) {
 
     /**
      * fades out game name
+     * @param {number} fadeTime - in milliseconds
      */
-    GUI.startingAnimationFadeOut = function() {
-        var fadeTime = 1000;
+    GUI.startingAnimationFadeOut = function(fadeTime) {
         $('.game-name').fadeOut(fadeTime);
         $('.intro').fadeOut(fadeTime);
     };
@@ -58446,7 +58446,7 @@ module.exports = (function($) {
 
     /**
      * updates distance in scoreboard
-     * @param {number} distance 
+     * @param {number} distance
      */
     GUI.updateDistance = function(distance){
       $('.scores .distance span').html(distance);
@@ -59022,8 +59022,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showSuccessScreen = function() {
         var last = '';
-        if (this.current === _levels.length) last = "gone";
-        var canNotBePlayed, disableNextLevel;
+        var canNotBePlayed, disableNextLevel, showOutro;
+        if (this.current === _levels.length){
+          last = "gone";
+          showOutro = "true";
+        }
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
             disableNextLevel = "disabled";
@@ -59034,7 +59037,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             next: this.current + 1,
             last: last,
             canNotBePlayed: canNotBePlayed,
-            disableNextLevel: disableNextLevel
+            disableNextLevel: disableNextLevel,
+            showOutro: showOutro
         });
         this.showShopScreen();
     };
@@ -63904,7 +63908,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         new Level(3),
         new Level(4),
         new Level(5),
-        new Level(6) 
+        new Level(6)
     ];
     var _currentLevel = 1;
     var _URLpath = '';
@@ -63929,7 +63933,8 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
                 });
             },
             function startingAnimation(next) {
-                GUI.startingAnimationFadeOut();
+              var fadeTime = 1000;
+                GUI.startingAnimationFadeOut(fadeTime);
                 setTimeout(function() {
                     _mainScene.startingAnimation(next);
                 }, fadeTime);
@@ -64029,11 +64034,10 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(_mainScene.renderer.domElement);
             GUI.removeLoadingIcon();
-            if (_playThisLevel()) {
+            if (_playThisLevel() && _URLpath !== "game") {
                 _gameWithoutIntro();
             } else {
-                currentLevel = 1;
-                _URLpath = "game";
+                _currentLevel = 1;
                 _gameWithIntro();
             }
         });
@@ -64668,7 +64672,7 @@ var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=th
 },{"hogan.js/lib/template":2}],31:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members.");_.b("\n" + i);_.b("  Freeing your family enlarges your skill set, like turning faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br><br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,457,1054,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-6 medium-6 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"");_.b(_.v(_.f("img",c,p,0)));_.b("\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                  <div class=\"content\">");_.b("\n" + i);_.b("                    <p>");_.b(_.t(_.f("description",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("                    <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Free for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("              </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],32:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,590,769,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i>  Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("showOutro",c,p,1),c,p,0,491,597,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <a href=\"/outro\" class=\"button success reload\">");_.b("\n" + i);_.b("            Free the world!");_.b("\n" + i);_.b("        </a>");_.b("\n");});c.pop();}_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,733,912,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"callout alert\">");_.b("\n" + i);_.b("          <h5>Free your Family!</h5>");_.b("\n" + i);_.b("          <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],33:[function(require,module,exports){
 module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean, GUI) {
     /**

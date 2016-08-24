@@ -143,8 +143,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      */
     Level.prototype.showSuccessScreen = function() {
         var last = '';
-        if (this.current === _levels.length) last = "gone";
-        var canNotBePlayed, disableNextLevel;
+        var canNotBePlayed, disableNextLevel, showOutro;
+        if (this.current === _levels.length){
+          last = "gone";
+          showOutro = "true";
+        }
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
             disableNextLevel = "disabled";
@@ -155,7 +158,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             next: this.current + 1,
             last: last,
             canNotBePlayed: canNotBePlayed,
-            disableNextLevel: disableNextLevel
+            disableNextLevel: disableNextLevel,
+            showOutro: showOutro
         });
         this.showShopScreen();
     };

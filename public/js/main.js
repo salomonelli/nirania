@@ -12,7 +12,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         new Level(3),
         new Level(4),
         new Level(5),
-        new Level(6) 
+        new Level(6)
     ];
     var _currentLevel = 1;
     var _URLpath = '';
@@ -37,7 +37,8 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
                 });
             },
             function startingAnimation(next) {
-                GUI.startingAnimationFadeOut();
+              var fadeTime = 1000;
+                GUI.startingAnimationFadeOut(fadeTime);
                 setTimeout(function() {
                     _mainScene.startingAnimation(next);
                 }, fadeTime);
@@ -137,11 +138,10 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(_mainScene.renderer.domElement);
             GUI.removeLoadingIcon();
-            if (_playThisLevel()) {
+            if (_playThisLevel() && _URLpath !== "game") {
                 _gameWithoutIntro();
             } else {
-                currentLevel = 1;
-                _URLpath = "game";
+                _currentLevel = 1;
                 _gameWithIntro();
             }
         });

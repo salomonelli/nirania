@@ -73,9 +73,9 @@ module.exports = (function($) {
 
     /**
      * fades out game name
+     * @param {number} fadeTime - in milliseconds
      */
-    GUI.startingAnimationFadeOut = function() {
-        var fadeTime = 1000;
+    GUI.startingAnimationFadeOut = function(fadeTime) {
         $('.game-name').fadeOut(fadeTime);
         $('.intro').fadeOut(fadeTime);
     };
@@ -136,7 +136,7 @@ module.exports = (function($) {
 
     /**
      * updates distance in scoreboard
-     * @param {number} distance 
+     * @param {number} distance
      */
     GUI.updateDistance = function(distance){
       $('.scores .distance span').html(distance);
