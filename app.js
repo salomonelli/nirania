@@ -19,6 +19,14 @@ app.get('/intro-ger', function(req, res){
     res.sendFile(__dirname +'/intro-ger.html');
 });
 
+app.get('/outro', function(req, res){
+    res.sendFile(__dirname +'/outro.html');
+});
+
+app.get('/outro-ger', function(req, res){
+    res.sendFile(__dirname +'/outro-ger.html');
+});
+
 app.listen(3000, '0.0.0.0', function(){
     console.log('Listening on localhost:3000');
 });
