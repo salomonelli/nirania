@@ -5,7 +5,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         require('./level2'),
         require('./level3'),
         require('./level4'),
-        require('./level5')
+        require('./level5'),
+        require('./level6')
     ];
 
     var _templates = {
@@ -18,13 +19,12 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
-     * @param {number} speed - speed in milliseconds
      * @constructor
      */
-    function Level(current, speed) {
+    function Level(current) {
         this.current = current;
         this.way = null;
-        this.speed = speed;
+        this.speed = 1;
         this.collisionDetector = null;
         this.gameOver = false;
         this.diamonds = 0;

@@ -7,11 +7,12 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
 
     var _mainScene;
     var _level = [{},
-        new Level(1, 1),
-        new Level(2, 1),
-        new Level(3, 1),
-        new Level(4, 1),
-        new Level(5, 1)
+        new Level(1),
+        new Level(2),
+        new Level(3),
+        new Level(4),
+        new Level(5),
+        new Level(6) 
     ];
     var _currentLevel = 1;
     var _URLpath = '';

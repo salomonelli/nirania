@@ -134,6 +134,14 @@ module.exports = (function($) {
       $('.blackOverlay').fadeOut(1000);
     };
 
+    /**
+     * updates distance in scoreboard
+     * @param {number} distance 
+     */
+    GUI.updateDistance = function(distance){
+      $('.scores .distance span').html(distance);
+    };
+
     return GUI;
 })(
     require('jquery')

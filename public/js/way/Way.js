@@ -1,4 +1,4 @@
-module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean) {
+module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean, GUI) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -8,12 +8,8 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
     function Way(length, speed, color) {
         this.length = length;
         this.speed = speed;
-
         this.group = new THREE.Object3D();
-
         this.obstacles = [];
-        this.randomObstacles = [];
-
         this.radius = 80;
         this.segments = 1000;
         this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
@@ -24,7 +20,6 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
         this.group.add(this.mesh);
-
         this.currentPosition = {
             angle: 0,
             anglemin: -5,
@@ -47,13 +42,24 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
 
     /**
      * moves way direction z positive
+     * @param {number} speed
      */
     Way.prototype.moveForwardTillEnd = function(speed) {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
-        //TODO remove this after finished programming
-        $('.scores .distance span').html(this.currentPosition.distance);
+        GUI.updateDistance(this.currentPosition.distance);
+    };
+
+    /**
+     * sets current position
+     */
+    Way.prototype.setCurrentPosition = function(){
+      // anglemin and anglemax are hitbox for protagonist
+      this.currentPosition.anglemin = this.currentPosition.angle - 5;
+      if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
+      if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
+      this.currentPosition.anglemax = this.currentPosition.angle + 5;
     };
 
     /**
@@ -61,28 +67,23 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
      * @param {number} angle
      */
     Way.prototype.rotate = function(angle) {
-        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) >= 360) {
-            this.group.rotation.y = 0;
-        } else if (UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0) {
-            this.group.rotation.y = UTIL.convertDegreesToRadians(360);
-        }
+        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
+        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = UTIL.convertDegreesToRadians(360);
 
-        var speedRotation = angle;
-        // roatates faster with powerup 1
-        if (Cookies.get('powerup-1') == "bought") speedRotation = speedRotation * 2;
-        this.group.rotation.y += speedRotation;
+        // rotates faster with powerup 1
+        if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
+        this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+
         //TODO remove this
         $('td.angle').html(Math.round(this.currentPosition.angle));
-        // anglemin and anglemax are hitbox for protagonist
-        this.currentPosition.anglemin = this.currentPosition.angle - 5;
-        if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
-        if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
-        this.currentPosition.anglemax = this.currentPosition.angle + 5;
+        this.setCurrentPosition();
     };
 
+    /**
+     * moves the random obstacles
+     */
     Way.prototype.moveRandomObstacles = function() {
-        //this.obstacles
         this.obstacles.forEach(function(obstacle) {
             if (!obstacle.randomMoving) return;
             obstacle.directionChangeIndex++;
@@ -95,16 +96,13 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
         });
     };
 
-
     /**
      * creates Obstacles out of array and adds them to the way
      * @param {[{}]} obstacles
      */
     Way.prototype.addObstacles = function(obstacles) {
         var self = this;
-        //generate obstacles
         self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
-        //calculate positions
         self.obstacles.forEach(function(obstacle) {
             if (obstacle.distance < self.length) {
                 self.group.add(obstacle.mesh);
@@ -130,5 +128,6 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
     require('../UTIL'),
     require('jquery'),
     require('js-cookie'),
-    require('random-boolean')
+    require('random-boolean'),
+    require('../GUI')
 );
