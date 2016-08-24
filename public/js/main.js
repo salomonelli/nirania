@@ -1,13 +1,12 @@
 //noinspection JSUnresolvedFunction
-module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups, GUI) {
+module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups, GUI) {
     "use strict";
 
     //because some three js modules need a global THREE-variable....
     window.THREE = THREE;
 
     var _mainScene;
-    var _level = [
-        {},
+    var _level = [{},
         new Level(1, 1),
         new Level(2, 1),
         new Level(3, 1),
@@ -18,53 +17,51 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     var _URLpath = '';
     window.initMe = 0;
 
-    function gameWithIntro(){
+    function _gameWithIntro() {
         async.series([
-            function setup(next){
+            function setup(next) {
                 $('.game-name').fadeIn(3000);
                 $('.intro').fadeIn(3000);
                 _mainScene.showIntro();
-                render();
-                addLevel();
+                _render();
+                _addLevel();
                 next();
             },
-            function waitForAnyKeyPress(next){
-                Keybindings.bind('keydown', _mainScene, function () {
+            function waitForAnyKeyPress(next) {
+                Keybindings.bind('keydown', _mainScene, function() {
                     Keybindings.unbind('keydown');
                     next();
                 });
             },
-            function startingAnimation(next){
-                var fadeTime = 1000;
-                $('.game-name').fadeOut(fadeTime);
-                $('.intro').fadeOut(fadeTime);
-                setTimeout(function () {
+            function startingAnimation(next) {
+                GUI.startingAnimationFadeOut();
+                setTimeout(function() {
                     _mainScene.startingAnimation(next);
                 }, fadeTime);
             },
-            function startGame(next){
-                startLevel(next);
+            function startGame(next) {
+                _startLevel(next);
             },
-            function showLevelScreen(next){
-                showScreen();
+            function showLevelScreen(next) {
+                _showScreen();
             }
         ]);
     }
 
-    function gameWithoutIntro(){
+    function _gameWithoutIntro() {
         _mainScene.simpleIntro();
-        render();
-        addLevel();
-        startLevel(function(){
-            showScreen();
+        _render();
+        _addLevel();
+        _startLevel(function() {
+            _showScreen();
         });
     }
 
     /**
      * renders game
      */
-    function render() {
-        requestAnimationFrame(render);
+    function _render() {
+        requestAnimationFrame(_render);
         _mainScene.render();
         _mainScene.turn(_level[_currentLevel]);
         TWEEN.update();
@@ -73,7 +70,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
     /**
      * adds current level to scene
      */
-    function addLevel() {
+    function _addLevel() {
         _level[_currentLevel].prepare();
         _mainScene.addLevel(_level[_currentLevel]);
     }
@@ -82,13 +79,12 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      * starts current level
      * @param {Function} cb - callback function called when level is done
      */
-    function startLevel(cb) {
+    function _startLevel(cb) {
         Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
-
         //start moving way
         _mainScene.move.continue = true;
-        _level[_currentLevel].begin(function () {
+        _level[_currentLevel].begin(function() {
             //level done
             _mainScene.move.continue = false;
             Keybindings.unbind('keydown');
@@ -97,7 +93,7 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
         }, _mainScene.getProtagonist());
     }
 
-    function showScreen() {
+    function _showScreen() {
         if (!_level[_currentLevel].gameOver) {
             //success
             _level[_currentLevel].setCookie(true);
@@ -114,70 +110,52 @@ module.exports = (function (Scene, $, THREE, async, Protagonist, Level, Keybindi
      * @param {number} level
      * @returns {boolean}
      */
-    function playThisLevel() {
-        if(_currentLevel===1){
-            return true;
-        }else{
-            return Level.canBePlayed(_currentLevel);
-        }
+    function _playThisLevel() {
+        if (_currentLevel === 1) return true;
+        return Level.canBePlayed(_currentLevel);
     }
 
-    var main = function () {
+    var _main = function() {
         var URL = window.location.href;
         _URLpath = URL.replace(/http:\/\/.+\//g, '');
-        if(_URLpath !== "game"){
-            _currentLevel = _URLpath.replace('#','');
-        }
-        //show loading icon
-        var height = $('.sk-folding-cube').height() + $('.loading p').height();
-        $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
-        Protagonist.init(function(){
+        if (_URLpath !== "game") _currentLevel = _URLpath.replace('game#', '');
+        GUI.showLoadingIcon();
+        Protagonist.init(function() {
             var background = _level[_currentLevel].background();
             _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(_mainScene.renderer.domElement);
-            //remove loading icon
-            $(".sk-folding-cube").remove();
-            $(".loading p").remove();
-            var fadeTime = 3000;
-            $(".loading").fadeOut(fadeTime);
-            if(_URLpath){
-                if(playThisLevel()){
-                    gameWithoutIntro();
-                }else{
-                    alert('level may not be played');
-                }
-            }else{
-                gameWithIntro();
+            GUI.removeLoadingIcon();
+            if (_playThisLevel()) {
+                _gameWithoutIntro();
+            } else {
+                currentLevel = 1;
+                _URLpath = "game";
+                _gameWithIntro();
             }
         });
 
 
     };
 
-    $(document).on('click', '.button.reload', function () {
+    $(document).on('click', '.button.reload', function() {
         location.reload();
     });
 
-    $(document).on('click', '.powerup .button', function(event){
-      if(!$(this).hasClass('disabled')){
-        var powerup = event.target.id.replace('buy-powerup-', '');
-        var total =  Powerups.buy(powerup);
-        _level[_currentLevel].updateShopScreen();
-        if($('.button.success.reload').length){
-          if(Level.canBePlayed(parseInt(_currentLevel)+1)){
-            $('.button.success.reload').removeClass('disabled');
-            $('.callout.alert').remove();
-          }
+    $(document).on('click', '.powerup .button', function(event) {
+        if (GUI.buttonIsEnabled($(this))) {
+            var powerup = GUI.getPowerupIdFromButton(event);
+            var total = Powerups.buy(powerup);
+            _level[_currentLevel].updateShopScreen();
+            if (Level.canBePlayed(parseInt(_currentLevel) + 1)) GUI.updateNextLevelButton();
         }
-      }
     });
 
-    var intro = function(){
-      $('.blackOverlay').fadeOut(1000);
+    var _intro = function() {
+        $('.blackOverlay').fadeOut(1000);
     };
 
-    window.intro = intro;
-    window.main = main;
+    window.intro = _intro;
+    window.main = _main;
 
 })(
     require('./Scene'),

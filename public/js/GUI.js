@@ -1,57 +1,113 @@
-module.exports = (function($){
-  var _templates = {
-      successScreen: require('./templates/success.mustache'),
-      gameoverScreen: require('./templates/gameover.mustache'),
-      shopScreen: require('./templates/shop.mustache'),
-      modalContentShopScreen: require('./templates/shopModalContent.mustache')
-  };
+module.exports = (function($) {
+    var _templates = {
+        successScreen: require('./templates/success.mustache'),
+        gameoverScreen: require('./templates/gameover.mustache'),
+        shopScreen: require('./templates/shop.mustache'),
+        modalContentShopScreen: require('./templates/shopModalContent.mustache')
+    };
 
-  function GUI(){}
+    function GUI() {}
 
-  /**
-   * updates amount of diamonds in scoreboard
-   * @param {number} diamonds
-   */
-  GUI.setDiamondsInScoreBoard = function(diamonds){
-    $('.scores .diamonds span').html(diamonds);
-  };
+    /**
+     * updates amount of diamonds in scoreboard
+     * @param {number} diamonds
+     */
+    GUI.setDiamondsInScoreBoard = function(diamonds) {
+        $('.scores .diamonds span').html(diamonds);
+    };
 
-  /**
-   * shows screen on successful end of level
-   * @param {Object} obj - obj to render template successScreen
-   */
-  GUI.showSuccessScreen = function(obj){
-    var html = _templates.successScreen.render(obj);
-    $('body').append(html);
-  };
+    /**
+     * shows screen on successful end of level
+     * @param {Object} obj - obj to render template successScreen
+     */
+    GUI.showSuccessScreen = function(obj) {
+        var html = _templates.successScreen.render(obj);
+        $('body').append(html);
+    };
 
-  /**
-   * shows screen on game over
-   * @param {Object} obj - obj to render template gameoverScreen
-   */
-  GUI.showGameOverScreen = function(obj){
-    var html = _templates.gameoverScreen.render(obj);
-    $('body').append(html);
-  };
+    /**
+     * shows screen on game over
+     * @param {Object} obj - obj to render template gameoverScreen
+     */
+    GUI.showGameOverScreen = function(obj) {
+        var html = _templates.gameoverScreen.render(obj);
+        $('body').append(html);
+    };
 
-  GUI.fillShopModal = function(obj){
-    return _templates.modalContentShopScreen.render(obj);
-  };
+    GUI.fillShopModal = function(obj) {
+        return _templates.modalContentShopScreen.render(obj);
+    };
 
-  GUI.showShopScreen = function(obj){
-    var html = _templates.shopScreen.render({
-      content: GUI.fillShopModal(obj)
-    });
-    $('div.shopScreen').append(html);
-  };
+    GUI.showShopScreen = function(obj) {
+        var html = _templates.shopScreen.render({
+            content: GUI.fillShopModal(obj)
+        });
+        $('div.shopScreen').append(html);
+    };
 
-  GUI.updateShopScreen = function(obj){
-    var html = _templates.modalContentShopScreen.render(obj);
-    $('#shopModal').empty();
-    $('#shopModal').append(html);
-  };
+    GUI.updateShopScreen = function(obj) {
+        var html = _templates.modalContentShopScreen.render(obj);
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
+    };
 
-  return GUI;
+    /**
+     * fades out game name
+     */
+    GUI.startingAnimationFadeOut = function() {
+        var fadeTime = 1000;
+        $('.game-name').fadeOut(fadeTime);
+        $('.intro').fadeOut(fadeTime);
+    };
+
+    /**
+     * shows loading icon
+     */
+    GUI.showLoadingIcon = function() {
+        var height = $('.sk-folding-cube').height() + $('.loading p').height();
+        $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
+    };
+
+    /**
+     * removes loading icon
+     */
+    GUI.removeLoadingIcon = function() {
+        $(".sk-folding-cube").remove();
+        $(".loading p").remove();
+        var fadeTime = 3000;
+        $(".loading").fadeOut(fadeTime);
+    };
+
+    /**
+     * checks if button is enabled
+     * @param {$} button
+     * @returns {boolean} - true if button is enabled
+     */
+    GUI.buttonIsEnabled = function(button) {
+        if (button.hasClass('disabled')) return false;
+        return true;
+    };
+
+    /**
+     * gets powerup id from button
+     * @param {Object} e - event
+     * @returns {number} - powerup id
+     */
+    GUI.getPowerupIdFromButton = function(e) {
+        return e.target.id.replace('buy-powerup-', '');
+    };
+
+    /**
+     * updates next-level-button in success screen
+     */
+    GUI.updateNextLevelButton = function() {
+        if ($('.button.success.reload').length) {
+            $('.button.success.reload').removeClass('disabled');
+            $('.callout.alert').remove();
+        }
+    };
+
+    return GUI;
 })(
-  require('jquery')
+    require('jquery')
 );
