@@ -684,7 +684,7 @@ module.exports = (function(UTIL, COLOR) {
                     size: {},
                     color: ringColor,
                     position: {
-                        distance: 2800, //Math.round(UTIL.randomNumberInRange(3000,3100)),
+                        distance: 3000, //Math.round(UTIL.randomNumberInRange(3000,3100)),
                         angle: 0
                     }
                 }
