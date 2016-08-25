@@ -12,9 +12,9 @@ module.exports = (function(){
       url: '/de'
     },
     outro: {
-      slide1: 'You did it! You\'ve saved your family and the earth from the extraterrestrials.',
+      slide1: 'You did it! You\'ve saved your family and Nirania from the extraterrestrials.',
       slide2: 'The war is over. The aliens are gone. They have their space diamonds and gonna never come back.',
-      slide3: 'Everyone on earth is proud of you. For your earnings for the humanity you get a medal of honor.',
+      slide3: 'Everyone on Nirania is proud of you. For your earnings for the humanity you get a medal of honor.',
       playAgain: 'Play again',
       urlButton: 'View in German',
       url: '/de-outro'
