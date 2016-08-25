@@ -43,10 +43,8 @@ module.exports = (function() {
         self.obstacles.forEach(function(obstacle, i) {
             if (ret.collision) return;
             //check if obstacle should not be checked anymore
-            if (_getMaxDistance(obstacle) < currentPosition.distance) {
-                delete self.obstacles[i]; //remove from array with the next garbage-collection
-            }
-
+            // remove from array with the next garbage-collection
+            if (_getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
 
             if (
                 (
@@ -70,16 +68,7 @@ module.exports = (function() {
                     obstacle.collisionData.type == "ring" &&
                     _getMaxDistance(obstacle) == currentPosition.distance &&
                     obstacle.collisionData.size.height > currentPosition.height
-                )
-            ) {
-
-                ret = {
-                    collision: true,
-                    type: obstacle.collisionData.type,
-                    mesh: obstacle.mesh
-                };
-            }
-            if (
+                ) ||
                 (
                     //cone
                     obstacle.collisionData.type == "cone" &&
@@ -97,6 +86,7 @@ module.exports = (function() {
                     currentPosition.anglemax > obstacle.collisionData.angle.min
                 )
             ) {
+
                 ret = {
                     collision: true,
                     type: obstacle.collisionData.type,

@@ -1,12 +1,11 @@
-module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI) {
+module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI, Sound) {
 
     var _levels = [
         require('./level1'),
         require('./level2'),
         require('./level3'),
         require('./level4'),
-        require('./level5'),
-        require('./level6')
+        require('./level5')
     ];
 
     var _templates = {
@@ -14,11 +13,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         gameoverScreen: require('../templates/gameover.mustache'),
         shopScreen: require('../templates/shop.mustache'),
         modalContentShopScreen: require('../templates/shopModalContent.mustache')
-    };
-
-    var _audio = {
-        hitDiamond: new Audio('/sound/hitDiamond.mp3'),
-        hitObstacle: new Audio('/sound/hitObstacle.mp3')
     };
 
     /**
@@ -48,12 +42,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         var self = this;
         var current = _levels[self.current - 1];
         this.way = new Way(current.way.length, current.speed, current.way.color);
-
         this.way.addObstacles(current.way.obstacles);
-
-        //var obstacles = Obstacle.prepareForCollisionDetection(this.way.radius, current.way.obstacles);
         this.collisionDetector = new CollisionDetector(this.way.obstacles);
-
         this.way.position();
     };
 
@@ -73,7 +63,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 // no collsion detection, if powerup 4 is active
                 if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;
-                this.playAudio(_audio.hitObstacle);
+                if (this.playSound) Sound.play('hitObstacle');
                 return true;
             case "diamond":
                 this.hitDiamond(collObj);
@@ -132,32 +122,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     };
 
     /**
-     * plays sound if enabled
-     * @param {String} sound - URL of sound
-     */
-    Level.prototype.playAudio = function(sound) {
-        if (this.playSound) {
-            sound.currentTime = 0;
-            sound.play();
-        }
-    };
-
-    /**
-     * stop sound if enabled
-     * @param {String} sound - URL of sound
-     */
-    Level.prototype.stopAudio = function(sound){
-      if (this.playSound) sound.pause();
-    };
-
-    /**
      * increases score on diamond hit and removes it
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
         if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
-            self.playAudio(_audio.hitDiamond);
+            if (self.playSound) Sound.play('hitDiamond');
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
@@ -290,5 +261,6 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('js-cookie'),
     require('./Powerups'),
     require('../protagonist/Protagonist'),
-    require('../GUI')
+    require('../GUI'),
+    require('../Sound')
 );

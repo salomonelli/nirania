@@ -1,5 +1,5 @@
 module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
-    var obstacleTypes = {
+    var _obstacleTypes = {
         box: Box,
         ring: Ring,
         diamond: Diamond,
@@ -38,9 +38,9 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     Obstacle.generateFromArray = function(obstacles, wayLength, radius) {
         var ret = [];
         obstacles.forEach(function(o) {
-            var obstacle = new obstacleTypes[o.type](o);
+            var obstacle = new _obstacleTypes[o.type](o);
             obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
-            var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
+            var collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
             ret.push(
                 new Obstacle(
                     o.type,

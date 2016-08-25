@@ -165,6 +165,13 @@ module.exports = (function($) {
       return false;
     };
 
+    /**
+     * unchecks sound switch
+     */
+    GUI.uncheckSoundSwitch = function(){
+      $('#soundSwitch').attr('checked', false);
+    };
+
 
     return GUI;
 })(

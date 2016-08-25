@@ -1,17 +1,18 @@
 <div id="successScreen">
     <div class="wrapper">
         <h1>Level {{level}}</h1>
-        <br><br>
+        <br>
+        <br>
         <p> Diamonds: {{score}}</p>
         <br>
         <a href="/game#{{level}}" class="button reload">
-            <i class="fa fa-repeat" aria-hidden="true"></i>  Run again
+            <i class="fa fa-repeat" aria-hidden="true"></i> Run again
         </a>
         <a href="/game#{{next}}" class="button success reload {{last}} {{disableNextLevel}}">
-            <i class="fa fa-check" aria-hidden="true"></i>  Next Level
+            <i class="fa fa-check" aria-hidden="true"></i> Next Level
         </a>
         {{#showOutro}}
-        <a href="/outro" class="button success reload">
+            <a href="/outro" class="button success reload">
             Free the world!
         </a>
         {{/showOutro}}
@@ -19,10 +20,10 @@
             Free family members
         </a>
         {{#canNotBePlayed}}
-        <div class="callout alert">
-          <h5>Free your Family!</h5>
-          <p>Next Level can only be played by freeing the next family member.</p>
-        </div>
+            <div class="callout alert">
+                <h5>Free your Family!</h5>
+                <p>Next Level can only be played by freeing the next family member.</p>
+            </div>
         {{/canNotBePlayed}}
 
         <div class="shopScreen"></div>

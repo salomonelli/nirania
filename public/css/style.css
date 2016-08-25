@@ -3,24 +3,51 @@ body {
     overflow-x: hidden;
     overflow-y: hidden;
     font-family: 'Quicksand', sans-serif;
+    background: black;
 }
-
-h1, h2, h3, h5 ,h6{
-  font-family: 'Quicksand', sans-serif;
+h1, h2, h3, h5, h6 {
+    font-family: 'Quicksand', sans-serif;
 }
-
-canvas {
-    width: 100%;
-    height: 100%
+a.disabled {
+    pointer-events: none;
+    cursor: default;
 }
-
- .scores .distance  {
+.hidden {
+    visibility: hidden;
+}
+.gone {
+    display: none;
+}
+.scores {
+    position: absolute;
+    width: 200px;
+    right: 0;
+}
+.scores tr:first-child {
+    background: #e9dac0;
+}
+.scores tr:nth-child(2) {
+    background: #d4c6ad;
+}
+.scores tbody {
+    border: none;
+}
+.scores .distance, .scores .diamonds {
     text-align: right;
 }
-.scores .diamonds  {
-    text-align: right;
+.sound {
+    position: absolute;
+    z-index: 1000;
+    padding: 10px;
 }
-
+.sound span {
+    color: white;
+    font-weight: bold;
+}
+.sound .switch {
+    float: right;
+    margin-left: 10px;
+}
 .loading {
     width: 100%;
     height: 100%;
@@ -28,9 +55,8 @@ canvas {
     text-align: center;
     color: white;
     background: black;
-    }
-
-body .intro {
+}
+.intro {
     color: white;
     position: absolute;
     bottom: 10%;
@@ -57,26 +83,13 @@ body .intro {
     font-family: Quicksand;
     text-align: center;
 }
-
-#successScreen .wrapper, #gameoverScreen .wrapper, .intro .intro{
-  position: relative;
+#successScreen .wrapper, #gameoverScreen .wrapper, .intro .intro {
+    position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
-.scores {
-    position: absolute;
-    width: 200px;
-    right: 0;
-}
 
-
-.hidden{
-  visibility: hidden;
-}
-
-.gone{
-  display: none;
-}
+/******LOADING ICON*********/
 
 .sk-folding-cube {
     margin: 20px auto;
@@ -169,49 +182,15 @@ body .intro {
     }
 }
 
-.scores tr:first-child{
-  background: #e9dac0;
+/*******INTRO & OUTRO*******/
+.blackOverlay {
+    position: absolute;
+    background: black;
+    width: 100%;
+    height: 100%;
+    z-index: 2000;
 }
-.scores tr:nth-child(2){
-  background: #d4c6ad;
-}
-.scores tbody{
-  border: none;
-}
-
-a.disabled {
-   pointer-events: none;
-   cursor: default;
-}
-
-
-.sound{
-  position: absolute;
-    z-index: 1000;
-    padding: 10px;
-}
-.sound span{
-  color: white;
-  font-weight: bold;
-}
-.sound .switch{
-  float: right;
-    margin-left: 10px;
-}
-/*******INTRO********/
-
-body{
-  background: black;
-}
-.blackOverlay{
-  position: absolute;
-background: black;
-width: 100%;
-height: 100%;
-z-index: 2000;
-}
-
-.orbit{
-  margin-left: auto;
-  margin-right: auto;
+.orbit {
+    margin-left: auto;
+    margin-right: auto;
 }

@@ -1,11 +1,14 @@
 module.exports = (function(){
-  var langs = {
+  var _langs = {
     de: require('./de'),
     en: require('./en')
   };
 
+  /**
+   * Represents language
+   */
   function l(lang){
-    return langs[lang];
+    return _langs[lang];
   }
 
   return l;
