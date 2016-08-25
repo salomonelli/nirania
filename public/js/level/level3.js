@@ -882,8 +882,6 @@ module.exports = (function(UTIL, COLOR){
                         angle: 90
                     }
                 },
-                
-                //End of Boxes
 
                 {
                     type: 'diamond',
@@ -1208,7 +1206,6 @@ module.exports = (function(UTIL, COLOR){
                         angle: 10
                     }
                 },
-                //End of diamonds
 
                 {
                     type: 'ring',
@@ -1259,7 +1256,6 @@ module.exports = (function(UTIL, COLOR){
                         distance: UTIL.randomIntInRange(1900,2000)*2
                     }
                 },
-                //End of Rings
 
                 {
                     type: 'cone',

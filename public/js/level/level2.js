@@ -704,7 +704,7 @@ module.exports = (function(UTIL, COLOR) {
                         angle: 310
                     }
                 },
-                //End of Diamonds
+
 
                 {
                     type: 'ring',
@@ -748,7 +748,6 @@ module.exports = (function(UTIL, COLOR) {
                         distance: UTIL.randomIntInRange(1500,1550)*2
                     }
                 }
-                //End of Rings
 
             ]
         }

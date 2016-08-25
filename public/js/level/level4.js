@@ -7,7 +7,7 @@ module.exports = (function(UTIL, COLOR){
         speed: 1,
         background: COLOR.palette[3].background,
         way: {
-            length: 5230,
+            length: 4230,
             color: COLOR.palette[3].way,
             obstacles : [
                 {
@@ -19,345 +19,7 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 350,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
                         distance: 450,
-                        angle: 60
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 557,
-                        angle: 300
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 300,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 557,
-                        angle: 260
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 760,
-                        angle: 340
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 824,
-                        angle: 315
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 50,
-                        length: 25,
-                        height: 10
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 863,
-                        angle: 71
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 10,
-                        length: 80,
-                        height: 50
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 934,
-                        angle: 83
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1068,
-                        angle: 282
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1162,
-                        angle: 37
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 35,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1357,
-                        angle: 20
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 30
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1447,
-                        angle: 281
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 20,
-                        length: 25,
-                        height: 40
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1457,
-                        angle: 310
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1625,
-                        angle: 271
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 5,
-                        length: 5,
-                        height: 1
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1721,
-                        angle: 9
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 10,
-                        length: 75,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1843,
-                        angle: 76
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1900,
-                        angle: 279
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1973,
-                        angle: 290
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 2000,
-                        angle: 0
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: 324
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1420,
-                        angle: 270
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1532,
-                        angle: 258
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1635,
-                        angle: 206
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 546,
-                        angle: 193
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 892,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 200,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1057,
-                        angle: 152
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 37,
-                        length: 25,
-                        height: 60
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 1500,
                         angle: 190
                     }
                 },
@@ -370,8 +32,35 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 1290,
-                        angle: 159
+                        distance: 450,
+                        angle: 230
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 35,
+                        length: 15,
+                        height: 300
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 500,
+                        angle: 90
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 35,
+                        length: 15,
+                        height: 300
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 500,
+                        angle: 270
                     }
                 },
                 {
@@ -383,8 +72,34 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 1923,
-                        angle: 64
+                        distance: 550,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 700,
+                        angle: 40
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 200,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 700,
+                        angle: 80
                     }
                 },
                 {
@@ -396,8 +111,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2046,
-                        angle: 295
+                        distance: 700,
+                        angle: 130
                     }
                 },
                 {
@@ -409,8 +124,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2298,
-                        angle: 284
+                        distance: 720,
+                        angle: 220
                     }
                 },
                 {
@@ -422,8 +137,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2438,
-                        angle: 269
+                        distance: 850,
+                        angle: 90
                     }
                 },
                 {
@@ -435,7 +150,153 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2567,
+                        distance: 950,
+                        angle: 75
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1075,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1050,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1080,
+                        angle: 240
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1160,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1180,
+                        angle: 130
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1350,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1350,
+                        angle: 175
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 180
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 400,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 130
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 400,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1500,
+                        angle: 90
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 60,
+                        length: 25,
+                        height: 40
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1600,
                         angle: 170
                     }
                 },
@@ -448,21 +309,114 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2675,
-                        angle: 265
+                        distance: 1700,
+                        angle: 200
                     }
                 },
                 {
                     type: 'box',
                     size: {
-                        width: 5,
-                        length: 100,
-                        height: 10
+                        width: 25,
+                        length: 25,
+                        height: 400
                     },
                     color: boxColor,
                     position: {
-                        distance: 2679,
-                        angle: 279
+                        distance: 1800,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1800,
+                        angle: 80
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1800,
+                        angle: 140
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1800,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1800,
+                        angle: 260
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 1800,
+                        angle: 320
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 100,
+                        length: 25,
+                        height: 35
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2000,
+                        angle: 50
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 250,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2100,
+                        angle: 110
                     }
                 },
                 {
@@ -474,8 +428,8 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2750,
-                        angle: 207
+                        distance: 2100,
+                        angle: 270
                     }
                 },
                 {
@@ -487,7 +441,21 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2865,
+                        distance: 2150,
+                        angle: 300
+                    }
+                },
+
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2250,
                         angle: 25
                     }
                 },
@@ -500,12 +468,309 @@ module.exports = (function(UTIL, COLOR){
                     },
                     color: boxColor,
                     position: {
-                        distance: 2964,
-                        angle: 333
+                        distance: 2400,
+                        angle: 90
                     }
                 },
-
-
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2450,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 75,
+                        length: 25,
+                        height: 50
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2500,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2550,
+                        angle: 200
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2650,
+                        angle: 190
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2700,
+                        angle: 300
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2800,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 2950,
+                        angle: 45
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 10,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3000,
+                        angle: 95
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 10,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3050,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3174,
+                        angle: 86
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3250,
+                        angle: 240
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3260,
+                        angle: 100
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3400,
+                        angle: 120
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3400,
+                        angle: 10
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3500,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3500,
+                        angle: 295
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3600,
+                        angle: 30
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 25
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3650,
+                        angle: 155
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 10,
+                        height: 100
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 3750,
+                        angle: 160
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 4000,
+                        angle: 45
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 4000,
+                        angle: 135
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 4000,
+                        angle: 225
+                    }
+                },
+                {
+                    type: 'box',
+                    size: {
+                        width: 25,
+                        length: 25,
+                        height: 400
+                    },
+                    color: boxColor,
+                    position: {
+                        distance: 4000,
+                        angle: 315
+                    }
+                },
 
 
 
@@ -513,126 +778,175 @@ module.exports = (function(UTIL, COLOR){
                     type: 'diamond',
                     position: {
                         distance: 300,
-                        angle: 40
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 350,
-                        angle: 42
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 400,
-                        angle: 44
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 450,
-                        angle: 46
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 500,
-                        angle: 48
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 550,
-                        angle: 50
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 700,
-                        angle: 270
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 770,
-                        angle: 280
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 800,
-                        angle: 280
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 950,
-                        angle: 280
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 1000,
-                        angle: 280
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 1050,
-                        angle: 280
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 1225,
-                        angle: 30
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 1300,
-                        angle: 25
-                    }
-                },
-                {
-                    type: 'diamond',
-                    position: {
-                        distance: 1375,
                         angle: 20
                     }
                 },
                 {
                     type: 'diamond',
                     position: {
-                        distance: 1450,
+                        distance: 350,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 400,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 450,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 500,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 550,
+                        angle: 20
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 630,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 650,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 680,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 700,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 730,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 750,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 780,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 800,
+                        angle: 60
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1150,
                         angle: 15
                     }
                 },
                 {
                     type: 'diamond',
                     position: {
-                        distance: 1700,
+                        distance: 1200,
                         angle: 345
                     }
                 },
                 {
                     type: 'diamond',
                     position: {
-                        distance: 1750,
+                        distance: 1350,
                         angle: 340
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1300,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1340,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1380,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1420,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1460,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1500,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1550,
+                        angle: 110
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 1600,
+                        angle: 110
                     }
                 },
                 {
@@ -646,21 +960,49 @@ module.exports = (function(UTIL, COLOR){
                     type: 'diamond',
                     position: {
                         distance: 1950,
-                        angle: 330
+                        angle: 90
                     }
                 },
                 {
                     type: 'diamond',
                     position: {
                         distance: 2000,
-                        angle: 330
+                        angle: 90
                     }
                 },
                 {
                     type: 'diamond',
                     position: {
                         distance: 2050,
-                        angle: 330
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2100,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2150,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2200,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'diamond',
+                    position: {
+                        distance: 2350,
+                        angle: 180
                     }
                 },
                 {
@@ -1190,7 +1532,6 @@ module.exports = (function(UTIL, COLOR){
                     }
                 },
 
-                //End of Diamonds
 
 
 
@@ -1250,22 +1591,7 @@ module.exports = (function(UTIL, COLOR){
                         distance: UTIL.randomIntInRange(1900,2100)*2
                     }
                 },
-                {
-                    type: 'ring',
-                    color: ringColor,
-                    position: {
-                        distance: UTIL.randomIntInRange(2250,2300)*2
-                    }
-                },
-                {
-                    type: 'ring',
-                    color: ringColor,
-                    position: {
-                        distance: UTIL.randomIntInRange(2400,2450)*2
-                    }
-                },
 
-                // End of Rings
 
                 {
                     type: 'cone',
@@ -1343,27 +1669,10 @@ module.exports = (function(UTIL, COLOR){
                     type: 'cone',
                     color: coneColor,
                     position: {
-                        distance: 4300,
+                        distance: 4100,
                         angle: 90
                     }
                 },
-                {
-                    type: 'cone',
-                    color: coneColor,
-                    position: {
-                        distance: 4700,
-                        angle: 180
-                    }
-                },
-                {
-                    type: 'cone',
-                    color: coneColor,
-                    position: {
-                        distance: 5100,
-                        angle: 270
-                    }
-                }
-                //End of Cones
 
             ]
         }
