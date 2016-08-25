@@ -31,7 +31,7 @@ module.exports = (function() {
             way: 0x878E9A,
             box: 0xEEEEEE,
             ring: 0xA6FDFD,
-            cone: 0x808282
+            cone: 0x404040
         }, {
             name: 'orange black',
             background: 0x140F0C,

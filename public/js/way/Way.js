@@ -1,4 +1,4 @@
-module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean, GUI) {
+module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean, GUI) {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -75,8 +75,6 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
         this.group.rotation.y += angle;
         this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
 
-        //TODO remove this
-        $('td.angle').html(Math.round(this.currentPosition.angle));
         this.setCurrentPosition();
     };
 
@@ -126,7 +124,6 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
     require('../COLOR'),
     require('./obstacles/Obstacle'),
     require('../UTIL'),
-    require('jquery'),
     require('js-cookie'),
     require('random-boolean'),
     require('../GUI')
