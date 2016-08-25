@@ -766,7 +766,6 @@ module.exports = (function(UTIL, COLOR){
                     }
                 },
 
-                //End of Boxes
 
                 {
                     type: 'diamond',
@@ -1107,7 +1106,11 @@ module.exports = (function(UTIL, COLOR){
                         distance: 3000
                     }
                 },
+<<<<<<< HEAD
                 // End of Rings
+=======
+
+>>>>>>> bc9171e4d52d3a2e6d2ba27a2b96aae3546f0ce6
                 {
                     type: 'cone',
                     color: coneColor,
@@ -1148,7 +1151,6 @@ module.exports = (function(UTIL, COLOR){
                         angle: 0
                     }
                 }
-                //End of Cones
             ]
         }
     };

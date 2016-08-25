@@ -321,7 +321,6 @@ module.exports = (function(UTIL, COLOR) {
                         angle: 295
                     }
                 },
-                //End of Boxes
 
                 {
                     type: 'diamond',
