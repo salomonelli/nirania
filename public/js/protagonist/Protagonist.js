@@ -1,4 +1,4 @@
-module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
+module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, Sound) {
 
     /**
      * Represents Protagonist
@@ -42,6 +42,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
 
             var self = this;
             if (!self.isJumping) {
+                Sound.play('jump');
                 self.isJumping = true;
                 var tween = new TWEEN
                     .Tween({jump: 0})
@@ -59,6 +60,8 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
         else{
             var self = this;
             if (!self.isJumping) {
+
+                  Sound.play('jump');
                 self.isJumping = true;
                 var tween = new TWEEN
                     .Tween({jump: 0})
@@ -204,5 +207,6 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies) {
     require('jquery'),
     require('three'),
     require('tween.js'),
-    require('js-cookie')
+    require('js-cookie'),
+    require('../Sound')
 );
