@@ -58575,7 +58575,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
             protagonist: new Protagonist()
         };
-
         this.lights = {
             hemisphere: null,
             shadow: null
@@ -58594,15 +58593,13 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * adds lights to scene
      */
     Scene.prototype.addLights = function () {
-        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
-
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);//0xffffff, 1);
+        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
         this.lights.shadow.position.y += 1000;
         this.lights.shadow.target.position.set(0, 0, 0);
         this.lights.shadow.castShadow = true;
-
         //visible area of the projected shadow
         this.lights.shadow.shadow.camera.left = -1000;
         this.lights.shadow.shadow.camera.right = 1000;
@@ -58610,7 +58607,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         this.lights.shadow.shadow.camera.bottom = -1000;
         this.lights.shadow.shadow.camera.near = 1;
         this.lights.shadow.shadow.camera.far = 2000;
-
         //resolution
         this.lights.shadow.shadow.mapSize.width = 2048;
         this.lights.shadow.shadow.mapSize.height = 2048;
@@ -58625,20 +58621,16 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.showIntro = function () {
         this.camera.position.set(250, 1000, 50);
-
         //add particles
         this.objects.particles.position(0, 0, -500);
         this.objects.particles.addToScene(this.scene);
-
         //add particles for intro
         this.objects.introParticles.position(0, 0, 250);
         this.objects.introParticles.addToScene(this.scene);
-
         //add protagonist
         this.objects.protagonist.position(0, 950, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-
         this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
@@ -58647,7 +58639,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.render = function () {
         this.objects.particles.animate();
-        this.objects.protagonist.animate();
         this.renderer.render(this.scene, this.camera);
     };
 
@@ -58665,7 +58656,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var t = 150;
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
-
                     t--;
                     position = Math.sin(clock.getElapsedTime()*10)* 1;
                     self.objects.protagonist.body.position.x = position * - 5;
@@ -58673,9 +58663,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    } else {
-                        next();
-                    }
+                    } else next();
                 };
                 fall();
             },
@@ -58691,9 +58679,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    } else {
-                        next();
-                    }
+                    }  next();
                 };
                 fall();
             },
@@ -58703,7 +58689,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                     self.camera.position.y--;
                     t--;position = Math.sin(clock.getElapsedTime()*10)* 1;
                     self.objects.protagonist.body.position.x = position * - 5;
-
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -58784,9 +58769,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 self.objects.way.rotate(Math.PI * 0.01);
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
-            if (self.move.up) {
-                self.objects.protagonist.jump();
-            }
+            if (self.move.up) self.objects.protagonist.jump();
             if(self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought"){
               level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
               level.powerupActive = true;
@@ -58808,16 +58791,11 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.simpleIntro = function () {
         this.camera.position.set(0, 50, 95);
-
-        //add particles
         this.objects.particles.position(0, 0, -500);
         this.objects.particles.addToScene(this.scene);
-
-        //add protagonist
         this.objects.protagonist.position(0, 5, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-
         this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
@@ -64367,7 +64345,7 @@ module.exports = (function(COLOR, THREE){
      */
     Body.init = function(cb){
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/body.json', function(geometry, materials) {
+        loader.load('/js/blender/body.json', function(geometry, materials) {
             Body.geometry = geometry;
             cb();
         });
@@ -64425,10 +64403,8 @@ module.exports = (function() {
         self.obstacles.forEach(function(obstacle, i) {
             if (ret.collision) return;
             //check if obstacle should not be checked anymore
-            if (_getMaxDistance(obstacle) < currentPosition.distance) {
-                delete self.obstacles[i]; //remove from array with the next garbage-collection
-            }
-
+            // remove from array with the next garbage-collection
+            if (_getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
 
             if (
                 (
@@ -64452,16 +64428,7 @@ module.exports = (function() {
                     obstacle.collisionData.type == "ring" &&
                     _getMaxDistance(obstacle) == currentPosition.distance &&
                     obstacle.collisionData.size.height > currentPosition.height
-                )
-            ) {
-
-                ret = {
-                    collision: true,
-                    type: obstacle.collisionData.type,
-                    mesh: obstacle.mesh
-                };
-            }
-            if (
+                ) ||
                 (
                     //cone
                     obstacle.collisionData.type == "cone" &&
@@ -64479,6 +64446,7 @@ module.exports = (function() {
                     currentPosition.anglemax > obstacle.collisionData.angle.min
                 )
             ) {
+
                 ret = {
                     collision: true,
                     type: obstacle.collisionData.type,
@@ -64524,14 +64492,14 @@ module.exports = (function (COLOR, THREE) {
     Head.prototype.addToGroup = function (group) {
         group.add(this.mesh);
     };
-    
+
     /**
      * loads the head from json file (blender)
      * @param {function} cb callback
      */
     Head.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/head.json', function (geometry, materials) {
+        loader.load('/js/blender/head.json', function (geometry, materials) {
             Head.geometry = geometry;
             cb();
         });
@@ -64583,7 +64551,7 @@ module.exports = (function (COLOR, THREE) {
      */
     Leg.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/leg.json', function (geometry, materials) {
+        loader.load('/js/blender/leg.json', function (geometry, materials) {
             Leg.geometry = geometry;
             cb();
         });
@@ -64596,14 +64564,13 @@ module.exports = (function (COLOR, THREE) {
 );
 
 },{"../COLOR":9,"three":7}],29:[function(require,module,exports){
-module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, Sound) {
+module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
 
     /**
      * Represents Protagonist
      * @constructor
      */
     function Protagonist() {
-        //create an empty container
         this.group = new THREE.Object3D();
         this.body = new Body();
         this.head = new Head();
@@ -64621,7 +64588,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
     /**
      * groups the body parts of protagonist and positions them
      */
-    Protagonist.prototype.groupBodyParts = function () {
+    Protagonist.prototype.groupBodyParts = function() {
         this.body.position(0, 0, 0);
         this.body.addToGroup(this.group);
         this.head.position(0, 0.1, 0);
@@ -64635,43 +64602,26 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
     /**
      * Makes protagonist jump a given height
      */
-    Protagonist.prototype.jump = function () {
-        if(Cookies.get('powerup-2') == "bought") {
-
-            var self = this;
-            if (!self.isJumping) {
-                Sound.play('jump');
-                self.isJumping = true;
-                var tween = new TWEEN
-                    .Tween({jump: 0})
-                    .to({jump: Math.PI}, 700)
-                    .onUpdate(function () {
-                        self.group.position.y = 70 * Math.sin(this.jump);
-                    })
-                    .start();
-                tween.onComplete(function () {
-                    self.isJumping = false;
-                });
-            }
-
-        }
-        else{
-            var self = this;
-            if (!self.isJumping) {
-
-                  Sound.play('jump');
-                self.isJumping = true;
-                var tween = new TWEEN
-                    .Tween({jump: 0})
-                    .to({jump: Math.PI}, 700)
-                    .onUpdate(function () {
-                        self.group.position.y = 40 * Math.sin(this.jump);
-                    })
-                    .start();
-                tween.onComplete(function () {
-                    self.isJumping = false;
-                });
-            }
+    Protagonist.prototype.jump = function() {
+        var height = 40;
+        if (Cookies.get('powerup-2') == "bought") height = 70;
+        var self = this;
+        if (!self.isJumping) {
+            self.isJumping = true;
+            var tween = new TWEEN
+                .Tween({
+                    jump: 0
+                })
+                .to({
+                    jump: Math.PI
+                }, 700)
+                .onUpdate(function() {
+                    self.group.position.y = 70 * Math.sin(this.jump);
+                })
+                .start();
+            tween.onComplete(function() {
+                self.isJumping = false;
+            });
         }
 
     };
@@ -64682,7 +64632,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * @param {number} y - y position of particles group
      * @param {number} z - z position of particles group
      */
-    Protagonist.prototype.position = function (x, y, z) {
+    Protagonist.prototype.position = function(x, y, z) {
         this.group.position.set(x, y, z);
     };
 
@@ -64691,7 +64641,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * @param {string} axis - "x", "y" or "z"
      * @param {number} angle - in radians
      */
-    Protagonist.prototype.rotate = function (axis, angle) {
+    Protagonist.prototype.rotate = function(axis, angle) {
         switch (axis) {
             case 'x':
                 this.group.rotateX(angle);
@@ -64709,7 +64659,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * adds protagonist to given scene
      * @param {THREE.Scene} scene - scene to which the protagonist will be added
      */
-    Protagonist.prototype.addToScene = function (scene) {
+    Protagonist.prototype.addToScene = function(scene) {
         scene.add(this.group);
     };
 
@@ -64717,7 +64667,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * returns the current position of the Protagonist
      * @returns {Object}
      */
-    Protagonist.prototype.getPosition = function () {
+    Protagonist.prototype.getPosition = function() {
         return this.group.position;
     };
 
@@ -64725,7 +64675,7 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * decreases the position of the protagonist according to given axis
      * @param {string} axis - "x", "y" or "z"
      */
-    Protagonist.prototype.decreasePosition = function (axis) {
+    Protagonist.prototype.decreasePosition = function(axis) {
         switch (axis) {
             case "x":
                 this.group.position.x--;
@@ -64743,28 +64693,23 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * returns the group of meshes of the protagonist
      * @returns {THREE.Object3D}
      */
-    Protagonist.prototype.returnGroup = function () {
+    Protagonist.prototype.returnGroup = function() {
         return this.group;
-    };
-
-
-    Protagonist.prototype.animate = function () {
-        //TODO let dress move slightly
     };
 
     /**
      * loads blender files for protagonist
      * @param {function} cb
      */
-    Protagonist.init = (function (cb) {
+    Protagonist.init = (function(cb) {
         var initUs = [
             Leg,
             Body,
             Head
         ];
         var initCount = initUs.length;
-        initUs.forEach(function (initMe) {
-            initMe.init(function () {
+        initUs.forEach(function(initMe) {
+            initMe.init(function() {
                 initCount--;
                 if (initCount === 0) {
                     cb();
@@ -64778,11 +64723,11 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * @param {THREE.Object3D} group - contains meshes of protagonist
      * @param {number} opacity - from 0 to 1
      */
-    Protagonist.makeGroupTransparent = function(group, opacity){
-      group.children.forEach(function(parts){
-        parts.material.transparent = true;
-        parts.material.opacity = opacity;
-      });
+    Protagonist.makeGroupTransparent = function(group, opacity) {
+        group.children.forEach(function(parts) {
+            parts.material.transparent = true;
+            parts.material.opacity = opacity;
+        });
     };
 
     /**
@@ -64790,10 +64735,10 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
      * @param {THREE.Object3D} group - contains meshes of protagonist
      *
      */
-    Protagonist.move = function(group, position){
-      group.children[0].position.x = position * -0.05;
-      group.children[3].position.z = position * 1;
-      group.children[2].position.z = position * -1;
+    Protagonist.move = function(group, position) {
+        group.children[0].position.x = position * -0.05;
+        group.children[3].position.z = position * 1;
+        group.children[2].position.z = position * -1;
     };
 
     return Protagonist;
@@ -64801,15 +64746,12 @@ module.exports = (function (Head, Body, Leg, COLOR, $, THREE, TWEEN, Cookies, So
     require('./Head'),
     require('./Body'),
     require('./Leg'),
-    require('../COLOR'),
-    require('jquery'),
     require('three'),
     require('tween.js'),
-    require('js-cookie'),
-    require('../Sound')
+    require('js-cookie')
 );
 
-},{"../COLOR":9,"../Sound":13,"./Body":25,"./Head":27,"./Leg":28,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],30:[function(require,module,exports){
+},{"./Body":25,"./Head":27,"./Leg":28,"js-cookie":4,"three":7,"tween.js":8}],30:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br><br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i>  Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":2}],31:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    ");_.b(_.t(_.f("content",c,p,0)));_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};

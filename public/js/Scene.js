@@ -22,7 +22,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
             protagonist: new Protagonist()
         };
-
         this.lights = {
             hemisphere: null,
             shadow: null
@@ -41,15 +40,13 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * adds lights to scene
      */
     Scene.prototype.addLights = function () {
-        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);//0x53034A, COLOR.way, 0.8)
-
-        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);//0xffffff, 1);
+        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);
+        this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
         this.lights.shadow.position.y += 1000;
         this.lights.shadow.target.position.set(0, 0, 0);
         this.lights.shadow.castShadow = true;
-
         //visible area of the projected shadow
         this.lights.shadow.shadow.camera.left = -1000;
         this.lights.shadow.shadow.camera.right = 1000;
@@ -57,7 +54,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         this.lights.shadow.shadow.camera.bottom = -1000;
         this.lights.shadow.shadow.camera.near = 1;
         this.lights.shadow.shadow.camera.far = 2000;
-
         //resolution
         this.lights.shadow.shadow.mapSize.width = 2048;
         this.lights.shadow.shadow.mapSize.height = 2048;
@@ -72,20 +68,16 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.showIntro = function () {
         this.camera.position.set(250, 1000, 50);
-
         //add particles
         this.objects.particles.position(0, 0, -500);
         this.objects.particles.addToScene(this.scene);
-
         //add particles for intro
         this.objects.introParticles.position(0, 0, 250);
         this.objects.introParticles.addToScene(this.scene);
-
         //add protagonist
         this.objects.protagonist.position(0, 950, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-
         this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
@@ -94,7 +86,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.render = function () {
         this.objects.particles.animate();
-        this.objects.protagonist.animate();
         this.renderer.render(this.scene, this.camera);
     };
 
@@ -112,7 +103,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 var t = 150;
                 var fall = function () {
                     self.objects.protagonist.decreasePosition('y');
-
                     t--;
                     position = Math.sin(clock.getElapsedTime()*10)* 1;
                     self.objects.protagonist.body.position.x = position * - 5;
@@ -120,9 +110,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    } else {
-                        next();
-                    }
+                    } else next();
                 };
                 fall();
             },
@@ -138,9 +126,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    } else {
-                        next();
-                    }
+                    }  next();
                 };
                 fall();
             },
@@ -150,7 +136,6 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                     self.camera.position.y--;
                     t--;position = Math.sin(clock.getElapsedTime()*10)* 1;
                     self.objects.protagonist.body.position.x = position * - 5;
-
                     if (t > 0) {
                         setTimeout(function () {
                             fall();
@@ -231,9 +216,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 self.objects.way.rotate(Math.PI * 0.01);
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
-            if (self.move.up) {
-                self.objects.protagonist.jump();
-            }
+            if (self.move.up) self.objects.protagonist.jump();
             if(self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought"){
               level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
               level.powerupActive = true;
@@ -255,16 +238,11 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      */
     Scene.prototype.simpleIntro = function () {
         this.camera.position.set(0, 50, 95);
-
-        //add particles
         this.objects.particles.position(0, 0, -500);
         this.objects.particles.addToScene(this.scene);
-
-        //add protagonist
         this.objects.protagonist.position(0, 5, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-
         this.camera.lookAt(this.objects.protagonist.getPosition());
     };
 
