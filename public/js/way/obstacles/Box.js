@@ -34,22 +34,18 @@ module.exports=(function(THREE, UTIL){
      * converts box object from levelX.js into a format that can be used for detecting collisions
      * @param {Object} obstacle - with structure as in levelX.js
      * @param radius - radius of way
-     * @returns {Object} ret - object ret that is fitted for detecting collisions
+     * @returns {Object} - object ret that is fitted for detecting collisions
      */
     Box.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius;
         var b = obstacle.size.width*0.5;
-        var angleRight = Math.atan(b/a);
-        var minAngle = obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight);
-        var maxAngle = obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight);
-
-        var ret = {
+        var angleRight = Math.atan(b/radius);
+        return {
             type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: minAngle,
-                max: maxAngle
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
@@ -57,7 +53,6 @@ module.exports=(function(THREE, UTIL){
                 max: obstacle.position.distance + (0.5*obstacle.size.length)
             }
         };
-        return ret;
     };
 
     return Box;

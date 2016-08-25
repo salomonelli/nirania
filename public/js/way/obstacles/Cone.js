@@ -1,6 +1,10 @@
 module.exports = (function(THREE, UTIL) {
     var _height = 30;
     var _radius = 15;
+
+    /**
+     * Represenst cone that moves randomly around the way
+     */
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
         this.geometry = new THREE.ConeGeometry(_radius, _height, 100, 100);
@@ -9,6 +13,13 @@ module.exports = (function(THREE, UTIL) {
         this.mesh.castShadow = true;
     }
 
+    /**
+     * positions cone on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
     Cone.prototype.position = function(angle, distance, length, radius){
         radius += _height*0.5;
         this.mesh.rotation.z -= Math.PI/2;
@@ -26,7 +37,7 @@ module.exports = (function(THREE, UTIL) {
         var a = radius - 0.5* _height;
         var b = _height*0.5;
         var angleRight = Math.atan(b/a);
-        var ret = {
+        return {
             type: 'cone',
             size: {
               width: _height,
@@ -44,7 +55,6 @@ module.exports = (function(THREE, UTIL) {
                 max: obstacle.position.distance + (0.5*_height)
             }
         };
-        return ret;
     };
 
     return Cone;

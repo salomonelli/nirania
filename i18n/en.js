@@ -1,4 +1,5 @@
 module.exports = (function(){
+  //english text for intro and outro
   var text = {
     intro: {
       slide1: 'We write the year 2794... <br>  In a galaxy far, far away...<br> In a war between the humanity and extraterrestrials. <br>  Many human beings got kidnapped for experiments.',

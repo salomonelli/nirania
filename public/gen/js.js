@@ -58235,76 +58235,48 @@ TWEEN.Interpolation = {
 }).call(this,require('_process'))
 },{"_process":5}],9:[function(require,module,exports){
 module.exports = (function() {
-    var COLOR = {
+    return {
         background: 0x13BAAA,
-        particles: 0xffffff, //FD5C98
-        way: 0xC9B693, //0xCEBCA5,0x2598BA, //
+        particles: 0xffffff,
         protagonist: {
             body: 0xffffff,
             head: 0xffffff
         },
-        ring: 0x82BF45,
-        box: 0xF29C9E,
-        diamond: 0xffffff,
-        basic: {
-            red: 0xf25346,
-            white: 0xd8d0d1,
-            brown: 0x59332e,
-            pink: 0xF5986E,
-            brownDark: 0x23190f,
-            blue: 0x68c3c0,
-            beige: 0xE9DCB9,
-            orange: 0xF55A46,
-            grey: 0xD9D0D1,
-            lila: 0x311B92,
-            pink2: 0xFBAAB5,
-            green: 0x33691E,
-            darkred: 0x913334,
-            yellow: 0xECD078,
-            darkblue: 0x031634
-        },
-        palette: [
-          {
+        palette: [{
             name: 'blue pink light',
             background: 0x3E9598,
             way: 0xC9B693,
             box: 0xF29C9E,
             ring: 0x82BF45
-          },
-          {
+        }, {
             name: 'pink blue strong',
             background: 0x781152,
             way: 0x1CB4C5,
             box: 0x096388,
             ring: 0x096388
-          },
-          {
+        }, {
             name: 'light brown',
             background: 0xFDF1CD,
             way: 0xE0C17E,
             box: 0x9E614D,
             ring: 0x7BAAB1,
             cone: 0xEA9C00
-          },
-          {
+        }, {
             name: 'black',
             background: 0x030303,
             way: 0x878E9A,
             box: 0xEEEEEE,
             ring: 0xA6FDFD,
             cone: 0x808282
-          },
-          {
+        }, {
             name: 'orange black',
             background: 0x140F0C,
             way: 0xFF9056,
             box: 0xFD6E4E,
             ring: 0x8A5C45,
             cone: 0x463F2F
-          }
-        ]
+        }]
     };
-    return COLOR;
 })();
 
 },{}],10:[function(require,module,exports){
@@ -58488,23 +58460,22 @@ module.exports = (function($) {
     require('jquery')
 );
 
-},{"./templates/gameover.mustache":30,"./templates/shop.mustache":31,"./templates/shopModalContent.mustache":32,"./templates/success.mustache":33,"jquery":3}],11:[function(require,module,exports){
+},{"./templates/gameover.mustache":29,"./templates/shop.mustache":30,"./templates/shopModalContent.mustache":31,"./templates/success.mustache":32,"jquery":3}],11:[function(require,module,exports){
 //require this anywhere
-module.exports = (function ($) {
+module.exports = (function($) {
 
     /**
      * Handles key events
      * @constructor
      */
-    function Keybindings() {
-    }
+    function Keybindings() {}
 
     /**
      * Handles key code and returns fitting string like 'left' or 'right'
      * @param {number} code - keycode
      * @returns {string}
      */
-    Keybindings.handleKeyCode = function (code) {
+    Keybindings.handleKeyCode = function(code) {
         switch (code) {
             case 37:
             case 65:
@@ -58529,7 +58500,7 @@ module.exports = (function ($) {
      * @param {Scene} scene
      * @param {function} doSomething - function that should be started when event has been triggered
      */
-    Keybindings.bind = function (e, scene, doSomething) {
+    Keybindings.bind = function(e, scene, doSomething) {
         var keyHandler = function keyHandler(event) {
             var direction = Keybindings.handleKeyCode(event.keyCode);
             doSomething(scene, direction);
@@ -58541,7 +58512,7 @@ module.exports = (function ($) {
      * Unbinds a given event from document
      * @param {string} event - like 'keydown'
      */
-    Keybindings.unbind = function (event) {
+    Keybindings.unbind = function(event) {
         $(document).unbind(event);
     };
 
@@ -58663,7 +58634,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    } else next();
+                    }  next();
                 };
                 fall();
             },
@@ -58679,7 +58650,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    }  next();
+                    } else next();
                 };
                 fall();
             },
@@ -58828,7 +58799,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     require('js-cookie')
 );
 
-},{"./COLOR":9,"./Particles":24,"./protagonist/Protagonist":29,"async":1,"js-cookie":4,"three":7,"tween.js":8}],13:[function(require,module,exports){
+},{"./COLOR":9,"./Particles":23,"./protagonist/Protagonist":28,"async":1,"js-cookie":4,"three":7,"tween.js":8}],13:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _audio = {
         hitDiamond: new Audio('/sound/hitDiamond.mp3'),
@@ -58888,9 +58859,7 @@ module.exports = (function(){
      * Contains functions that can be used anywhere
      * @constructor
      */
-    function UTIL(){
-
-    }
+    function UTIL(){}
 
     /**
      * converts degrees to radians
@@ -58947,8 +58916,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         require('./level2'),
         require('./level3'),
         require('./level4'),
-        require('./level5'),
-        require('./level6')
+        require('./level5')
     ];
 
     var _templates = {
@@ -59208,7 +59176,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../Sound')
 );
 
-},{"../GUI":10,"../Sound":13,"../protagonist/CollisionDetector":26,"../protagonist/Protagonist":29,"../templates/gameover.mustache":30,"../templates/shop.mustache":31,"../templates/shopModalContent.mustache":32,"../templates/success.mustache":33,"../way/Way":34,"../way/obstacles/Obstacle":38,"./Powerups":16,"./level1":17,"./level2":18,"./level3":19,"./level4":20,"./level5":21,"./level6":22,"jquery":3,"js-cookie":4}],16:[function(require,module,exports){
+},{"../GUI":10,"../Sound":13,"../protagonist/CollisionDetector":25,"../protagonist/Protagonist":28,"../templates/gameover.mustache":29,"../templates/shop.mustache":30,"../templates/shopModalContent.mustache":31,"../templates/success.mustache":32,"../way/Way":33,"../way/obstacles/Obstacle":37,"./Powerups":16,"./level1":17,"./level2":18,"./level3":19,"./level4":20,"./level5":21,"jquery":3,"js-cookie":4}],16:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _powerups = [{
             id: 1,
@@ -63922,44 +63890,6 @@ module.exports = (function(UTIL, COLOR){
 );
 
 },{"../COLOR":9,"../UTIL":14}],22:[function(require,module,exports){
-module.exports = (function(UTIL, COLOR) {
-    var boxColor = COLOR.palette[4].box;
-    var ringColor = COLOR.palette[4].ring;
-    var coneColor = COLOR.palette[4].cone;
-    var level = {
-        level: 6,
-        speed: 1,
-        background: COLOR.palette[4].background,
-        way: {
-            length: 1000,
-            color: COLOR.palette[4].way,
-            obstacles: [
-
-                    {
-                          type: 'box',
-                          size: {
-                              width: 25,
-                              length: 25,
-                              height: 500
-                          },
-                          color: boxColor,
-                          position: {
-                              distance: 450,
-                              angle: 0
-                          }
-                      }
-
-        ]
-        }
-    };
-
-    return level;
-})(
-    require('../UTIL'),
-    require('../COLOR')
-);
-
-},{"../COLOR":9,"../UTIL":14}],23:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups, GUI, Cookies) {
     "use strict";
@@ -63973,8 +63903,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         new Level(2),
         new Level(3),
         new Level(4),
-        new Level(5),
-        new Level(6)
+        new Level(5)
     ];
     var _currentLevel = 1;
     var _URLpath = '';
@@ -63982,7 +63911,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
 
     var _music = new Audio('/sound/music3.mp3');
 
-    if(_isMusicOn()) _music.play();
+    if (_isMusicOn()) _music.play();
     else GUI.uncheckSoundSwitch();
 
     /**
@@ -64098,22 +64027,22 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      * checks in cookies whether sound is on
      * @returns {boolean} - true if sound is on
      */
-    function _isMusicOn(){
-      if(Cookies.get('sound') === "on" ) return true;
-      if(Cookies.get('sound') === "undefined"){
-        _setMusicSettings(true);
-        return true;
-      }
-      _level[_currentLevel].playSound = false;
-      return false;
+    function _isMusicOn() {
+        if (Cookies.get('sound') === "on") return true;
+        if (Cookies.get('sound') === "undefined") {
+            _setMusicSettings(true);
+            return true;
+        }
+        _level[_currentLevel].playSound = false;
+        return false;
     }
 
     /**
      * sets music settings in Cookies
      */
-    function _setMusicSettings(isOn){
-      if (isOn) Cookies.set('sound', 'on');
-      else Cookies.set('sound', 'off');
+    function _setMusicSettings(isOn) {
+        if (isOn) Cookies.set('sound', 'on');
+        else Cookies.set('sound', 'off');
     }
 
     /**
@@ -64165,20 +64094,27 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     });
 
     //enables and disables sound
-    $(document).on('click', '#soundSwitch', function(event){
-      _level[_currentLevel].playSound = GUI.getSoundSwitch();
-      _setMusicSettings(_level[_currentLevel].playSound);
-      if(_level[_currentLevel].playSound) _music.play();
-      else _music.pause();
+    $(document).on('click', '#soundSwitch', function(event) {
+        _level[_currentLevel].playSound = GUI.getSoundSwitch();
+        _setMusicSettings(_level[_currentLevel].playSound);
+        if (_level[_currentLevel].playSound) _music.play();
+        else _music.pause();
+    });
+
+    $(document).on('click', '#playagain', function(event) {
+        for (var property in Cookies.get()) {
+            if (object.hasOwnProperty(property)) {
+                Cookies.remove(property);
+            }
+        }
     });
 
     _music.addEventListener('ended', function() {
-      if(_level[_currentLevel].playSound){
-        this.currentTime = 0;
-        this.play();
-      }
+        if (_level[_currentLevel].playSound) {
+            this.currentTime = 0;
+            this.play();
+        }
     }, false);
-
 
     //store functions to window
     window.intro = _intro;
@@ -64198,7 +64134,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     require('js-cookie')
 );
 
-},{"./GUI":10,"./Keybindings":11,"./Scene":12,"./level/Level":15,"./level/Powerups":16,"./protagonist/Protagonist":29,"async":1,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],24:[function(require,module,exports){
+},{"./GUI":10,"./Keybindings":11,"./Scene":12,"./level/Level":15,"./level/Powerups":16,"./protagonist/Protagonist":28,"async":1,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],23:[function(require,module,exports){
 module.exports = (function (THREE) {
 
     /**
@@ -64303,7 +64239,7 @@ module.exports = (function (THREE) {
 })(
     require('three')
 );
-},{"three":7}],25:[function(require,module,exports){
+},{"three":7}],24:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -64355,7 +64291,7 @@ module.exports = (function(COLOR, THREE){
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],26:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],25:[function(require,module,exports){
 module.exports = (function() {
 
     /**
@@ -64457,7 +64393,7 @@ module.exports = (function() {
     return CollisionDetector;
 })();
 
-},{}],27:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64509,7 +64445,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],28:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],27:[function(require,module,exports){
 module.exports = (function (COLOR, THREE) {
 
     /**
@@ -64561,7 +64497,7 @@ module.exports = (function (COLOR, THREE) {
     require('three')
 );
 
-},{"../COLOR":9,"three":7}],29:[function(require,module,exports){
+},{"../COLOR":9,"three":7}],28:[function(require,module,exports){
 module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
 
     /**
@@ -64749,15 +64685,15 @@ module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
     require('js-cookie')
 );
 
-},{"./Body":25,"./Head":27,"./Leg":28,"js-cookie":4,"three":7,"tween.js":8}],30:[function(require,module,exports){
+},{"./Body":24,"./Head":26,"./Leg":27,"js-cookie":4,"three":7,"tween.js":8}],29:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],31:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],30:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    ");_.b(_.t(_.f("content",c,p,0)));_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],32:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],31:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like turning faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,456,1069,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-6 medium-6 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"");_.b(_.v(_.f("img",c,p,0)));_.b("\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <div class=\"content\">");_.b("\n" + i);_.b("                        <p>");_.b(_.t(_.f("description",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Free for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],33:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],32:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/game#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i> Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("showOutro",c,p,1),c,p,0,498,608,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <a href=\"/outro\" class=\"button success reload\">");_.b("\n" + i);_.b("            Free the world!");_.b("\n" + i);_.b("        </a>");_.b("\n");});c.pop();}_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,744,943,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"callout alert\">");_.b("\n" + i);_.b("                <h5>Free your Family!</h5>");_.b("\n" + i);_.b("                <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":2}],34:[function(require,module,exports){
+},{"hogan.js/lib/template":2}],33:[function(require,module,exports){
 module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoolean, GUI) {
     /**
      * Represents way
@@ -64892,7 +64828,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, $, Cookies, randomBoole
     require('../GUI')
 );
 
-},{"../COLOR":9,"../GUI":10,"../UTIL":14,"./obstacles/Obstacle":38,"jquery":3,"js-cookie":4,"random-boolean":6,"three":7}],35:[function(require,module,exports){
+},{"../COLOR":9,"../GUI":10,"../UTIL":14,"./obstacles/Obstacle":37,"jquery":3,"js-cookie":4,"random-boolean":6,"three":7}],34:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -64929,22 +64865,18 @@ module.exports=(function(THREE, UTIL){
      * converts box object from levelX.js into a format that can be used for detecting collisions
      * @param {Object} obstacle - with structure as in levelX.js
      * @param radius - radius of way
-     * @returns {Object} ret - object ret that is fitted for detecting collisions
+     * @returns {Object} - object ret that is fitted for detecting collisions
      */
     Box.prepareForCollisionDetection = function(obstacle, radius){
-        var a = radius;
         var b = obstacle.size.width*0.5;
-        var angleRight = Math.atan(b/a);
-        var minAngle = obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight);
-        var maxAngle = obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight);
-
-        var ret = {
+        var angleRight = Math.atan(b/radius);
+        return {
             type: 'box',
             size: obstacle.size,
             angle: {
                 center: obstacle.position.angle,
-                min: minAngle,
-                max: maxAngle
+                min: obstacle.position.angle - UTIL.convertRadiansToDegrees(angleRight),
+                max: obstacle.position.angle + UTIL.convertRadiansToDegrees(angleRight)
             },
             distance: {
                 center: obstacle.position.distance,
@@ -64952,7 +64884,6 @@ module.exports=(function(THREE, UTIL){
                 max: obstacle.position.distance + (0.5*obstacle.size.length)
             }
         };
-        return ret;
     };
 
     return Box;
@@ -64961,10 +64892,14 @@ module.exports=(function(THREE, UTIL){
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"three":7}],36:[function(require,module,exports){
+},{"../../UTIL":14,"three":7}],35:[function(require,module,exports){
 module.exports = (function(THREE, UTIL) {
     var _height = 30;
     var _radius = 15;
+
+    /**
+     * Represenst cone that moves randomly around the way
+     */
     function Cone(cone) {
         this.material = new THREE.MeshLambertMaterial({color: cone.color});
         this.geometry = new THREE.ConeGeometry(_radius, _height, 100, 100);
@@ -64973,6 +64908,13 @@ module.exports = (function(THREE, UTIL) {
         this.mesh.castShadow = true;
     }
 
+    /**
+     * positions cone on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
     Cone.prototype.position = function(angle, distance, length, radius){
         radius += _height*0.5;
         this.mesh.rotation.z -= Math.PI/2;
@@ -64990,7 +64932,7 @@ module.exports = (function(THREE, UTIL) {
         var a = radius - 0.5* _height;
         var b = _height*0.5;
         var angleRight = Math.atan(b/a);
-        var ret = {
+        return {
             type: 'cone',
             size: {
               width: _height,
@@ -65008,7 +64950,6 @@ module.exports = (function(THREE, UTIL) {
                 max: obstacle.position.distance + (0.5*_height)
             }
         };
-        return ret;
     };
 
     return Cone;
@@ -65017,25 +64958,24 @@ module.exports = (function(THREE, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"three":7}],37:[function(require,module,exports){
-module.exports = (function(THREE, UTIL, Cookies){
-    var size = 10;
-    var heightFromWay = 20;
+},{"../../UTIL":14,"three":7}],36:[function(require,module,exports){
+module.exports = (function(THREE, UTIL, Cookies) {
+    var _size = 10;
+    var _heightFromWay = 20;
 
     /**
      * Represents the "obstacle" "diamond" (that can be collected)
      * @param {Object} diamond - structure as in levelX.js
      * @constructor
      */
-    function Diamond(diamond){
-        this.geometry = new THREE.OctahedronGeometry(size, 0);
+    function Diamond(diamond) {
+        this.geometry = new THREE.OctahedronGeometry(_size, 0);
         this.material = new THREE.MeshLambertMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.6
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.6
         });
         this.mesh = new THREE.Mesh(this.geometry, this.material);
-        //this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
     }
 
@@ -65046,15 +64986,15 @@ module.exports = (function(THREE, UTIL, Cookies){
      * @param {number} length - length of way
      * @param {number} radius - radius of way
      */
-    Diamond.prototype.position = function(angle, distance,  length, radius){
-        angle = -(angle -90);
+    Diamond.prototype.position = function(angle, distance, length, radius) {
+        angle = -(angle - 90);
         angle = UTIL.convertDegreesToRadians(angle);
-        radius += heightFromWay;
+        radius += _heightFromWay;
         var y = (length / 2) - distance;
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
         this.mesh.rotation.y += angle;
-        this.mesh.position.set(x,y,z);
+        this.mesh.position.set(x, y, z);
     };
 
     /**
@@ -65063,49 +65003,26 @@ module.exports = (function(THREE, UTIL, Cookies){
      * @param radius - radius of way
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
-    Diamond.prepareForCollisionDetection =function(obstacle, radius){
-        //var a = radius + heightFromWay - 0.5* size;
-        //var b = size*0.5;
-        //var angleRight = Math.atan(b/a);
-        if(Cookies.get('powerup-3') == "bought"){
-            var ret = {
+    Diamond.prepareForCollisionDetection = function(obstacle, radius) {
+        var angle = 10;
+        if (Cookies.get('powerup-3') == "bought") angle = 35;
+        return {
             type: 'diamond',
             size: {
-                height: heightFromWay
+                height: _heightFromWay
             },
             angle: {
                 center: obstacle.position.angle,
-                min: obstacle.position.angle - 25, //UTIL.convertRadiansToDegrees(angleRight),
-                max: obstacle.position.angle + 25 //UTIL.convertRadiansToDegrees(angleRight)
+                min: obstacle.position.angle - angle,
+                max: obstacle.position.angle + angle
             },
             distance: {
                 center: obstacle.position.distance,
-                min: obstacle.position.distance-10, /// - (0.5*size),
-                max: obstacle.position.distance+10// + (0.5*size)
+                min: obstacle.position.distance - 10,
+                max: obstacle.position.distance + 10
             }
-        };
-            return ret;
-        }
-        else{
-            var ret = {
-                type: 'diamond',
-                size: {
-                    height: heightFromWay
-                },
-                angle: {
-                    center: obstacle.position.angle,
-                    min: obstacle.position.angle - 10, //UTIL.convertRadiansToDegrees(angleRight),
-                    max: obstacle.position.angle + 10 //UTIL.convertRadiansToDegrees(angleRight)
-                },
-                distance: {
-                    center: obstacle.position.distance,
-                    min: obstacle.position.distance-10, /// - (0.5*size),
-                    max: obstacle.position.distance+10// + (0.5*size)
-                }
-            };
-            return ret;
-        }
 
+        };
     };
 
     return Diamond;
@@ -65115,9 +65032,9 @@ module.exports = (function(THREE, UTIL, Cookies){
     require('js-cookie')
 );
 
-},{"../../UTIL":14,"js-cookie":4,"three":7}],38:[function(require,module,exports){
+},{"../../UTIL":14,"js-cookie":4,"three":7}],37:[function(require,module,exports){
 module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
-    var obstacleTypes = {
+    var _obstacleTypes = {
         box: Box,
         ring: Ring,
         diamond: Diamond,
@@ -65156,9 +65073,9 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     Obstacle.generateFromArray = function(obstacles, wayLength, radius) {
         var ret = [];
         obstacles.forEach(function(o) {
-            var obstacle = new obstacleTypes[o.type](o);
+            var obstacle = new _obstacleTypes[o.type](o);
             obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
-            var collisionData = obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
+            var collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
             ret.push(
                 new Obstacle(
                     o.type,
@@ -65205,10 +65122,10 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"./Box":35,"./Cone":36,"./Diamond":37,"./Ring":39}],39:[function(require,module,exports){
+},{"../../UTIL":14,"./Box":34,"./Cone":35,"./Diamond":36,"./Ring":38}],38:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
-    var radius = 100;
+    var _radius = 100;
 
     /**
      * Represents the obstacle "Ring"
@@ -65217,7 +65134,7 @@ module.exports = (function () {
      */
     function Ring(ring) {
         this.material = new THREE.MeshLambertMaterial({color: ring.color});
-        this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
+        this.geometry = new THREE.TorusGeometry(_radius, 3, 16, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
@@ -65238,14 +65155,13 @@ module.exports = (function () {
     /**
      * converts ring object from levelX.js into a format that can be used for detecting collisions
      * @param {Object} obstacle - with structure as in levelX.js
-     * @param radius - radius of way
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
     Ring.prepareForCollisionDetection = function (obstacle, r) {
         return {
             type: 'ring',
             size: {
-                height: radius - 80
+                height: _radius - 80
             },
             angle: {
                 center: 0,
@@ -65259,4 +65175,4 @@ module.exports = (function () {
     return Ring;
 })();
 
-},{}]},{},[23]);
+},{}]},{},[22]);

@@ -11,8 +11,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         new Level(2),
         new Level(3),
         new Level(4),
-        new Level(5),
-        new Level(6)
+        new Level(5)
     ];
     var _currentLevel = 1;
     var _URLpath = '';
@@ -20,7 +19,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
 
     var _music = new Audio('/sound/music3.mp3');
 
-    if(_isMusicOn()) _music.play();
+    if (_isMusicOn()) _music.play();
     else GUI.uncheckSoundSwitch();
 
     /**
@@ -136,22 +135,22 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      * checks in cookies whether sound is on
      * @returns {boolean} - true if sound is on
      */
-    function _isMusicOn(){
-      if(Cookies.get('sound') === "on" ) return true;
-      if(Cookies.get('sound') === "undefined"){
-        _setMusicSettings(true);
-        return true;
-      }
-      _level[_currentLevel].playSound = false;
-      return false;
+    function _isMusicOn() {
+        if (Cookies.get('sound') === "on") return true;
+        if (Cookies.get('sound') === "undefined") {
+            _setMusicSettings(true);
+            return true;
+        }
+        _level[_currentLevel].playSound = false;
+        return false;
     }
 
     /**
      * sets music settings in Cookies
      */
-    function _setMusicSettings(isOn){
-      if (isOn) Cookies.set('sound', 'on');
-      else Cookies.set('sound', 'off');
+    function _setMusicSettings(isOn) {
+        if (isOn) Cookies.set('sound', 'on');
+        else Cookies.set('sound', 'off');
     }
 
     /**
@@ -203,20 +202,27 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     });
 
     //enables and disables sound
-    $(document).on('click', '#soundSwitch', function(event){
-      _level[_currentLevel].playSound = GUI.getSoundSwitch();
-      _setMusicSettings(_level[_currentLevel].playSound);
-      if(_level[_currentLevel].playSound) _music.play();
-      else _music.pause();
+    $(document).on('click', '#soundSwitch', function(event) {
+        _level[_currentLevel].playSound = GUI.getSoundSwitch();
+        _setMusicSettings(_level[_currentLevel].playSound);
+        if (_level[_currentLevel].playSound) _music.play();
+        else _music.pause();
+    });
+
+    $(document).on('click', '#playagain', function(event) {
+        for (var property in Cookies.get()) {
+            if (object.hasOwnProperty(property)) {
+                Cookies.remove(property);
+            }
+        }
     });
 
     _music.addEventListener('ended', function() {
-      if(_level[_currentLevel].playSound){
-        this.currentTime = 0;
-        this.play();
-      }
+        if (_level[_currentLevel].playSound) {
+            this.currentTime = 0;
+            this.play();
+        }
     }, false);
-
 
     //store functions to window
     window.intro = _intro;
