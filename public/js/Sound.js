@@ -1,10 +1,8 @@
 module.exports = (function(Cookies) {
     var _audio = {
-        hitDiamond: new Audio('/sound/hitDiamond2.mp3'),
+        hitDiamond: new Audio('/sound/hitDiamond.mp3'),
         hitObstacle: new Audio('/sound/hitObstacle.mp3'),
-        music: new Audio('/sound/music3.mp3'),
-        turn: new Audio('/sound/turn.mp3'),
-        jump: new Audio('/sound/jump2.mp3')
+        music: new Audio('/sound/music.mp3')
     };
 
     function Sound() {}
