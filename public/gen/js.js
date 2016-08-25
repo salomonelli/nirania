@@ -58634,7 +58634,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    }  next();
+                    }  else next();
                 };
                 fall();
             },
@@ -63910,7 +63910,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
 
     var _music = new Audio('/sound/music.mp3');
 
-    if (_isMusicOn()) _music.play('music');
+    if (_isMusicOn()) _music.play();
     else GUI.uncheckSoundSwitch();
 
     /**
@@ -64028,12 +64028,13 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      */
     function _isMusicOn() {
         if (Cookies.get('sound') === "on") return true;
-        if (Cookies.get('sound') === "undefined") {
-            _setMusicSettings(true);
-            return true;
+        if (Cookies.get('sound')) {
+            _level[_currentLevel].playSound = false;
+            return false;
         }
-        _level[_currentLevel].playSound = false;
-        return false;
+        _setMusicSettings(true);
+        return true;
+
     }
 
     /**

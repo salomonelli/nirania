@@ -110,7 +110,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                         setTimeout(function () {
                             fall();
                         }, 1);
-                    }  next();
+                    }  else next();
                 };
                 fall();
             },
