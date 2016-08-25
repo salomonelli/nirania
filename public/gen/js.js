@@ -58803,8 +58803,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
 module.exports = (function(Cookies) {
     var _audio = {
         hitDiamond: new Audio('/sound/hitDiamond.mp3'),
-        hitObstacle: new Audio('/sound/hitObstacle.mp3'),
-        music: new Audio('/sound/music.mp3')
+        hitObstacle: new Audio('/sound/hitObstacle.mp3')
     };
 
     function Sound() {}
@@ -63909,9 +63908,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     var _URLpath = '';
     window.initMe = 0;
 
-    var _music = new Audio('/sound/music3.mp3');
+    var _music = new Audio('/sound/music.mp3');
 
-    if (_isMusicOn()) _music.play();
+    if (_isMusicOn()) _music.play('music');
     else GUI.uncheckSoundSwitch();
 
     /**
@@ -64101,8 +64100,10 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
         else _music.pause();
     });
 
+    //resets cookies to play game from start
     $(document).on('click', '#playagain', function(event) {
-        for (var property in Cookies.get()) {
+        var object = Cookies.get();
+        for (var property in object) {
             if (object.hasOwnProperty(property)) {
                 Cookies.remove(property);
             }
