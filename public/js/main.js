@@ -18,6 +18,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     var _URLpath = '';
     window.initMe = 0;
 
+    var _music = new Audio('/sound/music3.mp3');
+    _music.play();
+
     /**
      * game with intro
      */
@@ -88,6 +91,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      */
     function _startLevel(cb) {
         GUI.fadeInScoreboard();
+        GUI.fadeInSoundSwitch(); 
         Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
         //start moving way
@@ -139,11 +143,15 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(_mainScene.renderer.domElement);
             GUI.removeLoadingIcon();
-            if (_playThisLevel() && _URLpath !== "game") {
-                _gameWithoutIntro();
-            } else {
-                _currentLevel = 1;
+            if (_URLpath == "game") {
                 _gameWithIntro();
+            } else {
+                if (_playThisLevel()) {
+                    _gameWithoutIntro();
+                } else {
+                    var newURL = URL.replace(_URLpath, 'game');
+                    window.location.href = newURL;
+                }
             }
         });
     };
@@ -169,6 +177,24 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             if (Level.canBePlayed(parseInt(_currentLevel) + 1)) GUI.updateNextLevelButton();
         }
     });
+
+    //enables and disables sound
+    $(document).on('click', '#soundSwitch', function(event){
+      _level[_currentLevel].playSound = GUI.getSoundSwitch();
+      if(_level[_currentLevel].playSound){
+        _music.play();
+      }else{
+        _music.pause();
+      }
+    });
+
+    _music.addEventListener('ended', function() {
+      if(_level[_currentLevel].playSound){
+        this.currentTime = 0;
+        this.play();
+      }
+    }, false);
+
 
     //store functions to window
     window.intro = _intro;

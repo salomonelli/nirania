@@ -149,6 +149,23 @@ module.exports = (function($) {
       $('.scores').fadeIn(1000);
     };
 
+    /**
+     * fades in soundswitch
+     */
+    GUI.fadeInSoundSwitch = function(){
+      $('.sound').fadeIn(1000);
+    };
+
+    /**
+     * returns whether sound is on or not
+     * @returns {boolean} - true if sound is enabled
+     */
+    GUI.getSoundSwitch = function(){
+      if($('#soundSwitch').is(':checked')) return true;
+      return false;
+    };
+
+
     return GUI;
 })(
     require('jquery')

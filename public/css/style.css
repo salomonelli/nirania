@@ -178,6 +178,26 @@ body .intro {
 .scores tbody{
   border: none;
 }
+
+a.disabled {
+   pointer-events: none;
+   cursor: default;
+}
+
+
+.sound{
+  position: absolute;
+    z-index: 1000;
+    padding: 10px;
+}
+.sound span{
+  color: white;
+  font-weight: bold;
+}
+.sound .switch{
+  float: right;
+    margin-left: 10px;
+}
 /*******INTRO********/
 
 body{

@@ -58459,6 +58459,23 @@ module.exports = (function($) {
       $('.scores').fadeIn(1000);
     };
 
+    /**
+     * fades in soundswitch
+     */
+    GUI.fadeInSoundSwitch = function(){
+      $('.sound').fadeIn(1000);
+    };
+
+    /**
+     * returns whether sound is on or not
+     * @returns {boolean} - true if sound is enabled
+     */
+    GUI.getSoundSwitch = function(){
+      if($('#soundSwitch').is(':checked')) return true;
+      return false;
+    };
+
+
     return GUI;
 })(
     require('jquery')
@@ -58902,6 +58919,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
+    var _audio = {
+        hitDiamond: new Audio('/sound/hitDiamond.mp3'),
+        hitObstacle: new Audio('/sound/hitObstacle.mp3')
+    };
+
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
@@ -58919,6 +58941,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.powerupActiveDuration = 0;
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
+        this.playSound = true;
     }
 
     /**
@@ -58953,6 +58976,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 // no collsion detection, if powerup 4 is active
                 if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;
+                this.playAudio(_audio.hitObstacle);
                 return true;
             case "diamond":
                 this.hitDiamond(collObj);
@@ -58971,8 +58995,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         Protagonist.move(protagonist, position);
         if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
             var opacity = 0.3;
-            if(this.opacityHelper >= 0){
-              opacity = (0.7/149625)* (this.opacityHelper*this.opacityHelper)+0.3;
+            if (this.opacityHelper >= 0) {
+                opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
             }
             this.opacityHelper += speedMulti;
             Protagonist.makeGroupTransparent(protagonist, opacity);
@@ -59011,12 +59035,32 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     };
 
     /**
+     * plays sound if enabled
+     * @param {String} sound - URL of sound
+     */
+    Level.prototype.playAudio = function(sound) {
+        if (this.playSound) {
+            sound.currentTime = 0;
+            sound.play();
+        }
+    };
+
+    /**
+     * stop sound if enabled
+     * @param {String} sound - URL of sound
+     */
+    Level.prototype.stopAudio = function(sound){
+      if (this.playSound) sound.pause();
+    };
+
+    /**
      * increases score on diamond hit and removes it
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
         if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
+            self.playAudio(_audio.hitDiamond);
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
@@ -59030,9 +59074,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         var canNotBePlayed, disableNextLevel, showOutro;
-        if (this.current === _levels.length){
-          last = "gone";
-          showOutro = "true";
+        if (this.current === _levels.length) {
+            last = "gone";
+            showOutro = "true";
         }
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
@@ -59072,6 +59116,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         });
     };
 
+    /**
+     * updates shop screen
+     */
     Level.prototype.updateShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
@@ -59126,7 +59173,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             //managed level
             if (level <= Powerups.amount()) {
                 //powerup exists
-                if(level <= Powerups.amountOfBought()) return true;
+                if (level <= Powerups.amountOfBought()) return true;
                 return false;
             } else {
                 //no powerup exist
@@ -63921,6 +63968,9 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     var _URLpath = '';
     window.initMe = 0;
 
+    var _music = new Audio('/sound/music3.mp3');
+    _music.play();
+
     /**
      * game with intro
      */
@@ -63991,6 +64041,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      */
     function _startLevel(cb) {
         GUI.fadeInScoreboard();
+        GUI.fadeInSoundSwitch(); 
         Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
         //start moving way
@@ -64042,11 +64093,15 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             _mainScene = new Scene(window.innerWidth, window.innerHeight, background);
             document.body.appendChild(_mainScene.renderer.domElement);
             GUI.removeLoadingIcon();
-            if (_playThisLevel() && _URLpath !== "game") {
-                _gameWithoutIntro();
-            } else {
-                _currentLevel = 1;
+            if (_URLpath == "game") {
                 _gameWithIntro();
+            } else {
+                if (_playThisLevel()) {
+                    _gameWithoutIntro();
+                } else {
+                    var newURL = URL.replace(_URLpath, 'game');
+                    window.location.href = newURL;
+                }
             }
         });
     };
@@ -64072,6 +64127,24 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
             if (Level.canBePlayed(parseInt(_currentLevel) + 1)) GUI.updateNextLevelButton();
         }
     });
+
+    //enables and disables sound
+    $(document).on('click', '#soundSwitch', function(event){
+      _level[_currentLevel].playSound = GUI.getSoundSwitch();
+      if(_level[_currentLevel].playSound){
+        _music.play();
+      }else{
+        _music.pause();
+      }
+    });
+
+    _music.addEventListener('ended', function() {
+      if(_level[_currentLevel].playSound){
+        this.currentTime = 0;
+        this.play();
+      }
+    }, false);
+
 
     //store functions to window
     window.intro = _intro;

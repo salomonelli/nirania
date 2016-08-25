@@ -16,6 +16,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         modalContentShopScreen: require('../templates/shopModalContent.mustache')
     };
 
+    var _audio = {
+        hitDiamond: new Audio('/sound/hitDiamond.mp3'),
+        hitObstacle: new Audio('/sound/hitObstacle.mp3')
+    };
+
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
@@ -33,6 +38,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         this.powerupActiveDuration = 0;
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
+        this.playSound = true;
     }
 
     /**
@@ -67,6 +73,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
                 // no collsion detection, if powerup 4 is active
                 if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
                 this.gameOver = true;
+                this.playAudio(_audio.hitObstacle);
                 return true;
             case "diamond":
                 this.hitDiamond(collObj);
@@ -85,8 +92,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         Protagonist.move(protagonist, position);
         if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
             var opacity = 0.3;
-            if(this.opacityHelper >= 0){
-              opacity = (0.7/149625)* (this.opacityHelper*this.opacityHelper)+0.3;
+            if (this.opacityHelper >= 0) {
+                opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
             }
             this.opacityHelper += speedMulti;
             Protagonist.makeGroupTransparent(protagonist, opacity);
@@ -125,12 +132,32 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     };
 
     /**
+     * plays sound if enabled
+     * @param {String} sound - URL of sound
+     */
+    Level.prototype.playAudio = function(sound) {
+        if (this.playSound) {
+            sound.currentTime = 0;
+            sound.play();
+        }
+    };
+
+    /**
+     * stop sound if enabled
+     * @param {String} sound - URL of sound
+     */
+    Level.prototype.stopAudio = function(sound){
+      if (this.playSound) sound.pause();
+    };
+
+    /**
      * increases score on diamond hit and removes it
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
     Level.prototype.hitDiamond = function(collObj) {
         var self = this;
         if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
+            self.playAudio(_audio.hitDiamond);
             self.lastDiamond = collObj;
             self.diamonds++;
             self.lastDiamond.mesh.visible = false;
@@ -144,9 +171,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     Level.prototype.showSuccessScreen = function() {
         var last = '';
         var canNotBePlayed, disableNextLevel, showOutro;
-        if (this.current === _levels.length){
-          last = "gone";
-          showOutro = "true";
+        if (this.current === _levels.length) {
+            last = "gone";
+            showOutro = "true";
         }
         if (!Level.canBePlayed(this.current + 1)) {
             canNotBePlayed = "true";
@@ -186,6 +213,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
         });
     };
 
+    /**
+     * updates shop screen
+     */
     Level.prototype.updateShopScreen = function() {
         var self = this;
         var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
@@ -240,7 +270,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             //managed level
             if (level <= Powerups.amount()) {
                 //powerup exists
-                if(level <= Powerups.amountOfBought()) return true;
+                if (level <= Powerups.amountOfBought()) return true;
                 return false;
             } else {
                 //no powerup exist
