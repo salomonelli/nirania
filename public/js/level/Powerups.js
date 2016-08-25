@@ -19,7 +19,7 @@ module.exports = (function(Cookies) {
         },
         {
             id: 4,
-            description: 'Father Dave is a doc. During a run you can activate him with <i class="fa fa-long-arrow-down" aria-hidden="true"></i>. That will make you <b>invulnerable</b> for a certain distance. ',
+            description: 'Father Dave is a doc. During a run you can activate him with <kbd><i class="fa fa-long-arrow-down" aria-hidden="true"></i></kbd>. That will make you <b>invulnerable</b> for a certain distance. ',
             diamonds: 40,
             img: '/img/powerups/invulnerable.jpg'
         }];

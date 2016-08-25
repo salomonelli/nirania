@@ -169,8 +169,15 @@ body .intro {
     }
 }
 
-
-
+.scores tr:first-child{
+  background: #e9dac0;
+}
+.scores tr:nth-child(2){
+  background: #d4c6ad;
+}
+.scores tbody{
+  border: none;
+}
 /*******INTRO********/
 
 body{

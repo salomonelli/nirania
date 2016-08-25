@@ -58452,6 +58452,13 @@ module.exports = (function($) {
       $('.scores .distance span').html(distance);
     };
 
+    /**
+     * fades in scoreboard
+     */
+    GUI.fadeInScoreboard = function(){
+      $('.scores').fadeIn(1000);
+    };
+
     return GUI;
 })(
     require('jquery')
@@ -59164,7 +59171,7 @@ module.exports = (function(Cookies) {
         },
         {
             id: 4,
-            description: 'Father Dave is a doc. During a run you can activate him with <i class="fa fa-long-arrow-down" aria-hidden="true"></i>. That will make you <b>invulnerable</b> for a certain distance. ',
+            description: 'Father Dave is a doc. During a run you can activate him with <kbd><i class="fa fa-long-arrow-down" aria-hidden="true"></i></kbd>. That will make you <b>invulnerable</b> for a certain distance. ',
             diamonds: 40,
             img: '/img/powerups/invulnerable.jpg'
         }];
@@ -63933,7 +63940,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
                 });
             },
             function startingAnimation(next) {
-              var fadeTime = 1000;
+                var fadeTime = 1000;
                 GUI.startingAnimationFadeOut(fadeTime);
                 setTimeout(function() {
                     _mainScene.startingAnimation(next);
@@ -63983,6 +63990,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      * @param {Function} cb - callback function called when level is done
      */
     function _startLevel(cb) {
+        GUI.fadeInScoreboard();
         Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
         //start moving way

@@ -142,6 +142,13 @@ module.exports = (function($) {
       $('.scores .distance span').html(distance);
     };
 
+    /**
+     * fades in scoreboard
+     */
+    GUI.fadeInScoreboard = function(){
+      $('.scores').fadeIn(1000);
+    };
+
     return GUI;
 })(
     require('jquery')

@@ -37,7 +37,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
                 });
             },
             function startingAnimation(next) {
-              var fadeTime = 1000;
+                var fadeTime = 1000;
                 GUI.startingAnimationFadeOut(fadeTime);
                 setTimeout(function() {
                     _mainScene.startingAnimation(next);
@@ -87,6 +87,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
      * @param {Function} cb - callback function called when level is done
      */
     function _startLevel(cb) {
+        GUI.fadeInScoreboard();
         Keybindings.bind('keydown', _mainScene, Scene.startMovingProtagonist);
         Keybindings.bind('keyup', _mainScene, Scene.stopMovingProtagonist);
         //start moving way
