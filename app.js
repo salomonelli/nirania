@@ -1,14 +1,10 @@
-/**
- * Created by sarasteiert on 05/08/16.
- */
+//this file is responsible for the node.js express server and routes
 var express = require('express');
 var mustacheExpress = require('mustache-express');
 var path = require('path');
 var app = express();
 
 var Lang = require('./i18n/Lang');
-
-console.log(__dirname);
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('mustache', require('hogan-express'));
@@ -67,5 +63,5 @@ app.get('/de-outro', function(req, res) {
 });
 
 app.listen(3000, '0.0.0.0', function() {
-    console.log('Listening on localhost:3000');
+    console.log('Listening on localhost:3000!');
 });

@@ -37,7 +37,7 @@ module.exports = (function (COLOR, THREE) {
      */
     Leg.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/leg.json', function (geometry, materials) {
+        loader.load('/js/blender/leg.json', function (geometry, materials) {
             Leg.geometry = geometry;
             cb();
         });

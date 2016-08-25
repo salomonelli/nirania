@@ -30,14 +30,14 @@ module.exports = (function (COLOR, THREE) {
     Head.prototype.addToGroup = function (group) {
         group.add(this.mesh);
     };
-    
+
     /**
      * loads the head from json file (blender)
      * @param {function} cb callback
      */
     Head.init = function (cb) {
         var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/type1/head.json', function (geometry, materials) {
+        loader.load('/js/blender/head.json', function (geometry, materials) {
             Head.geometry = geometry;
             cb();
         });

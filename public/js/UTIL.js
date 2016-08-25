@@ -3,9 +3,7 @@ module.exports = (function(){
      * Contains functions that can be used anywhere
      * @constructor
      */
-    function UTIL(){
-
-    }
+    function UTIL(){}
 
     /**
      * converts degrees to radians

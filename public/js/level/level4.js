@@ -10,58 +10,6 @@ module.exports = (function(UTIL, COLOR){
             length: 5230,
             color: COLOR.palette[3].way,
             obstacles : [
-              {
-                    type: 'cone',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: coneColor,
-                    position: {
-                        distance: 400,
-                        angle: 340
-                    }
-                },
-                {
-                      type: 'cone',
-                      size: {
-                          width: 25,
-                          length: 25,
-                          height: 25
-                      },
-                      color: coneColor,
-                      position: {
-                          distance: 900,
-                          angle: 340
-                      }
-                  },
-                  {
-                        type: 'cone',
-                        size: {
-                            width: 25,
-                            length: 25,
-                            height: 25
-                        },
-                        color: coneColor,
-                        position: {
-                            distance: 700,
-                            angle: 340
-                        }
-                    },
-                    {
-                          type: 'cone',
-                          size: {
-                              width: 25,
-                              length: 25,
-                              height: 25
-                          },
-                          color: coneColor,
-                          position: {
-                              distance: 1000,
-                              angle: 340
-                          }
-                      },
                 {
                     type: 'box',
                     size: {
@@ -556,46 +504,7 @@ module.exports = (function(UTIL, COLOR){
                         angle: 333
                     }
                 },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 100,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3050,
-                        angle: 138
-                    }
-                },
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3100,
-                        angle: 43
-                    }
-                },
 
-                {
-                    type: 'box',
-                    size: {
-                        width: 25,
-                        length: 25,
-                        height: 25
-                    },
-                    color: boxColor,
-                    position: {
-                        distance: 3100,
-                        angle: 43
-                    }
-                },
 
 
 
@@ -1281,8 +1190,7 @@ module.exports = (function(UTIL, COLOR){
                     }
                 },
 
-
-
+                //End of Diamonds
 
 
 
@@ -1297,42 +1205,42 @@ module.exports = (function(UTIL, COLOR){
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(500,700)*2
+                        distance: UTIL.randomIntInRange(500,600)*2
                     }
                 },
                 {
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(800,900)*2
+                        distance: UTIL.randomIntInRange(700,800)*2
                     }
                 },
                 {
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(1050,1200)*2
+                        distance: UTIL.randomIntInRange(1050,1060)*2
                     }
                 },
                 {
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(1300,1400)*2
+                        distance: UTIL.randomIntInRange(1300,1320)*2
                     }
                 },
                 {
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(1500,1550)*2
+                        distance: UTIL.randomIntInRange(1450,1500)*2
                     }
                 },
                 {
                     type: 'ring',
                     color: ringColor,
                     position: {
-                        distance: UTIL.randomIntInRange(1650,1750)*2
+                        distance: UTIL.randomIntInRange(1600,1625)*2
                     }
                 },
                 {
@@ -1348,9 +1256,114 @@ module.exports = (function(UTIL, COLOR){
                     position: {
                         distance: UTIL.randomIntInRange(2250,2300)*2
                     }
+                },
+                {
+                    type: 'ring',
+                    color: ringColor,
+                    position: {
+                        distance: UTIL.randomIntInRange(2400,2450)*2
+                    }
+                },
+
+                // End of Rings
+
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 700,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 1100,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 1500,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 1900,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 2300,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 2700,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 3100,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 3500,
+                        angle: 270
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 3900,
+                        angle: 0
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 4300,
+                        angle: 90
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 4700,
+                        angle: 180
+                    }
+                },
+                {
+                    type: 'cone',
+                    color: coneColor,
+                    position: {
+                        distance: 5100,
+                        angle: 270
+                    }
                 }
-
-
+                //End of Cones
 
             ]
         }
