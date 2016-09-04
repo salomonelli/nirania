@@ -3,4 +3,4 @@ node_modules/
 nohup.out
 npm-debug.log
 server_nohup.out
-gen/
+.DS_Store
