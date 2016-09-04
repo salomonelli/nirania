@@ -9,6 +9,7 @@ docker stop $NAME
 docker rm $NAME
 docker rmi --force $NAME
 docker build -t $NAME .
-docker run -itd -p 18787:80 \
+docker run -itd -p 18787:18787 \
+--restart=always \
 -v $SCRIPTPATH/app:/app \
 --name $NAME $NAME

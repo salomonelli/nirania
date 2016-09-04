@@ -4,9 +4,14 @@ RUN apt-get update && apt-get upgrade -y
 RUN apt-get install wget -y
 RUN apt-get install curl -y
 
-#install nodejs and npm
-RUN curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -
-RUN apt-get install -y nodejs
+## nodejs v 4.0##
+RUN cd /usr/local
+RUN wget https://nodejs.org/dist/v4.4.7/node-v4.4.7-linux-x64.tar.gz -O nodejs.tar.gz
+RUN tar -C /usr/local --strip-components 1 -xzf nodejs.tar.gz
+## symlinks
+RUN ls -l /usr/local/bin/node
+RUN ls -l /usr/local/bin/npm
+RUN ln -s `which node` /usr/bin/nodejs
 
 COPY entrypoint.bash /entrypoint.bash
 ENTRYPOINT bash entrypoint.bash
