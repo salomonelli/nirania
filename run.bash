@@ -7,7 +7,7 @@ echo $SCRIPTPATH
 NAME="nirania"
 docker stop $NAME
 docker rm $NAME
-docker rmi --force $NAME
+docker rmi $NAME
 docker build -t $NAME .
 docker run -itd -p 18787:18787 \
 --restart=always \
