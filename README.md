@@ -4,16 +4,6 @@ Nirania is a game based on JavaScript using Three.js. This game was created for 
 
 ## Getting Started
 
-Node needs to be installed. Do the following steps after cloning this repository:
+Docker needs to be installed. Run the "run.bash" on Linux and Max OSX to start the application.
 
-1. Open terminal in directory
-
-2. Run 'npm install'
-
-3. Start application with 'node app.js'
-
-
-The game will be running at localhost:3000.
-
-
-
+(Check IP of container with "docker inspect nirania".)
