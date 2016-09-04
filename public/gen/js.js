@@ -15277,18 +15277,23 @@ return jQuery;
 
 },{}],4:[function(require,module,exports){
 /*!
- * JavaScript Cookie v2.1.2
+ * JavaScript Cookie v2.1.3
  * https://github.com/js-cookie/js-cookie
  *
  * Copyright 2006, 2015 Klaus Hartl & Fagner Brack
  * Released under the MIT license
  */
 ;(function (factory) {
+	var registeredInModuleLoader = false;
 	if (typeof define === 'function' && define.amd) {
 		define(factory);
-	} else if (typeof exports === 'object') {
+		registeredInModuleLoader = true;
+	}
+	if (typeof exports === 'object') {
 		module.exports = factory();
-	} else {
+		registeredInModuleLoader = true;
+	}
+	if (!registeredInModuleLoader) {
 		var OldCookies = window.Cookies;
 		var api = window.Cookies = factory();
 		api.noConflict = function () {
@@ -15349,9 +15354,9 @@ return jQuery;
 
 				return (document.cookie = [
 					key, '=', value,
-					attributes.expires && '; expires=' + attributes.expires.toUTCString(), // use expires attribute, max-age is not supported by IE
-					attributes.path    && '; path=' + attributes.path,
-					attributes.domain  && '; domain=' + attributes.domain,
+					attributes.expires ? '; expires=' + attributes.expires.toUTCString() : '', // use expires attribute, max-age is not supported by IE
+					attributes.path ? '; path=' + attributes.path : '',
+					attributes.domain ? '; domain=' + attributes.domain : '',
 					attributes.secure ? '; secure' : ''
 				].join(''));
 			}
@@ -15405,7 +15410,7 @@ return jQuery;
 
 		api.set = api;
 		api.get = function (key) {
-			return api(key);
+			return api.call(api, key);
 		};
 		api.getJSON = function () {
 			return api.apply({
@@ -15440,25 +15445,40 @@ var process = module.exports = {};
 var cachedSetTimeout;
 var cachedClearTimeout;
 
+function defaultSetTimout() {
+    throw new Error('setTimeout has not been defined');
+}
+function defaultClearTimeout () {
+    throw new Error('clearTimeout has not been defined');
+}
 (function () {
     try {
-        cachedSetTimeout = setTimeout;
-    } catch (e) {
-        cachedSetTimeout = function () {
-            throw new Error('setTimeout is not defined');
+        if (typeof setTimeout === 'function') {
+            cachedSetTimeout = setTimeout;
+        } else {
+            cachedSetTimeout = defaultSetTimout;
         }
+    } catch (e) {
+        cachedSetTimeout = defaultSetTimout;
     }
     try {
-        cachedClearTimeout = clearTimeout;
-    } catch (e) {
-        cachedClearTimeout = function () {
-            throw new Error('clearTimeout is not defined');
+        if (typeof clearTimeout === 'function') {
+            cachedClearTimeout = clearTimeout;
+        } else {
+            cachedClearTimeout = defaultClearTimeout;
         }
+    } catch (e) {
+        cachedClearTimeout = defaultClearTimeout;
     }
 } ())
 function runTimeout(fun) {
     if (cachedSetTimeout === setTimeout) {
         //normal enviroments in sane situations
+        return setTimeout(fun, 0);
+    }
+    // if setTimeout wasn't available but was latter defined
+    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+        cachedSetTimeout = setTimeout;
         return setTimeout(fun, 0);
     }
     try {
@@ -15479,6 +15499,11 @@ function runTimeout(fun) {
 function runClearTimeout(marker) {
     if (cachedClearTimeout === clearTimeout) {
         //normal enviroments in sane situations
+        return clearTimeout(marker);
+    }
+    // if clearTimeout wasn't available but was latter defined
+    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+        cachedClearTimeout = clearTimeout;
         return clearTimeout(marker);
     }
     try {
@@ -58496,6 +58521,111 @@ module.exports = (function($) {
 );
 
 },{"jquery":3}],12:[function(require,module,exports){
+module.exports = (function (THREE) {
+
+    /**
+     * Represents Particles
+     * @param {number} minX - minimum x value
+     * @param {number} maxX -maximum x value
+     * @param {number} minY - minimum y value
+     * @param {number} maxY - maximum y value
+     * @param {number} minZ - minimum z value
+     * @param {number} maxZ - maximum z value
+     * @param {number} amount - amount of particles distributed in given space
+     * @constructor
+     */
+    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
+        this.group = new THREE.Group();
+        this.particle = null;
+        this.amount = amount;
+        this.x = {
+            min: minX,
+            max: maxX
+        };
+        this.y = {
+            min: minY,
+            max: maxY
+        };
+        this.z = {
+            min: minZ,
+            max: maxZ
+        };
+        this.init();
+    }
+
+    /**
+     * adds the particles to the mainScene
+     */
+    Particles.prototype.init = function () {
+        var self = this;
+        for (var i = 0; i < self.amount; i++) {
+            self.particle = new THREE.Mesh(
+                new THREE.SphereGeometry(1, 32, 32),
+                new THREE.MeshBasicMaterial()
+            );
+            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
+            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
+            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
+            self.group.add(self.particle);
+        }
+    };
+
+    /**
+     * animates the particles in the mainScene
+     */
+    Particles.prototype.animate = function () {
+        this.group.rotation.z += 0.0004;
+    };
+
+    /**
+     * rotates the way around the z axis according to given angle
+     * @param {number} angle
+     */
+    Particles.prototype.rotate = function (angle) {
+        this.group.rotation.z += angle;
+    };
+
+    /**
+     * positions particles according to given coordinates
+     * @param {number} x - x position of particles group
+     * @param {number} y - y position of particles group
+     * @param {number} z - z position of particles group
+     */
+    Particles.prototype.position = function (x, y, z) {
+        this.group.position.set(x, y, z);
+    };
+
+    /**
+     * adds particles to given scene
+     * @param {THREE.Scene} scene - scene to which the particles will be added
+     */
+    Particles.prototype.addToScene = function (scene) {
+        scene.add(this.group);
+    };
+
+    /**
+     * removes particles from given scene
+     * @param {THREE.Scene} scene - scene from which the particles will be removed
+     */
+    Particles.prototype.removeFromScene = function (scene) {
+        scene.remove(this.group);
+    };
+
+    /**
+     * calculates random integer from interval
+     * @param {number} min
+     * @param {number} max
+     * @returns {number}
+     */
+    Particles.randomIntFromInterval = function (min, max) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    };
+
+    return Particles;
+})(
+    require('three')
+);
+},{"three":7}],13:[function(require,module,exports){
 module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
 
     /**
@@ -58773,7 +58903,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     require('js-cookie')
 );
 
-},{"./COLOR":9,"./Particles":23,"./protagonist/Protagonist":28,"async":1,"js-cookie":4,"three":7,"tween.js":8}],13:[function(require,module,exports){
+},{"./COLOR":9,"./Particles":12,"./protagonist/Protagonist":28,"async":1,"js-cookie":4,"three":7,"tween.js":8}],14:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _audio = {
         hitDiamond: new Audio('/sound/hitDiamond.mp3'),
@@ -58809,6 +58939,7 @@ module.exports = (function(Cookies) {
         _setMusicSettings(true);
         return true;
       }
+      console.log(Cookies.get('sound'));
       return false;
     };
 
@@ -58826,7 +58957,7 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":4}],14:[function(require,module,exports){
+},{"js-cookie":4}],15:[function(require,module,exports){
 module.exports = (function(){
     /**
      * Contains functions that can be used anywhere
@@ -58881,7 +59012,7 @@ module.exports = (function(){
     return UTIL;
 })();
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI, Sound) {
 
     var _levels = [
@@ -59149,7 +59280,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     require('../Sound')
 );
 
-},{"../GUI":10,"../Sound":13,"../protagonist/CollisionDetector":25,"../protagonist/Protagonist":28,"../templates/gameover.mustache":29,"../templates/shop.mustache":30,"../templates/shopModalContent.mustache":31,"../templates/success.mustache":32,"../way/Way":33,"../way/obstacles/Obstacle":37,"./Powerups":16,"./level1":17,"./level2":18,"./level3":19,"./level4":20,"./level5":21,"jquery":3,"js-cookie":4}],16:[function(require,module,exports){
+},{"../GUI":10,"../Sound":14,"../protagonist/CollisionDetector":25,"../protagonist/Protagonist":28,"../templates/gameover.mustache":29,"../templates/shop.mustache":30,"../templates/shopModalContent.mustache":31,"../templates/success.mustache":32,"../way/Way":33,"../way/obstacles/Obstacle":37,"./Powerups":17,"./level1":18,"./level2":19,"./level3":20,"./level4":21,"./level5":22,"jquery":3,"js-cookie":4}],17:[function(require,module,exports){
 module.exports = (function(Cookies) {
     var _powerups = [{
             id: 1,
@@ -59246,7 +59377,7 @@ module.exports = (function(Cookies) {
   require('js-cookie')
 );
 
-},{"js-cookie":4}],17:[function(require,module,exports){
+},{"js-cookie":4}],18:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[1].box;
     var level = {
@@ -59735,7 +59866,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../UTIL'),
     require('../COLOR'));
 
-},{"../COLOR":9,"../UTIL":14}],18:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":15}],19:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR) {
     var boxColor = COLOR.palette[0].box;
     var ringColor = COLOR.palette[0].ring;
@@ -60497,7 +60628,7 @@ module.exports = (function(UTIL, COLOR) {
     require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":14}],19:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":15}],20:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[2].box;
   var ringColor = COLOR.palette[2].ring;
@@ -61782,7 +61913,7 @@ module.exports = (function(UTIL, COLOR){
 require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":14}],20:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":15}],21:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
   var boxColor = COLOR.palette[3].box;
   var ringColor = COLOR.palette[3].ring;
@@ -63469,7 +63600,7 @@ module.exports = (function(UTIL, COLOR){
   require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":14}],21:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":15}],22:[function(require,module,exports){
 module.exports = (function(UTIL, COLOR){
     var boxColor = COLOR.palette[4].box;
     var ringColor = COLOR.palette[4].ring;
@@ -64628,7 +64759,7 @@ module.exports = (function(UTIL, COLOR){
     require('../COLOR')
 );
 
-},{"../COLOR":9,"../UTIL":14}],22:[function(require,module,exports){
+},{"../COLOR":9,"../UTIL":15}],23:[function(require,module,exports){
 //noinspection JSUnresolvedFunction
 module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindings, TWEEN, Powerups, GUI, Cookies) {
     "use strict";
@@ -64876,112 +65007,7 @@ module.exports = (function(Scene, $, THREE, async, Protagonist, Level, Keybindin
     require('js-cookie')
 );
 
-},{"./GUI":10,"./Keybindings":11,"./Scene":12,"./level/Level":15,"./level/Powerups":16,"./protagonist/Protagonist":28,"async":1,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],23:[function(require,module,exports){
-module.exports = (function (THREE) {
-
-    /**
-     * Represents Particles
-     * @param {number} minX - minimum x value
-     * @param {number} maxX -maximum x value
-     * @param {number} minY - minimum y value
-     * @param {number} maxY - maximum y value
-     * @param {number} minZ - minimum z value
-     * @param {number} maxZ - maximum z value
-     * @param {number} amount - amount of particles distributed in given space
-     * @constructor
-     */
-    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
-        this.group = new THREE.Group();
-        this.particle = null;
-        this.amount = amount;
-        this.x = {
-            min: minX,
-            max: maxX
-        };
-        this.y = {
-            min: minY,
-            max: maxY
-        };
-        this.z = {
-            min: minZ,
-            max: maxZ
-        };
-        this.init();
-    }
-
-    /**
-     * adds the particles to the mainScene
-     */
-    Particles.prototype.init = function () {
-        var self = this;
-        for (var i = 0; i < self.amount; i++) {
-            self.particle = new THREE.Mesh(
-                new THREE.SphereGeometry(1, 32, 32),
-                new THREE.MeshBasicMaterial()
-            );
-            self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
-            self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
-            self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
-            self.group.add(self.particle);
-        }
-    };
-
-    /**
-     * animates the particles in the mainScene
-     */
-    Particles.prototype.animate = function () {
-        this.group.rotation.z += 0.0004;
-    };
-
-    /**
-     * rotates the way around the z axis according to given angle
-     * @param {number} angle
-     */
-    Particles.prototype.rotate = function (angle) {
-        this.group.rotation.z += angle;
-    };
-
-    /**
-     * positions particles according to given coordinates
-     * @param {number} x - x position of particles group
-     * @param {number} y - y position of particles group
-     * @param {number} z - z position of particles group
-     */
-    Particles.prototype.position = function (x, y, z) {
-        this.group.position.set(x, y, z);
-    };
-
-    /**
-     * adds particles to given scene
-     * @param {THREE.Scene} scene - scene to which the particles will be added
-     */
-    Particles.prototype.addToScene = function (scene) {
-        scene.add(this.group);
-    };
-
-    /**
-     * removes particles from given scene
-     * @param {THREE.Scene} scene - scene from which the particles will be removed
-     */
-    Particles.prototype.removeFromScene = function (scene) {
-        scene.remove(this.group);
-    };
-
-    /**
-     * calculates random integer from interval
-     * @param {number} min
-     * @param {number} max
-     * @returns {number}
-     */
-    Particles.randomIntFromInterval = function (min, max) {
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    };
-
-    return Particles;
-})(
-    require('three')
-);
-},{"three":7}],24:[function(require,module,exports){
+},{"./GUI":10,"./Keybindings":11,"./Scene":13,"./level/Level":16,"./level/Powerups":17,"./protagonist/Protagonist":28,"async":1,"jquery":3,"js-cookie":4,"three":7,"tween.js":8}],24:[function(require,module,exports){
 module.exports = (function(COLOR, THREE){
 
     /**
@@ -65567,7 +65593,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
     require('../GUI')
 );
 
-},{"../COLOR":9,"../GUI":10,"../UTIL":14,"./obstacles/Obstacle":37,"js-cookie":4,"random-boolean":6,"three":7}],34:[function(require,module,exports){
+},{"../COLOR":9,"../GUI":10,"../UTIL":15,"./obstacles/Obstacle":37,"js-cookie":4,"random-boolean":6,"three":7}],34:[function(require,module,exports){
 module.exports=(function(THREE, UTIL){
 
     /**
@@ -65631,7 +65657,7 @@ module.exports=(function(THREE, UTIL){
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"three":7}],35:[function(require,module,exports){
+},{"../../UTIL":15,"three":7}],35:[function(require,module,exports){
 module.exports = (function(THREE, UTIL) {
     var _height = 30;
     var _radius = 15;
@@ -65697,7 +65723,7 @@ module.exports = (function(THREE, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"three":7}],36:[function(require,module,exports){
+},{"../../UTIL":15,"three":7}],36:[function(require,module,exports){
 module.exports = (function(THREE, UTIL, Cookies) {
     var _size = 10;
     var _heightFromWay = 20;
@@ -65771,7 +65797,7 @@ module.exports = (function(THREE, UTIL, Cookies) {
     require('js-cookie')
 );
 
-},{"../../UTIL":14,"js-cookie":4,"three":7}],37:[function(require,module,exports){
+},{"../../UTIL":15,"js-cookie":4,"three":7}],37:[function(require,module,exports){
 module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     var _obstacleTypes = {
         box: Box,
@@ -65861,7 +65887,7 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
     require('../../UTIL')
 );
 
-},{"../../UTIL":14,"./Box":34,"./Cone":35,"./Diamond":36,"./Ring":38}],38:[function(require,module,exports){
+},{"../../UTIL":15,"./Box":34,"./Cone":35,"./Diamond":36,"./Ring":38}],38:[function(require,module,exports){
 module.exports = (function () {
     //radius of all rings (has to be larger than radius of way!)
     var _radius = 100;
@@ -65914,4 +65940,4 @@ module.exports = (function () {
     return Ring;
 })();
 
-},{}]},{},[22]);
+},{}]},{},[23]);
