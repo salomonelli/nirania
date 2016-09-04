@@ -2,6 +2,8 @@
 
 Nirania is a game based on JavaScript using Three.js. This game was created for a university project (DHBW Villingen-Schwenningen, Germany).
 
+Play game: http://nirania.sarasteiert.com
+
 ## Getting Started
 
 Docker needs to be installed. Run the "run.bash" on Linux and Max OSX to start the application.
