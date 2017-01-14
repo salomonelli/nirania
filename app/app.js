@@ -4,6 +4,7 @@ var mustacheExpress = require('mustache-express');
 var path = require('path');
 var app = express();
 
+
 var Lang = require('./i18n/Lang');
 
 app.set('views', path.join(__dirname, 'views'));
