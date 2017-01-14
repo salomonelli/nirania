@@ -1,11 +1,19 @@
-module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
+import {
+    Body
+} from './Body';
+import {
+    Head
+} from './Head';
+import {
+    Leg
+} from './Leg';
+const THREE = require('three');
+const TWEEN = require('tween.js');
+const Cookies = require('js-cookie');
 
-    /**
-     * Represents Protagonist
-     * @constructor
-     */
-    function Protagonist() {
-        this.group = new THREE.Object3D();
+export class Protagonist {
+    constructor() {
+        this.object3D = new THREE.Object3D();
         this.body = new Body();
         this.head = new Head();
         this.left = {
@@ -15,34 +23,41 @@ module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
             leg: new Leg()
         };
         this.groupBodyParts();
-        this.group.scale.x = this.group.scale.y = this.group.scale.z = 10;
+        this.scaleBodyParts();
         this.isJumping = false;
+    }
+
+    /**
+     * scales body parts to proper setSize
+     */
+    scaleBodyParts(){
+      this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
     }
 
     /**
      * groups the body parts of protagonist and positions them
      */
-    Protagonist.prototype.groupBodyParts = function() {
+    groupBodyParts() {
         this.body.position(0, 0, 0);
-        this.body.addToGroup(this.group);
+        this.body.addToGroup(this.object3D);
         this.head.position(0, 0.1, 0);
-        this.head.addToGroup(this.group);
+        this.head.addToGroup(this.object3D);
         this.right.leg.position(0.5, 0, 0);
-        this.right.leg.addToGroup(this.group);
+        this.right.leg.addToGroup(this.object3D);
         this.left.leg.position(0, 0, 0);
-        this.left.leg.addToGroup(this.group);
-    };
+        this.left.leg.addToGroup(this.object3D);
+    }
 
     /**
      * Makes protagonist jump a given height
      */
-    Protagonist.prototype.jump = function() {
-        var height = 40;
+    jump() {
+        let height = 40;
         if (Cookies.get('powerup-2') == "bought") height = 70;
-        var self = this;
+        let self = this;
         if (!self.isJumping) {
             self.isJumping = true;
-            var tween = new TWEEN
+            let tween = new TWEEN
                 .Tween({
                     jump: 0
                 })
@@ -58,7 +73,7 @@ module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
             });
         }
 
-    };
+    }
 
     /**
      * positions protagonist according to given coordinates
@@ -66,121 +81,103 @@ module.exports = (function(Head, Body, Leg, THREE, TWEEN, Cookies) {
      * @param {number} y - y position of particles group
      * @param {number} z - z position of particles group
      */
-    Protagonist.prototype.position = function(x, y, z) {
-        this.group.position.set(x, y, z);
-    };
+    position(x, y, z) {
+        this.object3D.position.set(x, y, z);
+    }
 
     /**
      * rotates the protagonist according to axis and angle
      * @param {string} axis - "x", "y" or "z"
      * @param {number} angle - in radians
      */
-    Protagonist.prototype.rotate = function(axis, angle) {
+    rotate(axis, angle) {
         switch (axis) {
             case 'x':
-                this.group.rotateX(angle);
+                this.object3D.rotateX(angle);
                 break;
             case 'y':
-                this.group.rotateY(angle);
+                this.object3D.rotateY(angle);
                 break;
             case 'z':
-                this.group.rotateZ(angle);
+                this.object3D.rotateZ(angle);
                 break;
         }
-    };
+    }
 
     /**
      * adds protagonist to given scene
      * @param {THREE.Scene} scene - scene to which the protagonist will be added
      */
-    Protagonist.prototype.addToScene = function(scene) {
-        scene.add(this.group);
-    };
+    addToScene(scene) {
+        scene.add(this.object3D);
+    }
 
     /**
      * returns the current position of the Protagonist
      * @returns {Object}
      */
-    Protagonist.prototype.getPosition = function() {
-        return this.group.position;
-    };
+    get currentPosition() {
+        return this.object3D.position;
+    }
 
     /**
      * decreases the position of the protagonist according to given axis
      * @param {string} axis - "x", "y" or "z"
      */
-    Protagonist.prototype.decreasePosition = function(axis) {
+    decreasePosition(axis) {
         switch (axis) {
             case "x":
-                this.group.position.x--;
+                this.object3D.position.x--;
                 break;
             case "y":
-                this.group.position.y--;
+                this.object3D.position.y--;
                 break;
             case "z":
-                this.group.position.z--;
+                this.object3D.position.z--;
                 break;
         }
-    };
+    }
 
     /**
      * returns the group of meshes of the protagonist
      * @returns {THREE.Object3D}
      */
-    Protagonist.prototype.returnGroup = function() {
-        return this.group;
-    };
-
-    /**
-     * loads blender files for protagonist
-     * @param {function} cb
-     */
-    Protagonist.init = (function(cb) {
-        var initUs = [
-            Leg,
-            Body,
-            Head
-        ];
-        var initCount = initUs.length;
-        initUs.forEach(function(initMe) {
-            initMe.init(function() {
-                initCount--;
-                if (initCount === 0) {
-                    cb();
-                }
-            });
-        });
-    });
+    get group() {
+        return this.object3D;
+    }
 
     /**
      * changes opacity of protagonist
      * @param {THREE.Object3D} group - contains meshes of protagonist
      * @param {number} opacity - from 0 to 1
      */
-    Protagonist.makeGroupTransparent = function(group, opacity) {
+    static makeGroupTransparent(group, opacity) {
         group.children.forEach(function(parts) {
             parts.material.transparent = true;
             parts.material.opacity = opacity;
         });
-    };
+    }
 
     /**
      * moves group of protagonist
      * @param {THREE.Object3D} group - contains meshes of protagonist
      *
      */
-    Protagonist.move = function(group, position) {
+    static move(group, position) {
         group.children[0].position.x = position * -0.05;
         group.children[3].position.z = position * 1;
         group.children[2].position.z = position * -1;
-    };
+    }
 
-    return Protagonist;
-})(
-    require('./Head'),
-    require('./Body'),
-    require('./Leg'),
-    require('three'),
-    require('tween.js'),
-    require('js-cookie')
-);
+    /**
+     * loads blender files for protagonist
+     * @param {Promise} promise
+     */
+    static init() {
+        return Promise.all([
+            Leg.init(),
+            Head.init(),
+            Body.init()
+        ]);
+    };
+}

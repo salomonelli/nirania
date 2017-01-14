@@ -5,17 +5,13 @@
         <br>
         <p> Diamonds: {{score}}</p>
         <br>
-        <a href="/game#{{level}}" class="button reload">
+        <a href="/#{{level}}" class="button reload">
             <i class="fa fa-repeat" aria-hidden="true"></i> Run again
         </a>
-        <a href="/game#{{next}}" class="button success reload {{last}} {{disableNextLevel}}">
+        <a href="/#{{next}}" class="button success reload {{last}} {{disableNextLevel}}">
             <i class="fa fa-check" aria-hidden="true"></i> Next Level
         </a>
-        {{#showOutro}}
-            <a href="/outro" class="button success reload">
-            Free the world!
         </a>
-        {{/showOutro}}
         <a data-open="shopModal" class="button">
             Free family members
         </a>

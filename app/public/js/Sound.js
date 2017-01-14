@@ -1,51 +1,47 @@
-module.exports = (function(Cookies) {
-    var _audio = {
-        hitDiamond: new Audio('/sound/hitDiamond.mp3'),
-        hitObstacle: new Audio('/sound/hitObstacle.mp3')
-    };
+let Cookies = require('js-cookie');
 
-    function Sound() {}
+const audio = {
+    hitDiamond: new Audio('/sound/hitDiamond.mp3'),
+    hitObstacle: new Audio('/sound/hitObstacle.mp3')
+};
 
-    /**
-     * plays sound
-     * @param {String} sound - name of the sound
-     */
-    Sound.play = function(sound) {
-        _audio[sound].currentTime = 0;
-        _audio[sound].play();
-    };
+export let Sound = {
+  /**
+   * plays sound
+   * @param {String} sound - name of the sound
+   */
+  play: function(sound) {
+      audio[sound].currentTime = 0;
+      audio[sound].play();
+  },
 
-    /**
-     * stops sound
-     * @param {String} sound - name of the sound
-     */
-    Sound.stop = function(sound){
-      _audio[sound].stop();
-    };
+  /**
+   * stops sound
+   * @param {String} sound - name of the sound
+   */
+  stop: function(sound){
+    audio[sound].stop();
+  },
 
-    /**
-     * checks in cookies whether sound is on
-     * @returns {boolean} - true if sound is on
-     */
-    Sound.isMusicOn = function(){
-      if(Cookies.get('sound') === "on" ) return true;
-      if(Cookies.get('sound') === "undefined"){
-        _setMusicSettings(true);
-        return true;
-      }
-      return false;
-    };
+  /**
+   * checks in cookies whether sound is on
+   * @returns {boolean} - true if sound is on
+   */
+  isMusicOn: function(){
+    if(Cookies.get('sound') === "on" ) return true;
+    if(Cookies.get('sound') === "undefined"){
+      _setMusicSettings(true);
+      return true;
+    }
+    return false;
+  },
 
-    /**
-     * sets music settings in Cookies
-     * @param {boolean} isOn
-     */
-    Sound.setMusicSettings = function(isOn){
-      if (isOn) Cookies.set('sound', 'on');
-      else Cookies.set('sound', 'off');
-    };
-
-    return Sound;
-})(
-  require('js-cookie')
-);
+  /**
+   * sets music settings in Cookies
+   * @param {boolean} isOn
+   */
+  setMusicSettings: function(isOn){
+    if (isOn) Cookies.set('sound', 'on');
+    else Cookies.set('sound', 'off');
+  }
+}

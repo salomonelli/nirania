@@ -1,4 +1,9 @@
-module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
+import { Box } from './Box';
+import { Cone } from './Cone';
+import { Diamond } from './Diamond';
+import { Ring } from './Ring';
+import { Util } from '../../Util';
+module.exports = (function() {
     var _obstacleTypes = {
         box: Box,
         ring: Ring,
@@ -58,11 +63,11 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
         if (direction) this.angle += 1;
         else this.angle -= 1;
 
-        this.angle = UTIL.normalizeAngle(this.angle);
+        this.angle = Util.normalizeAngle(this.angle);
 
         var radius = 80 + 15;
         var angle = -(this.angle -90);
-        angle  = UTIL.convertDegreesToRadians(angle);
+        angle  = Util.convertDegreesToRadians(angle);
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
         this.mesh.rotation.y = angle;
@@ -72,17 +77,11 @@ module.exports = (function(Box, Ring, Diamond, Cone, UTIL) {
         //neue angle ist this.angle
         var a = radius - 0.5 * 30;
         var b = 30 * 0.5;
-        var angleRight = UTIL.convertRadiansToDegrees(Math.atan(b / a));
+        var angleRight = Util.convertRadiansToDegrees(Math.atan(b / a));
         this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = UTIL.normalizeAngle(this.angle - angleRight);
-        this.collisionData.angle.max = UTIL.normalizeAngle(this.angle + angleRight);
+        this.collisionData.angle.min = Util.normalizeAngle(this.angle - angleRight);
+        this.collisionData.angle.max = Util.normalizeAngle(this.angle + angleRight);
     };
 
     return Obstacle;
-})(
-    require('./Box'),
-    require('./Ring'),
-    require('./Diamond'),
-    require('./Cone'),
-    require('../../UTIL')
-);
+})();

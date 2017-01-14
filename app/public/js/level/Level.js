@@ -1,26 +1,39 @@
-module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerups, Protagonist, GUI, Sound) {
+import {
+    Protagonist
+} from '../protagonist/Protagonist';
+import { Powerups } from './Powerups';
+import { Way } from '../way/Way';
+import { CollisionDetector } from '../protagonist/CollisionDetector';
+const Obstacle = require('../way/obstacles/Obstacle');
+const $ = require('jquery');
+const Cookies = require('js-cookie');
+import {GUI }  from '../GUI';
+import { Sound } from '../Sound';
 
-    var _levels = [
-        require('./level1'),
-        require('./level2'),
-        require('./level3'),
-        require('./level4'),
-        require('./level5')
-    ];
+import { level1 } from './level1';
+import { level2 } from './level2';
+import { level3 } from './level3';
+import { level4 } from './level4';
+import { level5 } from './level5';
 
-    var _templates = {
-        successScreen: require('../templates/success.mustache'),
-        gameoverScreen: require('../templates/gameover.mustache'),
-        shopScreen: require('../templates/shop.mustache'),
-        modalContentShopScreen: require('../templates/shopModalContent.mustache')
-    };
+const levels = [
+    level1,
+    level2,
+    level3,
+    level4,
+    level5,
+];
 
+/**
+ * Represents Level
+ */
+export class Level {
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
      * @constructor
      */
-    function Level(current) {
+    constructor(current) {
         this.current = current;
         this.way = null;
         this.speed = 1;
@@ -38,9 +51,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * generates and positions meshes for the current level
      */
-    Level.prototype.prepare = function() {
-        var self = this;
-        var current = _levels[self.current - 1];
+    prepare() {
+        let current = levels[this.current - 1];
         this.way = new Way(current.way.length, current.speed, current.way.color);
         this.way.addObstacles(current.way.obstacles);
         this.collisionDetector = new CollisionDetector(this.way.obstacles);
@@ -52,10 +64,10 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {THREE.Object3D} protagonist
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
-    Level.prototype.checkCollision = function(protagonist) {
+    checkCollision(protagonist) {
         //check whether collision
         this.way.currentPosition.height = protagonist.position.y;
-        var collObj = this.collisionDetector.collision(this.way.currentPosition);
+        let collObj = this.collisionDetector.collision(this.way.currentPosition);
         switch (collObj.type) {
             case "box":
             case "ring":
@@ -77,11 +89,11 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {THREE.Clock} clock
      * @param {number} speedMulti
      */
-    Level.prototype.animateProtagonist = function(protagonist, clock, speedMulti) {
-        var position = Math.sin(clock.getElapsedTime() * 10) * 1;
+    animateProtagonist(protagonist, clock, speedMulti) {
+        let position = Math.sin(clock.getElapsedTime() * 10) * 1;
         Protagonist.move(protagonist, position);
         if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
-            var opacity = 0.3;
+            let opacity = 0.3;
             if (this.opacityHelper >= 0) {
                 opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
             }
@@ -96,37 +108,38 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {function} cb - callback function
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
-    Level.prototype.begin = function(cb, protagonist) {
-        var self = this;
+    begin(protagonist) {
+        let self = this;
         //reset diamonds
         self.lastDiamond = null;
         self.diamonds = 0;
         //reset way
-        var t = self.way.length - 80;
-        var speedMulti = 2;
-
-        var clock = new THREE.Clock(true);
-        var animate = function() {
-            t -= speedMulti;
-            self.animateProtagonist(protagonist, clock, speedMulti);
-            self.way.moveForwardTillEnd(self.speed * speedMulti);
-            if (t <= 0 || self.checkCollision(protagonist)) {
-                cb();
-                return;
-            }
-            setTimeout(function() {
-                animate();
-            }, self.speed);
-        };
-        animate(); //once
+        let t = self.way.length - 80;
+        let speedMulti = 2;
+        let clock = new THREE.Clock(true);
+        return new Promise((resolve, reject) => {
+            let animate = function() {
+                t -= speedMulti;
+                self.animateProtagonist(protagonist, clock, speedMulti);
+                self.way.moveForwardTillEnd(self.speed * speedMulti);
+                if (t <= 0 || self.checkCollision(protagonist)) {
+                    resolve();
+                    return;
+                }
+                setTimeout(function() {
+                    animate();
+                }, self.speed);
+            };
+            animate(); //once
+        });
     };
 
     /**
      * increases score on diamond hit and removes it
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
-    Level.prototype.hitDiamond = function(collObj) {
-        var self = this;
+    hitDiamond(collObj) {
+        let self = this;
         if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
             if (self.playSound) Sound.play('hitDiamond');
             self.lastDiamond = collObj;
@@ -139,10 +152,10 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
      */
-    Level.prototype.showSuccessScreen = function() {
-        var last = '';
-        var canNotBePlayed, disableNextLevel, showOutro;
-        if (this.current === _levels.length) {
+    showSuccessScreen() {
+        let last = '';
+        let canNotBePlayed, disableNextLevel, showOutro;
+        if (this.current === levels.length) {
             last = "gone";
             showOutro = "true";
         }
@@ -165,7 +178,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
-    Level.prototype.showGameOverScreen = function() {
+    showGameOverScreen() {
         GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.current
@@ -175,9 +188,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * adds shop screen
      */
-    Level.prototype.showShopScreen = function() {
-        var self = this;
-        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+    showShopScreen() {
+        let self = this;
+        let powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         GUI.showShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
@@ -187,9 +200,9 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
     /**
      * updates shop screen
      */
-    Level.prototype.updateShopScreen = function() {
-        var self = this;
-        var powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+    updateShopScreen() {
+        let self = this;
+        let powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
         GUI.updateShopScreen({
             total: Level.getTotalDiamonds(),
             powerups: powerups
@@ -200,13 +213,13 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * stores the score and success in cookie
      * @param {boolean} success - whether current level has been ended with success
      */
-    Level.prototype.setCookie = function(success) {
+    setCookie(success) {
         if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
-        var obj = Cookies.get();
+        let obj = Cookies.get();
         if (isNaN(Cookies.get('total'))) {
             Cookies.set('total', this.diamonds);
         } else {
-            var sum = parseInt(Cookies.get('total'));
+            let sum = parseInt(Cookies.get('total'));
             sum += this.diamonds;
             Cookies.set('total', sum);
         }
@@ -216,8 +229,8 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * returns background color for level
      * @returns {number} color as hexdecimal
      */
-    Level.prototype.background = function() {
-        var current = _levels[this.current - 1];
+    background() {
+        let current = levels[this.current - 1];
         return current.background;
     };
 
@@ -225,7 +238,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * returns total amount of diamonds
      * @returns {number}
      */
-    Level.getTotalDiamonds = function() {
+    static getTotalDiamonds() {
         return Cookies.get('total');
     };
 
@@ -234,7 +247,7 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
      * @param {number} level - that should be played
      * @returns {boolean}
      */
-    Level.canBePlayed = function(level) {
+    static canBePlayed(level) {
         if (level == 1) return true;
         level--;
         if (Cookies.get(level + '-success') == "true") {
@@ -249,18 +262,5 @@ module.exports = (function(Way, CollisionDetector, Obstacle, $, Cookies, Powerup
             }
         }
         return false;
-
     };
-
-    return Level;
-})(
-    require('../way/Way'),
-    require('../protagonist/CollisionDetector'),
-    require('../way/obstacles/Obstacle'),
-    require('jquery'),
-    require('js-cookie'),
-    require('./Powerups'),
-    require('../protagonist/Protagonist'),
-    require('../GUI'),
-    require('../Sound')
-);
+}

@@ -1,15 +1,17 @@
-module.exports = (function () {
-    //radius of all rings (has to be larger than radius of way!)
-    var _radius = 100;
+let THREE = require('three');
+const radius = 100;
 
+export class Ring {
     /**
      * Represents the obstacle "Ring"
      * @param {Object} ring - structure as in levelX.js
      * @constructor
      */
-    function Ring(ring) {
-        this.material = new THREE.MeshLambertMaterial({color: ring.color});
-        this.geometry = new THREE.TorusGeometry(_radius, 3, 16, 100);
+    constructor(ring) {
+        this.material = new THREE.MeshLambertMaterial({
+            color: ring.color
+        });
+        this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
         this.mesh.castShadow = true;
@@ -22,7 +24,7 @@ module.exports = (function () {
      * @param {number} length - length of way
      * @param {number} radius - radius of way
      */
-    Ring.prototype.position = function (angle, distance, length, radius) {
+    position(angle, distance, length, radius) {
         this.mesh.rotation.x += Math.PI / 2;
         this.mesh.position.y = (length / 2) - distance;
     };
@@ -32,11 +34,11 @@ module.exports = (function () {
      * @param {Object} obstacle - with structure as in levelX.js
      * @returns {Object} ret - object ret that is fitted for detecting collisions
      */
-    Ring.prepareForCollisionDetection = function (obstacle, r) {
+    static prepareForCollisionDetection(obstacle, r) {
         return {
             type: 'ring',
             size: {
-                height: _radius - 80
+                height: radius - 80
             },
             angle: {
                 center: 0,
@@ -46,6 +48,4 @@ module.exports = (function () {
             distance: obstacle.position.distance,
         };
     };
-
-    return Ring;
-})();
+}

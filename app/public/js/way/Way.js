@@ -1,11 +1,25 @@
-module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean, GUI) {
+import {
+    Color
+} from '../Color';
+import {
+    Util
+} from '../Util';
+import {
+    GUI
+} from '../GUI';
+let THREE = require('three');
+let Obstacle = require('./obstacles/Obstacle');
+let Cookies = require('js-cookie');
+let randomBoolean = require('random-boolean');
+
+export class Way {
     /**
      * Represents way
      * @param {number} length how long the way is
      * @param {number} speed how fast the way should move
      * @constructor
      */
-    function Way(length, speed, color) {
+     constructor(length, speed, color) {
         this.length = length;
         this.speed = speed;
         this.group = new THREE.Object3D();
@@ -34,7 +48,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
      * @param {number} y y position
      * @param {number} z z position
      */
-    Way.prototype.position = function() {
+    position() {
         this.group.rotation.x = Math.PI / 2;
         this.group.position.y = -this.radius - 18;
         this.group.position.z = -this.length * 0.5 + 50;
@@ -44,7 +58,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
      * moves way direction z positive
      * @param {number} speed
      */
-    Way.prototype.moveForwardTillEnd = function(speed) {
+    moveForwardTillEnd(speed) {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
@@ -54,26 +68,26 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
     /**
      * sets current position
      */
-    Way.prototype.setCurrentPosition = function(){
-      // anglemin and anglemax are hitbox for protagonist
-      this.currentPosition.anglemin = this.currentPosition.angle - 5;
-      if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
-      if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
-      this.currentPosition.anglemax = this.currentPosition.angle + 5;
+    setCurrentPosition() {
+        // anglemin and anglemax are hitbox for protagonist
+        this.currentPosition.anglemin = this.currentPosition.angle - 5;
+        if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
+        if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
+        this.currentPosition.anglemax = this.currentPosition.angle + 5;
     };
 
     /**
      * rotates the way around the y axis according to given angle
      * @param {number} angle
      */
-    Way.prototype.rotate = function(angle) {
-        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
-        if (UTIL.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = UTIL.convertDegreesToRadians(360);
+    rotate(angle) {
+        if (Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
+        if (Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = Util.convertDegreesToRadians(360);
 
         // rotates faster with powerup 1
         if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
         this.group.rotation.y += angle;
-        this.currentPosition.angle = UTIL.convertRadiansToDegrees(this.group.rotation.y);
+        this.currentPosition.angle = Util.convertRadiansToDegrees(this.group.rotation.y);
 
         this.setCurrentPosition();
     };
@@ -81,7 +95,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
     /**
      * moves the random obstacles
      */
-    Way.prototype.moveRandomObstacles = function() {
+    moveRandomObstacles() {
         this.obstacles.forEach(function(obstacle) {
             if (!obstacle.randomMoving) return;
             obstacle.directionChangeIndex++;
@@ -98,8 +112,8 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
      * creates Obstacles out of array and adds them to the way
      * @param {[{}]} obstacles
      */
-    Way.prototype.addObstacles = function(obstacles) {
-        var self = this;
+    addObstacles(obstacles) {
+        let self = this;
         self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
         self.obstacles.forEach(function(obstacle) {
             if (obstacle.distance < self.length) {
@@ -114,17 +128,7 @@ module.exports = (function(THREE, COLOR, Obstacle, UTIL, Cookies, randomBoolean,
      * adds way to given scene
      * @param {THREE.Scene} scene - scene to which the way will be added
      */
-    Way.prototype.addToScene = function(scene) {
+    addToScene(scene) {
         scene.add(this.group);
     };
-
-    return Way;
-})(
-    require('three'),
-    require('../COLOR'),
-    require('./obstacles/Obstacle'),
-    require('../UTIL'),
-    require('js-cookie'),
-    require('random-boolean'),
-    require('../GUI')
-);
+}

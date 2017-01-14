@@ -1,10 +1,14 @@
-module.exports = (function (COLOR, THREE) {
+import { Color } from '../Color';
+const THREE = require('three');
 
+/**
+ * head of protagonist
+ */
+export class Head {
     /**
-     * Represents head of protagonist
-     * @constructor
+     * generates mesh for head of Protagonist
      */
-    function Head() {
+    constructor() {
         this.material = new THREE.MeshLambertMaterial({
             color: 0xffffff,
             transparent: false,
@@ -19,32 +23,29 @@ module.exports = (function (COLOR, THREE) {
      * @param {number} y
      * @param {number} z
      */
-    Head.prototype.position = function (x, y, z) {
+    position(x, y, z) {
         this.mesh.position.set(x, y, z);
-    };
+    }
 
     /**
      * adds the head to a group
      * @param {THREE.Group} group
      */
-    Head.prototype.addToGroup = function (group) {
+    addToGroup(group) {
         group.add(this.mesh);
-    };
+    }
 
     /**
      * loads the head from json file (blender)
-     * @param {function} cb callback
+     * @param {Promise} promise
      */
-    Head.init = function (cb) {
-        var loader = new THREE.JSONLoader();
-        loader.load('/js/blender/head.json', function (geometry, materials) {
-            Head.geometry = geometry;
-            cb();
+    static init() {
+        let loader = new THREE.JSONLoader();
+        return new Promise((resolve, reject)=>{
+          loader.load('/js/blender/head.json', function(geometry, materials) {
+              Head.geometry = geometry;
+              resolve();
+          });
         });
-    };
-
-    return Head;
-})(
-    require('../COLOR'),
-    require('three')
-);
+    }
+}

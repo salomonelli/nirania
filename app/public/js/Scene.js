@@ -1,4 +1,19 @@
-module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, Cookies) {
+"use strict";
+require('babel-polyfill');
+import {
+    Protagonist
+} from './protagonist/Protagonist';
+import { Particles } from './Particles';
+import { Color } from './Color';
+const THREE = require('three');
+const async = require('async');
+const TWEEN = require('tween.js');
+const Cookies = require('js-cookie');
+
+/**
+ * Represents Scene
+ */
+export class Scene {
 
     /**
      * Represents Scene
@@ -6,17 +21,17 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * @param {number} height - height of browser window
      * @constructor
      */
-    function Scene(width, height, background) {
+    constructor(width, height, background) {
         this.width = width;
         this.height = height;
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
+        this.setSceneBackground(background);
         this.powerupUsed = false;
-        this.renderer = new THREE.WebGLRenderer();
-        this.scene.background = new THREE.Color( background);
-        this.renderer.setSize(this.width, this.height);
-        this.renderer.shadowMap.enabled = false;
         this.boostNotUsed = true;
+        this.renderer = new THREE.WebGLRenderer();
+        this.setRendererSize();
+        this.enableShadowMap(false);
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
@@ -37,10 +52,33 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     }
 
     /**
+     * sets background color of scene
+     * @param {Number} background hexadecimal number e.g. 7868754
+     */
+    setSceneBackground(background) {
+        this.scene.background = new THREE.Color(background);
+    }
+
+    /**
+     * sets size of renderer according to given width and height
+     */
+    setRendererSize() {
+        this.renderer.setSize(this.width, this.height);
+    }
+
+    /**
+     * enables shadow map of renderer
+     * @param {Boolean} to default true
+     */
+    enableShadowMap(to = true) {
+        this.renderer.shadowMap.enabled = false;
+    }
+
+    /**
      * adds lights to scene
      */
-    Scene.prototype.addLights = function () {
-        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, COLOR.way, 0.8);
+    addLights() {
+        this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, Color.way, 0.8);
         this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);
         this.lights.shadow.position.set(0, 200, 0);
         this.lights.shadow.position.copy(this.camera.position);
@@ -60,13 +98,13 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         //this.lights.shadow.shadowDarkness = 0.1;
         this.scene.add(this.lights.hemisphere);
         this.scene.add(this.lights.shadow);
-        this.scene.add( new THREE.AmbientLight( 0xffffff, 0.3 ) );
+        this.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
     };
 
     /**
      * positions and creates intro view
      */
-    Scene.prototype.showIntro = function () {
+    showIntro() {
         this.camera.position.set(250, 1000, 50);
         //add particles
         this.objects.particles.position(0, 0, -500);
@@ -78,126 +116,168 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
         this.objects.protagonist.position(0, 950, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-        this.camera.lookAt(this.objects.protagonist.getPosition());
+        this.camera.lookAt(this.objects.protagonist.currentPosition);
     };
 
     /**
      * Renders scene and starts basic animations like particles
      */
-    Scene.prototype.render = function () {
+    render() {
         this.objects.particles.animate();
         this.renderer.render(this.scene, this.camera);
     };
 
     /**
-     * creates the animation for starting the game
-     * @param {function} cb - callback function
+     * starting animation  part 1
+     * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
      */
-    Scene.prototype.startingAnimation = function (cb) {
-        var self = this;
-        var position;
-        var clock = new THREE.Clock(true);
-        //protagonist and cube fall
-        async.series([
-            function animation1(next) {
-                var t = 150;
-                var fall = function () {
-                    self.objects.protagonist.decreasePosition('y');
-                    t--;
-                    position = Math.sin(clock.getElapsedTime()*10)* 1;
-                    self.objects.protagonist.body.position.x = position * - 5;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    }  else next();
-                };
-                fall();
-            },
-            function animation2(next) {
-                var t = 800;
-                var fall = function () {
-                    self.objects.protagonist.decreasePosition('y');
-                    self.camera.position.y--;
-                    position = Math.sin(clock.getElapsedTime()*10)* 1;
-                    self.objects.protagonist.body.position.x = position * - 5;
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else next();
-                };
-                fall();
-            },
-            function animation3(next) {
-                var t = 150;
-                var fall = function () {
-                    self.camera.position.y--;
-                    t--;position = Math.sin(clock.getElapsedTime()*10)* 1;
-                    self.objects.protagonist.body.position.x = position * - 5;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.getPosition());
-                        next();
-                    }
-                };
-                fall();
-            },
-            function animation4(next) {
-                var t = 250;
-                var fall = function () {
-                    self.camera.position.x--;
-                    self.camera.position.z += 0.5;
-                    position = Math.sin(clock.getElapsedTime()*10)* 1;
-                    self.objects.protagonist.body.position.x = position * - 5;
-                    self.camera.lookAt(self.objects.protagonist.getPosition());
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.getPosition());
-                        next();
-                    }
-                };
-                fall();
-            },
-            function animation5(next) {
-                var t = 80;
-                var zoom = function () {
-                    self.camera.position.z--;
-                    self.camera.lookAt(self.objects.protagonist.getPosition());
-                    position = Math.sin(clock.getElapsedTime()*10)* 1;
-                    self.objects.protagonist.body.position.x = position * - 5;
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            zoom();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.getPosition());
-                        next();
-                    }
-                };
-                zoom();
-            },
-            function endAnimation() {
-                self.objects.introParticles.removeFromScene(self.scene);
-                cb();
-            }
-        ]);
+    startingAnimation1(obj) {
+        let t = 150;
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const fall = function() {
+                self.objects.protagonist.decreasePosition('y');
+                t--;
+                obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                self.objects.protagonist.body.position.x = obj.position * -5;
+                if (t > 0) {
+                    setTimeout(function() {
+                        fall();
+                    }, 1);
+                } else resolve(obj);
+            };
+            fall();
+        });
+    }
+
+    /**
+     * starting animation part 2
+     * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+     */
+    startingAnimation2(obj) {
+        let t = 800;
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const fall = function() {
+                self.objects.protagonist.decreasePosition('y');
+                self.camera.position.y--;
+                obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                self.objects.protagonist.body.position.x = obj.position * -5;
+                t--;
+                if (t > 0) {
+                    setTimeout(function() {
+                        fall();
+                    }, 1);
+                } else resolve(obj);
+            };
+            fall();
+        })
+    }
+
+    /**
+     * starting animation part 3
+     * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+     */
+    startingAnimation3(obj) {
+        let t = 150;
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const fall = function() {
+                self.camera.position.y--;
+                t--;
+                obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                self.objects.protagonist.body.position.x = obj.position * -5;
+                if (t > 0) {
+                    setTimeout(function() {
+                        fall();
+                    }, 1);
+                } else {
+                    self.camera.lookAt(self.objects.protagonist.currentPosition);
+                    resolve(obj);
+                }
+            };
+            fall();
+        });
+    }
+
+    /**
+     * starting animation part 4
+     * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+     */
+    startingAnimation4(obj) {
+        let t = 250;
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const fall = function() {
+                self.camera.position.x--;
+                self.camera.position.z += 0.5;
+                obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                self.objects.protagonist.body.position.x = obj.position * -5;
+                self.camera.lookAt(self.objects.protagonist.currentPosition);
+                t--;
+                if (t > 0) {
+                    setTimeout(function() {
+                        fall();
+                    }, 1);
+                } else {
+                    self.camera.lookAt(self.objects.protagonist.currentPosition);
+                    resolve(obj);
+                }
+            };
+            fall();
+        });
+    }
+
+    /**
+     * starting animation part 5
+     * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+     */
+    startingAnimation5(obj) {
+        let t = 80;
+        let self = this;
+        return new Promise((resolve, reject) => {
+            const zoom = function() {
+                self.camera.position.z--;
+                self.camera.lookAt(self.objects.protagonist.currentPosition);
+                obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                self.objects.protagonist.body.position.x = obj.position * -5;
+                t--;
+                if (t > 0) {
+                    setTimeout(function() {
+                        zoom();
+                    }, 1);
+                } else {
+                    self.camera.lookAt(self.objects.protagonist.currentPosition);
+                    resolve(obj);
+                }
+            };
+            zoom();
+        });
+    }
+
+    /**
+     * creates the animation for starting the game
+     * @param {Promise}
+     */
+    async startingAnimation() {
+        let obj = {
+            position: null,
+            clock: new THREE.Clock(true)
+        };
+        obj = await this.startingAnimation1(obj);
+        obj = await this.startingAnimation2(obj);
+        obj = await this.startingAnimation3(obj);
+        obj = await this.startingAnimation4(obj);
+        obj = await this.startingAnimation5(obj);
+        this.objects.introParticles.removeFromScene(this.scene);
+        return;
     };
 
     /**
      * adds current level objects to scene
      * @param {Level} level - current level
      */
-    Scene.prototype.addLevel = function (level) {
+    addLevel(level) {
         this.objects.way = level.way;
         this.objects.way.addToScene(this.scene);
     };
@@ -205,7 +285,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
     /**
      * turns camera and protagonist until told to stop
      */
-    Scene.prototype.turn = function (level) {
+    turn(level) {
         var self = this;
         if (self.move.continue) {
             if (self.move.left) {
@@ -217,10 +297,10 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
             if (self.move.up) self.objects.protagonist.jump();
-            if(self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought"){
-              level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
-              level.powerupActive = true;
-              self.boostNotUsed = false;
+            if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought") {
+                level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+                level.powerupActive = true;
+                self.boostNotUsed = false;
             }
         }
     };
@@ -229,21 +309,21 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * returns the THREE group of the protagonist
      * @returns {THREE.Object3D} group of protagonist
      */
-    Scene.prototype.getProtagonist = function () {
-        return this.objects.protagonist.returnGroup();
+    getProtagonist() {
+        return this.objects.protagonist.group;
     };
 
     /**
      * sets camera to the right position
      */
-    Scene.prototype.simpleIntro = function () {
+    simpleIntro() {
         this.camera.position.set(0, 50, 95);
         this.objects.particles.position(0, 0, -500);
         this.objects.particles.addToScene(this.scene);
         this.objects.protagonist.position(0, 5, 0);
         this.objects.protagonist.rotate('y', Math.PI);
         this.objects.protagonist.addToScene(this.scene);
-        this.camera.lookAt(this.objects.protagonist.getPosition());
+        this.camera.lookAt(this.objects.protagonist.currentPosition);
     };
 
     /**
@@ -251,7 +331,7 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.stopMovingProtagonist = function (scene, direction) {
+    static stopMovingProtagonist(scene, direction) {
         scene.move[direction] = false;
     };
 
@@ -260,17 +340,8 @@ module.exports = (function (Particles, Protagonist, COLOR, THREE, async, TWEEN, 
      * @param {Scene} scene
      * @param {string} direction - "left" or "right"
      */
-    Scene.startMovingProtagonist = function (scene, direction) {
+    static startMovingProtagonist(scene, direction) {
         scene.move[direction] = true;
+        console.log(scene.move[direction]);
     };
-
-    return Scene;
-})(
-    require('./Particles'),
-    require('./protagonist/Protagonist'),
-    require('./COLOR'),
-    require('three'),
-    require('async'),
-    require('tween.js'),
-    require('js-cookie')
-);
+}

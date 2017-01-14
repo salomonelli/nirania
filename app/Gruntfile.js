@@ -1,13 +1,15 @@
 module.exports = function(grunt) {
     require('jit-grunt')(grunt);
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-typescript');
 
     grunt.initConfig({
         browserify: {
             'public/gen/js.js': ['public/js/main.js'],
             options: {
                 transform: [
-                    'browserify-hogan'
+                    'browserify-hogan',
+                    ['babelify', { 'presets': ['latest'] }]
                 ]
             }
         },
