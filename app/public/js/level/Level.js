@@ -1,20 +1,40 @@
 import {
     Protagonist
 } from '../protagonist/Protagonist';
-import { Powerups } from './Powerups';
-import { Way } from '../way/Way';
-import { CollisionDetector } from '../protagonist/CollisionDetector';
+import {
+    Powerups
+} from './Powerups';
+import {
+    Way
+} from '../way/Way';
+import {
+    CollisionDetector
+} from '../protagonist/CollisionDetector';
 const Obstacle = require('../way/obstacles/Obstacle');
 const $ = require('jquery');
 const Cookies = require('js-cookie');
-import {GUI }  from '../GUI';
-import { Sound } from '../Sound';
+import {
+    GUI
+} from '../GUI';
+import {
+    Sound
+} from '../Sound';
 
-import { level1 } from './level1';
-import { level2 } from './level2';
-import { level3 } from './level3';
-import { level4 } from './level4';
-import { level5 } from './level5';
+import {
+    level1
+} from './level1';
+import {
+    level2
+} from './level2';
+import {
+    level3
+} from './level3';
+import {
+    level4
+} from './level4';
+import {
+    level5
+} from './level5';
 
 const levels = [
     level1,
@@ -46,6 +66,7 @@ export class Level {
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
         this.playSound = true;
+        this.checkedCollision = false;
     }
 
     /**
@@ -65,22 +86,25 @@ export class Level {
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
     checkCollision(protagonist) {
-        //check whether collision
-        this.way.currentPosition.height = protagonist.position.y;
-        let collObj = this.collisionDetector.collision(this.way.currentPosition);
-        switch (collObj.type) {
-            case "box":
-            case "ring":
-            case "cone":
-                // no collsion detection, if powerup 4 is active
-                if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
-                this.gameOver = true;
-                if (this.playSound) Sound.play('hitObstacle');
-                return true;
-            case "diamond":
-                this.hitDiamond(collObj);
-                return false;
-        }
+        if (!this.checkedCollision) {
+            this.checkedCollision = true;
+            //check whether collision
+            this.way.currentPosition.height = protagonist.position.y;
+            let collObj = this.collisionDetector.collision(this.way.currentPosition);
+            switch (collObj.type) {
+                case "box":
+                case "ring":
+                case "cone":
+                    // no collsion detection, if powerup 4 is active
+                    if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
+                    this.gameOver = true;
+                    if (this.playSound) Sound.play('hitObstacle');
+                    return true;
+                case "diamond":
+                    this.hitDiamond(collObj);
+                    return false;
+            }
+        } else this.checkedCollision = false;
     };
 
     /**
