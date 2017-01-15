@@ -182,6 +182,13 @@ function setMusicSettings(isOn) {
 }
 
 /**
+ * reloads page
+ */
+function reloadPage(){
+    location.reload();
+}
+
+/**
  * main function for game
  * @return {Promise}
  */
@@ -212,9 +219,14 @@ let intro = function() {
     GUI.introFadeIn();
 };
 
-//reloads page
+// reloads page on resize
+$(window).on('resize', function(){
+  reloadPage();
+});
+
+// reloads page
 $(document).on('click', '.button.reload', function() {
-    location.reload();
+  reloadPage();
 });
 
 //enables and disables sound

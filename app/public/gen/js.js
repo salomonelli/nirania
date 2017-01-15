@@ -6152,6 +6152,13 @@ function setMusicSettings(isOn) {
 }
 
 /**
+ * reloads page
+ */
+function reloadPage() {
+    location.reload();
+}
+
+/**
  * main function for game
  * @return {Promise}
  */
@@ -6216,19 +6223,14 @@ var intro = function intro() {
     _GUI.GUI.introFadeIn();
 };
 
-//reloads page
-$(document).on('click', '.button.reload', function () {
-    location.reload();
+// reloads page on resize
+$(window).on('resize', function () {
+    reloadPage();
 });
 
-//buys powerup on click
-$(document).on('click', '.powerup .button', function (event) {
-    if (_GUI.GUI.buttonIsEnabled($(this))) {
-        var powerup = _GUI.GUI.getPowerupIdFromButton(event);
-        var total = Powerups.buy(powerup);
-        level[currentLevel].updateShopScreen();
-        if (_Level.Level.canBePlayed(parseInt(currentLevel) + 1)) _GUI.GUI.updateNextLevelButton();
-    }
+// reloads page
+$(document).on('click', '.button.reload', function () {
+    reloadPage();
 });
 
 //enables and disables sound
