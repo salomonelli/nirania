@@ -7,6 +7,7 @@ export let level4 = {
     level: 4,
     speed: 1,
     background: Color.palette[3].background,
+    requiredDiamonds: 0,
     way: {
         length: 4230,
         color: Color.palette[3].way,

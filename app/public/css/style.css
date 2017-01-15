@@ -5,49 +5,62 @@ body {
     font-family: 'Quicksand', sans-serif;
     background: black;
 }
+
 h1, h2, h3, h5, h6 {
     font-family: 'Quicksand', sans-serif;
 }
+
 a.disabled {
     pointer-events: none;
     cursor: default;
 }
+
 .hidden {
     visibility: hidden;
 }
+
 .gone {
     display: none;
 }
+
 .scores {
     position: absolute;
     width: 200px;
     right: 0;
 }
+
 .scores tr:first-child {
     background: #e9dac0;
 }
+
 .scores tr:nth-child(2) {
     background: #d4c6ad;
 }
+
 .scores tbody {
     border: none;
 }
+
 .scores .distance, .scores .diamonds {
     text-align: right;
 }
+
 .sound {
     position: absolute;
     z-index: 1000;
     padding: 10px;
 }
+
 .sound span {
     color: white;
     font-weight: bold;
 }
+
 .sound .switch {
     float: right;
     margin-left: 10px;
 }
+
 .loading {
     width: 100%;
     height: 100%;
@@ -56,6 +69,7 @@ a.disabled {
     color: white;
     background: black;
 }
+
 .intro {
     color: white;
     position: absolute;
@@ -64,6 +78,7 @@ a.disabled {
     width: 100%;
     text-align: center;
 }
+
 .game-name {
     color: white;
     position: absolute;
@@ -72,6 +87,20 @@ a.disabled {
     width: 100%;
     text-align: center;
 }
+
+.instruction {
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.5);
+    padding: 20px;
+}
+
+.instruction span {
+    font-size: 18px;
+}
+
 #successScreen, #gameoverScreen {
     z-index: 1000;
     background: rgba(0, 0, 0, 0.5);
@@ -83,11 +112,13 @@ a.disabled {
     font-family: Quicksand;
     text-align: center;
 }
+
 #successScreen .wrapper, #gameoverScreen .wrapper, .intro .intro {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
+
 
 /******LOADING ICON*********/
 
@@ -100,6 +131,7 @@ a.disabled {
     transform: rotateZ(45deg);
     /*background: #39FFEB;*/
 }
+
 .sk-folding-cube .sk-cube {
     float: left;
     width: 50%;
@@ -109,6 +141,7 @@ a.disabled {
     -ms-transform: scale(1.1);
     transform: scale(1.1);
 }
+
 .sk-folding-cube .sk-cube:before {
     content: '';
     position: absolute;
@@ -123,30 +156,37 @@ a.disabled {
     -ms-transform-origin: 100% 100%;
     transform-origin: 100% 100%;
 }
+
 .sk-folding-cube .sk-cube2 {
     -webkit-transform: scale(1.1) rotateZ(90deg);
     transform: scale(1.1) rotateZ(90deg);
 }
+
 .sk-folding-cube .sk-cube3 {
     -webkit-transform: scale(1.1) rotateZ(180deg);
     transform: scale(1.1) rotateZ(180deg);
 }
+
 .sk-folding-cube .sk-cube4 {
     -webkit-transform: scale(1.1) rotateZ(270deg);
     transform: scale(1.1) rotateZ(270deg);
 }
+
 .sk-folding-cube .sk-cube2:before {
     -webkit-animation-delay: 0.3s;
     animation-delay: 0.3s;
 }
+
 .sk-folding-cube .sk-cube3:before {
     -webkit-animation-delay: 0.6s;
     animation-delay: 0.6s;
 }
+
 .sk-folding-cube .sk-cube4:before {
     -webkit-animation-delay: 0.9s;
     animation-delay: 0.9s;
 }
+
 @-webkit-keyframes sk-foldCubeAngle {
     0%, 10% {
         -webkit-transform: perspective(140px) rotateX(-180deg);
@@ -164,6 +204,7 @@ a.disabled {
         opacity: 0;
     }
 }
+
 @keyframes sk-foldCubeAngle {
     0%, 10% {
         -webkit-transform: perspective(140px) rotateX(-180deg);
@@ -182,7 +223,9 @@ a.disabled {
     }
 }
 
+
 /*******INTRO & OUTRO*******/
+
 .blackOverlay {
     position: absolute;
     background: black;
@@ -190,6 +233,7 @@ a.disabled {
     height: 100%;
     z-index: 2000;
 }
+
 .orbit {
     margin-left: auto;
     margin-right: auto;

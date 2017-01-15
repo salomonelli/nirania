@@ -170,4 +170,13 @@ export let GUI = {
   uncheckSoundSwitch: function(){
     $('#soundSwitch').attr('checked', false);
   },
+
+  /**
+   * shows instruction
+   * @param  {String} instruction
+   */
+  showInstruction: function(instruction){
+    console.log(instruction);
+    $('.instruction span').html(instruction);
+  }
 }

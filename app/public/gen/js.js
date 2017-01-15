@@ -224,6 +224,15 @@ var GUI = exports.GUI = {
    */
   uncheckSoundSwitch: function uncheckSoundSwitch() {
     $('#soundSwitch').attr('checked', false);
+  },
+
+  /**
+   * shows instruction
+   * @param  {String} instruction
+   */
+  showInstruction: function showInstruction(instruction) {
+    console.log(instruction);
+    $('.instruction span').html(instruction);
   }
 };
 
@@ -1103,7 +1112,8 @@ var Level = exports.Level = function () {
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
         this.playSound = true;
-        this.checkedCollision = false;
+        this.instruction = '';
+        this.requiredDiamonds = 0;
     }
 
     /**
@@ -1115,6 +1125,9 @@ var Level = exports.Level = function () {
         key: 'prepare',
         value: function prepare() {
             var current = levels[this.current - 1];
+            if (current.instruction) this.instruction = current.instruction;
+            if (current.requiredDiamonds) this.requiredDiamonds = current.requiredDiamonds;
+            _GUI.GUI.showInstruction(this.instruction);
             this.way = new _Way.Way(current.way.length, current.speed, current.way.color);
             this.way.addObstacles(current.way.obstacles);
             this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
@@ -1195,6 +1208,7 @@ var Level = exports.Level = function () {
                     self.animateProtagonist(protagonist, clock, speedMulti);
                     self.way.moveForwardTillEnd(self.speed * speedMulti);
                     if (t <= 0 || self.checkCollision(protagonist)) {
+                        Cookies.set('diamonds-' + self.current, self.diamonds);
                         resolve();
                         return;
                     }
@@ -1351,16 +1365,19 @@ var Level = exports.Level = function () {
         value: function canBePlayed(level) {
             if (level == 1) return true;
             level--;
-            if (Cookies.get(level + '-success') == "true") {
-                //managed level
-                if (level <= _Powerups.Powerups.amount()) {
+            if (Cookies.get(level + '-success') == "true" && Cookies.get('diamonds-' + level) >= levels[level - 1].requiredDiamonds) {
+                // managed level
+                // check if amount of diamonds were collected
+
+                return true;
+                /*if (level <= Powerups.amount()) {
                     //powerup exists
-                    if (level <= _Powerups.Powerups.amountOfBought()) return true;
+                    if (level <= Powerups.amountOfBought()) return true;
                     return false;
                 } else {
                     //no powerup exist
                     return true;
-                }
+                }*/
             }
             return false;
         }
@@ -1477,431 +1494,23 @@ var boxColor = _Color.Color.palette[1].box;
 var level1 = exports.level1 = {
     level: 1,
     speed: 1,
+    instruction: 'Press <kbd>a</kbd> and <kbd>d</kbd> to avoid the obstacle.',
     background: _Color.Color.palette[1].background,
+    requiredDiamonds: 0,
     way: {
-        length: 2230,
+        length: 1300,
         color: _Color.Color.palette[1].way,
         obstacles: [{
             type: 'box',
             size: {
                 width: 25,
                 length: 25,
-                height: 15
+                height: 25
             },
             color: boxColor,
             position: {
-                distance: 500,
+                distance: 900,
                 angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 760,
-                angle: 340
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 824,
-                angle: 315
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 863,
-                angle: 71
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 892,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1057,
-                angle: 152
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1068,
-                angle: 282
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1162,
-                angle: 37
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 324
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 240
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1532,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1550,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 230
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'diamond',
-
-            position: {
-                distance: 300,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 42
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 44
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 46
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 48
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
-                angle: 30
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 25
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1375,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1450,
-                angle: 15
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1700,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1750,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 2
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 330
             }
         }]
     }
@@ -1926,6 +1535,7 @@ var level2 = exports.level2 = {
     level: 2,
     speed: 1,
     background: _Color.Color.palette[0].background,
+    requiredDiamonds: 8,
     way: {
         length: 3230,
         color: _Color.Color.palette[0].way,
@@ -2618,6 +2228,7 @@ var level3 = exports.level3 = {
     level: 3,
     speed: 1,
     background: _Color.Color.palette[2].background,
+    requiredDiamonds: 0,
     way: {
         length: 4230,
         color: _Color.Color.palette[2].way,
@@ -3779,6 +3390,7 @@ var level4 = exports.level4 = {
     level: 4,
     speed: 1,
     background: _Color.Color.palette[3].background,
+    requiredDiamonds: 0,
     way: {
         length: 4230,
         color: _Color.Color.palette[3].way,
@@ -5268,6 +4880,7 @@ var level5 = exports.level5 = {
     level: 5,
     speed: 1,
     background: _Color.Color.palette[4].background,
+    requiredDiamonds: 0,
     way: {
         length: 4000,
         color: _Color.Color.palette[4].way,

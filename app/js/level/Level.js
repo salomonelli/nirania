@@ -66,6 +66,8 @@ export class Level {
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
         this.playSound = true;
+        this.instruction = '';
+        this.requiredDiamonds = 0;
     }
 
     /**
@@ -73,6 +75,9 @@ export class Level {
      */
     prepare() {
         let current = levels[this.current - 1];
+        if (current.instruction) this.instruction = current.instruction;
+        if (current.requiredDiamonds) this.requiredDiamonds = current.requiredDiamonds;
+        GUI.showInstruction(this.instruction);
         this.way = new Way(current.way.length, current.speed, current.way.color);
         this.way.addObstacles(current.way.obstacles);
         this.collisionDetector = new CollisionDetector(this.way.obstacles);
@@ -144,6 +149,7 @@ export class Level {
                 self.animateProtagonist(protagonist, clock, speedMulti);
                 self.way.moveForwardTillEnd(self.speed * speedMulti);
                 if (t <= 0 || self.checkCollision(protagonist)) {
+                    Cookies.set('diamonds-' + self.current, self.diamonds);
                     resolve();
                     return;
                 }
@@ -271,16 +277,22 @@ export class Level {
     static canBePlayed(level) {
         if (level == 1) return true;
         level--;
-        if (Cookies.get(level + '-success') == "true") {
-            //managed level
-            if (level <= Powerups.amount()) {
+        if (
+          Cookies.get(level + '-success') == "true" &&
+          Cookies.get('diamonds-'+level) >= levels[level-1].requiredDiamonds
+      ) {
+            // managed level
+            // check if amount of diamonds were collected
+
+            return true;
+            /*if (level <= Powerups.amount()) {
                 //powerup exists
                 if (level <= Powerups.amountOfBought()) return true;
                 return false;
             } else {
                 //no powerup exist
                 return true;
-            }
+            }*/
         }
         return false;
     };
