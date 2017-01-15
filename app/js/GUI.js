@@ -1,9 +1,7 @@
 let $ = require('jquery');
 const templates = {
     successScreen: require('./templates/success.mustache'),
-    gameoverScreen: require('./templates/gameover.mustache'),
-    shopScreen: require('./templates/shop.mustache'),
-    modalContentShopScreen: require('./templates/shopModalContent.mustache')
+    gameoverScreen: require('./templates/gameover.mustache')
 };
 
 export let GUI = {
@@ -31,35 +29,6 @@ export let GUI = {
     showGameOverScreen: function(obj) {
         var html = templates.gameoverScreen.render(obj);
         $('body').append(html);
-    },
-
-    /**
-     * renders modal for shop screen
-     * @param {Object} - render object
-     */
-    fillShopModal: function(obj) {
-        return templates.modalContentShopScreen.render(obj);
-    },
-
-    /**
-     * renders shop screen and adds it
-     * @param {Object} - render object
-     */
-    showShopScreen: function(obj) {
-        var html = templates.shopScreen.render({
-            content: GUI.fillShopModal(obj)
-        });
-        $('div.shopScreen').append(html);
-    },
-
-    /**
-     * updates shop shopScreen
-     * @param {Object} - render Object
-     */
-    updateShopScreen: function(obj) {
-        var html = templates.modalContentShopScreen.render(obj);
-        $('#shopModal').empty();
-        $('#shopModal').append(html);
     },
 
     /**
@@ -105,15 +74,6 @@ export let GUI = {
     buttonIsEnabled: function(button) {
         if (button.hasClass('disabled')) return false;
         return true;
-    },
-
-    /**
-     * gets powerup id from button
-     * @param {Object} e - event
-     * @returns {number} - powerup id
-     */
-    getPowerupIdFromButton: function(e) {
-        return e.target.id.replace('buy-powerup-', '');
     },
 
     /**

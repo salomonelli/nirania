@@ -2,9 +2,6 @@ import {
     Protagonist
 } from '../protagonist/Protagonist';
 import {
-    Powerups
-} from './Powerups';
-import {
     Way
 } from '../way/Way';
 import {
@@ -61,9 +58,6 @@ export class Level {
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
-        this.powerupActive = false;
-        this.powerupActiveDuration = 0;
-        this.powerUpDistance = 0;
         this.opacityHelper = -375;
         this.playSound = true;
         this.instruction = '';
@@ -129,7 +123,6 @@ export class Level {
           case "box":
           case "ring":
           case "cone":
-              if (this.powerup4IsActive()) return false;
               this.hitObstacle();
               return true;
           case "diamond":
@@ -161,16 +154,6 @@ export class Level {
       }
     };
 
-
-    /**
-     * checks if powerup 4 is active
-     * @return {Boolean} true if active
-     */
-    powerup4IsActive(){
-      if(this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return true;
-      else return false;
-    };
-
     /**
      * gets current position of protagonist
      * @param {Protagonist} protagonist
@@ -198,22 +181,6 @@ export class Level {
      */
     animateProtagonist(protagonist, clock, speedMulti) {
         this.moveProtagonist(protagonist, clock);
-        this.animatePowerup4(protagonist, speedMulti);
-    };
-
-    /**
-     * animates powerup 4 if active
-     * @param {THREE.Object3D} protagonist
-     * @param {number} speedMulti
-     */
-    animatePowerup4(protagonist, speedMulti){
-      if (this.powerup4IsActive()) {
-          let opacity = 0.3;
-          if (this.opacityHelper >= 0)  opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
-          this.opacityHelper += speedMulti;
-          this.makeProtagonistTransparent(protagonist, opacity);
-          this.powerUpDistance += speedMulti;
-      }
     };
 
     /**
@@ -306,8 +273,7 @@ export class Level {
             canNotBePlayed: canNotBePlayed,
             disableNextLevel: disableNextLevel,
             showOutro: showOutro
-        });
-        this.showShopScreen();
+        }); 
     };
 
     /**
@@ -317,30 +283,6 @@ export class Level {
         GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.current
-        });
-    };
-
-    /**
-     * adds shop screen
-     */
-    showShopScreen() {
-        let self = this;
-        let powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        GUI.showShopScreen({
-            total: Level.getTotalDiamonds(),
-            powerups: powerups
-        });
-    };
-
-    /**
-     * updates shop screen
-     */
-    updateShopScreen() {
-        let self = this;
-        let powerups = Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-        GUI.updateShopScreen({
-            total: Level.getTotalDiamonds(),
-            powerups: powerups
         });
     };
 
@@ -388,19 +330,8 @@ export class Level {
         if (
           Cookies.get(level + '-success') == "true" &&
           Cookies.get('diamonds-'+level) >= levels[level-1].requiredDiamonds
-      ) {
-            // managed level
-            // check if amount of diamonds were collected
-
+        ) {
             return true;
-            /*if (level <= Powerups.amount()) {
-                //powerup exists
-                if (level <= Powerups.amountOfBought()) return true;
-                return false;
-            } else {
-                //no powerup exist
-                return true;
-            }*/
         }
         return false;
     };

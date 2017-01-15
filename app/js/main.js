@@ -13,9 +13,6 @@ import {
     Keybindings
 } from './Keybindings';
 import {
-    Powerups
-} from './level/Powerups';
-import {
     GUI
 } from './GUI';
 let $ = require('jquery');
@@ -218,16 +215,6 @@ let intro = function() {
 //reloads page
 $(document).on('click', '.button.reload', function() {
     location.reload();
-});
-
-//buys powerup on click
-$(document).on('click', '.powerup .button', function(event) {
-    if (GUI.buttonIsEnabled($(this))) {
-        let powerup = GUI.getPowerupIdFromButton(event);
-        let total = Powerups.buy(powerup);
-        level[currentLevel].updateShopScreen();
-        if (Level.canBePlayed(parseInt(currentLevel) + 1)) GUI.updateNextLevelButton();
-    }
 });
 
 //enables and disables sound
