@@ -1,4 +1,7904 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var Color = exports.Color = {
+    background: 0x13BAAA,
+    particles: 0xffffff,
+    protagonist: {
+        body: 0xffffff,
+        head: 0xffffff
+    },
+    palette: [{
+        name: 'blue pink light',
+        background: 0x3E9598,
+        way: 0xC9B693,
+        box: 0xF29C9E,
+        ring: 0x82BF45
+    }, {
+        name: 'pink blue strong',
+        background: 0x781152,
+        way: 0x1CB4C5,
+        box: 0x096388,
+        ring: 0x096388
+    }, {
+        name: 'light brown',
+        background: 0xFDF1CD,
+        way: 0xE0C17E,
+        box: 0x9E614D,
+        ring: 0x7BAAB1,
+        cone: 0xEA9C00
+    }, {
+        name: 'black',
+        background: 0x030303,
+        way: 0x878E9A,
+        box: 0xEEEEEE,
+        ring: 0xA6FDFD,
+        cone: 0x404040
+    }, {
+        name: 'orange black',
+        background: 0x140F0C,
+        way: 0xFF9056,
+        box: 0xFD6E4E,
+        ring: 0x8A5C45,
+        cone: 0x463F2F
+    }]
+};
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var $ = require('jquery');
+var templates = {
+  successScreen: require('./templates/success.mustache'),
+  gameoverScreen: require('./templates/gameover.mustache'),
+  shopScreen: require('./templates/shop.mustache'),
+  modalContentShopScreen: require('./templates/shopModalContent.mustache')
+};
+
+var GUI = exports.GUI = {
+  /**
+   * updates amount of diamonds in scoreboard
+   * @param {number} diamonds
+   */
+  setDiamondsInScoreBoard: function setDiamondsInScoreBoard(diamonds) {
+    $('.scores .diamonds span').html(diamonds);
+  },
+
+  /**
+   * shows screen on successful end of level
+   * @param {Object} obj - obj to render template successScreen
+   */
+  showSuccessScreen: function showSuccessScreen(obj) {
+    var html = templates.successScreen.render(obj);
+    $('body').append(html);
+  },
+
+  /**
+   * shows screen on game over
+   * @param {Object} obj - obj to render template gameoverScreen
+   */
+  showGameOverScreen: function showGameOverScreen(obj) {
+    var html = templates.gameoverScreen.render(obj);
+    $('body').append(html);
+  },
+
+  /**
+   * renders modal for shop screen
+   * @param {Object} - render object
+   */
+  fillShopModal: function fillShopModal(obj) {
+    return templates.modalContentShopScreen.render(obj);
+  },
+
+  /**
+   * renders shop screen and adds it
+   * @param {Object} - render object
+   */
+  showShopScreen: function showShopScreen(obj) {
+    var html = templates.shopScreen.render({
+      content: GUI.fillShopModal(obj)
+    });
+    $('div.shopScreen').append(html);
+  },
+
+  /**
+   * updates shop shopScreen
+   * @param {Object} - render Object
+   */
+  updateShopScreen: function updateShopScreen(obj) {
+    var html = templates.modalContentShopScreen.render(obj);
+    $('#shopModal').empty();
+    $('#shopModal').append(html);
+  },
+
+  /**
+   * fades in game name
+   */
+  startingAnimationFadeIn: function startingAnimationFadeIn() {
+    $('.game-name').fadeIn(3000);
+    $('.intro').fadeIn(3000);
+  },
+
+  /**
+   * fades out game name
+   * @param {number} fadeTime - in milliseconds
+   */
+  startingAnimationFadeOut: function startingAnimationFadeOut(fadeTime) {
+    $('.game-name').fadeOut(fadeTime);
+    $('.intro').fadeOut(fadeTime);
+  },
+
+  /**
+   * shows loading icon
+   */
+  showLoadingIcon: function showLoadingIcon() {
+    var height = $('.sk-folding-cube').height() + $('.loading p').height();
+    $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
+  },
+
+  /**
+   * removes loading icon
+   */
+  removeLoadingIcon: function removeLoadingIcon() {
+    $(".sk-folding-cube").remove();
+    $(".loading p").remove();
+    var fadeTime = 3000;
+    $(".loading").fadeOut(fadeTime);
+  },
+
+  /**
+   * checks if button is enabled
+   * @param {$} button
+   * @returns {boolean} - true if button is enabled
+   */
+  buttonIsEnabled: function buttonIsEnabled(button) {
+    if (button.hasClass('disabled')) return false;
+    return true;
+  },
+
+  /**
+   * gets powerup id from button
+   * @param {Object} e - event
+   * @returns {number} - powerup id
+   */
+  getPowerupIdFromButton: function getPowerupIdFromButton(e) {
+    return e.target.id.replace('buy-powerup-', '');
+  },
+
+  /**
+   * updates next-level-button in success screen
+   */
+  updateNextLevelButton: function updateNextLevelButton() {
+    if ($('.button.success.reload').length) {
+      $('.button.success.reload').removeClass('disabled');
+      $('.callout.alert').remove();
+    }
+  },
+
+  /**
+   * fades in intro slide show
+   */
+  introFadeIn: function introFadeIn() {
+    $('.blackOverlay').fadeOut(1000);
+  },
+
+  /**
+   * updates distance in scoreboard
+   * @param {number} distance
+   */
+  updateDistance: function updateDistance(distance) {
+    $('.scores .distance span').html(distance);
+  },
+
+  /**
+   * fades in scoreboard
+   */
+  fadeInScoreboard: function fadeInScoreboard() {
+    $('.scores').fadeIn(1000);
+  },
+
+  /**
+   * fades in soundswitch
+   */
+  fadeInSoundSwitch: function fadeInSoundSwitch() {
+    $('.sound').fadeIn(1000);
+  },
+
+  /**
+   * returns whether sound is on or not
+   * @returns {boolean} - true if sound is enabled
+   */
+  getSoundSwitch: function getSoundSwitch() {
+    if ($('#soundSwitch').is(':checked')) return true;
+    return false;
+  },
+
+  /**
+   * unchecks sound switch
+   */
+  uncheckSoundSwitch: function uncheckSoundSwitch() {
+    $('#soundSwitch').attr('checked', false);
+  }
+};
+
+},{"./templates/gameover.mustache":21,"./templates/shop.mustache":22,"./templates/shopModalContent.mustache":23,"./templates/success.mustache":24,"jquery":400}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Keybindings = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Rx = require('rxjs/Rx');
+
+var _Rx2 = _interopRequireDefault(_Rx);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var $ = require('jquery');
+
+/**
+ * handles key events
+ */
+var Keybindings = exports.Keybindings = function () {
+    function Keybindings() {
+        (0, _classCallCheck3.default)(this, Keybindings);
+    }
+
+    (0, _createClass3.default)(Keybindings, null, [{
+        key: 'handleKeyCode',
+
+        /**
+         * Handles key code and returns fitting string like 'left' or 'right'
+         * @param {number} code - keycode
+         * @returns {string}
+         */
+        value: function handleKeyCode(code) {
+            switch (code) {
+                case 37:
+                case 65:
+                    return 'left';
+                case 39:
+                case 68:
+                    return 'right';
+                case 32:
+                case 87:
+                case 38:
+                    return 'up';
+                case 40:
+                    return 'boost';
+                default:
+                    return 'anyKey';
+            }
+        }
+
+        /**
+         * Binds a given event to document
+         * @param {string} ev - like 'keydown'
+         * @param {Scene} scene
+         * @param {function()} doSomething - should be called on key event
+         */
+
+    }, {
+        key: 'keyBind',
+        value: function keyBind(ev) {
+            return _Rx2.default.Observable.fromEvent(document, ev).map(function (ev) {
+                return Keybindings.handleKeyCode(ev.keyCode);
+            });
+        }
+    }]);
+    return Keybindings;
+}();
+
+;
+
+},{"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"jquery":400,"rxjs/Rx":414}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Particles = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+var Particles = exports.Particles = function () {
+    /**
+     * Represents Particles
+     * @param {number} minX - minimum x value
+     * @param {number} maxX -maximum x value
+     * @param {number} minY - minimum y value
+     * @param {number} maxY - maximum y value
+     * @param {number} minZ - minimum z value
+     * @param {number} maxZ - maximum z value
+     * @param {number} amount - amount of particles distributed in given space
+     * @constructor
+     */
+    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
+        (0, _classCallCheck3.default)(this, Particles);
+
+        this.group = new THREE.Group();
+        this.particle = null;
+        this.amount = amount;
+        this.x = {
+            min: minX,
+            max: maxX
+        };
+        this.y = {
+            min: minY,
+            max: maxY
+        };
+        this.z = {
+            min: minZ,
+            max: maxZ
+        };
+        this.init();
+    }
+
+    /**
+     * adds the particles to the mainScene
+     */
+
+
+    (0, _createClass3.default)(Particles, [{
+        key: 'init',
+        value: function init() {
+            var self = this;
+            for (var i = 0; i < self.amount; i++) {
+                self.particle = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial());
+                self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
+                self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
+                self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
+                self.group.add(self.particle);
+            }
+        }
+    }, {
+        key: 'animate',
+
+
+        /**
+         * animates the particles in the mainScene
+         */
+        value: function animate() {
+            this.group.rotation.z += 0.0004;
+        }
+    }, {
+        key: 'rotate',
+
+
+        /**
+         * rotates the way around the z axis according to given angle
+         * @param {number} angle
+         */
+        value: function rotate(angle) {
+            this.group.rotation.z += angle;
+        }
+    }, {
+        key: 'position',
+
+
+        /**
+         * positions particles according to given coordinates
+         * @param {number} x - x position of particles group
+         * @param {number} y - y position of particles group
+         * @param {number} z - z position of particles group
+         */
+        value: function position(x, y, z) {
+            this.group.position.set(x, y, z);
+        }
+    }, {
+        key: 'addToScene',
+
+
+        /**
+         * adds particles to given scene
+         * @param {THREE.Scene} scene - scene to which the particles will be added
+         */
+        value: function addToScene(scene) {
+            scene.add(this.group);
+        }
+    }, {
+        key: 'removeFromScene',
+
+
+        /**
+         * removes particles from given scene
+         * @param {THREE.Scene} scene - scene from which the particles will be removed
+         */
+        value: function removeFromScene(scene) {
+            scene.remove(this.group);
+        }
+    }], [{
+        key: 'randomIntFromInterval',
+
+
+        /**
+         * calculates random integer from interval
+         * @param {number} min
+         * @param {number} max
+         * @returns {number}
+         */
+        value: function randomIntFromInterval(min, max) {
+            return Math.floor(Math.random() * (max - min + 1) + min);
+        }
+    }]);
+    return Particles;
+}();
+
+},{"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],5:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Scene = undefined;
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Protagonist = require('./protagonist/Protagonist');
+
+var _Particles = require('./Particles');
+
+var _Color = require('./Color');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+require('babel-polyfill');
+
+var THREE = require('three');
+var async = require('async');
+var TWEEN = require('tween.js');
+var Cookies = require('js-cookie');
+
+/**
+ * Represents Scene
+ */
+
+var Scene = exports.Scene = function () {
+
+    /**
+     * Represents Scene
+     * @param {number} width - width of browser window
+     * @param {number} height - height of browser window
+     * @constructor
+     */
+    function Scene(width, height, background) {
+        (0, _classCallCheck3.default)(this, Scene);
+
+        this.width = width;
+        this.height = height;
+        this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
+        this.scene = new THREE.Scene();
+        this.setSceneBackground(background);
+        this.powerupUsed = false;
+        this.boostNotUsed = true;
+        this.renderer = new THREE.WebGLRenderer();
+        this.setRendererSize();
+        this.enableShadowMap(false);
+        this.objects = {
+            particles: new _Particles.Particles(-600, 600, -600, 600, -300, 0, 100),
+            introParticles: new _Particles.Particles(20, -300, 100, 1300, -500, 0, 30),
+            protagonist: new _Protagonist.Protagonist()
+        };
+        this.lights = {
+            hemisphere: null,
+            shadow: null
+        };
+        this.move = {
+            left: false,
+            right: false,
+            up: false,
+            continue: false,
+            boost: false
+        };
+        this.addLights();
+    }
+
+    /**
+     * sets background color of scene
+     * @param {Number} background hexadecimal number e.g. 7868754
+     */
+
+
+    (0, _createClass3.default)(Scene, [{
+        key: 'setSceneBackground',
+        value: function setSceneBackground(background) {
+            this.scene.background = new THREE.Color(background);
+        }
+
+        /**
+         * sets size of renderer according to given width and height
+         */
+
+    }, {
+        key: 'setRendererSize',
+        value: function setRendererSize() {
+            this.renderer.setSize(this.width, this.height);
+        }
+
+        /**
+         * enables shadow map of renderer
+         * @param {Boolean} to default true
+         */
+
+    }, {
+        key: 'enableShadowMap',
+        value: function enableShadowMap() {
+            var to = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
+
+            this.renderer.shadowMap.enabled = false;
+        }
+
+        /**
+         * adds lights to scene
+         */
+
+    }, {
+        key: 'addLights',
+        value: function addLights() {
+            this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, _Color.Color.way, 0.8);
+            this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);
+            this.lights.shadow.position.set(0, 200, 0);
+            this.lights.shadow.position.copy(this.camera.position);
+            this.lights.shadow.position.y += 1000;
+            this.lights.shadow.target.position.set(0, 0, 0);
+            this.lights.shadow.castShadow = true;
+            //visible area of the projected shadow
+            this.lights.shadow.shadow.camera.left = -1000;
+            this.lights.shadow.shadow.camera.right = 1000;
+            this.lights.shadow.shadow.camera.top = 1000;
+            this.lights.shadow.shadow.camera.bottom = -1000;
+            this.lights.shadow.shadow.camera.near = 1;
+            this.lights.shadow.shadow.camera.far = 2000;
+            //resolution
+            this.lights.shadow.shadow.mapSize.width = 2048;
+            this.lights.shadow.shadow.mapSize.height = 2048;
+            //this.lights.shadow.shadowDarkness = 0.1;
+            this.scene.add(this.lights.hemisphere);
+            this.scene.add(this.lights.shadow);
+            this.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
+        }
+    }, {
+        key: 'showIntro',
+
+
+        /**
+         * positions and creates intro view
+         */
+        value: function showIntro() {
+            this.camera.position.set(250, 1000, 50);
+            //add particles
+            this.objects.particles.position(0, 0, -500);
+            this.objects.particles.addToScene(this.scene);
+            //add particles for intro
+            this.objects.introParticles.position(0, 0, 250);
+            this.objects.introParticles.addToScene(this.scene);
+            //add protagonist
+            this.objects.protagonist.position(0, 950, 0);
+            this.objects.protagonist.rotate('y', Math.PI);
+            this.objects.protagonist.addToScene(this.scene);
+            this.camera.lookAt(this.objects.protagonist.currentPosition);
+        }
+    }, {
+        key: 'render',
+
+
+        /**
+         * Renders scene and starts basic animations like particles
+         */
+        value: function render() {
+            this.objects.particles.animate();
+            this.renderer.render(this.scene, this.camera);
+        }
+    }, {
+        key: 'startingAnimation1',
+
+
+        /**
+         * starting animation  part 1
+         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+         */
+        value: function startingAnimation1(obj) {
+            var t = 150;
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var fall = function fall() {
+                    self.objects.protagonist.decreasePosition('y');
+                    t--;
+                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                    self.objects.protagonist.body.position.x = obj.position * -5;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else resolve(obj);
+                };
+                fall();
+            });
+        }
+
+        /**
+         * starting animation part 2
+         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+         */
+
+    }, {
+        key: 'startingAnimation2',
+        value: function startingAnimation2(obj) {
+            var t = 800;
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var fall = function fall() {
+                    self.objects.protagonist.decreasePosition('y');
+                    self.camera.position.y--;
+                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                    self.objects.protagonist.body.position.x = obj.position * -5;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else resolve(obj);
+                };
+                fall();
+            });
+        }
+
+        /**
+         * starting animation part 3
+         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+         */
+
+    }, {
+        key: 'startingAnimation3',
+        value: function startingAnimation3(obj) {
+            var t = 150;
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var fall = function fall() {
+                    self.camera.position.y--;
+                    t--;
+                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                    self.objects.protagonist.body.position.x = obj.position * -5;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.currentPosition);
+                        resolve(obj);
+                    }
+                };
+                fall();
+            });
+        }
+
+        /**
+         * starting animation part 4
+         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+         */
+
+    }, {
+        key: 'startingAnimation4',
+        value: function startingAnimation4(obj) {
+            var t = 250;
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var fall = function fall() {
+                    self.camera.position.x--;
+                    self.camera.position.z += 0.5;
+                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                    self.objects.protagonist.body.position.x = obj.position * -5;
+                    self.camera.lookAt(self.objects.protagonist.currentPosition);
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            fall();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.currentPosition);
+                        resolve(obj);
+                    }
+                };
+                fall();
+            });
+        }
+
+        /**
+         * starting animation part 5
+         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
+         */
+
+    }, {
+        key: 'startingAnimation5',
+        value: function startingAnimation5(obj) {
+            var t = 80;
+            var self = this;
+            return new Promise(function (resolve, reject) {
+                var zoom = function zoom() {
+                    self.camera.position.z--;
+                    self.camera.lookAt(self.objects.protagonist.currentPosition);
+                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
+                    self.objects.protagonist.body.position.x = obj.position * -5;
+                    t--;
+                    if (t > 0) {
+                        setTimeout(function () {
+                            zoom();
+                        }, 1);
+                    } else {
+                        self.camera.lookAt(self.objects.protagonist.currentPosition);
+                        resolve(obj);
+                    }
+                };
+                zoom();
+            });
+        }
+
+        /**
+         * creates the animation for starting the game
+         * @param {Promise}
+         */
+
+    }, {
+        key: 'startingAnimation',
+        value: function () {
+            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+                var obj;
+                return _regenerator2.default.wrap(function _callee$(_context) {
+                    while (1) {
+                        switch (_context.prev = _context.next) {
+                            case 0:
+                                obj = {
+                                    position: null,
+                                    clock: new THREE.Clock(true)
+                                };
+                                _context.next = 3;
+                                return this.startingAnimation1(obj);
+
+                            case 3:
+                                obj = _context.sent;
+                                _context.next = 6;
+                                return this.startingAnimation2(obj);
+
+                            case 6:
+                                obj = _context.sent;
+                                _context.next = 9;
+                                return this.startingAnimation3(obj);
+
+                            case 9:
+                                obj = _context.sent;
+                                _context.next = 12;
+                                return this.startingAnimation4(obj);
+
+                            case 12:
+                                obj = _context.sent;
+                                _context.next = 15;
+                                return this.startingAnimation5(obj);
+
+                            case 15:
+                                obj = _context.sent;
+
+                                this.objects.introParticles.removeFromScene(this.scene);
+                                return _context.abrupt('return');
+
+                            case 18:
+                            case 'end':
+                                return _context.stop();
+                        }
+                    }
+                }, _callee, this);
+            }));
+
+            function startingAnimation() {
+                return _ref.apply(this, arguments);
+            }
+
+            return startingAnimation;
+        }()
+    }, {
+        key: 'addLevel',
+
+
+        /**
+         * adds current level objects to scene
+         * @param {Level} level - current level
+         */
+        value: function addLevel(level) {
+            this.objects.way = level.way;
+            this.objects.way.addToScene(this.scene);
+        }
+    }, {
+        key: 'turn',
+
+
+        /**
+         * turns camera and protagonist until told to stop
+         */
+        value: function turn(level) {
+            var self = this;
+            if (self.move.continue) {
+                if (self.move.left) {
+                    self.objects.way.rotate(-Math.PI * 0.01);
+                    self.objects.particles.rotate(-Math.PI * 0.01);
+                }
+                if (self.move.right) {
+                    self.objects.way.rotate(Math.PI * 0.01);
+                    self.objects.particles.rotate(Math.PI * 0.01);
+                }
+                if (self.move.up) self.objects.protagonist.jump();
+                if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought") {
+                    level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
+                    level.powerupActive = true;
+                    self.boostNotUsed = false;
+                }
+            }
+        }
+    }, {
+        key: 'getProtagonist',
+
+
+        /**
+         * returns the THREE group of the protagonist
+         * @returns {THREE.Object3D} group of protagonist
+         */
+        value: function getProtagonist() {
+            return this.objects.protagonist.group;
+        }
+    }, {
+        key: 'simpleIntro',
+
+
+        /**
+         * sets camera to the right position
+         */
+        value: function simpleIntro() {
+            this.camera.position.set(0, 50, 95);
+            this.objects.particles.position(0, 0, -500);
+            this.objects.particles.addToScene(this.scene);
+            this.objects.protagonist.position(0, 5, 0);
+            this.objects.protagonist.rotate('y', Math.PI);
+            this.objects.protagonist.addToScene(this.scene);
+            this.camera.lookAt(this.objects.protagonist.currentPosition);
+        }
+    }], [{
+        key: 'stopMovingProtagonist',
+
+
+        /**
+         * disables turning in the given direction
+         * @param {Scene} scene
+         * @param {string} direction - "left" or "right"
+         */
+        value: function stopMovingProtagonist(scene, direction) {
+            scene.move[direction] = false;
+        }
+    }, {
+        key: 'startMovingProtagonist',
+
+
+        /**
+         * enables turning in the given direction
+         * @param {Scene} scene
+         * @param {string} direction - "left" or "right"
+         */
+        value: function startMovingProtagonist(scene, direction) {
+            scene.move[direction] = true;
+        }
+    }]);
+    return Scene;
+}();
+
+},{"./Color":1,"./Particles":4,"./protagonist/Protagonist":20,"async":31,"babel-polyfill":32,"babel-runtime/helpers/asyncToGenerator":35,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"babel-runtime/regenerator":38,"js-cookie":401,"three":746,"tween.js":747}],6:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var Cookies = require('js-cookie');
+
+var audio = {
+  hitDiamond: new Audio('/sound/hitDiamond.mp3'),
+  hitObstacle: new Audio('/sound/hitObstacle.mp3')
+};
+
+var Sound = exports.Sound = {
+  /**
+   * plays sound
+   * @param {String} sound - name of the sound
+   */
+  play: function play(sound) {
+    audio[sound].currentTime = 0;
+    audio[sound].play();
+  },
+
+  /**
+   * stops sound
+   * @param {String} sound - name of the sound
+   */
+  stop: function stop(sound) {
+    audio[sound].stop();
+  },
+
+  /**
+   * checks in cookies whether sound is on
+   * @returns {boolean} - true if sound is on
+   */
+  isMusicOn: function isMusicOn() {
+    if (Cookies.get('sound') === "on") return true;
+    if (Cookies.get('sound') === "undefined") {
+      _setMusicSettings(true);
+      return true;
+    }
+    return false;
+  },
+
+  /**
+   * sets music settings in Cookies
+   * @param {boolean} isOn
+   */
+  setMusicSettings: function setMusicSettings(isOn) {
+    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
+  }
+};
+
+},{"js-cookie":401}],7:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+var Util = exports.Util = {
+  /**
+   * converts degrees to radians
+   * @param {number} degrees
+   * @returns {number}
+   */
+  convertDegreesToRadians: function convertDegreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+  },
+
+  /**
+   * converts radians to degrees
+   * @param {number} radians
+   * @returns {number}
+   */
+  convertRadiansToDegrees: function convertRadiansToDegrees(radians) {
+    return radians * (180 / Math.PI);
+  },
+
+  /**
+   * Returns a random number between min (inclusive) and max (exclusive)
+   * @returns {number}
+   */
+  randomNumberInRange: function randomNumberInRange(min, max) {
+    return Math.random() * (max - min) + min;
+  },
+
+  /**
+   * Returns a random int between min (inclusive) and max (exclusive)
+   * @returns {number}
+   */
+  randomIntInRange: function randomIntInRange(min, max) {
+    return Math.round(Util.randomNumberInRange(min, max));
+  },
+
+  /**
+   * normalizes angle
+   * @param {number} angle - in degrees
+   */
+  normalizeAngle: function normalizeAngle(angle) {
+    //if (angle < 0) angle = angle + 360; //always positive
+    angle = angle % 360; //always <360
+    return angle;
+  }
+};
+
+},{}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Level = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Protagonist = require('../protagonist/Protagonist');
+
+var _Powerups = require('./Powerups');
+
+var _Way = require('../way/Way');
+
+var _CollisionDetector = require('../protagonist/CollisionDetector');
+
+var _GUI = require('../GUI');
+
+var _Sound = require('../Sound');
+
+var _level = require('./level1');
+
+var _level2 = require('./level2');
+
+var _level3 = require('./level3');
+
+var _level4 = require('./level4');
+
+var _level5 = require('./level5');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Obstacle = require('../way/obstacles/Obstacle');
+var $ = require('jquery');
+var Cookies = require('js-cookie');
+
+
+var levels = [_level.level1, _level2.level2, _level3.level3, _level4.level4, _level5.level5];
+
+/**
+ * Represents Level
+ */
+
+var Level = exports.Level = function () {
+    /**
+     * Represents Level
+     * @param {number} current - number starting at 1 representing current level
+     * @constructor
+     */
+    function Level(current) {
+        (0, _classCallCheck3.default)(this, Level);
+
+        this.current = current;
+        this.way = null;
+        this.speed = 1;
+        this.collisionDetector = null;
+        this.gameOver = false;
+        this.diamonds = 0;
+        this.lastDiamond = null;
+        this.powerupActive = false;
+        this.powerupActiveDuration = 0;
+        this.powerUpDistance = 0;
+        this.opacityHelper = -375;
+        this.playSound = true;
+        this.checkedCollision = false;
+    }
+
+    /**
+     * generates and positions meshes for the current level
+     */
+
+
+    (0, _createClass3.default)(Level, [{
+        key: 'prepare',
+        value: function prepare() {
+            var current = levels[this.current - 1];
+            this.way = new _Way.Way(current.way.length, current.speed, current.way.color);
+            this.way.addObstacles(current.way.obstacles);
+            this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
+            this.way.position();
+        }
+    }, {
+        key: 'checkCollision',
+
+
+        /**
+         * calls collision detector and returns true if game needs to be ended
+         * @param {THREE.Object3D} protagonist
+         * @returns {boolean} - true if gameover (collision with box or ring)
+         */
+        value: function checkCollision(protagonist) {
+            this.checkedCollision = true;
+            //check whether collision
+            this.way.currentPosition.height = protagonist.position.y;
+            var collObj = this.collisionDetector.collision(this.way.currentPosition);
+            switch (collObj.type) {
+                case "box":
+                case "ring":
+                case "cone":
+                    // no collsion detection, if powerup 4 is active
+                    if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
+                    this.gameOver = true;
+                    if (this.playSound) _Sound.Sound.play('hitObstacle');
+                    return true;
+                case "diamond":
+                    this.hitDiamond(collObj);
+                    return false;
+            }
+        }
+    }, {
+        key: 'animateProtagonist',
+
+
+        /**
+         * calls animation functions of protagonist
+         * @param {THREE.Object3D} protagonist
+         * @param {THREE.Clock} clock
+         * @param {number} speedMulti
+         */
+        value: function animateProtagonist(protagonist, clock, speedMulti) {
+            var position = Math.sin(clock.getElapsedTime() * 10) * 1;
+            _Protagonist.Protagonist.move(protagonist, position);
+            if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
+                var opacity = 0.3;
+                if (this.opacityHelper >= 0) {
+                    opacity = 0.7 / 149625 * (this.opacityHelper * this.opacityHelper) + 0.3;
+                }
+                this.opacityHelper += speedMulti;
+                _Protagonist.Protagonist.makeGroupTransparent(protagonist, opacity);
+                this.powerUpDistance += speedMulti;
+            }
+        }
+    }, {
+        key: 'begin',
+
+
+        /**
+         * starts level
+         * @param {function} cb - callback function
+         * @param {THREE.Object3D} protagonist - group of meshes of protagonist
+         */
+        value: function begin(protagonist) {
+            var self = this;
+            //reset diamonds
+            self.lastDiamond = null;
+            self.diamonds = 0;
+            //reset way
+            var t = self.way.length - 80;
+            var speedMulti = 2;
+            var clock = new THREE.Clock(true);
+            return new Promise(function (resolve, reject) {
+                var animate = function animate() {
+                    t -= speedMulti;
+                    self.animateProtagonist(protagonist, clock, speedMulti);
+                    self.way.moveForwardTillEnd(self.speed * speedMulti);
+                    if (t <= 0 || self.checkCollision(protagonist)) {
+                        resolve();
+                        return;
+                    }
+                    setTimeout(function () {
+                        animate();
+                    }, self.speed);
+                };
+                animate(); //once
+            });
+        }
+    }, {
+        key: 'hitDiamond',
+
+
+        /**
+         * increases score on diamond hit and removes it
+         * @param {Obstacle} collObj - diamond whitch which the collision happened
+         */
+        value: function hitDiamond(collObj) {
+            var self = this;
+            if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
+                if (self.playSound) _Sound.Sound.play('hitDiamond');
+                self.lastDiamond = collObj;
+                self.diamonds++;
+                self.lastDiamond.mesh.visible = false;
+                _GUI.GUI.setDiamondsInScoreBoard(self.diamonds);
+            }
+        }
+    }, {
+        key: 'showSuccessScreen',
+
+
+        /**
+         * renders hogan tempalte success.mustache and adds it to html-body
+         */
+        value: function showSuccessScreen() {
+            var last = '';
+            var canNotBePlayed = void 0,
+                disableNextLevel = void 0,
+                showOutro = void 0;
+            if (this.current === levels.length) {
+                last = "gone";
+                showOutro = "true";
+            }
+            if (!Level.canBePlayed(this.current + 1)) {
+                canNotBePlayed = "true";
+                disableNextLevel = "disabled";
+            }
+            _GUI.GUI.showSuccessScreen({
+                score: this.diamonds,
+                level: this.current,
+                next: this.current + 1,
+                last: last,
+                canNotBePlayed: canNotBePlayed,
+                disableNextLevel: disableNextLevel,
+                showOutro: showOutro
+            });
+            this.showShopScreen();
+        }
+    }, {
+        key: 'showGameOverScreen',
+
+
+        /**
+         * renders hogan template gameover.mustache and adds it to html-body
+         */
+        value: function showGameOverScreen() {
+            _GUI.GUI.showGameOverScreen({
+                score: this.diamonds,
+                level: this.current
+            });
+        }
+    }, {
+        key: 'showShopScreen',
+
+
+        /**
+         * adds shop screen
+         */
+        value: function showShopScreen() {
+            var self = this;
+            var powerups = _Powerups.Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+            _GUI.GUI.showShopScreen({
+                total: Level.getTotalDiamonds(),
+                powerups: powerups
+            });
+        }
+    }, {
+        key: 'updateShopScreen',
+
+
+        /**
+         * updates shop screen
+         */
+        value: function updateShopScreen() {
+            var self = this;
+            var powerups = _Powerups.Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
+            _GUI.GUI.updateShopScreen({
+                total: Level.getTotalDiamonds(),
+                powerups: powerups
+            });
+        }
+    }, {
+        key: 'setCookie',
+
+
+        /**
+         * stores the score and success in cookie
+         * @param {boolean} success - whether current level has been ended with success
+         */
+        value: function setCookie(success) {
+            if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
+            var obj = Cookies.get();
+            if (isNaN(Cookies.get('total'))) {
+                Cookies.set('total', this.diamonds);
+            } else {
+                var sum = parseInt(Cookies.get('total'));
+                sum += this.diamonds;
+                Cookies.set('total', sum);
+            }
+        }
+    }, {
+        key: 'background',
+
+
+        /**
+         * returns background color for level
+         * @returns {number} color as hexdecimal
+         */
+        value: function background() {
+            var current = levels[this.current - 1];
+            return current.background;
+        }
+    }], [{
+        key: 'getTotalDiamonds',
+
+
+        /**
+         * returns total amount of diamonds
+         * @returns {number}
+         */
+        value: function getTotalDiamonds() {
+            return Cookies.get('total');
+        }
+    }, {
+        key: 'canBePlayed',
+
+
+        /**
+         * checks whether the level can be played
+         * @param {number} level - that should be played
+         * @returns {boolean}
+         */
+        value: function canBePlayed(level) {
+            if (level == 1) return true;
+            level--;
+            if (Cookies.get(level + '-success') == "true") {
+                //managed level
+                if (level <= _Powerups.Powerups.amount()) {
+                    //powerup exists
+                    if (level <= _Powerups.Powerups.amountOfBought()) return true;
+                    return false;
+                } else {
+                    //no powerup exist
+                    return true;
+                }
+            }
+            return false;
+        }
+    }]);
+    return Level;
+}();
+
+},{"../GUI":2,"../Sound":6,"../protagonist/CollisionDetector":17,"../protagonist/Protagonist":20,"../way/Way":25,"../way/obstacles/Obstacle":29,"./Powerups":9,"./level1":10,"./level2":11,"./level3":12,"./level4":13,"./level5":14,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"jquery":400,"js-cookie":401}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var Cookies = require('js-cookie');
+var powerups = [{
+    id: 1,
+    description: 'Sister Alice has very wide legs. Free her and you will be able to <b>dodge faster</b>.',
+    diamonds: 10,
+    img: '/img/powerups/wideleg.jpg'
+}, {
+    id: 2,
+    description: 'With his very long legs, Bob can jump very high. To <b>jump higher</b> free him.',
+    diamonds: 20,
+    img: '/img/powerups/longleg.jpg'
+}, {
+    id: 3,
+    description: 'Mother Carol likes her magnet hat. Free her and <b>collecting diamonds</b> will be easier.',
+    diamonds: 30,
+    img: '/img/powerups/magnet.jpg'
+}, {
+    id: 4,
+    description: 'Father Dave is a doc. During a run you can activate him with <kbd><i class="fa fa-long-arrow-down" aria-hidden="true"></i></kbd>. That will make you <b>invulnerable</b> for a certain distance. ',
+    diamonds: 40,
+    img: '/img/powerups/invulnerable.jpg'
+}];
+
+var Powerups = exports.Powerups = {
+
+    /**
+     * returns array with all powerups
+     * @return {Array} powerups - array with all powerups
+     */
+    getPowerups: function getPowerups() {
+        return powerups;
+    },
+
+    /**
+     * buys powerup according to powerup id
+     * @param {number} id - id of powerup
+     */
+    buy: function buy(id) {
+        powerups.forEach(function (powerup) {
+            if (powerup.id == id) {
+                var total = Cookies.get('total');
+                Cookies.set('powerup-' + powerup.id, 'bought');
+                total -= powerup.diamonds;
+                console.log('total: ' + total);
+                Cookies.set('total', total);
+                return total;
+            }
+        });
+    },
+
+    /**
+     * checks whether powerup has been bought already
+     * @param {boolean} - is true if powerup has been bought
+     */
+    boughtAlready: function boughtAlready(id) {
+        if (Cookies.get('powerup-' + id) == "bought") {
+            return true;
+        } else {
+            return false;
+        }
+    },
+
+    getPowerupsForTemplate: function getPowerupsForTemplate(totalDiamonds) {
+        powerups.forEach(function (powerup) {
+            powerup.disabled = "disabled";
+            if (Powerups.boughtAlready(powerup.id)) {
+                powerup.disabled = "hidden";
+            } else if (powerup.diamonds <= totalDiamonds) {
+                powerup.disabled = "";
+            }
+        });
+        return powerups;
+    },
+
+    amount: function amount() {
+        return powerups.length;
+    },
+
+    amountOfBought: function amountOfBought() {
+        var bought = 0;
+        for (var i = 1; i <= powerups.length; i++) {
+            if (Cookies.get('powerup-' + i) === "bought") bought++;
+        }
+        return bought;
+    }
+};
+
+},{"js-cookie":401}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.level1 = undefined;
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var boxColor = _Color.Color.palette[1].box;
+var level1 = exports.level1 = {
+    level: 1,
+    speed: 1,
+    background: _Color.Color.palette[1].background,
+    way: {
+        length: 2230,
+        color: _Color.Color.palette[1].way,
+        obstacles: [{
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 500,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 760,
+                angle: 340
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 824,
+                angle: 315
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 863,
+                angle: 71
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 892,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1057,
+                angle: 152
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1068,
+                angle: 282
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1162,
+                angle: 37
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1420,
+                angle: 324
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 60
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 120
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 240
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 10,
+                height: 500
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1532,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 35,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1550,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1625,
+                angle: 271
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1635,
+                angle: 206
+            }
+
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 75,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1843,
+                angle: 76
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1900,
+                angle: 279
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1923,
+                angle: 64
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1973,
+                angle: 230
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2046,
+                angle: 295
+            }
+        }, {
+            type: 'diamond',
+
+            position: {
+                distance: 300,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 350,
+                angle: 42
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 400,
+                angle: 44
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 450,
+                angle: 46
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 500,
+                angle: 48
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 550,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 700,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 770,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 950,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1000,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1050,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1225,
+                angle: 30
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 25
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1375,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1450,
+                angle: 15
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 345
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1750,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1800,
+                angle: 335
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1950,
+                angle: 2
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2000,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 330
+            }
+        }]
+    }
+};
+
+},{"../Color":1,"../Util":7}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.level2 = undefined;
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var boxColor = _Color.Color.palette[0].box;
+var ringColor = _Color.Color.palette[0].ring;
+
+var level2 = exports.level2 = {
+    level: 2,
+    speed: 1,
+    background: _Color.Color.palette[0].background,
+    way: {
+        length: 3230,
+        color: _Color.Color.palette[0].way,
+        obstacles: [{
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 450,
+                angle: 60
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 546,
+                angle: 193
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 760,
+                angle: 340
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 824,
+                angle: 315
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 25,
+                height: 10
+            },
+            color: boxColor,
+            position: {
+                distance: 863,
+                angle: 71
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 892,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1057,
+                angle: 152
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1068,
+                angle: 282
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1162,
+                angle: 37
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1290,
+                angle: 159
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 35,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1357,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1420,
+                angle: 350
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 20,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1507,
+                angle: 310
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 20,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1520,
+                angle: 125
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1532,
+                angle: 258
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1625,
+                angle: 271
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1635,
+                angle: 206
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1721,
+                angle: 9
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1740,
+                angle: 109
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 55,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1820,
+                angle: 131
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 75,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1843,
+                angle: 76
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1900,
+                angle: 279
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1923,
+                angle: 64
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1973,
+                angle: 230
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2046,
+                angle: 295
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2080,
+                angle: 110
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2120,
+                angle: 160
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2298,
+                angle: 284
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2438,
+                angle: 269
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2567,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2675,
+                angle: 265
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2750,
+                angle: 207
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2865,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 2964,
+                angle: 333
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 100,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 3050,
+                angle: 138
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 3100,
+                angle: 43
+            }
+        },
+        //End fo Boxes
+
+        {
+            type: 'diamond',
+            position: {
+                distance: 300,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 350,
+                angle: 42
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 400,
+                angle: 44
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 450,
+                angle: 46
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 500,
+                angle: 48
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 550,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 700,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 770,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 950,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1000,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1050,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1225,
+                angle: 30
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 25
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1375,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1450,
+                angle: 15
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 345
+            }
+        }, {
+            type: 'diamond',
+
+            position: {
+                distance: 1750,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+
+            position: {
+                distance: 1800,
+                angle: 335
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1950,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2000,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2500,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2550,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2600,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2650,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2750,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2800,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2900,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3000,
+                angle: 310
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(250, 350) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(500, 600) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(750, 850) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1000, 1100) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1300, 1350) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
+            }
+        }]
+    }
+};
+
+},{"../Color":1,"../Util":7}],12:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.level3 = undefined;
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var boxColor = _Color.Color.palette[2].box;
+var ringColor = _Color.Color.palette[2].ring;
+var coneColor = _Color.Color.palette[2].cone;
+
+var level3 = exports.level3 = {
+    level: 3,
+    speed: 1,
+    background: _Color.Color.palette[2].background,
+    way: {
+        length: 4230,
+        color: _Color.Color.palette[2].way,
+        obstacles: [{
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 500,
+                angle: 34
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 546,
+                angle: 264
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 300,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 557,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 300,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 557,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 580,
+                angle: 120
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 15,
+                height: 35
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 760,
+                angle: 210
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 834,
+                angle: 283
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 25,
+                height: 10
+            },
+            color: boxColor,
+            position: {
+                distance: 875,
+                angle: 60
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 900,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 80,
+                height: 50
+            },
+            color: boxColor,
+            position: {
+                distance: 950,
+                angle: 100
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1060,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1070,
+                angle: 290
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1140,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1150,
+                angle: 137
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1200,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1290,
+                angle: 159
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 35,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1350,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1450,
+                angle: 350
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1450,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 30
+            },
+            color: boxColor,
+            position: {
+                distance: 1470,
+                angle: 310
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 20,
+                length: 25,
+                height: 40
+            },
+            color: boxColor,
+            position: {
+                distance: 1475,
+                angle: 110
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 60
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 100
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1560,
+                angle: 260
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1625,
+                angle: 271
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1635,
+                angle: 206
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 15
+            },
+            color: boxColor,
+            position: {
+                distance: 1721,
+                angle: 19
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 75,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1843,
+                angle: 76
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1900,
+                angle: 279
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1923,
+                angle: 64
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 15,
+                length: 55,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1973,
+                angle: 320
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 60,
+                length: 5,
+                height: 40
+            },
+            color: boxColor,
+            position: {
+                distance: 2000,
+                angle: 30
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2046,
+                angle: 295
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2298,
+                angle: 284
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2438,
+                angle: 269
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2567,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2675,
+                angle: 265
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 100,
+                height: 10
+            },
+            color: boxColor,
+            position: {
+                distance: 2679,
+                angle: 310
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2750,
+                angle: 207
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2865,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2964,
+                angle: 333
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 100,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3050,
+                angle: 138
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3100,
+                angle: 43
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3150,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3170,
+                angle: 273
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3200,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3210,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3270,
+                angle: 75
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3300,
+                angle: 145
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3340,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3370,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3375,
+                angle: 140
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+
+                distance: 3400,
+                angle: 220
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 210
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 330
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 30
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3700,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3700,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3750,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3800,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3800,
+                angle: 30
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3900,
+                angle: 50
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 35,
+                length: 25,
+                height: 70
+            },
+            color: boxColor,
+            position: {
+                distance: 3950,
+                angle: 350
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 4000,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 300,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 350,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 400,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 450,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 500,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 550,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 700,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 770,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 950,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1000,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1050,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1225,
+                angle: 290
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 290
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1375,
+                angle: 290
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1450,
+                angle: 290
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 345
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1750,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1800,
+                angle: 335
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1950,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2000,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 130
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2100,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2150,
+                angle: 140
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2200,
+                angle: 145
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2250,
+                angle: 150
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2300,
+                angle: 155
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2500,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2550,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2600,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2650,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2750,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2800,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2900,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3000,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3100,
+                angle: 38
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3500,
+                angle: 183
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 192
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3700,
+                angle: 210
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3140,
+                angle: 45
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3240,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3300,
+                angle: 55
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 10
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3650,
+                angle: 10
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3675,
+                angle: 10
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(250, 350) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(500, 700) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(750, 950) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1050, 1200) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1300, 1400) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1900, 2000) * 2
+            }
+        }, {
+            type: 'cone',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: coneColor,
+            position: {
+                distance: 4100,
+                angle: 340
+            }
+        }]
+    }
+};
+
+},{"../Color":1,"../Util":7}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.level4 = undefined;
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var boxColor = _Color.Color.palette[3].box;
+var ringColor = _Color.Color.palette[3].ring;
+var coneColor = _Color.Color.palette[3].cone;
+var level4 = exports.level4 = {
+    level: 4,
+    speed: 1,
+    background: _Color.Color.palette[3].background,
+    way: {
+        length: 4230,
+        color: _Color.Color.palette[3].way,
+        obstacles: [{
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 450,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 450,
+                angle: 230
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 35,
+                length: 15,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 500,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 35,
+                length: 15,
+                height: 300
+            },
+            color: boxColor,
+            position: {
+                distance: 500,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 550,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 40
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 80
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 130
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 720,
+                angle: 220
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 850,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 950,
+                angle: 75
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1075,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1050,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1080,
+                angle: 240
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1160,
+                angle: 240
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1180,
+                angle: 130
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1350,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1350,
+                angle: 175
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 400,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 130
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 400,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 60,
+                length: 25,
+                height: 40
+            },
+            color: boxColor,
+            position: {
+                distance: 1600,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1700,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 80
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 140
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 260
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 320
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 100,
+                length: 25,
+                height: 35
+            },
+            color: boxColor,
+            position: {
+                distance: 2000,
+                angle: 50
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 250,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2100,
+                angle: 110
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2100,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2150,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2250,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2400,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2450,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 75,
+                length: 25,
+                height: 50
+            },
+            color: boxColor,
+            position: {
+                distance: 2500,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2550,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2650,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2700,
+                angle: 300
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2800,
+                angle: 60
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2950,
+                angle: 45
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 10,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3000,
+                angle: 95
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 10,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3050,
+                angle: 120
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3174,
+                angle: 86
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3250,
+                angle: 240
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3260,
+                angle: 100
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3400,
+                angle: 120
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3400,
+                angle: 10
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 295
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3600,
+                angle: 30
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 3650,
+                angle: 155
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 10,
+                height: 100
+            },
+            color: boxColor,
+            position: {
+                distance: 3750,
+                angle: 160
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 4000,
+                angle: 45
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 4000,
+                angle: 135
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 4000,
+                angle: 225
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 400
+            },
+            color: boxColor,
+            position: {
+                distance: 4000,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 300,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 350,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 400,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 450,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 500,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 550,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 630,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 650,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 680,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 700,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 730,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 750,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 780,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1150,
+                angle: 15
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1200,
+                angle: 345
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1350,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1340,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1380,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1420,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1460,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1500,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1550,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1600,
+                angle: 110
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1800,
+                angle: 335
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1950,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2000,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2100,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2150,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2200,
+                angle: 90
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2350,
+                angle: 180
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2500,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2550,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2600,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2650,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2750,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2800,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2900,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3000,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3100,
+                angle: 38
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3500,
+                angle: 183
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 192
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3700,
+                angle: 170
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3140,
+                angle: 45
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3240,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3300,
+                angle: 55
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3650,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3675,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 4050,
+                angle: 25
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 4200,
+                angle: 30
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 300
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 300
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 300
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 260
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 260
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 260
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 240
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 240
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 240
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 220
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 220
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 220
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 200
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 200
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 200
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 180
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 180
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 180
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 160
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 160
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 160
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 140
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 140
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 140
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 120
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 120
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 120
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 100
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 100
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 100
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 80
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 80
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 80
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 60
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3800,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3850,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 320
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(250, 350) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(500, 600) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(700, 800) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1050, 1060) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1300, 1320) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1450, 1500) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1600, 1625) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(1900, 2100) * 2
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 700,
+                angle: 0
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 1100,
+                angle: 90
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 1500,
+                angle: 180
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 1900,
+                angle: 270
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 2300,
+                angle: 0
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 2700,
+                angle: 90
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3100,
+                angle: 180
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3500,
+                angle: 270
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3900,
+                angle: 0
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 4100,
+                angle: 90
+            }
+        }]
+    }
+};
+
+},{"../Color":1,"../Util":7}],14:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.level5 = undefined;
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var boxColor = _Color.Color.palette[4].box;
+var ringColor = _Color.Color.palette[4].ring;
+var coneColor = _Color.Color.palette[4].cone;
+
+var level5 = exports.level5 = {
+    level: 5,
+    speed: 1,
+    background: _Color.Color.palette[4].background,
+    way: {
+        length: 4000,
+        color: _Color.Color.palette[4].way,
+        obstacles: [{
+            type: 'box',
+            size: {
+                width: 50,
+                length: 80,
+                height: 50
+            },
+            color: boxColor,
+            position: {
+                distance: 1300,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1800,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 80,
+                length: 20,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2100,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 80,
+                length: 20,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2800,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 100,
+                length: 20,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2800,
+                angle: 100
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 700,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 450,
+                angle: 10
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 450,
+                angle: 60
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 546,
+                angle: 193
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 35
+            },
+            color: boxColor,
+            position: {
+                distance: 560,
+                angle: 340
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 35
+            },
+            color: boxColor,
+            position: {
+                distance: 660,
+                angle: 193
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 730,
+                angle: 168
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 824,
+                angle: 315
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 25,
+                height: 10
+            },
+            color: boxColor,
+            position: {
+                distance: 863,
+                angle: 71
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 892,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 80,
+                height: 50
+            },
+            color: boxColor,
+            position: {
+                distance: 934,
+                angle: 83
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 80,
+                height: 50
+            },
+            color: boxColor,
+            position: {
+                distance: 970,
+                angle: 120
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 200,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1057,
+                angle: 152
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1078,
+                angle: 282
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1162,
+                angle: 37
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1290,
+                angle: 159
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 35,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1357,
+                angle: 20
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1420,
+                angle: 324
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1420,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 30
+            },
+            color: boxColor,
+            position: {
+                distance: 1447,
+                angle: 281
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 20,
+                length: 25,
+                height: 40
+            },
+            color: boxColor,
+            position: {
+                distance: 1457,
+                angle: 310
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 60
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 190
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1532,
+                angle: 258
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 300,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1600,
+                angle: 150
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 300,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1600,
+                angle: 200
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 37,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1625,
+                angle: 271
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1635,
+                angle: 206
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 5,
+                height: 1
+            },
+            color: boxColor,
+            position: {
+                distance: 1721,
+                angle: 9
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 10,
+                length: 75,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1843,
+                angle: 76
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1900,
+                angle: 279
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1923,
+                angle: 64
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1973,
+                angle: 290
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2000,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2046,
+                angle: 295
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2298,
+                angle: 284
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2438,
+                angle: 269
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2567,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2675,
+                angle: 265
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 5,
+                length: 100,
+                height: 10
+            },
+            color: boxColor,
+            position: {
+                distance: 2679,
+                angle: 290
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2750,
+                angle: 170
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2865,
+                angle: 25
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 2964,
+                angle: 333
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 2500,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 2500,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 2500,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 2500,
+                angle: 270
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 0
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 200
+            },
+            color: boxColor,
+            position: {
+                distance: 3500,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 300,
+                angle: 40
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 350,
+                angle: 42
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 400,
+                angle: 44
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 450,
+                angle: 46
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 500,
+                angle: 48
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 550,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 700,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 770,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 950,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1000,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1050,
+                angle: 280
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1225,
+                angle: 30
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 25
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1375,
+                angle: 20
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1450,
+                angle: 15
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 345
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1750,
+                angle: 340
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1800,
+                angle: 335
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1950,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2000,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2050,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2500,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2550,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2600,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2650,
+                angle: 320
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2750,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2800,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 2900,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3000,
+                angle: 310
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3100,
+                angle: 38
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3500,
+                angle: 183
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 192
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3700,
+                angle: 170
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3140,
+                angle: 45
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3240,
+                angle: 50
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3300,
+                angle: 55
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3600,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3650,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3675,
+                angle: 0
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 3900,
+                angle: 20
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(250, 350) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(500, 700) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: _Util.Util.randomIntInRange(800, 900) * 2
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: 2000
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: 2300
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: 2600
+            }
+        }, {
+            type: 'ring',
+            color: ringColor,
+            position: {
+                distance: 3000
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 1000,
+                angle: 0
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 2000,
+                angle: 90
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3000,
+                angle: 180
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3650,
+                angle: 90
+            }
+        }, {
+            type: 'cone',
+            color: coneColor,
+            position: {
+                distance: 3850,
+                angle: 0
+            }
+        }]
+    }
+};
+
+},{"../Color":1,"../Util":7}],15:[function(require,module,exports){
+'use strict';
+//noinspection JSUnresolvedFunction
+
+var _regenerator = require('babel-runtime/regenerator');
+
+var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+
+var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+/**
+ * initiates the game with intro
+ */
+var gameWithIntro = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        _GUI.GUI.startingAnimationFadeIn();
+                        mainScene.showIntro();
+                        addLevel();
+                        _context.next = 5;
+                        return render();
+
+                    case 5:
+                        _context.next = 7;
+                        return _Keybindings.Keybindings.keyBind('keydown').first().toPromise();
+
+                    case 7:
+                        _context.next = 9;
+                        return startingAnimation();
+
+                    case 9:
+                        _context.next = 11;
+                        return startLevel();
+
+                    case 11:
+                        _context.next = 13;
+                        return showScreen();
+
+                    case 13:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this);
+    }));
+
+    return function gameWithIntro() {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+/**
+ * starts animation on homepage
+ * @return {Promise}
+ */
+
+
+/**
+ * starts game without intro
+ * @return {Promise}
+ */
+var gameWithoutIntro = function () {
+    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        // TODO preload everything
+                        mainScene.simpleIntro();
+                        addLevel();
+                        _context3.next = 4;
+                        return render();
+
+                    case 4:
+                        _context3.next = 6;
+                        return startLevel();
+
+                    case 6:
+                        showScreen();
+
+                    case 7:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, this);
+    }));
+
+    return function gameWithoutIntro() {
+        return _ref3.apply(this, arguments);
+    };
+}();
+
+/**
+ * renders game
+ */
+
+
+/**
+ * starts current level
+ * @return {Promise}
+ */
+var startLevel = function () {
+    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
+        var subs, protagonist;
+        return _regenerator2.default.wrap(function _callee4$(_context4) {
+            while (1) {
+                switch (_context4.prev = _context4.next) {
+                    case 0:
+                        subs = [];
+
+                        _GUI.GUI.fadeInScoreboard();
+                        _GUI.GUI.fadeInSoundSwitch();
+                        subs.push(_Keybindings.Keybindings.keyBind('keydown').subscribe(function (direction) {
+                            return _Scene.Scene.startMovingProtagonist(mainScene, direction);
+                        }));
+                        subs.push(_Keybindings.Keybindings.keyBind('keyup').subscribe(function (direction) {
+                            return _Scene.Scene.stopMovingProtagonist(mainScene, direction);
+                        }));
+                        //start moving way
+                        mainScene.move.continue = true;
+                        protagonist = mainScene.getProtagonist();
+                        _context4.next = 9;
+                        return level[currentLevel].begin(protagonist);
+
+                    case 9:
+                        mainScene.move.continue = false;
+                        subs.forEach(function (sub) {
+                            return sub.unsubscribe();
+                        });
+
+                    case 11:
+                    case 'end':
+                        return _context4.stop();
+                }
+            }
+        }, _callee4, this);
+    }));
+
+    return function startLevel() {
+        return _ref4.apply(this, arguments);
+    };
+}();
+
+/**
+ * shows gameover or successcreen at the end of the level and updates Cookies
+ */
+
+
+var _Protagonist = require('./protagonist/Protagonist');
+
+var _Scene = require('./Scene');
+
+var _Level = require('./level/Level');
+
+var _Keybindings = require('./Keybindings');
+
+var _Powerups = require('./level/Powerups');
+
+var _GUI = require('./GUI');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var $ = require('jquery');
+var THREE = require('three');
+var async = require('async');
+var TWEEN = require('tween.js');
+var Cookies = require('js-cookie');
+
+//because some three js modules need a global THREE-letiable....
+window.THREE = THREE;
+
+var mainScene = void 0;
+var level = [{}, new _Level.Level(1), new _Level.Level(2), new _Level.Level(3), new _Level.Level(4), new _Level.Level(5)];
+var currentLevel = 1;
+var URLpath = '';
+window.initMe = 0;
+
+var music = new Audio('/sound/music.mp3');
+
+if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function startingAnimation() {
+    var _this = this;
+
+    var fadeTime = 1000;
+    _GUI.GUI.startingAnimationFadeOut(fadeTime);
+    return new Promise(function (resolve) {
+        setTimeout((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+            return _regenerator2.default.wrap(function _callee2$(_context2) {
+                while (1) {
+                    switch (_context2.prev = _context2.next) {
+                        case 0:
+                            _context2.next = 2;
+                            return mainScene.startingAnimation();
+
+                        case 2:
+                            resolve();
+
+                        case 3:
+                        case 'end':
+                            return _context2.stop();
+                    }
+                }
+            }, _callee2, _this);
+        })), fadeTime);
+    });
+}function render() {
+    return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
+            render();
+            resolve();
+        });
+        mainScene.render();
+        mainScene.turn(level[currentLevel]);
+        TWEEN.update();
+    });
+}
+
+/**
+ * adds current level to scene
+ */
+function addLevel() {
+    level[currentLevel].prepare();
+    mainScene.addLevel(level[currentLevel]);
+}function showScreen() {
+    if (!level[currentLevel].gameOver) {
+        //success
+        level[currentLevel].setCookie(true);
+        level[currentLevel].showSuccessScreen();
+    } else {
+        //gameover
+        level[currentLevel].setCookie(false);
+        level[currentLevel].showGameOverScreen();
+    }
+}
+
+/**
+ * checks whether level is allowed to be played, if yes return true
+ * @param {number} level
+ * @returns {boolean}
+ */
+function playThisLevel() {
+    if (currentLevel === 1) return true;
+    return _Level.Level.canBePlayed(currentLevel);
+}
+
+/**
+ * checks in cookies whether sound is on
+ * @returns {boolean} - true if sound is on
+ */
+function isMusicOn() {
+    if (Cookies.get('sound') === "on") return true;
+    if (Cookies.get('sound')) {
+        level[currentLevel].playSound = false;
+        return false;
+    }
+    setMusicSettings(true);
+    return true;
+}
+
+/**
+ * sets music settings in Cookies
+ */
+function setMusicSettings(isOn) {
+    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
+}
+
+/**
+ * main function for game
+ * @return {Promise}
+ */
+var main = function () {
+    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5() {
+        var URL, background, newURL;
+        return _regenerator2.default.wrap(function _callee5$(_context5) {
+            while (1) {
+                switch (_context5.prev = _context5.next) {
+                    case 0:
+                        URL = window.location.href;
+
+                        URLpath = URL.replace(/http:\/\/.+\//g, '');
+                        if (URLpath !== "") currentLevel = URLpath.replace('#', '');
+                        _GUI.GUI.showLoadingIcon();
+                        _context5.next = 6;
+                        return _Protagonist.Protagonist.init();
+
+                    case 6:
+                        background = level[currentLevel].background();
+
+                        mainScene = new _Scene.Scene(window.innerWidth, window.innerHeight, background);
+                        document.body.appendChild(mainScene.renderer.domElement);
+                        _GUI.GUI.removeLoadingIcon();
+
+                        if (!(URLpath == "")) {
+                            _context5.next = 15;
+                            break;
+                        }
+
+                        _context5.next = 13;
+                        return gameWithIntro();
+
+                    case 13:
+                        _context5.next = 16;
+                        break;
+
+                    case 15:
+                        if (playThisLevel()) gameWithoutIntro();else {
+                            newURL = URL.replace(URLpath, '');
+
+                            window.location.href = newURL;
+                        }
+
+                    case 16:
+                    case 'end':
+                        return _context5.stop();
+                }
+            }
+        }, _callee5, this);
+    }));
+
+    return function main() {
+        return _ref5.apply(this, arguments);
+    };
+}();
+
+/**
+ * main function of /
+ */
+var intro = function intro() {
+    _GUI.GUI.introFadeIn();
+};
+
+//reloads page
+$(document).on('click', '.button.reload', function () {
+    location.reload();
+});
+
+//buys powerup on click
+$(document).on('click', '.powerup .button', function (event) {
+    if (_GUI.GUI.buttonIsEnabled($(this))) {
+        var powerup = _GUI.GUI.getPowerupIdFromButton(event);
+        var total = _Powerups.Powerups.buy(powerup);
+        level[currentLevel].updateShopScreen();
+        if (_Level.Level.canBePlayed(parseInt(currentLevel) + 1)) _GUI.GUI.updateNextLevelButton();
+    }
+});
+
+//enables and disables sound
+$(document).on('click', '#soundSwitch', function (event) {
+    level[currentLevel].playSound = _GUI.GUI.getSoundSwitch();
+    setMusicSettings(level[currentLevel].playSound);
+    if (level[currentLevel].playSound) music.play();else music.pause();
+});
+
+//resets cookies to play game from start
+$(document).on('click', '#playagain', function (event) {
+    var object = Cookies.get();
+    for (var property in object) {
+        if (object.hasOwnProperty(property)) {
+            Cookies.remove(property);
+        }
+    }
+});
+
+music.addEventListener('ended', function () {
+    if (level[currentLevel].playSound) {
+        this.currentTime = 0;
+        this.play();
+    }
+}, false);
+
+//store functions to window
+window.intro = intro;
+window.main = main;
+
+},{"./GUI":2,"./Keybindings":3,"./Scene":5,"./level/Level":8,"./level/Powerups":9,"./protagonist/Protagonist":20,"async":31,"babel-runtime/helpers/asyncToGenerator":35,"babel-runtime/regenerator":38,"jquery":400,"js-cookie":401,"three":746,"tween.js":747}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.Body = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Color = require('../Color');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+/**
+ * body of protagonist
+ */
+
+var Body = exports.Body = function () {
+
+  /**
+   * generates mesh for body
+   */
+  function Body() {
+    (0, _classCallCheck3.default)(this, Body);
+
+    this.material = new THREE.MeshLambertMaterial({
+      color: 0xffffff,
+      transparent: false,
+      opacity: 0.8
+    });
+    this.mesh = new THREE.Mesh(Body.geometry, this.material);
+  }
+
+  /**
+   * positions the body according to given coordinates
+   * @param {number} x
+   * @param {number} y
+   * @param {number} z
+   */
+
+
+  (0, _createClass3.default)(Body, [{
+    key: 'position',
+    value: function position(x, y, z) {
+      this.mesh.position.set(x, y, z);
+    }
+
+    /**
+     * adds the body to a group
+     * @param {THREE.Group} group
+     */
+
+  }, {
+    key: 'addToGroup',
+    value: function addToGroup(group) {
+      group.add(this.mesh);
+    }
+
+    /**
+     * loads the body from json file (blender)
+     * @param {Promise} promise
+     */
+
+  }], [{
+    key: 'init',
+    value: function init(cb) {
+      var loader = new THREE.JSONLoader();
+      return new Promise(function (resolve, reject) {
+        loader.load('/blender/body.json', function (geometry, materials) {
+          Body.geometry = geometry;
+          resolve();
+        });
+      });
+    }
+  }]);
+  return Body;
+}();
+
+},{"../Color":1,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],17:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.CollisionDetector = undefined;
+
+var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require("babel-runtime/helpers/createClass");
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var CollisionDetector = exports.CollisionDetector = function () {
+
+    /**
+     * @param {Obstacle[]} obstacles
+     * @constructor
+     */
+    function CollisionDetector(obstacles) {
+        (0, _classCallCheck3.default)(this, CollisionDetector);
+
+        //sort by distance to save performance
+        obstacles = obstacles.sort(function (a, b) {
+            try {
+                var keyA = CollisionDetector.getMaxDistance(a);
+                keyB = CollisionDetector.getMaxDistance(b);
+                // Compare the 2 keys
+                if (keyA < keyB) return -1;
+                if (keyA > keyB) return 1;
+            } catch (e) {}
+            return 0;
+        });
+        this.obstacles = obstacles;
+    }
+
+    /**
+     * @param {Obstacle} obstacle
+     * @return {number}
+     * @private
+     */
+
+
+    (0, _createClass3.default)(CollisionDetector, [{
+        key: "collision",
+
+
+        /**
+         * @param {{distance: number}} currentPosition - contains the current distance and angle
+         * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
+         */
+        value: function collision(currentPosition) {
+            var self = this;
+            var ret = {
+                collision: false,
+                type: null,
+                mesh: null
+            };
+            self.obstacles.forEach(function (obstacle, i) {
+                if (ret.collision) return;
+                // check if obstacle should not be checked anymore
+                // remove from array with the next garbage-collection
+                if (CollisionDetector.getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
+
+                if (
+                // check if obstacle is near enough otherwise don't even check whether collision
+                obstacle.collisionData.distance.min < currentPosition.distance + 100 &&
+                //other collision with left body half
+                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
+                //other collisions from right body half.
+                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemax && currentPosition.anglemax < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
+                //ring collision
+                obstacle.collisionData.type == "ring" && CollisionDetector.getMaxDistance(obstacle) == currentPosition.distance && obstacle.collisionData.size.height > currentPosition.height ||
+                //cone
+                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
+                //cone
+                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
+
+                    ret = {
+                        collision: true,
+                        type: obstacle.collisionData.type,
+                        mesh: obstacle.mesh
+                    };
+                }
+            });
+            return ret;
+        }
+    }], [{
+        key: "getMaxDistance",
+        value: function getMaxDistance(obstacle) {
+            if (obstacle.type == 'ring') return obstacle.collisionData.distance;
+            return obstacle.collisionData.distance.max;
+        }
+    }]);
+    return CollisionDetector;
+}();
+
+},{"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37}],18:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Head = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Color = require('../Color');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+/**
+ * head of protagonist
+ */
+
+var Head = exports.Head = function () {
+    /**
+     * generates mesh for head of Protagonist
+     */
+    function Head() {
+        (0, _classCallCheck3.default)(this, Head);
+
+        this.material = new THREE.MeshLambertMaterial({
+            color: 0xffffff,
+            transparent: false,
+            opacity: 0.8
+        });
+        this.mesh = new THREE.Mesh(Head.geometry, this.material);
+    }
+
+    /**
+     * positions the head according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+
+
+    (0, _createClass3.default)(Head, [{
+        key: 'position',
+        value: function position(x, y, z) {
+            this.mesh.position.set(x, y, z);
+        }
+
+        /**
+         * adds the head to a group
+         * @param {THREE.Group} group
+         */
+
+    }, {
+        key: 'addToGroup',
+        value: function addToGroup(group) {
+            group.add(this.mesh);
+        }
+
+        /**
+         * loads the head from json file (blender)
+         * @param {Promise} promise
+         */
+
+    }], [{
+        key: 'init',
+        value: function init() {
+            var loader = new THREE.JSONLoader();
+            return new Promise(function (resolve, reject) {
+                loader.load('/blender/head.json', function (geometry, materials) {
+                    Head.geometry = geometry;
+                    resolve();
+                });
+            });
+        }
+    }]);
+    return Head;
+}();
+
+},{"../Color":1,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],19:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Leg = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Color = require('../Color');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+/**
+ * leg of protagonist
+ */
+
+var Leg = exports.Leg = function () {
+    function Leg() {
+        (0, _classCallCheck3.default)(this, Leg);
+
+        this.material = new THREE.MeshLambertMaterial({
+            color: 0xffffff,
+            transparent: false,
+            opacity: 0.8
+        });
+        this.mesh = new THREE.Mesh(Leg.geometry, this.material);
+    }
+
+    /**
+     * positions the leg according to given coordinates
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+
+
+    (0, _createClass3.default)(Leg, [{
+        key: 'position',
+        value: function position(x, y, z) {
+            this.mesh.position.set(x, y, z);
+        }
+    }, {
+        key: 'addToGroup',
+
+
+        /**
+         * adds the leg to a group
+         * @param {THREE.Group} group
+         */
+        value: function addToGroup(group) {
+            group.add(this.mesh);
+        }
+    }], [{
+        key: 'init',
+
+
+        /**
+         * loads the leg from json file (blender)
+         * @param {Promise} promise
+         */
+        value: function init() {
+            var loader = new THREE.JSONLoader();
+            return new Promise(function (resolve, reject) {
+                loader.load('/blender/leg.json', function (geometry, materials) {
+                    Leg.geometry = geometry;
+                    resolve();
+                });
+            });
+        }
+    }]);
+    return Leg;
+}();
+
+},{"../Color":1,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],20:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Protagonist = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Body = require('./Body');
+
+var _Head = require('./Head');
+
+var _Leg = require('./Leg');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+var TWEEN = require('tween.js');
+var Cookies = require('js-cookie');
+
+var Protagonist = exports.Protagonist = function () {
+    function Protagonist() {
+        (0, _classCallCheck3.default)(this, Protagonist);
+
+        this.object3D = new THREE.Object3D();
+        this.body = new _Body.Body();
+        this.head = new _Head.Head();
+        this.left = {
+            leg: new _Leg.Leg()
+        };
+        this.right = {
+            leg: new _Leg.Leg()
+        };
+        this.groupBodyParts();
+        this.scaleBodyParts();
+        this.isJumping = false;
+    }
+
+    /**
+     * scales body parts to proper setSize
+     */
+
+
+    (0, _createClass3.default)(Protagonist, [{
+        key: 'scaleBodyParts',
+        value: function scaleBodyParts() {
+            this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
+        }
+
+        /**
+         * groups the body parts of protagonist and positions them
+         */
+
+    }, {
+        key: 'groupBodyParts',
+        value: function groupBodyParts() {
+            this.body.position(0, 0, 0);
+            this.body.addToGroup(this.object3D);
+            this.head.position(0, 0.1, 0);
+            this.head.addToGroup(this.object3D);
+            this.right.leg.position(0.5, 0, 0);
+            this.right.leg.addToGroup(this.object3D);
+            this.left.leg.position(0, 0, 0);
+            this.left.leg.addToGroup(this.object3D);
+        }
+
+        /**
+         * Makes protagonist jump a given height
+         */
+
+    }, {
+        key: 'jump',
+        value: function jump() {
+            var height = 40;
+            if (Cookies.get('powerup-2') == "bought") height = 70;
+            var self = this;
+            if (!self.isJumping) {
+                self.isJumping = true;
+                var tween = new TWEEN.Tween({
+                    jump: 0
+                }).to({
+                    jump: Math.PI
+                }, 700).onUpdate(function () {
+                    self.group.position.y = 70 * Math.sin(this.jump);
+                }).start();
+                tween.onComplete(function () {
+                    self.isJumping = false;
+                });
+            }
+        }
+
+        /**
+         * positions protagonist according to given coordinates
+         * @param {number} x - x position of particles group
+         * @param {number} y - y position of particles group
+         * @param {number} z - z position of particles group
+         */
+
+    }, {
+        key: 'position',
+        value: function position(x, y, z) {
+            this.object3D.position.set(x, y, z);
+        }
+
+        /**
+         * rotates the protagonist according to axis and angle
+         * @param {string} axis - "x", "y" or "z"
+         * @param {number} angle - in radians
+         */
+
+    }, {
+        key: 'rotate',
+        value: function rotate(axis, angle) {
+            switch (axis) {
+                case 'x':
+                    this.object3D.rotateX(angle);
+                    break;
+                case 'y':
+                    this.object3D.rotateY(angle);
+                    break;
+                case 'z':
+                    this.object3D.rotateZ(angle);
+                    break;
+            }
+        }
+
+        /**
+         * adds protagonist to given scene
+         * @param {THREE.Scene} scene - scene to which the protagonist will be added
+         */
+
+    }, {
+        key: 'addToScene',
+        value: function addToScene(scene) {
+            scene.add(this.object3D);
+        }
+
+        /**
+         * returns the current position of the Protagonist
+         * @returns {Object}
+         */
+
+    }, {
+        key: 'decreasePosition',
+
+
+        /**
+         * decreases the position of the protagonist according to given axis
+         * @param {string} axis - "x", "y" or "z"
+         */
+        value: function decreasePosition(axis) {
+            switch (axis) {
+                case "x":
+                    this.object3D.position.x--;
+                    break;
+                case "y":
+                    this.object3D.position.y--;
+                    break;
+                case "z":
+                    this.object3D.position.z--;
+                    break;
+            }
+        }
+
+        /**
+         * returns the group of meshes of the protagonist
+         * @returns {THREE.Object3D}
+         */
+
+    }, {
+        key: 'currentPosition',
+        get: function get() {
+            return this.object3D.position;
+        }
+    }, {
+        key: 'group',
+        get: function get() {
+            return this.object3D;
+        }
+
+        /**
+         * changes opacity of protagonist
+         * @param {THREE.Object3D} group - contains meshes of protagonist
+         * @param {number} opacity - from 0 to 1
+         */
+
+    }], [{
+        key: 'makeGroupTransparent',
+        value: function makeGroupTransparent(group, opacity) {
+            group.children.forEach(function (parts) {
+                parts.material.transparent = true;
+                parts.material.opacity = opacity;
+            });
+        }
+
+        /**
+         * moves group of protagonist
+         * @param {THREE.Object3D} group - contains meshes of protagonist
+         *
+         */
+
+    }, {
+        key: 'move',
+        value: function move(group, position) {
+            group.children[0].position.x = position * -0.05;
+            group.children[3].position.z = position * 1;
+            group.children[2].position.z = position * -1;
+        }
+
+        /**
+         * loads blender files for protagonist
+         * @param {Promise} promise
+         */
+
+    }, {
+        key: 'init',
+        value: function init() {
+            return Promise.all([_Leg.Leg.init(), _Head.Head.init(), _Body.Body.init()]);
+        }
+    }]);
+    return Protagonist;
+}();
+
+},{"./Body":16,"./Head":18,"./Leg":19,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"js-cookie":401,"three":746,"tween.js":747}],21:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":399}],22:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    ");_.b(_.t(_.f("content",c,p,0)));_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":399}],23:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like turning faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,456,1069,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-6 medium-6 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"");_.b(_.v(_.f("img",c,p,0)));_.b("\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <div class=\"content\">");_.b("\n" + i);_.b("                        <p>");_.b(_.t(_.f("description",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Free for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":399}],24:[function(require,module,exports){
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i> Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,602,801,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"callout alert\">");_.b("\n" + i);_.b("                <h5>Free your Family!</h5>");_.b("\n" + i);_.b("                <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+},{"hogan.js/lib/template":399}],25:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Way = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Color = require('../Color');
+
+var _Util = require('../Util');
+
+var _GUI = require('../GUI');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+var Obstacle = require('./obstacles/Obstacle');
+var Cookies = require('js-cookie');
+var randomBoolean = require('random-boolean');
+
+var Way = exports.Way = function () {
+    /**
+     * Represents way
+     * @param {number} length how long the way is
+     * @param {number} speed how fast the way should move
+     * @constructor
+     */
+    function Way(length, speed, color) {
+        (0, _classCallCheck3.default)(this, Way);
+
+        this.length = length;
+        this.speed = speed;
+        this.group = new THREE.Object3D();
+        this.obstacles = [];
+        this.radius = 80;
+        this.segments = 1000;
+        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
+        this.material = new THREE.MeshLambertMaterial({
+            color: color
+        });
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+        this.group.add(this.mesh);
+        this.currentPosition = {
+            angle: 0,
+            anglemin: -5,
+            anglemax: 5,
+            distance: 50,
+            height: 0
+        };
+    }
+
+    /**
+     * positions way properly into the scene
+     * @param {number} y y position
+     * @param {number} z z position
+     */
+
+
+    (0, _createClass3.default)(Way, [{
+        key: 'position',
+        value: function position() {
+            this.group.rotation.x = Math.PI / 2;
+            this.group.position.y = -this.radius - 18;
+            this.group.position.z = -this.length * 0.5 + 50;
+        }
+    }, {
+        key: 'moveForwardTillEnd',
+
+
+        /**
+         * moves way direction z positive
+         * @param {number} speed
+         */
+        value: function moveForwardTillEnd(speed) {
+            this.group.position.z = this.group.position.z + speed;
+            this.currentPosition.distance = this.currentPosition.distance + speed;
+            this.moveRandomObstacles();
+            _GUI.GUI.updateDistance(this.currentPosition.distance);
+        }
+    }, {
+        key: 'setCurrentPosition',
+
+
+        /**
+         * sets current position
+         */
+        value: function setCurrentPosition() {
+            // anglemin and anglemax are hitbox for protagonist
+            this.currentPosition.anglemin = this.currentPosition.angle - 5;
+            if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
+            if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
+            this.currentPosition.anglemax = this.currentPosition.angle + 5;
+        }
+    }, {
+        key: 'rotate',
+
+
+        /**
+         * rotates the way around the y axis according to given angle
+         * @param {number} angle
+         */
+        value: function rotate(angle) {
+            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
+            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = _Util.Util.convertDegreesToRadians(360);
+
+            // rotates faster with powerup 1
+            if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
+            this.group.rotation.y += angle;
+            this.currentPosition.angle = _Util.Util.convertRadiansToDegrees(this.group.rotation.y);
+
+            this.setCurrentPosition();
+        }
+    }, {
+        key: 'moveRandomObstacles',
+
+
+        /**
+         * moves the random obstacles
+         */
+        value: function moveRandomObstacles() {
+            this.obstacles.forEach(function (obstacle) {
+                if (!obstacle.randomMoving) return;
+                obstacle.directionChangeIndex++;
+                if (obstacle.directionChangeIndex == 15) {
+                    obstacle.directionChangeIndex = 0;
+                    obstacle.direction = randomBoolean();
+                }
+                //move it
+                obstacle.move(obstacle.direction);
+            });
+        }
+    }, {
+        key: 'addObstacles',
+
+
+        /**
+         * creates Obstacles out of array and adds them to the way
+         * @param {[{}]} obstacles
+         */
+        value: function addObstacles(obstacles) {
+            var self = this;
+            self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
+            self.obstacles.forEach(function (obstacle) {
+                if (obstacle.distance < self.length) {
+                    self.group.add(obstacle.mesh);
+                } else {
+                    console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
+                }
+            });
+        }
+    }, {
+        key: 'addToScene',
+
+
+        /**
+         * adds way to given scene
+         * @param {THREE.Scene} scene - scene to which the way will be added
+         */
+        value: function addToScene(scene) {
+            scene.add(this.group);
+        }
+    }]);
+    return Way;
+}();
+
+},{"../Color":1,"../GUI":2,"../Util":7,"./obstacles/Obstacle":29,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"js-cookie":401,"random-boolean":403,"three":746}],26:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Box = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Util = require('../../Util');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+var Box = exports.Box = function () {
+
+    /**
+     * Represents the obstacle "Box"
+     * @param {Object} box - structure as in levelX.js
+     * @constructor
+     */
+    function Box(box) {
+        (0, _classCallCheck3.default)(this, Box);
+
+        this.material = new THREE.MeshLambertMaterial({ color: box.color });
+        this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+    }
+
+    /**
+     * Positions the box on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+
+
+    (0, _createClass3.default)(Box, [{
+        key: 'position',
+        value: function position(angle, distance, length, radius) {
+            angle = -(angle - 90);
+            angle = _Util.Util.convertDegreesToRadians(angle);
+            var y = length / 2 - distance;
+            var x = radius * Math.cos(angle);
+            var z = -(radius * Math.sin(angle));
+            this.mesh.rotation.y += angle;
+            this.mesh.position.set(x, y, z);
+        }
+    }], [{
+        key: 'prepareForCollisionDetection',
+
+
+        /**
+         * converts box object from levelX.js into a format that can be used for detecting collisions
+         * @param {Object} obstacle - with structure as in levelX.js
+         * @param radius - radius of way
+         * @returns {Object} - object ret that is fitted for detecting collisions
+         */
+        value: function prepareForCollisionDetection(obstacle, radius) {
+            var b = obstacle.size.width * 0.5;
+            var angleRight = Math.atan(b / radius);
+            return {
+                type: 'box',
+                size: obstacle.size,
+                angle: {
+                    center: obstacle.position.angle,
+                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
+                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
+                },
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance - 0.5 * obstacle.size.length,
+                    max: obstacle.position.distance + 0.5 * obstacle.size.length
+                }
+            };
+        }
+    }]);
+    return Box;
+}();
+
+},{"../../Util":7,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],27:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Cone = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Util = require('../../Util');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+
+var height = 30;
+var radius = 15;
+
+var Cone = exports.Cone = function () {
+    /**
+     * Represenst cone that moves randomly around the way
+     */
+    function Cone(cone) {
+        (0, _classCallCheck3.default)(this, Cone);
+
+        this.material = new THREE.MeshLambertMaterial({ color: cone.color });
+        this.geometry = new THREE.ConeGeometry(radius, height, 100, 100);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+    }
+
+    /**
+     * positions cone on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+
+
+    (0, _createClass3.default)(Cone, [{
+        key: 'position',
+        value: function position(angle, distance, length, radius) {
+            radius += height * 0.5;
+            this.mesh.rotation.z -= Math.PI / 2;
+            angle = -(angle - 90);
+            angle = _Util.Util.convertDegreesToRadians(angle);
+            var y = length / 2 - distance;
+            var x = radius * Math.cos(angle);
+            var z = -(radius * Math.sin(angle));
+            this.mesh.rotation.y += angle;
+            this.mesh.position.set(x, y, z);
+        }
+    }], [{
+        key: 'prepareForCollisionDetection',
+        value: function prepareForCollisionDetection(obstacle, radius) {
+            var a = radius - 0.5 * height;
+            var b = height * 0.5;
+            var angleRight = Math.atan(b / a);
+            return {
+                type: 'cone',
+                size: {
+                    width: height,
+                    length: height,
+                    height: height
+                },
+                angle: {
+                    center: obstacle.position.angle,
+                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
+                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
+                },
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance - 0.5 * height,
+                    max: obstacle.position.distance + 0.5 * height
+                }
+            };
+        }
+    }]);
+    return Cone;
+}();
+
+},{"../../Util":7,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],28:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Diamond = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+var _Util = require('../../Util');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+
+var Cookies = require('js-cookie');
+
+var size = 10;
+var heightFromWay = 20;
+
+var Diamond = exports.Diamond = function () {
+    /**
+     * Represents the "obstacle" "diamond" (that can be collected)
+     * @param {Object} diamond - structure as in levelX.js
+     * @constructor
+     */
+    function Diamond(diamond) {
+        (0, _classCallCheck3.default)(this, Diamond);
+
+        this.geometry = new THREE.OctahedronGeometry(size, 0);
+        this.material = new THREE.MeshLambertMaterial({
+            color: 0xffffff,
+            transparent: true,
+            opacity: 0.6
+        });
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.castShadow = true;
+    }
+
+    /**
+     * Positions the diamond on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+
+
+    (0, _createClass3.default)(Diamond, [{
+        key: 'position',
+        value: function position(angle, distance, length, radius) {
+            angle = -(angle - 90);
+            angle = _Util.Util.convertDegreesToRadians(angle);
+            radius += heightFromWay;
+            var y = length / 2 - distance;
+            var x = radius * Math.cos(angle);
+            var z = -(radius * Math.sin(angle));
+            this.mesh.rotation.y += angle;
+            this.mesh.position.set(x, y, z);
+        }
+    }], [{
+        key: 'prepareForCollisionDetection',
+
+
+        /**
+         * converts diamond object from levelX.js into a format that can be used for detecting collisions
+         * @param {Object} obstacle - with structure as in levelX.js
+         * @param radius - radius of way
+         * @returns {Object} ret - object ret that is fitted for detecting collisions
+         */
+        value: function prepareForCollisionDetection(obstacle, radius) {
+            var angle = 10;
+            if (Cookies.get('powerup-3') == "bought") angle = 35;
+            return {
+                type: 'diamond',
+                size: {
+                    height: heightFromWay
+                },
+                angle: {
+                    center: obstacle.position.angle,
+                    min: obstacle.position.angle - angle,
+                    max: obstacle.position.angle + angle
+                },
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance - 10,
+                    max: obstacle.position.distance + 10
+                }
+
+            };
+        }
+    }]);
+    return Diamond;
+}();
+
+},{"../../Util":7,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"js-cookie":401,"three":746}],29:[function(require,module,exports){
+'use strict';
+
+var _Box = require('./Box');
+
+var _Cone = require('./Cone');
+
+var _Diamond = require('./Diamond');
+
+var _Ring = require('./Ring');
+
+var _Util = require('../../Util');
+
+module.exports = function () {
+    var _obstacleTypes = {
+        box: _Box.Box,
+        ring: _Ring.Ring,
+        diamond: _Diamond.Diamond,
+        cone: _Cone.Cone
+    };
+
+    /**
+     * Represents an Obstacle on wthe way
+     * @param {String} type - string like "cube"
+     * @param {THREE.Mesh} mesh - mesh of obstacle
+     * @param {number} distance - from starting point of way up to obstacle
+     * @param {number} angle - in radiant, on which side the obstacle is positioned
+     * @constructor
+     */
+    function Obstacle(type, mesh, distance, angle, collisionData) {
+        this.type = type;
+        this.mesh = mesh;
+        this.distance = distance;
+        this.angle = angle;
+        this.collisionData = collisionData;
+        this.randomMoving = false;
+
+        //used if moving obstacle
+        if (type == 'cone') {
+            this.randomMoving = true;
+            this.directionChangeIndex = 0;
+            this.direction = true; //true == 'right', false == 'left'
+        }
+    }
+
+    /**
+     * creates from array obstacles and returns them
+     * @param {Array} obstacles - contains information to generate obstacles
+     * @returns {Array} ret - containing obstacle objects
+     */
+    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
+        var ret = [];
+        obstacles.forEach(function (o) {
+            var obstacle = new _obstacleTypes[o.type](o);
+            obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
+            var collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
+            ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle, collisionData));
+        });
+        return ret;
+    };
+
+    Obstacle.prototype.move = function (direction) {
+        if (direction) this.angle += 1;else this.angle -= 1;
+
+        this.angle = _Util.Util.normalizeAngle(this.angle);
+
+        var radius = 80 + 15;
+        var angle = -(this.angle - 90);
+        angle = _Util.Util.convertDegreesToRadians(angle);
+        var x = radius * Math.cos(angle);
+        var z = -(radius * Math.sin(angle));
+        this.mesh.rotation.y = angle;
+        this.mesh.position.x = x;
+        this.mesh.position.z = z;
+
+        //neue angle ist this.angle
+        var a = radius - 0.5 * 30;
+        var b = 30 * 0.5;
+        var angleRight = _Util.Util.convertRadiansToDegrees(Math.atan(b / a));
+        this.collisionData.angle.center = this.angle;
+        this.collisionData.angle.min = _Util.Util.normalizeAngle(this.angle - angleRight);
+        this.collisionData.angle.max = _Util.Util.normalizeAngle(this.angle + angleRight);
+    };
+
+    return Obstacle;
+}();
+
+},{"../../Util":7,"./Box":26,"./Cone":27,"./Diamond":28,"./Ring":30}],30:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Ring = undefined;
+
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+
+var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+
+var _createClass2 = require('babel-runtime/helpers/createClass');
+
+var _createClass3 = _interopRequireDefault(_createClass2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var THREE = require('three');
+var radius = 100;
+
+var Ring = exports.Ring = function () {
+    /**
+     * Represents the obstacle "Ring"
+     * @param {Object} ring - structure as in levelX.js
+     * @constructor
+     */
+    function Ring(ring) {
+        (0, _classCallCheck3.default)(this, Ring);
+
+        this.material = new THREE.MeshLambertMaterial({
+            color: ring.color
+        });
+        this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
+        this.mesh = new THREE.Mesh(this.geometry, this.material);
+        this.mesh.receiveShadow = true;
+        this.mesh.castShadow = true;
+    }
+
+    /**
+     * Positions the Ring on way
+     * @param {number} angle - angle of position in degrees
+     * @param {number} distance - distance from starting point of way
+     * @param {number} length - length of way
+     * @param {number} radius - radius of way
+     */
+
+
+    (0, _createClass3.default)(Ring, [{
+        key: 'position',
+        value: function position(angle, distance, length, radius) {
+            this.mesh.rotation.x += Math.PI / 2;
+            this.mesh.position.y = length / 2 - distance;
+        }
+    }], [{
+        key: 'prepareForCollisionDetection',
+
+
+        /**
+         * converts ring object from levelX.js into a format that can be used for detecting collisions
+         * @param {Object} obstacle - with structure as in levelX.js
+         * @returns {Object} ret - object ret that is fitted for detecting collisions
+         */
+        value: function prepareForCollisionDetection(obstacle, r) {
+            return {
+                type: 'ring',
+                size: {
+                    height: radius - 80
+                },
+                angle: {
+                    center: 0,
+                    min: 0,
+                    max: 360
+                },
+                distance: obstacle.position.distance
+            };
+        }
+    }]);
+    return Ring;
+}();
+
+},{"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"three":746}],31:[function(require,module,exports){
 (function (process,global){
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -5291,7 +13191,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 })));
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":372}],2:[function(require,module,exports){
+},{"_process":402}],32:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -5322,11 +13222,11 @@ define(String.prototype, "padRight", "".padEnd);
   [][key] && define(Array, key, Function.call.bind([][key]));
 });
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"core-js/fn/regexp/escape":9,"core-js/shim":368,"regenerator-runtime/runtime":375}],3:[function(require,module,exports){
+},{"core-js/fn/regexp/escape":39,"core-js/shim":398,"regenerator-runtime/runtime":405}],33:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":10}],4:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":40}],34:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/promise"), __esModule: true };
-},{"core-js/library/fn/promise":11}],5:[function(require,module,exports){
+},{"core-js/library/fn/promise":41}],35:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -5365,7 +13265,7 @@ exports.default = function (fn) {
     });
   };
 };
-},{"../core-js/promise":4}],6:[function(require,module,exports){
+},{"../core-js/promise":34}],36:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -5375,7 +13275,7 @@ exports.default = function (instance, Constructor) {
     throw new TypeError("Cannot call a class as a function");
   }
 };
-},{}],7:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 
 exports.__esModule = true;
@@ -5403,44 +13303,44 @@ exports.default = function () {
     return Constructor;
   };
 }();
-},{"../core-js/object/define-property":3}],8:[function(require,module,exports){
+},{"../core-js/object/define-property":33}],38:[function(require,module,exports){
 module.exports = require("regenerator-runtime");
 
-},{"regenerator-runtime":374}],9:[function(require,module,exports){
+},{"regenerator-runtime":404}],39:[function(require,module,exports){
 require('../../modules/core.regexp.escape');
 module.exports = require('../../modules/_core').RegExp.escape;
-},{"../../modules/_core":96,"../../modules/core.regexp.escape":192}],10:[function(require,module,exports){
+},{"../../modules/_core":126,"../../modules/core.regexp.escape":222}],40:[function(require,module,exports){
 require('../../modules/es6.object.define-property');
 var $Object = require('../../modules/_core').Object;
 module.exports = function defineProperty(it, key, desc){
   return $Object.defineProperty(it, key, desc);
 };
-},{"../../modules/_core":19,"../../modules/es6.object.define-property":71}],11:[function(require,module,exports){
+},{"../../modules/_core":49,"../../modules/es6.object.define-property":101}],41:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.promise');
 module.exports = require('../modules/_core').Promise;
-},{"../modules/_core":19,"../modules/es6.object.to-string":72,"../modules/es6.promise":73,"../modules/es6.string.iterator":74,"../modules/web.dom.iterable":75}],12:[function(require,module,exports){
+},{"../modules/_core":49,"../modules/es6.object.to-string":102,"../modules/es6.promise":103,"../modules/es6.string.iterator":104,"../modules/web.dom.iterable":105}],42:[function(require,module,exports){
 module.exports = function(it){
   if(typeof it != 'function')throw TypeError(it + ' is not a function!');
   return it;
 };
-},{}],13:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = function(){ /* empty */ };
-},{}],14:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = function(it, Constructor, name, forbiddenField){
   if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
     throw TypeError(name + ': incorrect invocation!');
   } return it;
 };
-},{}],15:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var isObject = require('./_is-object');
 module.exports = function(it){
   if(!isObject(it))throw TypeError(it + ' is not an object!');
   return it;
 };
-},{"./_is-object":36}],16:[function(require,module,exports){
+},{"./_is-object":66}],46:[function(require,module,exports){
 // false -> Array#indexOf
 // true  -> Array#includes
 var toIObject = require('./_to-iobject')
@@ -5462,7 +13362,7 @@ module.exports = function(IS_INCLUDES){
     } return !IS_INCLUDES && -1;
   };
 };
-},{"./_to-index":61,"./_to-iobject":63,"./_to-length":64}],17:[function(require,module,exports){
+},{"./_to-index":91,"./_to-iobject":93,"./_to-length":94}],47:[function(require,module,exports){
 // getting tag from 19.1.3.6 Object.prototype.toString()
 var cof = require('./_cof')
   , TAG = require('./_wks')('toStringTag')
@@ -5486,16 +13386,16 @@ module.exports = function(it){
     // ES3 arguments fallback
     : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
 };
-},{"./_cof":18,"./_wks":68}],18:[function(require,module,exports){
+},{"./_cof":48,"./_wks":98}],48:[function(require,module,exports){
 var toString = {}.toString;
 
 module.exports = function(it){
   return toString.call(it).slice(8, -1);
 };
-},{}],19:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 var core = module.exports = {version: '2.4.0'};
 if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
-},{}],20:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 // optional / simple context binding
 var aFunction = require('./_a-function');
 module.exports = function(fn, that, length){
@@ -5516,18 +13416,18 @@ module.exports = function(fn, that, length){
     return fn.apply(that, arguments);
   };
 };
-},{"./_a-function":12}],21:[function(require,module,exports){
+},{"./_a-function":42}],51:[function(require,module,exports){
 // 7.2.1 RequireObjectCoercible(argument)
 module.exports = function(it){
   if(it == undefined)throw TypeError("Can't call method on  " + it);
   return it;
 };
-},{}],22:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 // Thank's IE8 for his funny defineProperty
 module.exports = !require('./_fails')(function(){
   return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_fails":26}],23:[function(require,module,exports){
+},{"./_fails":56}],53:[function(require,module,exports){
 var isObject = require('./_is-object')
   , document = require('./_global').document
   // in old IE typeof document.createElement is 'object'
@@ -5535,12 +13435,12 @@ var isObject = require('./_is-object')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./_global":28,"./_is-object":36}],24:[function(require,module,exports){
+},{"./_global":58,"./_is-object":66}],54:[function(require,module,exports){
 // IE 8- don't enum bug keys
 module.exports = (
   'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
 ).split(',');
-},{}],25:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 var global    = require('./_global')
   , core      = require('./_core')
   , ctx       = require('./_ctx')
@@ -5602,7 +13502,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":19,"./_ctx":20,"./_global":28,"./_hide":30}],26:[function(require,module,exports){
+},{"./_core":49,"./_ctx":50,"./_global":58,"./_hide":60}],56:[function(require,module,exports){
 module.exports = function(exec){
   try {
     return !!exec();
@@ -5610,7 +13510,7 @@ module.exports = function(exec){
     return true;
   }
 };
-},{}],27:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 var ctx         = require('./_ctx')
   , call        = require('./_iter-call')
   , isArrayIter = require('./_is-array-iter')
@@ -5636,17 +13536,17 @@ var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
 };
 exports.BREAK  = BREAK;
 exports.RETURN = RETURN;
-},{"./_an-object":15,"./_ctx":20,"./_is-array-iter":35,"./_iter-call":37,"./_to-length":64,"./core.get-iterator-method":69}],28:[function(require,module,exports){
+},{"./_an-object":45,"./_ctx":50,"./_is-array-iter":65,"./_iter-call":67,"./_to-length":94,"./core.get-iterator-method":99}],58:[function(require,module,exports){
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 var global = module.exports = typeof window != 'undefined' && window.Math == Math
   ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
 if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
-},{}],29:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 var hasOwnProperty = {}.hasOwnProperty;
 module.exports = function(it, key){
   return hasOwnProperty.call(it, key);
 };
-},{}],30:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 var dP         = require('./_object-dp')
   , createDesc = require('./_property-desc');
 module.exports = require('./_descriptors') ? function(object, key, value){
@@ -5655,13 +13555,13 @@ module.exports = require('./_descriptors') ? function(object, key, value){
   object[key] = value;
   return object;
 };
-},{"./_descriptors":22,"./_object-dp":46,"./_property-desc":51}],31:[function(require,module,exports){
+},{"./_descriptors":52,"./_object-dp":76,"./_property-desc":81}],61:[function(require,module,exports){
 module.exports = require('./_global').document && document.documentElement;
-},{"./_global":28}],32:[function(require,module,exports){
+},{"./_global":58}],62:[function(require,module,exports){
 module.exports = !require('./_descriptors') && !require('./_fails')(function(){
   return Object.defineProperty(require('./_dom-create')('div'), 'a', {get: function(){ return 7; }}).a != 7;
 });
-},{"./_descriptors":22,"./_dom-create":23,"./_fails":26}],33:[function(require,module,exports){
+},{"./_descriptors":52,"./_dom-create":53,"./_fails":56}],63:[function(require,module,exports){
 // fast apply, http://jsperf.lnkit.com/fast-apply/5
 module.exports = function(fn, args, that){
   var un = that === undefined;
@@ -5678,13 +13578,13 @@ module.exports = function(fn, args, that){
                       : fn.call(that, args[0], args[1], args[2], args[3]);
   } return              fn.apply(that, args);
 };
-},{}],34:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 var cof = require('./_cof');
 module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
   return cof(it) == 'String' ? it.split('') : Object(it);
 };
-},{"./_cof":18}],35:[function(require,module,exports){
+},{"./_cof":48}],65:[function(require,module,exports){
 // check on default Array iterator
 var Iterators  = require('./_iterators')
   , ITERATOR   = require('./_wks')('iterator')
@@ -5693,11 +13593,11 @@ var Iterators  = require('./_iterators')
 module.exports = function(it){
   return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
 };
-},{"./_iterators":42,"./_wks":68}],36:[function(require,module,exports){
+},{"./_iterators":72,"./_wks":98}],66:[function(require,module,exports){
 module.exports = function(it){
   return typeof it === 'object' ? it !== null : typeof it === 'function';
 };
-},{}],37:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 // call something on iterator step with safe closing on error
 var anObject = require('./_an-object');
 module.exports = function(iterator, fn, value, entries){
@@ -5710,7 +13610,7 @@ module.exports = function(iterator, fn, value, entries){
     throw e;
   }
 };
-},{"./_an-object":15}],38:[function(require,module,exports){
+},{"./_an-object":45}],68:[function(require,module,exports){
 'use strict';
 var create         = require('./_object-create')
   , descriptor     = require('./_property-desc')
@@ -5724,7 +13624,7 @@ module.exports = function(Constructor, NAME, next){
   Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
   setToStringTag(Constructor, NAME + ' Iterator');
 };
-},{"./_hide":30,"./_object-create":45,"./_property-desc":51,"./_set-to-string-tag":55,"./_wks":68}],39:[function(require,module,exports){
+},{"./_hide":60,"./_object-create":75,"./_property-desc":81,"./_set-to-string-tag":85,"./_wks":98}],69:[function(require,module,exports){
 'use strict';
 var LIBRARY        = require('./_library')
   , $export        = require('./_export')
@@ -5795,7 +13695,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED
   }
   return methods;
 };
-},{"./_export":25,"./_has":29,"./_hide":30,"./_iter-create":38,"./_iterators":42,"./_library":43,"./_object-gpo":48,"./_redefine":53,"./_set-to-string-tag":55,"./_wks":68}],40:[function(require,module,exports){
+},{"./_export":55,"./_has":59,"./_hide":60,"./_iter-create":68,"./_iterators":72,"./_library":73,"./_object-gpo":78,"./_redefine":83,"./_set-to-string-tag":85,"./_wks":98}],70:[function(require,module,exports){
 var ITERATOR     = require('./_wks')('iterator')
   , SAFE_CLOSING = false;
 
@@ -5817,15 +13717,15 @@ module.exports = function(exec, skipClosing){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./_wks":68}],41:[function(require,module,exports){
+},{"./_wks":98}],71:[function(require,module,exports){
 module.exports = function(done, value){
   return {value: value, done: !!done};
 };
-},{}],42:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 module.exports = {};
-},{}],43:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports = true;
-},{}],44:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 var global    = require('./_global')
   , macrotask = require('./_task').set
   , Observer  = global.MutationObserver || global.WebKitMutationObserver
@@ -5894,7 +13794,7 @@ module.exports = function(){
     } last = task;
   };
 };
-},{"./_cof":18,"./_global":28,"./_task":60}],45:[function(require,module,exports){
+},{"./_cof":48,"./_global":58,"./_task":90}],75:[function(require,module,exports){
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 var anObject    = require('./_an-object')
   , dPs         = require('./_object-dps')
@@ -5937,7 +13837,7 @@ module.exports = Object.create || function create(O, Properties){
   return Properties === undefined ? result : dPs(result, Properties);
 };
 
-},{"./_an-object":15,"./_dom-create":23,"./_enum-bug-keys":24,"./_html":31,"./_object-dps":47,"./_shared-key":56}],46:[function(require,module,exports){
+},{"./_an-object":45,"./_dom-create":53,"./_enum-bug-keys":54,"./_html":61,"./_object-dps":77,"./_shared-key":86}],76:[function(require,module,exports){
 var anObject       = require('./_an-object')
   , IE8_DOM_DEFINE = require('./_ie8-dom-define')
   , toPrimitive    = require('./_to-primitive')
@@ -5954,7 +13854,7 @@ exports.f = require('./_descriptors') ? Object.defineProperty : function defineP
   if('value' in Attributes)O[P] = Attributes.value;
   return O;
 };
-},{"./_an-object":15,"./_descriptors":22,"./_ie8-dom-define":32,"./_to-primitive":66}],47:[function(require,module,exports){
+},{"./_an-object":45,"./_descriptors":52,"./_ie8-dom-define":62,"./_to-primitive":96}],77:[function(require,module,exports){
 var dP       = require('./_object-dp')
   , anObject = require('./_an-object')
   , getKeys  = require('./_object-keys');
@@ -5968,7 +13868,7 @@ module.exports = require('./_descriptors') ? Object.defineProperties : function 
   while(length > i)dP.f(O, P = keys[i++], Properties[P]);
   return O;
 };
-},{"./_an-object":15,"./_descriptors":22,"./_object-dp":46,"./_object-keys":50}],48:[function(require,module,exports){
+},{"./_an-object":45,"./_descriptors":52,"./_object-dp":76,"./_object-keys":80}],78:[function(require,module,exports){
 // 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
 var has         = require('./_has')
   , toObject    = require('./_to-object')
@@ -5982,7 +13882,7 @@ module.exports = Object.getPrototypeOf || function(O){
     return O.constructor.prototype;
   } return O instanceof Object ? ObjectProto : null;
 };
-},{"./_has":29,"./_shared-key":56,"./_to-object":65}],49:[function(require,module,exports){
+},{"./_has":59,"./_shared-key":86,"./_to-object":95}],79:[function(require,module,exports){
 var has          = require('./_has')
   , toIObject    = require('./_to-iobject')
   , arrayIndexOf = require('./_array-includes')(false)
@@ -6000,7 +13900,7 @@ module.exports = function(object, names){
   }
   return result;
 };
-},{"./_array-includes":16,"./_has":29,"./_shared-key":56,"./_to-iobject":63}],50:[function(require,module,exports){
+},{"./_array-includes":46,"./_has":59,"./_shared-key":86,"./_to-iobject":93}],80:[function(require,module,exports){
 // 19.1.2.14 / 15.2.3.14 Object.keys(O)
 var $keys       = require('./_object-keys-internal')
   , enumBugKeys = require('./_enum-bug-keys');
@@ -6008,7 +13908,7 @@ var $keys       = require('./_object-keys-internal')
 module.exports = Object.keys || function keys(O){
   return $keys(O, enumBugKeys);
 };
-},{"./_enum-bug-keys":24,"./_object-keys-internal":49}],51:[function(require,module,exports){
+},{"./_enum-bug-keys":54,"./_object-keys-internal":79}],81:[function(require,module,exports){
 module.exports = function(bitmap, value){
   return {
     enumerable  : !(bitmap & 1),
@@ -6017,7 +13917,7 @@ module.exports = function(bitmap, value){
     value       : value
   };
 };
-},{}],52:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var hide = require('./_hide');
 module.exports = function(target, src, safe){
   for(var key in src){
@@ -6025,9 +13925,9 @@ module.exports = function(target, src, safe){
     else hide(target, key, src[key]);
   } return target;
 };
-},{"./_hide":30}],53:[function(require,module,exports){
+},{"./_hide":60}],83:[function(require,module,exports){
 module.exports = require('./_hide');
-},{"./_hide":30}],54:[function(require,module,exports){
+},{"./_hide":60}],84:[function(require,module,exports){
 'use strict';
 var global      = require('./_global')
   , core        = require('./_core')
@@ -6042,7 +13942,7 @@ module.exports = function(KEY){
     get: function(){ return this; }
   });
 };
-},{"./_core":19,"./_descriptors":22,"./_global":28,"./_object-dp":46,"./_wks":68}],55:[function(require,module,exports){
+},{"./_core":49,"./_descriptors":52,"./_global":58,"./_object-dp":76,"./_wks":98}],85:[function(require,module,exports){
 var def = require('./_object-dp').f
   , has = require('./_has')
   , TAG = require('./_wks')('toStringTag');
@@ -6050,20 +13950,20 @@ var def = require('./_object-dp').f
 module.exports = function(it, tag, stat){
   if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
 };
-},{"./_has":29,"./_object-dp":46,"./_wks":68}],56:[function(require,module,exports){
+},{"./_has":59,"./_object-dp":76,"./_wks":98}],86:[function(require,module,exports){
 var shared = require('./_shared')('keys')
   , uid    = require('./_uid');
 module.exports = function(key){
   return shared[key] || (shared[key] = uid(key));
 };
-},{"./_shared":57,"./_uid":67}],57:[function(require,module,exports){
+},{"./_shared":87,"./_uid":97}],87:[function(require,module,exports){
 var global = require('./_global')
   , SHARED = '__core-js_shared__'
   , store  = global[SHARED] || (global[SHARED] = {});
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./_global":28}],58:[function(require,module,exports){
+},{"./_global":58}],88:[function(require,module,exports){
 // 7.3.20 SpeciesConstructor(O, defaultConstructor)
 var anObject  = require('./_an-object')
   , aFunction = require('./_a-function')
@@ -6072,7 +13972,7 @@ module.exports = function(O, D){
   var C = anObject(O).constructor, S;
   return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
 };
-},{"./_a-function":12,"./_an-object":15,"./_wks":68}],59:[function(require,module,exports){
+},{"./_a-function":42,"./_an-object":45,"./_wks":98}],89:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , defined   = require('./_defined');
 // true  -> String#at
@@ -6090,7 +13990,7 @@ module.exports = function(TO_STRING){
       : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./_defined":21,"./_to-integer":62}],60:[function(require,module,exports){
+},{"./_defined":51,"./_to-integer":92}],90:[function(require,module,exports){
 var ctx                = require('./_ctx')
   , invoke             = require('./_invoke')
   , html               = require('./_html')
@@ -6166,7 +14066,7 @@ module.exports = {
   set:   setTask,
   clear: clearTask
 };
-},{"./_cof":18,"./_ctx":20,"./_dom-create":23,"./_global":28,"./_html":31,"./_invoke":33}],61:[function(require,module,exports){
+},{"./_cof":48,"./_ctx":50,"./_dom-create":53,"./_global":58,"./_html":61,"./_invoke":63}],91:[function(require,module,exports){
 var toInteger = require('./_to-integer')
   , max       = Math.max
   , min       = Math.min;
@@ -6174,34 +14074,34 @@ module.exports = function(index, length){
   index = toInteger(index);
   return index < 0 ? max(index + length, 0) : min(index, length);
 };
-},{"./_to-integer":62}],62:[function(require,module,exports){
+},{"./_to-integer":92}],92:[function(require,module,exports){
 // 7.1.4 ToInteger
 var ceil  = Math.ceil
   , floor = Math.floor;
 module.exports = function(it){
   return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
 };
-},{}],63:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 // to indexed object, toObject with fallback for non-array-like ES3 strings
 var IObject = require('./_iobject')
   , defined = require('./_defined');
 module.exports = function(it){
   return IObject(defined(it));
 };
-},{"./_defined":21,"./_iobject":34}],64:[function(require,module,exports){
+},{"./_defined":51,"./_iobject":64}],94:[function(require,module,exports){
 // 7.1.15 ToLength
 var toInteger = require('./_to-integer')
   , min       = Math.min;
 module.exports = function(it){
   return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
 };
-},{"./_to-integer":62}],65:[function(require,module,exports){
+},{"./_to-integer":92}],95:[function(require,module,exports){
 // 7.1.13 ToObject(argument)
 var defined = require('./_defined');
 module.exports = function(it){
   return Object(defined(it));
 };
-},{"./_defined":21}],66:[function(require,module,exports){
+},{"./_defined":51}],96:[function(require,module,exports){
 // 7.1.1 ToPrimitive(input [, PreferredType])
 var isObject = require('./_is-object');
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
@@ -6214,13 +14114,13 @@ module.exports = function(it, S){
   if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
   throw TypeError("Can't convert object to primitive value");
 };
-},{"./_is-object":36}],67:[function(require,module,exports){
+},{"./_is-object":66}],97:[function(require,module,exports){
 var id = 0
   , px = Math.random();
 module.exports = function(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
 };
-},{}],68:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 var store      = require('./_shared')('wks')
   , uid        = require('./_uid')
   , Symbol     = require('./_global').Symbol
@@ -6232,7 +14132,7 @@ var $exports = module.exports = function(name){
 };
 
 $exports.store = store;
-},{"./_global":28,"./_shared":57,"./_uid":67}],69:[function(require,module,exports){
+},{"./_global":58,"./_shared":87,"./_uid":97}],99:[function(require,module,exports){
 var classof   = require('./_classof')
   , ITERATOR  = require('./_wks')('iterator')
   , Iterators = require('./_iterators');
@@ -6241,7 +14141,7 @@ module.exports = require('./_core').getIteratorMethod = function(it){
     || it['@@iterator']
     || Iterators[classof(it)];
 };
-},{"./_classof":17,"./_core":19,"./_iterators":42,"./_wks":68}],70:[function(require,module,exports){
+},{"./_classof":47,"./_core":49,"./_iterators":72,"./_wks":98}],100:[function(require,module,exports){
 'use strict';
 var addToUnscopables = require('./_add-to-unscopables')
   , step             = require('./_iter-step')
@@ -6276,13 +14176,13 @@ Iterators.Arguments = Iterators.Array;
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
-},{"./_add-to-unscopables":13,"./_iter-define":39,"./_iter-step":41,"./_iterators":42,"./_to-iobject":63}],71:[function(require,module,exports){
+},{"./_add-to-unscopables":43,"./_iter-define":69,"./_iter-step":71,"./_iterators":72,"./_to-iobject":93}],101:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.4 / 15.2.3.6 Object.defineProperty(O, P, Attributes)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperty: require('./_object-dp').f});
-},{"./_descriptors":22,"./_export":25,"./_object-dp":46}],72:[function(require,module,exports){
+},{"./_descriptors":52,"./_export":55,"./_object-dp":76}],102:[function(require,module,exports){
 
-},{}],73:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 'use strict';
 var LIBRARY            = require('./_library')
   , global             = require('./_global')
@@ -6582,7 +14482,7 @@ $export($export.S + $export.F * !(USE_NATIVE && require('./_iter-detect')(functi
     return capability.promise;
   }
 });
-},{"./_a-function":12,"./_an-instance":14,"./_classof":17,"./_core":19,"./_ctx":20,"./_export":25,"./_for-of":27,"./_global":28,"./_is-object":36,"./_iter-detect":40,"./_library":43,"./_microtask":44,"./_redefine-all":52,"./_set-species":54,"./_set-to-string-tag":55,"./_species-constructor":58,"./_task":60,"./_wks":68}],74:[function(require,module,exports){
+},{"./_a-function":42,"./_an-instance":44,"./_classof":47,"./_core":49,"./_ctx":50,"./_export":55,"./_for-of":57,"./_global":58,"./_is-object":66,"./_iter-detect":70,"./_library":73,"./_microtask":74,"./_redefine-all":82,"./_set-species":84,"./_set-to-string-tag":85,"./_species-constructor":88,"./_task":90,"./_wks":98}],104:[function(require,module,exports){
 'use strict';
 var $at  = require('./_string-at')(true);
 
@@ -6600,7 +14500,7 @@ require('./_iter-define')(String, 'String', function(iterated){
   this._i += point.length;
   return {value: point, done: false};
 });
-},{"./_iter-define":39,"./_string-at":59}],75:[function(require,module,exports){
+},{"./_iter-define":69,"./_string-at":89}],105:[function(require,module,exports){
 require('./es6.array.iterator');
 var global        = require('./_global')
   , hide          = require('./_hide')
@@ -6614,15 +14514,15 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
   if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
   Iterators[NAME] = Iterators.Array;
 }
-},{"./_global":28,"./_hide":30,"./_iterators":42,"./_wks":68,"./es6.array.iterator":70}],76:[function(require,module,exports){
-arguments[4][12][0].apply(exports,arguments)
-},{"dup":12}],77:[function(require,module,exports){
+},{"./_global":58,"./_hide":60,"./_iterators":72,"./_wks":98,"./es6.array.iterator":100}],106:[function(require,module,exports){
+arguments[4][42][0].apply(exports,arguments)
+},{"dup":42}],107:[function(require,module,exports){
 var cof = require('./_cof');
 module.exports = function(it, msg){
   if(typeof it != 'number' && cof(it) != 'Number')throw TypeError(msg);
   return +it;
 };
-},{"./_cof":91}],78:[function(require,module,exports){
+},{"./_cof":121}],108:[function(require,module,exports){
 // 22.1.3.31 Array.prototype[@@unscopables]
 var UNSCOPABLES = require('./_wks')('unscopables')
   , ArrayProto  = Array.prototype;
@@ -6630,11 +14530,11 @@ if(ArrayProto[UNSCOPABLES] == undefined)require('./_hide')(ArrayProto, UNSCOPABL
 module.exports = function(key){
   ArrayProto[UNSCOPABLES][key] = true;
 };
-},{"./_hide":113,"./_wks":190}],79:[function(require,module,exports){
-arguments[4][14][0].apply(exports,arguments)
-},{"dup":14}],80:[function(require,module,exports){
-arguments[4][15][0].apply(exports,arguments)
-},{"./_is-object":122,"dup":15}],81:[function(require,module,exports){
+},{"./_hide":143,"./_wks":220}],109:[function(require,module,exports){
+arguments[4][44][0].apply(exports,arguments)
+},{"dup":44}],110:[function(require,module,exports){
+arguments[4][45][0].apply(exports,arguments)
+},{"./_is-object":152,"dup":45}],111:[function(require,module,exports){
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 'use strict';
 var toObject = require('./_to-object')
@@ -6661,7 +14561,7 @@ module.exports = [].copyWithin || function copyWithin(target/*= 0*/, start/*= 0,
     from += inc;
   } return O;
 };
-},{"./_to-index":178,"./_to-length":181,"./_to-object":182}],82:[function(require,module,exports){
+},{"./_to-index":208,"./_to-length":211,"./_to-object":212}],112:[function(require,module,exports){
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 'use strict';
 var toObject = require('./_to-object')
@@ -6677,7 +14577,7 @@ module.exports = function fill(value /*, start = 0, end = @length */){
   while(endPos > index)O[index++] = value;
   return O;
 };
-},{"./_to-index":178,"./_to-length":181,"./_to-object":182}],83:[function(require,module,exports){
+},{"./_to-index":208,"./_to-length":211,"./_to-object":212}],113:[function(require,module,exports){
 var forOf = require('./_for-of');
 
 module.exports = function(iter, ITERATOR){
@@ -6686,9 +14586,9 @@ module.exports = function(iter, ITERATOR){
   return result;
 };
 
-},{"./_for-of":110}],84:[function(require,module,exports){
-arguments[4][16][0].apply(exports,arguments)
-},{"./_to-index":178,"./_to-iobject":180,"./_to-length":181,"dup":16}],85:[function(require,module,exports){
+},{"./_for-of":140}],114:[function(require,module,exports){
+arguments[4][46][0].apply(exports,arguments)
+},{"./_to-index":208,"./_to-iobject":210,"./_to-length":211,"dup":46}],115:[function(require,module,exports){
 // 0 -> Array#forEach
 // 1 -> Array#map
 // 2 -> Array#filter
@@ -6733,7 +14633,7 @@ module.exports = function(TYPE, $create){
     return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : result;
   };
 };
-},{"./_array-species-create":88,"./_ctx":98,"./_iobject":118,"./_to-length":181,"./_to-object":182}],86:[function(require,module,exports){
+},{"./_array-species-create":118,"./_ctx":128,"./_iobject":148,"./_to-length":211,"./_to-object":212}],116:[function(require,module,exports){
 var aFunction = require('./_a-function')
   , toObject  = require('./_to-object')
   , IObject   = require('./_iobject')
@@ -6762,7 +14662,7 @@ module.exports = function(that, callbackfn, aLen, memo, isRight){
   }
   return memo;
 };
-},{"./_a-function":76,"./_iobject":118,"./_to-length":181,"./_to-object":182}],87:[function(require,module,exports){
+},{"./_a-function":106,"./_iobject":148,"./_to-length":211,"./_to-object":212}],117:[function(require,module,exports){
 var isObject = require('./_is-object')
   , isArray  = require('./_is-array')
   , SPECIES  = require('./_wks')('species');
@@ -6779,14 +14679,14 @@ module.exports = function(original){
     }
   } return C === undefined ? Array : C;
 };
-},{"./_is-array":120,"./_is-object":122,"./_wks":190}],88:[function(require,module,exports){
+},{"./_is-array":150,"./_is-object":152,"./_wks":220}],118:[function(require,module,exports){
 // 9.4.2.3 ArraySpeciesCreate(originalArray, length)
 var speciesConstructor = require('./_array-species-constructor');
 
 module.exports = function(original, length){
   return new (speciesConstructor(original))(length);
 };
-},{"./_array-species-constructor":87}],89:[function(require,module,exports){
+},{"./_array-species-constructor":117}],119:[function(require,module,exports){
 'use strict';
 var aFunction  = require('./_a-function')
   , isObject   = require('./_is-object')
@@ -6811,11 +14711,11 @@ module.exports = Function.bind || function bind(that /*, args... */){
   if(isObject(fn.prototype))bound.prototype = fn.prototype;
   return bound;
 };
-},{"./_a-function":76,"./_invoke":117,"./_is-object":122}],90:[function(require,module,exports){
-arguments[4][17][0].apply(exports,arguments)
-},{"./_cof":91,"./_wks":190,"dup":17}],91:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],92:[function(require,module,exports){
+},{"./_a-function":106,"./_invoke":147,"./_is-object":152}],120:[function(require,module,exports){
+arguments[4][47][0].apply(exports,arguments)
+},{"./_cof":121,"./_wks":220,"dup":47}],121:[function(require,module,exports){
+arguments[4][48][0].apply(exports,arguments)
+},{"dup":48}],122:[function(require,module,exports){
 'use strict';
 var dP          = require('./_object-dp').f
   , create      = require('./_object-create')
@@ -6958,7 +14858,7 @@ module.exports = {
     setSpecies(NAME);
   }
 };
-},{"./_an-instance":79,"./_ctx":98,"./_defined":100,"./_descriptors":101,"./_for-of":110,"./_iter-define":126,"./_iter-step":128,"./_meta":135,"./_object-create":139,"./_object-dp":140,"./_redefine-all":159,"./_set-species":164}],93:[function(require,module,exports){
+},{"./_an-instance":109,"./_ctx":128,"./_defined":130,"./_descriptors":131,"./_for-of":140,"./_iter-define":156,"./_iter-step":158,"./_meta":165,"./_object-create":169,"./_object-dp":170,"./_redefine-all":189,"./_set-species":194}],123:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var classof = require('./_classof')
   , from    = require('./_array-from-iterable');
@@ -6968,7 +14868,7 @@ module.exports = function(NAME){
     return from(this);
   };
 };
-},{"./_array-from-iterable":83,"./_classof":90}],94:[function(require,module,exports){
+},{"./_array-from-iterable":113,"./_classof":120}],124:[function(require,module,exports){
 'use strict';
 var redefineAll       = require('./_redefine-all')
   , getWeak           = require('./_meta').getWeak
@@ -7052,7 +14952,7 @@ module.exports = {
   },
   ufstore: uncaughtFrozenStore
 };
-},{"./_an-instance":79,"./_an-object":80,"./_array-methods":85,"./_for-of":110,"./_has":112,"./_is-object":122,"./_meta":135,"./_redefine-all":159}],95:[function(require,module,exports){
+},{"./_an-instance":109,"./_an-object":110,"./_array-methods":115,"./_for-of":140,"./_has":142,"./_is-object":152,"./_meta":165,"./_redefine-all":189}],125:[function(require,module,exports){
 'use strict';
 var global            = require('./_global')
   , $export           = require('./_export')
@@ -7138,9 +15038,9 @@ module.exports = function(NAME, wrapper, methods, common, IS_MAP, IS_WEAK){
 
   return C;
 };
-},{"./_an-instance":79,"./_export":105,"./_fails":107,"./_for-of":110,"./_global":111,"./_inherit-if-required":116,"./_is-object":122,"./_iter-detect":127,"./_meta":135,"./_redefine":160,"./_redefine-all":159,"./_set-to-string-tag":165}],96:[function(require,module,exports){
-arguments[4][19][0].apply(exports,arguments)
-},{"dup":19}],97:[function(require,module,exports){
+},{"./_an-instance":109,"./_export":135,"./_fails":137,"./_for-of":140,"./_global":141,"./_inherit-if-required":146,"./_is-object":152,"./_iter-detect":157,"./_meta":165,"./_redefine":190,"./_redefine-all":189,"./_set-to-string-tag":195}],126:[function(require,module,exports){
+arguments[4][49][0].apply(exports,arguments)
+},{"dup":49}],127:[function(require,module,exports){
 'use strict';
 var $defineProperty = require('./_object-dp')
   , createDesc      = require('./_property-desc');
@@ -7149,9 +15049,9 @@ module.exports = function(object, index, value){
   if(index in object)$defineProperty.f(object, index, createDesc(0, value));
   else object[index] = value;
 };
-},{"./_object-dp":140,"./_property-desc":158}],98:[function(require,module,exports){
-arguments[4][20][0].apply(exports,arguments)
-},{"./_a-function":76,"dup":20}],99:[function(require,module,exports){
+},{"./_object-dp":170,"./_property-desc":188}],128:[function(require,module,exports){
+arguments[4][50][0].apply(exports,arguments)
+},{"./_a-function":106,"dup":50}],129:[function(require,module,exports){
 'use strict';
 var anObject    = require('./_an-object')
   , toPrimitive = require('./_to-primitive')
@@ -7161,15 +15061,15 @@ module.exports = function(hint){
   if(hint !== 'string' && hint !== NUMBER && hint !== 'default')throw TypeError('Incorrect hint');
   return toPrimitive(anObject(this), hint != NUMBER);
 };
-},{"./_an-object":80,"./_to-primitive":183}],100:[function(require,module,exports){
-arguments[4][21][0].apply(exports,arguments)
-},{"dup":21}],101:[function(require,module,exports){
-arguments[4][22][0].apply(exports,arguments)
-},{"./_fails":107,"dup":22}],102:[function(require,module,exports){
-arguments[4][23][0].apply(exports,arguments)
-},{"./_global":111,"./_is-object":122,"dup":23}],103:[function(require,module,exports){
-arguments[4][24][0].apply(exports,arguments)
-},{"dup":24}],104:[function(require,module,exports){
+},{"./_an-object":110,"./_to-primitive":213}],130:[function(require,module,exports){
+arguments[4][51][0].apply(exports,arguments)
+},{"dup":51}],131:[function(require,module,exports){
+arguments[4][52][0].apply(exports,arguments)
+},{"./_fails":137,"dup":52}],132:[function(require,module,exports){
+arguments[4][53][0].apply(exports,arguments)
+},{"./_global":141,"./_is-object":152,"dup":53}],133:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"dup":54}],134:[function(require,module,exports){
 // all enumerable object keys, includes symbols
 var getKeys = require('./_object-keys')
   , gOPS    = require('./_object-gops')
@@ -7185,7 +15085,7 @@ module.exports = function(it){
     while(symbols.length > i)if(isEnum.call(it, key = symbols[i++]))result.push(key);
   } return result;
 };
-},{"./_object-gops":146,"./_object-keys":149,"./_object-pie":150}],105:[function(require,module,exports){
+},{"./_object-gops":176,"./_object-keys":179,"./_object-pie":180}],135:[function(require,module,exports){
 var global    = require('./_global')
   , core      = require('./_core')
   , hide      = require('./_hide')
@@ -7229,7 +15129,7 @@ $export.W = 32;  // wrap
 $export.U = 64;  // safe
 $export.R = 128; // real proto method for `library` 
 module.exports = $export;
-},{"./_core":96,"./_ctx":98,"./_global":111,"./_hide":113,"./_redefine":160}],106:[function(require,module,exports){
+},{"./_core":126,"./_ctx":128,"./_global":141,"./_hide":143,"./_redefine":190}],136:[function(require,module,exports){
 var MATCH = require('./_wks')('match');
 module.exports = function(KEY){
   var re = /./;
@@ -7242,9 +15142,9 @@ module.exports = function(KEY){
     } catch(f){ /* empty */ }
   } return true;
 };
-},{"./_wks":190}],107:[function(require,module,exports){
-arguments[4][26][0].apply(exports,arguments)
-},{"dup":26}],108:[function(require,module,exports){
+},{"./_wks":220}],137:[function(require,module,exports){
+arguments[4][56][0].apply(exports,arguments)
+},{"dup":56}],138:[function(require,module,exports){
 'use strict';
 var hide     = require('./_hide')
   , redefine = require('./_redefine')
@@ -7273,7 +15173,7 @@ module.exports = function(KEY, length, exec){
     );
   }
 };
-},{"./_defined":100,"./_fails":107,"./_hide":113,"./_redefine":160,"./_wks":190}],109:[function(require,module,exports){
+},{"./_defined":130,"./_fails":137,"./_hide":143,"./_redefine":190,"./_wks":220}],139:[function(require,module,exports){
 'use strict';
 // 21.2.5.3 get RegExp.prototype.flags
 var anObject = require('./_an-object');
@@ -7287,19 +15187,19 @@ module.exports = function(){
   if(that.sticky)     result += 'y';
   return result;
 };
-},{"./_an-object":80}],110:[function(require,module,exports){
-arguments[4][27][0].apply(exports,arguments)
-},{"./_an-object":80,"./_ctx":98,"./_is-array-iter":119,"./_iter-call":124,"./_to-length":181,"./core.get-iterator-method":191,"dup":27}],111:[function(require,module,exports){
-arguments[4][28][0].apply(exports,arguments)
-},{"dup":28}],112:[function(require,module,exports){
-arguments[4][29][0].apply(exports,arguments)
-},{"dup":29}],113:[function(require,module,exports){
-arguments[4][30][0].apply(exports,arguments)
-},{"./_descriptors":101,"./_object-dp":140,"./_property-desc":158,"dup":30}],114:[function(require,module,exports){
-arguments[4][31][0].apply(exports,arguments)
-},{"./_global":111,"dup":31}],115:[function(require,module,exports){
-arguments[4][32][0].apply(exports,arguments)
-},{"./_descriptors":101,"./_dom-create":102,"./_fails":107,"dup":32}],116:[function(require,module,exports){
+},{"./_an-object":110}],140:[function(require,module,exports){
+arguments[4][57][0].apply(exports,arguments)
+},{"./_an-object":110,"./_ctx":128,"./_is-array-iter":149,"./_iter-call":154,"./_to-length":211,"./core.get-iterator-method":221,"dup":57}],141:[function(require,module,exports){
+arguments[4][58][0].apply(exports,arguments)
+},{"dup":58}],142:[function(require,module,exports){
+arguments[4][59][0].apply(exports,arguments)
+},{"dup":59}],143:[function(require,module,exports){
+arguments[4][60][0].apply(exports,arguments)
+},{"./_descriptors":131,"./_object-dp":170,"./_property-desc":188,"dup":60}],144:[function(require,module,exports){
+arguments[4][61][0].apply(exports,arguments)
+},{"./_global":141,"dup":61}],145:[function(require,module,exports){
+arguments[4][62][0].apply(exports,arguments)
+},{"./_descriptors":131,"./_dom-create":132,"./_fails":137,"dup":62}],146:[function(require,module,exports){
 var isObject       = require('./_is-object')
   , setPrototypeOf = require('./_set-proto').set;
 module.exports = function(that, target, C){
@@ -7308,28 +15208,28 @@ module.exports = function(that, target, C){
     setPrototypeOf(that, P);
   } return that;
 };
-},{"./_is-object":122,"./_set-proto":163}],117:[function(require,module,exports){
-arguments[4][33][0].apply(exports,arguments)
-},{"dup":33}],118:[function(require,module,exports){
-arguments[4][34][0].apply(exports,arguments)
-},{"./_cof":91,"dup":34}],119:[function(require,module,exports){
-arguments[4][35][0].apply(exports,arguments)
-},{"./_iterators":129,"./_wks":190,"dup":35}],120:[function(require,module,exports){
+},{"./_is-object":152,"./_set-proto":193}],147:[function(require,module,exports){
+arguments[4][63][0].apply(exports,arguments)
+},{"dup":63}],148:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"./_cof":121,"dup":64}],149:[function(require,module,exports){
+arguments[4][65][0].apply(exports,arguments)
+},{"./_iterators":159,"./_wks":220,"dup":65}],150:[function(require,module,exports){
 // 7.2.2 IsArray(argument)
 var cof = require('./_cof');
 module.exports = Array.isArray || function isArray(arg){
   return cof(arg) == 'Array';
 };
-},{"./_cof":91}],121:[function(require,module,exports){
+},{"./_cof":121}],151:[function(require,module,exports){
 // 20.1.2.3 Number.isInteger(number)
 var isObject = require('./_is-object')
   , floor    = Math.floor;
 module.exports = function isInteger(it){
   return !isObject(it) && isFinite(it) && floor(it) === it;
 };
-},{"./_is-object":122}],122:[function(require,module,exports){
-arguments[4][36][0].apply(exports,arguments)
-},{"dup":36}],123:[function(require,module,exports){
+},{"./_is-object":152}],152:[function(require,module,exports){
+arguments[4][66][0].apply(exports,arguments)
+},{"dup":66}],153:[function(require,module,exports){
 // 7.2.8 IsRegExp(argument)
 var isObject = require('./_is-object')
   , cof      = require('./_cof')
@@ -7338,19 +15238,19 @@ module.exports = function(it){
   var isRegExp;
   return isObject(it) && ((isRegExp = it[MATCH]) !== undefined ? !!isRegExp : cof(it) == 'RegExp');
 };
-},{"./_cof":91,"./_is-object":122,"./_wks":190}],124:[function(require,module,exports){
-arguments[4][37][0].apply(exports,arguments)
-},{"./_an-object":80,"dup":37}],125:[function(require,module,exports){
-arguments[4][38][0].apply(exports,arguments)
-},{"./_hide":113,"./_object-create":139,"./_property-desc":158,"./_set-to-string-tag":165,"./_wks":190,"dup":38}],126:[function(require,module,exports){
-arguments[4][39][0].apply(exports,arguments)
-},{"./_export":105,"./_has":112,"./_hide":113,"./_iter-create":125,"./_iterators":129,"./_library":131,"./_object-gpo":147,"./_redefine":160,"./_set-to-string-tag":165,"./_wks":190,"dup":39}],127:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"./_wks":190,"dup":40}],128:[function(require,module,exports){
-arguments[4][41][0].apply(exports,arguments)
-},{"dup":41}],129:[function(require,module,exports){
-arguments[4][42][0].apply(exports,arguments)
-},{"dup":42}],130:[function(require,module,exports){
+},{"./_cof":121,"./_is-object":152,"./_wks":220}],154:[function(require,module,exports){
+arguments[4][67][0].apply(exports,arguments)
+},{"./_an-object":110,"dup":67}],155:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"./_hide":143,"./_object-create":169,"./_property-desc":188,"./_set-to-string-tag":195,"./_wks":220,"dup":68}],156:[function(require,module,exports){
+arguments[4][69][0].apply(exports,arguments)
+},{"./_export":135,"./_has":142,"./_hide":143,"./_iter-create":155,"./_iterators":159,"./_library":161,"./_object-gpo":177,"./_redefine":190,"./_set-to-string-tag":195,"./_wks":220,"dup":69}],157:[function(require,module,exports){
+arguments[4][70][0].apply(exports,arguments)
+},{"./_wks":220,"dup":70}],158:[function(require,module,exports){
+arguments[4][71][0].apply(exports,arguments)
+},{"dup":71}],159:[function(require,module,exports){
+arguments[4][72][0].apply(exports,arguments)
+},{"dup":72}],160:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject');
 module.exports = function(object, el){
@@ -7361,9 +15261,9 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./_object-keys":149,"./_to-iobject":180}],131:[function(require,module,exports){
+},{"./_object-keys":179,"./_to-iobject":210}],161:[function(require,module,exports){
 module.exports = false;
-},{}],132:[function(require,module,exports){
+},{}],162:[function(require,module,exports){
 // 20.2.2.14 Math.expm1(x)
 var $expm1 = Math.expm1;
 module.exports = (!$expm1
@@ -7374,17 +15274,17 @@ module.exports = (!$expm1
 ) ? function expm1(x){
   return (x = +x) == 0 ? x : x > -1e-6 && x < 1e-6 ? x + x * x / 2 : Math.exp(x) - 1;
 } : $expm1;
-},{}],133:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 // 20.2.2.20 Math.log1p(x)
 module.exports = Math.log1p || function log1p(x){
   return (x = +x) > -1e-8 && x < 1e-8 ? x - x * x / 2 : Math.log(1 + x);
 };
-},{}],134:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 // 20.2.2.28 Math.sign(x)
 module.exports = Math.sign || function sign(x){
   return (x = +x) == 0 || x != x ? x : x < 0 ? -1 : 1;
 };
-},{}],135:[function(require,module,exports){
+},{}],165:[function(require,module,exports){
 var META     = require('./_uid')('meta')
   , isObject = require('./_is-object')
   , has      = require('./_has')
@@ -7438,7 +15338,7 @@ var meta = module.exports = {
   getWeak:  getWeak,
   onFreeze: onFreeze
 };
-},{"./_fails":107,"./_has":112,"./_is-object":122,"./_object-dp":140,"./_uid":187}],136:[function(require,module,exports){
+},{"./_fails":137,"./_has":142,"./_is-object":152,"./_object-dp":170,"./_uid":217}],166:[function(require,module,exports){
 var Map     = require('./es6.map')
   , $export = require('./_export')
   , shared  = require('./_shared')('metadata')
@@ -7490,9 +15390,9 @@ module.exports = {
   key: toMetaKey,
   exp: exp
 };
-},{"./_export":105,"./_shared":167,"./es6.map":222,"./es6.weak-map":328}],137:[function(require,module,exports){
-arguments[4][44][0].apply(exports,arguments)
-},{"./_cof":91,"./_global":111,"./_task":177,"dup":44}],138:[function(require,module,exports){
+},{"./_export":135,"./_shared":197,"./es6.map":252,"./es6.weak-map":358}],167:[function(require,module,exports){
+arguments[4][74][0].apply(exports,arguments)
+},{"./_cof":121,"./_global":141,"./_task":207,"dup":74}],168:[function(require,module,exports){
 'use strict';
 // 19.1.2.1 Object.assign(target, source, ...)
 var getKeys  = require('./_object-keys')
@@ -7526,13 +15426,13 @@ module.exports = !$assign || require('./_fails')(function(){
     while(length > j)if(isEnum.call(S, key = keys[j++]))T[key] = S[key];
   } return T;
 } : $assign;
-},{"./_fails":107,"./_iobject":118,"./_object-gops":146,"./_object-keys":149,"./_object-pie":150,"./_to-object":182}],139:[function(require,module,exports){
-arguments[4][45][0].apply(exports,arguments)
-},{"./_an-object":80,"./_dom-create":102,"./_enum-bug-keys":103,"./_html":114,"./_object-dps":141,"./_shared-key":166,"dup":45}],140:[function(require,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"./_an-object":80,"./_descriptors":101,"./_ie8-dom-define":115,"./_to-primitive":183,"dup":46}],141:[function(require,module,exports){
-arguments[4][47][0].apply(exports,arguments)
-},{"./_an-object":80,"./_descriptors":101,"./_object-dp":140,"./_object-keys":149,"dup":47}],142:[function(require,module,exports){
+},{"./_fails":137,"./_iobject":148,"./_object-gops":176,"./_object-keys":179,"./_object-pie":180,"./_to-object":212}],169:[function(require,module,exports){
+arguments[4][75][0].apply(exports,arguments)
+},{"./_an-object":110,"./_dom-create":132,"./_enum-bug-keys":133,"./_html":144,"./_object-dps":171,"./_shared-key":196,"dup":75}],170:[function(require,module,exports){
+arguments[4][76][0].apply(exports,arguments)
+},{"./_an-object":110,"./_descriptors":131,"./_ie8-dom-define":145,"./_to-primitive":213,"dup":76}],171:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"./_an-object":110,"./_descriptors":131,"./_object-dp":170,"./_object-keys":179,"dup":77}],172:[function(require,module,exports){
 // Forced replacement prototype accessors methods
 module.exports = require('./_library')|| !require('./_fails')(function(){
   var K = Math.random();
@@ -7540,7 +15440,7 @@ module.exports = require('./_library')|| !require('./_fails')(function(){
   __defineSetter__.call(null, K, function(){ /* empty */});
   delete require('./_global')[K];
 });
-},{"./_fails":107,"./_global":111,"./_library":131}],143:[function(require,module,exports){
+},{"./_fails":137,"./_global":141,"./_library":161}],173:[function(require,module,exports){
 var pIE            = require('./_object-pie')
   , createDesc     = require('./_property-desc')
   , toIObject      = require('./_to-iobject')
@@ -7557,7 +15457,7 @@ exports.f = require('./_descriptors') ? gOPD : function getOwnPropertyDescriptor
   } catch(e){ /* empty */ }
   if(has(O, P))return createDesc(!pIE.f.call(O, P), O[P]);
 };
-},{"./_descriptors":101,"./_has":112,"./_ie8-dom-define":115,"./_object-pie":150,"./_property-desc":158,"./_to-iobject":180,"./_to-primitive":183}],144:[function(require,module,exports){
+},{"./_descriptors":131,"./_has":142,"./_ie8-dom-define":145,"./_object-pie":180,"./_property-desc":188,"./_to-iobject":210,"./_to-primitive":213}],174:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var toIObject = require('./_to-iobject')
   , gOPN      = require('./_object-gopn').f
@@ -7578,7 +15478,7 @@ module.exports.f = function getOwnPropertyNames(it){
   return windowNames && toString.call(it) == '[object Window]' ? getWindowNames(it) : gOPN(toIObject(it));
 };
 
-},{"./_object-gopn":145,"./_to-iobject":180}],145:[function(require,module,exports){
+},{"./_object-gopn":175,"./_to-iobject":210}],175:[function(require,module,exports){
 // 19.1.2.7 / 15.2.3.4 Object.getOwnPropertyNames(O)
 var $keys      = require('./_object-keys-internal')
   , hiddenKeys = require('./_enum-bug-keys').concat('length', 'prototype');
@@ -7586,17 +15486,17 @@ var $keys      = require('./_object-keys-internal')
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O){
   return $keys(O, hiddenKeys);
 };
-},{"./_enum-bug-keys":103,"./_object-keys-internal":148}],146:[function(require,module,exports){
+},{"./_enum-bug-keys":133,"./_object-keys-internal":178}],176:[function(require,module,exports){
 exports.f = Object.getOwnPropertySymbols;
-},{}],147:[function(require,module,exports){
-arguments[4][48][0].apply(exports,arguments)
-},{"./_has":112,"./_shared-key":166,"./_to-object":182,"dup":48}],148:[function(require,module,exports){
-arguments[4][49][0].apply(exports,arguments)
-},{"./_array-includes":84,"./_has":112,"./_shared-key":166,"./_to-iobject":180,"dup":49}],149:[function(require,module,exports){
-arguments[4][50][0].apply(exports,arguments)
-},{"./_enum-bug-keys":103,"./_object-keys-internal":148,"dup":50}],150:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
+arguments[4][78][0].apply(exports,arguments)
+},{"./_has":142,"./_shared-key":196,"./_to-object":212,"dup":78}],178:[function(require,module,exports){
+arguments[4][79][0].apply(exports,arguments)
+},{"./_array-includes":114,"./_has":142,"./_shared-key":196,"./_to-iobject":210,"dup":79}],179:[function(require,module,exports){
+arguments[4][80][0].apply(exports,arguments)
+},{"./_enum-bug-keys":133,"./_object-keys-internal":178,"dup":80}],180:[function(require,module,exports){
 exports.f = {}.propertyIsEnumerable;
-},{}],151:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 // most Object methods by ES6 should accept primitives
 var $export = require('./_export')
   , core    = require('./_core')
@@ -7607,7 +15507,7 @@ module.exports = function(KEY, exec){
   exp[KEY] = exec(fn);
   $export($export.S + $export.F * fails(function(){ fn(1); }), 'Object', exp);
 };
-},{"./_core":96,"./_export":105,"./_fails":107}],152:[function(require,module,exports){
+},{"./_core":126,"./_export":135,"./_fails":137}],182:[function(require,module,exports){
 var getKeys   = require('./_object-keys')
   , toIObject = require('./_to-iobject')
   , isEnum    = require('./_object-pie').f;
@@ -7624,7 +15524,7 @@ module.exports = function(isEntries){
     } return result;
   };
 };
-},{"./_object-keys":149,"./_object-pie":150,"./_to-iobject":180}],153:[function(require,module,exports){
+},{"./_object-keys":179,"./_object-pie":180,"./_to-iobject":210}],183:[function(require,module,exports){
 // all object keys, includes non-enumerable and symbols
 var gOPN     = require('./_object-gopn')
   , gOPS     = require('./_object-gops')
@@ -7635,7 +15535,7 @@ module.exports = Reflect && Reflect.ownKeys || function ownKeys(it){
     , getSymbols = gOPS.f;
   return getSymbols ? keys.concat(getSymbols(it)) : keys;
 };
-},{"./_an-object":80,"./_global":111,"./_object-gopn":145,"./_object-gops":146}],154:[function(require,module,exports){
+},{"./_an-object":110,"./_global":141,"./_object-gopn":175,"./_object-gops":176}],184:[function(require,module,exports){
 var $parseFloat = require('./_global').parseFloat
   , $trim       = require('./_string-trim').trim;
 
@@ -7644,7 +15544,7 @@ module.exports = 1 / $parseFloat(require('./_string-ws') + '-0') !== -Infinity ?
     , result = $parseFloat(string);
   return result === 0 && string.charAt(0) == '-' ? -0 : result;
 } : $parseFloat;
-},{"./_global":111,"./_string-trim":175,"./_string-ws":176}],155:[function(require,module,exports){
+},{"./_global":141,"./_string-trim":205,"./_string-ws":206}],185:[function(require,module,exports){
 var $parseInt = require('./_global').parseInt
   , $trim     = require('./_string-trim').trim
   , ws        = require('./_string-ws')
@@ -7654,7 +15554,7 @@ module.exports = $parseInt(ws + '08') !== 8 || $parseInt(ws + '0x16') !== 22 ? f
   var string = $trim(String(str), 3);
   return $parseInt(string, (radix >>> 0) || (hex.test(string) ? 16 : 10));
 } : $parseInt;
-},{"./_global":111,"./_string-trim":175,"./_string-ws":176}],156:[function(require,module,exports){
+},{"./_global":141,"./_string-trim":205,"./_string-ws":206}],186:[function(require,module,exports){
 'use strict';
 var path      = require('./_path')
   , invoke    = require('./_invoke')
@@ -7678,17 +15578,17 @@ module.exports = function(/* ...pargs */){
     return invoke(fn, args, that);
   };
 };
-},{"./_a-function":76,"./_invoke":117,"./_path":157}],157:[function(require,module,exports){
+},{"./_a-function":106,"./_invoke":147,"./_path":187}],187:[function(require,module,exports){
 module.exports = require('./_global');
-},{"./_global":111}],158:[function(require,module,exports){
-arguments[4][51][0].apply(exports,arguments)
-},{"dup":51}],159:[function(require,module,exports){
+},{"./_global":141}],188:[function(require,module,exports){
+arguments[4][81][0].apply(exports,arguments)
+},{"dup":81}],189:[function(require,module,exports){
 var redefine = require('./_redefine');
 module.exports = function(target, src, safe){
   for(var key in src)redefine(target, key, src[key], safe);
   return target;
 };
-},{"./_redefine":160}],160:[function(require,module,exports){
+},{"./_redefine":190}],190:[function(require,module,exports){
 var global    = require('./_global')
   , hide      = require('./_hide')
   , has       = require('./_has')
@@ -7721,7 +15621,7 @@ require('./_core').inspectSource = function(it){
 })(Function.prototype, TO_STRING, function toString(){
   return typeof this == 'function' && this[SRC] || $toString.call(this);
 });
-},{"./_core":96,"./_global":111,"./_has":112,"./_hide":113,"./_uid":187}],161:[function(require,module,exports){
+},{"./_core":126,"./_global":141,"./_has":142,"./_hide":143,"./_uid":217}],191:[function(require,module,exports){
 module.exports = function(regExp, replace){
   var replacer = replace === Object(replace) ? function(part){
     return replace[part];
@@ -7730,12 +15630,12 @@ module.exports = function(regExp, replace){
     return String(it).replace(regExp, replacer);
   };
 };
-},{}],162:[function(require,module,exports){
+},{}],192:[function(require,module,exports){
 // 7.2.9 SameValue(x, y)
 module.exports = Object.is || function is(x, y){
   return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
 };
-},{}],163:[function(require,module,exports){
+},{}],193:[function(require,module,exports){
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var isObject = require('./_is-object')
@@ -7761,7 +15661,7 @@ module.exports = {
     }({}, false) : undefined),
   check: check
 };
-},{"./_an-object":80,"./_ctx":98,"./_is-object":122,"./_object-gopd":143}],164:[function(require,module,exports){
+},{"./_an-object":110,"./_ctx":128,"./_is-object":152,"./_object-gopd":173}],194:[function(require,module,exports){
 'use strict';
 var global      = require('./_global')
   , dP          = require('./_object-dp')
@@ -7775,15 +15675,15 @@ module.exports = function(KEY){
     get: function(){ return this; }
   });
 };
-},{"./_descriptors":101,"./_global":111,"./_object-dp":140,"./_wks":190}],165:[function(require,module,exports){
-arguments[4][55][0].apply(exports,arguments)
-},{"./_has":112,"./_object-dp":140,"./_wks":190,"dup":55}],166:[function(require,module,exports){
-arguments[4][56][0].apply(exports,arguments)
-},{"./_shared":167,"./_uid":187,"dup":56}],167:[function(require,module,exports){
-arguments[4][57][0].apply(exports,arguments)
-},{"./_global":111,"dup":57}],168:[function(require,module,exports){
-arguments[4][58][0].apply(exports,arguments)
-},{"./_a-function":76,"./_an-object":80,"./_wks":190,"dup":58}],169:[function(require,module,exports){
+},{"./_descriptors":131,"./_global":141,"./_object-dp":170,"./_wks":220}],195:[function(require,module,exports){
+arguments[4][85][0].apply(exports,arguments)
+},{"./_has":142,"./_object-dp":170,"./_wks":220,"dup":85}],196:[function(require,module,exports){
+arguments[4][86][0].apply(exports,arguments)
+},{"./_shared":197,"./_uid":217,"dup":86}],197:[function(require,module,exports){
+arguments[4][87][0].apply(exports,arguments)
+},{"./_global":141,"dup":87}],198:[function(require,module,exports){
+arguments[4][88][0].apply(exports,arguments)
+},{"./_a-function":106,"./_an-object":110,"./_wks":220,"dup":88}],199:[function(require,module,exports){
 var fails = require('./_fails');
 
 module.exports = function(method, arg){
@@ -7791,9 +15691,9 @@ module.exports = function(method, arg){
     arg ? method.call(null, function(){}, 1) : method.call(null);
   });
 };
-},{"./_fails":107}],170:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"./_defined":100,"./_to-integer":179,"dup":59}],171:[function(require,module,exports){
+},{"./_fails":137}],200:[function(require,module,exports){
+arguments[4][89][0].apply(exports,arguments)
+},{"./_defined":130,"./_to-integer":209,"dup":89}],201:[function(require,module,exports){
 // helper for String#{startsWith, endsWith, includes}
 var isRegExp = require('./_is-regexp')
   , defined  = require('./_defined');
@@ -7802,7 +15702,7 @@ module.exports = function(that, searchString, NAME){
   if(isRegExp(searchString))throw TypeError('String#' + NAME + " doesn't accept regex!");
   return String(defined(that));
 };
-},{"./_defined":100,"./_is-regexp":123}],172:[function(require,module,exports){
+},{"./_defined":130,"./_is-regexp":153}],202:[function(require,module,exports){
 var $export = require('./_export')
   , fails   = require('./_fails')
   , defined = require('./_defined')
@@ -7822,7 +15722,7 @@ module.exports = function(NAME, exec){
     return test !== test.toLowerCase() || test.split('"').length > 3;
   }), 'String', O);
 };
-},{"./_defined":100,"./_export":105,"./_fails":107}],173:[function(require,module,exports){
+},{"./_defined":130,"./_export":135,"./_fails":137}],203:[function(require,module,exports){
 // https://github.com/tc39/proposal-string-pad-start-end
 var toLength = require('./_to-length')
   , repeat   = require('./_string-repeat')
@@ -7840,7 +15740,7 @@ module.exports = function(that, maxLength, fillString, left){
   return left ? stringFiller + S : S + stringFiller;
 };
 
-},{"./_defined":100,"./_string-repeat":174,"./_to-length":181}],174:[function(require,module,exports){
+},{"./_defined":130,"./_string-repeat":204,"./_to-length":211}],204:[function(require,module,exports){
 'use strict';
 var toInteger = require('./_to-integer')
   , defined   = require('./_defined');
@@ -7853,7 +15753,7 @@ module.exports = function repeat(count){
   for(;n > 0; (n >>>= 1) && (str += str))if(n & 1)res += str;
   return res;
 };
-},{"./_defined":100,"./_to-integer":179}],175:[function(require,module,exports){
+},{"./_defined":130,"./_to-integer":209}],205:[function(require,module,exports){
 var $export = require('./_export')
   , defined = require('./_defined')
   , fails   = require('./_fails')
@@ -7884,24 +15784,24 @@ var trim = exporter.trim = function(string, TYPE){
 };
 
 module.exports = exporter;
-},{"./_defined":100,"./_export":105,"./_fails":107,"./_string-ws":176}],176:[function(require,module,exports){
+},{"./_defined":130,"./_export":135,"./_fails":137,"./_string-ws":206}],206:[function(require,module,exports){
 module.exports = '\x09\x0A\x0B\x0C\x0D\x20\xA0\u1680\u180E\u2000\u2001\u2002\u2003' +
   '\u2004\u2005\u2006\u2007\u2008\u2009\u200A\u202F\u205F\u3000\u2028\u2029\uFEFF';
-},{}],177:[function(require,module,exports){
-arguments[4][60][0].apply(exports,arguments)
-},{"./_cof":91,"./_ctx":98,"./_dom-create":102,"./_global":111,"./_html":114,"./_invoke":117,"dup":60}],178:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"./_to-integer":179,"dup":61}],179:[function(require,module,exports){
-arguments[4][62][0].apply(exports,arguments)
-},{"dup":62}],180:[function(require,module,exports){
-arguments[4][63][0].apply(exports,arguments)
-},{"./_defined":100,"./_iobject":118,"dup":63}],181:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"./_to-integer":179,"dup":64}],182:[function(require,module,exports){
-arguments[4][65][0].apply(exports,arguments)
-},{"./_defined":100,"dup":65}],183:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"./_is-object":122,"dup":66}],184:[function(require,module,exports){
+},{}],207:[function(require,module,exports){
+arguments[4][90][0].apply(exports,arguments)
+},{"./_cof":121,"./_ctx":128,"./_dom-create":132,"./_global":141,"./_html":144,"./_invoke":147,"dup":90}],208:[function(require,module,exports){
+arguments[4][91][0].apply(exports,arguments)
+},{"./_to-integer":209,"dup":91}],209:[function(require,module,exports){
+arguments[4][92][0].apply(exports,arguments)
+},{"dup":92}],210:[function(require,module,exports){
+arguments[4][93][0].apply(exports,arguments)
+},{"./_defined":130,"./_iobject":148,"dup":93}],211:[function(require,module,exports){
+arguments[4][94][0].apply(exports,arguments)
+},{"./_to-integer":209,"dup":94}],212:[function(require,module,exports){
+arguments[4][95][0].apply(exports,arguments)
+},{"./_defined":130,"dup":95}],213:[function(require,module,exports){
+arguments[4][96][0].apply(exports,arguments)
+},{"./_is-object":152,"dup":96}],214:[function(require,module,exports){
 'use strict';
 if(require('./_descriptors')){
   var LIBRARY             = require('./_library')
@@ -8381,7 +16281,7 @@ if(require('./_descriptors')){
     if(!LIBRARY && !CORRECT_ITER_NAME)hide(TypedArrayPrototype, ITERATOR, $iterator);
   };
 } else module.exports = function(){ /* empty */ };
-},{"./_an-instance":79,"./_array-copy-within":81,"./_array-fill":82,"./_array-includes":84,"./_array-methods":85,"./_classof":90,"./_ctx":98,"./_descriptors":101,"./_export":105,"./_fails":107,"./_global":111,"./_has":112,"./_hide":113,"./_is-array-iter":119,"./_is-object":122,"./_iter-detect":127,"./_iterators":129,"./_library":131,"./_object-create":139,"./_object-dp":140,"./_object-gopd":143,"./_object-gopn":145,"./_object-gpo":147,"./_property-desc":158,"./_redefine-all":159,"./_same-value":162,"./_set-species":164,"./_species-constructor":168,"./_to-index":178,"./_to-integer":179,"./_to-length":181,"./_to-object":182,"./_to-primitive":183,"./_typed":186,"./_typed-buffer":185,"./_uid":187,"./_wks":190,"./core.get-iterator-method":191,"./es6.array.iterator":203}],185:[function(require,module,exports){
+},{"./_an-instance":109,"./_array-copy-within":111,"./_array-fill":112,"./_array-includes":114,"./_array-methods":115,"./_classof":120,"./_ctx":128,"./_descriptors":131,"./_export":135,"./_fails":137,"./_global":141,"./_has":142,"./_hide":143,"./_is-array-iter":149,"./_is-object":152,"./_iter-detect":157,"./_iterators":159,"./_library":161,"./_object-create":169,"./_object-dp":170,"./_object-gopd":173,"./_object-gopn":175,"./_object-gpo":177,"./_property-desc":188,"./_redefine-all":189,"./_same-value":192,"./_set-species":194,"./_species-constructor":198,"./_to-index":208,"./_to-integer":209,"./_to-length":211,"./_to-object":212,"./_to-primitive":213,"./_typed":216,"./_typed-buffer":215,"./_uid":217,"./_wks":220,"./core.get-iterator-method":221,"./es6.array.iterator":233}],215:[function(require,module,exports){
 'use strict';
 var global         = require('./_global')
   , DESCRIPTORS    = require('./_descriptors')
@@ -8655,7 +16555,7 @@ setToStringTag($DataView, DATA_VIEW);
 hide($DataView[PROTOTYPE], $typed.VIEW, true);
 exports[ARRAY_BUFFER] = $ArrayBuffer;
 exports[DATA_VIEW] = $DataView;
-},{"./_an-instance":79,"./_array-fill":82,"./_descriptors":101,"./_fails":107,"./_global":111,"./_hide":113,"./_library":131,"./_object-dp":140,"./_object-gopn":145,"./_redefine-all":159,"./_set-to-string-tag":165,"./_to-integer":179,"./_to-length":181,"./_typed":186}],186:[function(require,module,exports){
+},{"./_an-instance":109,"./_array-fill":112,"./_descriptors":131,"./_fails":137,"./_global":141,"./_hide":143,"./_library":161,"./_object-dp":170,"./_object-gopn":175,"./_redefine-all":189,"./_set-to-string-tag":195,"./_to-integer":209,"./_to-length":211,"./_typed":216}],216:[function(require,module,exports){
 var global = require('./_global')
   , hide   = require('./_hide')
   , uid    = require('./_uid')
@@ -8682,9 +16582,9 @@ module.exports = {
   TYPED:  TYPED,
   VIEW:   VIEW
 };
-},{"./_global":111,"./_hide":113,"./_uid":187}],187:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"dup":67}],188:[function(require,module,exports){
+},{"./_global":141,"./_hide":143,"./_uid":217}],217:[function(require,module,exports){
+arguments[4][97][0].apply(exports,arguments)
+},{"dup":97}],218:[function(require,module,exports){
 var global         = require('./_global')
   , core           = require('./_core')
   , LIBRARY        = require('./_library')
@@ -8694,27 +16594,27 @@ module.exports = function(name){
   var $Symbol = core.Symbol || (core.Symbol = LIBRARY ? {} : global.Symbol || {});
   if(name.charAt(0) != '_' && !(name in $Symbol))defineProperty($Symbol, name, {value: wksExt.f(name)});
 };
-},{"./_core":96,"./_global":111,"./_library":131,"./_object-dp":140,"./_wks-ext":189}],189:[function(require,module,exports){
+},{"./_core":126,"./_global":141,"./_library":161,"./_object-dp":170,"./_wks-ext":219}],219:[function(require,module,exports){
 exports.f = require('./_wks');
-},{"./_wks":190}],190:[function(require,module,exports){
-arguments[4][68][0].apply(exports,arguments)
-},{"./_global":111,"./_shared":167,"./_uid":187,"dup":68}],191:[function(require,module,exports){
-arguments[4][69][0].apply(exports,arguments)
-},{"./_classof":90,"./_core":96,"./_iterators":129,"./_wks":190,"dup":69}],192:[function(require,module,exports){
+},{"./_wks":220}],220:[function(require,module,exports){
+arguments[4][98][0].apply(exports,arguments)
+},{"./_global":141,"./_shared":197,"./_uid":217,"dup":98}],221:[function(require,module,exports){
+arguments[4][99][0].apply(exports,arguments)
+},{"./_classof":120,"./_core":126,"./_iterators":159,"./_wks":220,"dup":99}],222:[function(require,module,exports){
 // https://github.com/benjamingr/RexExp.escape
 var $export = require('./_export')
   , $re     = require('./_replacer')(/[\\^$*+?.()|[\]{}]/g, '\\$&');
 
 $export($export.S, 'RegExp', {escape: function escape(it){ return $re(it); }});
 
-},{"./_export":105,"./_replacer":161}],193:[function(require,module,exports){
+},{"./_export":135,"./_replacer":191}],223:[function(require,module,exports){
 // 22.1.3.3 Array.prototype.copyWithin(target, start, end = this.length)
 var $export = require('./_export');
 
 $export($export.P, 'Array', {copyWithin: require('./_array-copy-within')});
 
 require('./_add-to-unscopables')('copyWithin');
-},{"./_add-to-unscopables":78,"./_array-copy-within":81,"./_export":105}],194:[function(require,module,exports){
+},{"./_add-to-unscopables":108,"./_array-copy-within":111,"./_export":135}],224:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $every  = require('./_array-methods')(4);
@@ -8725,14 +16625,14 @@ $export($export.P + $export.F * !require('./_strict-method')([].every, true), 'A
     return $every(this, callbackfn, arguments[1]);
   }
 });
-},{"./_array-methods":85,"./_export":105,"./_strict-method":169}],195:[function(require,module,exports){
+},{"./_array-methods":115,"./_export":135,"./_strict-method":199}],225:[function(require,module,exports){
 // 22.1.3.6 Array.prototype.fill(value, start = 0, end = this.length)
 var $export = require('./_export');
 
 $export($export.P, 'Array', {fill: require('./_array-fill')});
 
 require('./_add-to-unscopables')('fill');
-},{"./_add-to-unscopables":78,"./_array-fill":82,"./_export":105}],196:[function(require,module,exports){
+},{"./_add-to-unscopables":108,"./_array-fill":112,"./_export":135}],226:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $filter = require('./_array-methods')(2);
@@ -8743,7 +16643,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].filter, true), '
     return $filter(this, callbackfn, arguments[1]);
   }
 });
-},{"./_array-methods":85,"./_export":105,"./_strict-method":169}],197:[function(require,module,exports){
+},{"./_array-methods":115,"./_export":135,"./_strict-method":199}],227:[function(require,module,exports){
 'use strict';
 // 22.1.3.9 Array.prototype.findIndex(predicate, thisArg = undefined)
 var $export = require('./_export')
@@ -8758,7 +16658,7 @@ $export($export.P + $export.F * forced, 'Array', {
   }
 });
 require('./_add-to-unscopables')(KEY);
-},{"./_add-to-unscopables":78,"./_array-methods":85,"./_export":105}],198:[function(require,module,exports){
+},{"./_add-to-unscopables":108,"./_array-methods":115,"./_export":135}],228:[function(require,module,exports){
 'use strict';
 // 22.1.3.8 Array.prototype.find(predicate, thisArg = undefined)
 var $export = require('./_export')
@@ -8773,7 +16673,7 @@ $export($export.P + $export.F * forced, 'Array', {
   }
 });
 require('./_add-to-unscopables')(KEY);
-},{"./_add-to-unscopables":78,"./_array-methods":85,"./_export":105}],199:[function(require,module,exports){
+},{"./_add-to-unscopables":108,"./_array-methods":115,"./_export":135}],229:[function(require,module,exports){
 'use strict';
 var $export  = require('./_export')
   , $forEach = require('./_array-methods')(0)
@@ -8785,7 +16685,7 @@ $export($export.P + $export.F * !STRICT, 'Array', {
     return $forEach(this, callbackfn, arguments[1]);
   }
 });
-},{"./_array-methods":85,"./_export":105,"./_strict-method":169}],200:[function(require,module,exports){
+},{"./_array-methods":115,"./_export":135,"./_strict-method":199}],230:[function(require,module,exports){
 'use strict';
 var ctx            = require('./_ctx')
   , $export        = require('./_export')
@@ -8824,7 +16724,7 @@ $export($export.S + $export.F * !require('./_iter-detect')(function(iter){ Array
   }
 });
 
-},{"./_create-property":97,"./_ctx":98,"./_export":105,"./_is-array-iter":119,"./_iter-call":124,"./_iter-detect":127,"./_to-length":181,"./_to-object":182,"./core.get-iterator-method":191}],201:[function(require,module,exports){
+},{"./_create-property":127,"./_ctx":128,"./_export":135,"./_is-array-iter":149,"./_iter-call":154,"./_iter-detect":157,"./_to-length":211,"./_to-object":212,"./core.get-iterator-method":221}],231:[function(require,module,exports){
 'use strict';
 var $export       = require('./_export')
   , $indexOf      = require('./_array-includes')(false)
@@ -8840,14 +16740,14 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !require('./_strict-method')($
       : $indexOf(this, searchElement, arguments[1]);
   }
 });
-},{"./_array-includes":84,"./_export":105,"./_strict-method":169}],202:[function(require,module,exports){
+},{"./_array-includes":114,"./_export":135,"./_strict-method":199}],232:[function(require,module,exports){
 // 22.1.2.2 / 15.4.3.2 Array.isArray(arg)
 var $export = require('./_export');
 
 $export($export.S, 'Array', {isArray: require('./_is-array')});
-},{"./_export":105,"./_is-array":120}],203:[function(require,module,exports){
-arguments[4][70][0].apply(exports,arguments)
-},{"./_add-to-unscopables":78,"./_iter-define":126,"./_iter-step":128,"./_iterators":129,"./_to-iobject":180,"dup":70}],204:[function(require,module,exports){
+},{"./_export":135,"./_is-array":150}],233:[function(require,module,exports){
+arguments[4][100][0].apply(exports,arguments)
+},{"./_add-to-unscopables":108,"./_iter-define":156,"./_iter-step":158,"./_iterators":159,"./_to-iobject":210,"dup":100}],234:[function(require,module,exports){
 'use strict';
 // 22.1.3.13 Array.prototype.join(separator)
 var $export   = require('./_export')
@@ -8860,7 +16760,7 @@ $export($export.P + $export.F * (require('./_iobject') != Object || !require('./
     return arrayJoin.call(toIObject(this), separator === undefined ? ',' : separator);
   }
 });
-},{"./_export":105,"./_iobject":118,"./_strict-method":169,"./_to-iobject":180}],205:[function(require,module,exports){
+},{"./_export":135,"./_iobject":148,"./_strict-method":199,"./_to-iobject":210}],235:[function(require,module,exports){
 'use strict';
 var $export       = require('./_export')
   , toIObject     = require('./_to-iobject')
@@ -8883,7 +16783,7 @@ $export($export.P + $export.F * (NEGATIVE_ZERO || !require('./_strict-method')($
     return -1;
   }
 });
-},{"./_export":105,"./_strict-method":169,"./_to-integer":179,"./_to-iobject":180,"./_to-length":181}],206:[function(require,module,exports){
+},{"./_export":135,"./_strict-method":199,"./_to-integer":209,"./_to-iobject":210,"./_to-length":211}],236:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $map    = require('./_array-methods')(1);
@@ -8894,7 +16794,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].map, true), 'Arr
     return $map(this, callbackfn, arguments[1]);
   }
 });
-},{"./_array-methods":85,"./_export":105,"./_strict-method":169}],207:[function(require,module,exports){
+},{"./_array-methods":115,"./_export":135,"./_strict-method":199}],237:[function(require,module,exports){
 'use strict';
 var $export        = require('./_export')
   , createProperty = require('./_create-property');
@@ -8914,7 +16814,7 @@ $export($export.S + $export.F * require('./_fails')(function(){
     return result;
   }
 });
-},{"./_create-property":97,"./_export":105,"./_fails":107}],208:[function(require,module,exports){
+},{"./_create-property":127,"./_export":135,"./_fails":137}],238:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $reduce = require('./_array-reduce');
@@ -8925,7 +16825,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].reduceRight, tru
     return $reduce(this, callbackfn, arguments.length, arguments[1], true);
   }
 });
-},{"./_array-reduce":86,"./_export":105,"./_strict-method":169}],209:[function(require,module,exports){
+},{"./_array-reduce":116,"./_export":135,"./_strict-method":199}],239:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $reduce = require('./_array-reduce');
@@ -8936,7 +16836,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].reduce, true), '
     return $reduce(this, callbackfn, arguments.length, arguments[1], false);
   }
 });
-},{"./_array-reduce":86,"./_export":105,"./_strict-method":169}],210:[function(require,module,exports){
+},{"./_array-reduce":116,"./_export":135,"./_strict-method":199}],240:[function(require,module,exports){
 'use strict';
 var $export    = require('./_export')
   , html       = require('./_html')
@@ -8965,7 +16865,7 @@ $export($export.P + $export.F * require('./_fails')(function(){
     return cloned;
   }
 });
-},{"./_cof":91,"./_export":105,"./_fails":107,"./_html":114,"./_to-index":178,"./_to-length":181}],211:[function(require,module,exports){
+},{"./_cof":121,"./_export":135,"./_fails":137,"./_html":144,"./_to-index":208,"./_to-length":211}],241:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $some   = require('./_array-methods')(3);
@@ -8976,7 +16876,7 @@ $export($export.P + $export.F * !require('./_strict-method')([].some, true), 'Ar
     return $some(this, callbackfn, arguments[1]);
   }
 });
-},{"./_array-methods":85,"./_export":105,"./_strict-method":169}],212:[function(require,module,exports){
+},{"./_array-methods":115,"./_export":135,"./_strict-method":199}],242:[function(require,module,exports){
 'use strict';
 var $export   = require('./_export')
   , aFunction = require('./_a-function')
@@ -9000,14 +16900,14 @@ $export($export.P + $export.F * (fails(function(){
       : $sort.call(toObject(this), aFunction(comparefn));
   }
 });
-},{"./_a-function":76,"./_export":105,"./_fails":107,"./_strict-method":169,"./_to-object":182}],213:[function(require,module,exports){
+},{"./_a-function":106,"./_export":135,"./_fails":137,"./_strict-method":199,"./_to-object":212}],243:[function(require,module,exports){
 require('./_set-species')('Array');
-},{"./_set-species":164}],214:[function(require,module,exports){
+},{"./_set-species":194}],244:[function(require,module,exports){
 // 20.3.3.1 / 15.9.4.4 Date.now()
 var $export = require('./_export');
 
 $export($export.S, 'Date', {now: function(){ return new Date().getTime(); }});
-},{"./_export":105}],215:[function(require,module,exports){
+},{"./_export":135}],245:[function(require,module,exports){
 'use strict';
 // 20.3.4.36 / 15.9.5.43 Date.prototype.toISOString()
 var $export = require('./_export')
@@ -9036,7 +16936,7 @@ $export($export.P + $export.F * (fails(function(){
       ':' + lz(d.getUTCSeconds()) + '.' + (m > 99 ? m : '0' + lz(m)) + 'Z';
   }
 });
-},{"./_export":105,"./_fails":107}],216:[function(require,module,exports){
+},{"./_export":135,"./_fails":137}],246:[function(require,module,exports){
 'use strict';
 var $export     = require('./_export')
   , toObject    = require('./_to-object')
@@ -9051,12 +16951,12 @@ $export($export.P + $export.F * require('./_fails')(function(){
     return typeof pv == 'number' && !isFinite(pv) ? null : O.toISOString();
   }
 });
-},{"./_export":105,"./_fails":107,"./_to-object":182,"./_to-primitive":183}],217:[function(require,module,exports){
+},{"./_export":135,"./_fails":137,"./_to-object":212,"./_to-primitive":213}],247:[function(require,module,exports){
 var TO_PRIMITIVE = require('./_wks')('toPrimitive')
   , proto        = Date.prototype;
 
 if(!(TO_PRIMITIVE in proto))require('./_hide')(proto, TO_PRIMITIVE, require('./_date-to-primitive'));
-},{"./_date-to-primitive":99,"./_hide":113,"./_wks":190}],218:[function(require,module,exports){
+},{"./_date-to-primitive":129,"./_hide":143,"./_wks":220}],248:[function(require,module,exports){
 var DateProto    = Date.prototype
   , INVALID_DATE = 'Invalid Date'
   , TO_STRING    = 'toString'
@@ -9068,12 +16968,12 @@ if(new Date(NaN) + '' != INVALID_DATE){
     return value === value ? $toString.call(this) : INVALID_DATE;
   });
 }
-},{"./_redefine":160}],219:[function(require,module,exports){
+},{"./_redefine":190}],249:[function(require,module,exports){
 // 19.2.3.2 / 15.3.4.5 Function.prototype.bind(thisArg, args...)
 var $export = require('./_export');
 
 $export($export.P, 'Function', {bind: require('./_bind')});
-},{"./_bind":89,"./_export":105}],220:[function(require,module,exports){
+},{"./_bind":119,"./_export":135}],250:[function(require,module,exports){
 'use strict';
 var isObject       = require('./_is-object')
   , getPrototypeOf = require('./_object-gpo')
@@ -9087,7 +16987,7 @@ if(!(HAS_INSTANCE in FunctionProto))require('./_object-dp').f(FunctionProto, HAS
   while(O = getPrototypeOf(O))if(this.prototype === O)return true;
   return false;
 }});
-},{"./_is-object":122,"./_object-dp":140,"./_object-gpo":147,"./_wks":190}],221:[function(require,module,exports){
+},{"./_is-object":152,"./_object-dp":170,"./_object-gpo":177,"./_wks":220}],251:[function(require,module,exports){
 var dP         = require('./_object-dp').f
   , createDesc = require('./_property-desc')
   , has        = require('./_has')
@@ -9113,7 +17013,7 @@ NAME in FProto || require('./_descriptors') && dP(FProto, NAME, {
     }
   }
 });
-},{"./_descriptors":101,"./_has":112,"./_object-dp":140,"./_property-desc":158}],222:[function(require,module,exports){
+},{"./_descriptors":131,"./_has":142,"./_object-dp":170,"./_property-desc":188}],252:[function(require,module,exports){
 'use strict';
 var strong = require('./_collection-strong');
 
@@ -9131,7 +17031,7 @@ module.exports = require('./_collection')('Map', function(get){
     return strong.def(this, key === 0 ? 0 : key, value);
   }
 }, strong, true);
-},{"./_collection":95,"./_collection-strong":92}],223:[function(require,module,exports){
+},{"./_collection":125,"./_collection-strong":122}],253:[function(require,module,exports){
 // 20.2.2.3 Math.acosh(x)
 var $export = require('./_export')
   , log1p   = require('./_math-log1p')
@@ -9150,7 +17050,7 @@ $export($export.S + $export.F * !($acosh
       : log1p(x - 1 + sqrt(x - 1) * sqrt(x + 1));
   }
 });
-},{"./_export":105,"./_math-log1p":133}],224:[function(require,module,exports){
+},{"./_export":135,"./_math-log1p":163}],254:[function(require,module,exports){
 // 20.2.2.5 Math.asinh(x)
 var $export = require('./_export')
   , $asinh  = Math.asinh;
@@ -9161,7 +17061,7 @@ function asinh(x){
 
 // Tor Browser bug: Math.asinh(0) -> -0 
 $export($export.S + $export.F * !($asinh && 1 / $asinh(0) > 0), 'Math', {asinh: asinh});
-},{"./_export":105}],225:[function(require,module,exports){
+},{"./_export":135}],255:[function(require,module,exports){
 // 20.2.2.7 Math.atanh(x)
 var $export = require('./_export')
   , $atanh  = Math.atanh;
@@ -9172,7 +17072,7 @@ $export($export.S + $export.F * !($atanh && 1 / $atanh(-0) < 0), 'Math', {
     return (x = +x) == 0 ? x : Math.log((1 + x) / (1 - x)) / 2;
   }
 });
-},{"./_export":105}],226:[function(require,module,exports){
+},{"./_export":135}],256:[function(require,module,exports){
 // 20.2.2.9 Math.cbrt(x)
 var $export = require('./_export')
   , sign    = require('./_math-sign');
@@ -9182,7 +17082,7 @@ $export($export.S, 'Math', {
     return sign(x = +x) * Math.pow(Math.abs(x), 1 / 3);
   }
 });
-},{"./_export":105,"./_math-sign":134}],227:[function(require,module,exports){
+},{"./_export":135,"./_math-sign":164}],257:[function(require,module,exports){
 // 20.2.2.11 Math.clz32(x)
 var $export = require('./_export');
 
@@ -9191,7 +17091,7 @@ $export($export.S, 'Math', {
     return (x >>>= 0) ? 31 - Math.floor(Math.log(x + 0.5) * Math.LOG2E) : 32;
   }
 });
-},{"./_export":105}],228:[function(require,module,exports){
+},{"./_export":135}],258:[function(require,module,exports){
 // 20.2.2.12 Math.cosh(x)
 var $export = require('./_export')
   , exp     = Math.exp;
@@ -9201,13 +17101,13 @@ $export($export.S, 'Math', {
     return (exp(x = +x) + exp(-x)) / 2;
   }
 });
-},{"./_export":105}],229:[function(require,module,exports){
+},{"./_export":135}],259:[function(require,module,exports){
 // 20.2.2.14 Math.expm1(x)
 var $export = require('./_export')
   , $expm1  = require('./_math-expm1');
 
 $export($export.S + $export.F * ($expm1 != Math.expm1), 'Math', {expm1: $expm1});
-},{"./_export":105,"./_math-expm1":132}],230:[function(require,module,exports){
+},{"./_export":135,"./_math-expm1":162}],260:[function(require,module,exports){
 // 20.2.2.16 Math.fround(x)
 var $export   = require('./_export')
   , sign      = require('./_math-sign')
@@ -9234,7 +17134,7 @@ $export($export.S, 'Math', {
     return $sign * result;
   }
 });
-},{"./_export":105,"./_math-sign":134}],231:[function(require,module,exports){
+},{"./_export":135,"./_math-sign":164}],261:[function(require,module,exports){
 // 20.2.2.17 Math.hypot([value1[, value2[, … ]]])
 var $export = require('./_export')
   , abs     = Math.abs;
@@ -9260,7 +17160,7 @@ $export($export.S, 'Math', {
     return larg === Infinity ? Infinity : larg * Math.sqrt(sum);
   }
 });
-},{"./_export":105}],232:[function(require,module,exports){
+},{"./_export":135}],262:[function(require,module,exports){
 // 20.2.2.18 Math.imul(x, y)
 var $export = require('./_export')
   , $imul   = Math.imul;
@@ -9278,7 +17178,7 @@ $export($export.S + $export.F * require('./_fails')(function(){
     return 0 | xl * yl + ((UINT16 & xn >>> 16) * yl + xl * (UINT16 & yn >>> 16) << 16 >>> 0);
   }
 });
-},{"./_export":105,"./_fails":107}],233:[function(require,module,exports){
+},{"./_export":135,"./_fails":137}],263:[function(require,module,exports){
 // 20.2.2.21 Math.log10(x)
 var $export = require('./_export');
 
@@ -9287,12 +17187,12 @@ $export($export.S, 'Math', {
     return Math.log(x) / Math.LN10;
   }
 });
-},{"./_export":105}],234:[function(require,module,exports){
+},{"./_export":135}],264:[function(require,module,exports){
 // 20.2.2.20 Math.log1p(x)
 var $export = require('./_export');
 
 $export($export.S, 'Math', {log1p: require('./_math-log1p')});
-},{"./_export":105,"./_math-log1p":133}],235:[function(require,module,exports){
+},{"./_export":135,"./_math-log1p":163}],265:[function(require,module,exports){
 // 20.2.2.22 Math.log2(x)
 var $export = require('./_export');
 
@@ -9301,12 +17201,12 @@ $export($export.S, 'Math', {
     return Math.log(x) / Math.LN2;
   }
 });
-},{"./_export":105}],236:[function(require,module,exports){
+},{"./_export":135}],266:[function(require,module,exports){
 // 20.2.2.28 Math.sign(x)
 var $export = require('./_export');
 
 $export($export.S, 'Math', {sign: require('./_math-sign')});
-},{"./_export":105,"./_math-sign":134}],237:[function(require,module,exports){
+},{"./_export":135,"./_math-sign":164}],267:[function(require,module,exports){
 // 20.2.2.30 Math.sinh(x)
 var $export = require('./_export')
   , expm1   = require('./_math-expm1')
@@ -9322,7 +17222,7 @@ $export($export.S + $export.F * require('./_fails')(function(){
       : (exp(x - 1) - exp(-x - 1)) * (Math.E / 2);
   }
 });
-},{"./_export":105,"./_fails":107,"./_math-expm1":132}],238:[function(require,module,exports){
+},{"./_export":135,"./_fails":137,"./_math-expm1":162}],268:[function(require,module,exports){
 // 20.2.2.33 Math.tanh(x)
 var $export = require('./_export')
   , expm1   = require('./_math-expm1')
@@ -9335,7 +17235,7 @@ $export($export.S, 'Math', {
     return a == Infinity ? 1 : b == Infinity ? -1 : (a - b) / (exp(x) + exp(-x));
   }
 });
-},{"./_export":105,"./_math-expm1":132}],239:[function(require,module,exports){
+},{"./_export":135,"./_math-expm1":162}],269:[function(require,module,exports){
 // 20.2.2.34 Math.trunc(x)
 var $export = require('./_export');
 
@@ -9344,7 +17244,7 @@ $export($export.S, 'Math', {
     return (it > 0 ? Math.floor : Math.ceil)(it);
   }
 });
-},{"./_export":105}],240:[function(require,module,exports){
+},{"./_export":135}],270:[function(require,module,exports){
 'use strict';
 var global            = require('./_global')
   , has               = require('./_has')
@@ -9414,12 +17314,12 @@ if(!$Number(' 0o1') || !$Number('0b1') || $Number('+0x1')){
   proto.constructor = $Number;
   require('./_redefine')(global, NUMBER, $Number);
 }
-},{"./_cof":91,"./_descriptors":101,"./_fails":107,"./_global":111,"./_has":112,"./_inherit-if-required":116,"./_object-create":139,"./_object-dp":140,"./_object-gopd":143,"./_object-gopn":145,"./_redefine":160,"./_string-trim":175,"./_to-primitive":183}],241:[function(require,module,exports){
+},{"./_cof":121,"./_descriptors":131,"./_fails":137,"./_global":141,"./_has":142,"./_inherit-if-required":146,"./_object-create":169,"./_object-dp":170,"./_object-gopd":173,"./_object-gopn":175,"./_redefine":190,"./_string-trim":205,"./_to-primitive":213}],271:[function(require,module,exports){
 // 20.1.2.1 Number.EPSILON
 var $export = require('./_export');
 
 $export($export.S, 'Number', {EPSILON: Math.pow(2, -52)});
-},{"./_export":105}],242:[function(require,module,exports){
+},{"./_export":135}],272:[function(require,module,exports){
 // 20.1.2.2 Number.isFinite(number)
 var $export   = require('./_export')
   , _isFinite = require('./_global').isFinite;
@@ -9429,12 +17329,12 @@ $export($export.S, 'Number', {
     return typeof it == 'number' && _isFinite(it);
   }
 });
-},{"./_export":105,"./_global":111}],243:[function(require,module,exports){
+},{"./_export":135,"./_global":141}],273:[function(require,module,exports){
 // 20.1.2.3 Number.isInteger(number)
 var $export = require('./_export');
 
 $export($export.S, 'Number', {isInteger: require('./_is-integer')});
-},{"./_export":105,"./_is-integer":121}],244:[function(require,module,exports){
+},{"./_export":135,"./_is-integer":151}],274:[function(require,module,exports){
 // 20.1.2.4 Number.isNaN(number)
 var $export = require('./_export');
 
@@ -9443,7 +17343,7 @@ $export($export.S, 'Number', {
     return number != number;
   }
 });
-},{"./_export":105}],245:[function(require,module,exports){
+},{"./_export":135}],275:[function(require,module,exports){
 // 20.1.2.5 Number.isSafeInteger(number)
 var $export   = require('./_export')
   , isInteger = require('./_is-integer')
@@ -9454,27 +17354,27 @@ $export($export.S, 'Number', {
     return isInteger(number) && abs(number) <= 0x1fffffffffffff;
   }
 });
-},{"./_export":105,"./_is-integer":121}],246:[function(require,module,exports){
+},{"./_export":135,"./_is-integer":151}],276:[function(require,module,exports){
 // 20.1.2.6 Number.MAX_SAFE_INTEGER
 var $export = require('./_export');
 
 $export($export.S, 'Number', {MAX_SAFE_INTEGER: 0x1fffffffffffff});
-},{"./_export":105}],247:[function(require,module,exports){
+},{"./_export":135}],277:[function(require,module,exports){
 // 20.1.2.10 Number.MIN_SAFE_INTEGER
 var $export = require('./_export');
 
 $export($export.S, 'Number', {MIN_SAFE_INTEGER: -0x1fffffffffffff});
-},{"./_export":105}],248:[function(require,module,exports){
+},{"./_export":135}],278:[function(require,module,exports){
 var $export     = require('./_export')
   , $parseFloat = require('./_parse-float');
 // 20.1.2.12 Number.parseFloat(string)
 $export($export.S + $export.F * (Number.parseFloat != $parseFloat), 'Number', {parseFloat: $parseFloat});
-},{"./_export":105,"./_parse-float":154}],249:[function(require,module,exports){
+},{"./_export":135,"./_parse-float":184}],279:[function(require,module,exports){
 var $export   = require('./_export')
   , $parseInt = require('./_parse-int');
 // 20.1.2.13 Number.parseInt(string, radix)
 $export($export.S + $export.F * (Number.parseInt != $parseInt), 'Number', {parseInt: $parseInt});
-},{"./_export":105,"./_parse-int":155}],250:[function(require,module,exports){
+},{"./_export":135,"./_parse-int":185}],280:[function(require,module,exports){
 'use strict';
 var $export      = require('./_export')
   , toInteger    = require('./_to-integer')
@@ -9588,7 +17488,7 @@ $export($export.P + $export.F * (!!$toFixed && (
     } return m;
   }
 });
-},{"./_a-number-value":77,"./_export":105,"./_fails":107,"./_string-repeat":174,"./_to-integer":179}],251:[function(require,module,exports){
+},{"./_a-number-value":107,"./_export":135,"./_fails":137,"./_string-repeat":204,"./_to-integer":209}],281:[function(require,module,exports){
 'use strict';
 var $export      = require('./_export')
   , $fails       = require('./_fails')
@@ -9607,22 +17507,22 @@ $export($export.P + $export.F * ($fails(function(){
     return precision === undefined ? $toPrecision.call(that) : $toPrecision.call(that, precision); 
   }
 });
-},{"./_a-number-value":77,"./_export":105,"./_fails":107}],252:[function(require,module,exports){
+},{"./_a-number-value":107,"./_export":135,"./_fails":137}],282:[function(require,module,exports){
 // 19.1.3.1 Object.assign(target, source)
 var $export = require('./_export');
 
 $export($export.S + $export.F, 'Object', {assign: require('./_object-assign')});
-},{"./_export":105,"./_object-assign":138}],253:[function(require,module,exports){
+},{"./_export":135,"./_object-assign":168}],283:[function(require,module,exports){
 var $export = require('./_export')
 // 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
 $export($export.S, 'Object', {create: require('./_object-create')});
-},{"./_export":105,"./_object-create":139}],254:[function(require,module,exports){
+},{"./_export":135,"./_object-create":169}],284:[function(require,module,exports){
 var $export = require('./_export');
 // 19.1.2.3 / 15.2.3.7 Object.defineProperties(O, Properties)
 $export($export.S + $export.F * !require('./_descriptors'), 'Object', {defineProperties: require('./_object-dps')});
-},{"./_descriptors":101,"./_export":105,"./_object-dps":141}],255:[function(require,module,exports){
-arguments[4][71][0].apply(exports,arguments)
-},{"./_descriptors":101,"./_export":105,"./_object-dp":140,"dup":71}],256:[function(require,module,exports){
+},{"./_descriptors":131,"./_export":135,"./_object-dps":171}],285:[function(require,module,exports){
+arguments[4][101][0].apply(exports,arguments)
+},{"./_descriptors":131,"./_export":135,"./_object-dp":170,"dup":101}],286:[function(require,module,exports){
 // 19.1.2.5 Object.freeze(O)
 var isObject = require('./_is-object')
   , meta     = require('./_meta').onFreeze;
@@ -9632,7 +17532,7 @@ require('./_object-sap')('freeze', function($freeze){
     return $freeze && isObject(it) ? $freeze(meta(it)) : it;
   };
 });
-},{"./_is-object":122,"./_meta":135,"./_object-sap":151}],257:[function(require,module,exports){
+},{"./_is-object":152,"./_meta":165,"./_object-sap":181}],287:[function(require,module,exports){
 // 19.1.2.6 Object.getOwnPropertyDescriptor(O, P)
 var toIObject                 = require('./_to-iobject')
   , $getOwnPropertyDescriptor = require('./_object-gopd').f;
@@ -9642,12 +17542,12 @@ require('./_object-sap')('getOwnPropertyDescriptor', function(){
     return $getOwnPropertyDescriptor(toIObject(it), key);
   };
 });
-},{"./_object-gopd":143,"./_object-sap":151,"./_to-iobject":180}],258:[function(require,module,exports){
+},{"./_object-gopd":173,"./_object-sap":181,"./_to-iobject":210}],288:[function(require,module,exports){
 // 19.1.2.7 Object.getOwnPropertyNames(O)
 require('./_object-sap')('getOwnPropertyNames', function(){
   return require('./_object-gopn-ext').f;
 });
-},{"./_object-gopn-ext":144,"./_object-sap":151}],259:[function(require,module,exports){
+},{"./_object-gopn-ext":174,"./_object-sap":181}],289:[function(require,module,exports){
 // 19.1.2.9 Object.getPrototypeOf(O)
 var toObject        = require('./_to-object')
   , $getPrototypeOf = require('./_object-gpo');
@@ -9657,7 +17557,7 @@ require('./_object-sap')('getPrototypeOf', function(){
     return $getPrototypeOf(toObject(it));
   };
 });
-},{"./_object-gpo":147,"./_object-sap":151,"./_to-object":182}],260:[function(require,module,exports){
+},{"./_object-gpo":177,"./_object-sap":181,"./_to-object":212}],290:[function(require,module,exports){
 // 19.1.2.11 Object.isExtensible(O)
 var isObject = require('./_is-object');
 
@@ -9666,7 +17566,7 @@ require('./_object-sap')('isExtensible', function($isExtensible){
     return isObject(it) ? $isExtensible ? $isExtensible(it) : true : false;
   };
 });
-},{"./_is-object":122,"./_object-sap":151}],261:[function(require,module,exports){
+},{"./_is-object":152,"./_object-sap":181}],291:[function(require,module,exports){
 // 19.1.2.12 Object.isFrozen(O)
 var isObject = require('./_is-object');
 
@@ -9675,7 +17575,7 @@ require('./_object-sap')('isFrozen', function($isFrozen){
     return isObject(it) ? $isFrozen ? $isFrozen(it) : false : true;
   };
 });
-},{"./_is-object":122,"./_object-sap":151}],262:[function(require,module,exports){
+},{"./_is-object":152,"./_object-sap":181}],292:[function(require,module,exports){
 // 19.1.2.13 Object.isSealed(O)
 var isObject = require('./_is-object');
 
@@ -9684,11 +17584,11 @@ require('./_object-sap')('isSealed', function($isSealed){
     return isObject(it) ? $isSealed ? $isSealed(it) : false : true;
   };
 });
-},{"./_is-object":122,"./_object-sap":151}],263:[function(require,module,exports){
+},{"./_is-object":152,"./_object-sap":181}],293:[function(require,module,exports){
 // 19.1.3.10 Object.is(value1, value2)
 var $export = require('./_export');
 $export($export.S, 'Object', {is: require('./_same-value')});
-},{"./_export":105,"./_same-value":162}],264:[function(require,module,exports){
+},{"./_export":135,"./_same-value":192}],294:[function(require,module,exports){
 // 19.1.2.14 Object.keys(O)
 var toObject = require('./_to-object')
   , $keys    = require('./_object-keys');
@@ -9698,7 +17598,7 @@ require('./_object-sap')('keys', function(){
     return $keys(toObject(it));
   };
 });
-},{"./_object-keys":149,"./_object-sap":151,"./_to-object":182}],265:[function(require,module,exports){
+},{"./_object-keys":179,"./_object-sap":181,"./_to-object":212}],295:[function(require,module,exports){
 // 19.1.2.15 Object.preventExtensions(O)
 var isObject = require('./_is-object')
   , meta     = require('./_meta').onFreeze;
@@ -9708,7 +17608,7 @@ require('./_object-sap')('preventExtensions', function($preventExtensions){
     return $preventExtensions && isObject(it) ? $preventExtensions(meta(it)) : it;
   };
 });
-},{"./_is-object":122,"./_meta":135,"./_object-sap":151}],266:[function(require,module,exports){
+},{"./_is-object":152,"./_meta":165,"./_object-sap":181}],296:[function(require,module,exports){
 // 19.1.2.17 Object.seal(O)
 var isObject = require('./_is-object')
   , meta     = require('./_meta').onFreeze;
@@ -9718,11 +17618,11 @@ require('./_object-sap')('seal', function($seal){
     return $seal && isObject(it) ? $seal(meta(it)) : it;
   };
 });
-},{"./_is-object":122,"./_meta":135,"./_object-sap":151}],267:[function(require,module,exports){
+},{"./_is-object":152,"./_meta":165,"./_object-sap":181}],297:[function(require,module,exports){
 // 19.1.3.19 Object.setPrototypeOf(O, proto)
 var $export = require('./_export');
 $export($export.S, 'Object', {setPrototypeOf: require('./_set-proto').set});
-},{"./_export":105,"./_set-proto":163}],268:[function(require,module,exports){
+},{"./_export":135,"./_set-proto":193}],298:[function(require,module,exports){
 'use strict';
 // 19.1.3.6 Object.prototype.toString()
 var classof = require('./_classof')
@@ -9733,19 +17633,19 @@ if(test + '' != '[object z]'){
     return '[object ' + classof(this) + ']';
   }, true);
 }
-},{"./_classof":90,"./_redefine":160,"./_wks":190}],269:[function(require,module,exports){
+},{"./_classof":120,"./_redefine":190,"./_wks":220}],299:[function(require,module,exports){
 var $export     = require('./_export')
   , $parseFloat = require('./_parse-float');
 // 18.2.4 parseFloat(string)
 $export($export.G + $export.F * (parseFloat != $parseFloat), {parseFloat: $parseFloat});
-},{"./_export":105,"./_parse-float":154}],270:[function(require,module,exports){
+},{"./_export":135,"./_parse-float":184}],300:[function(require,module,exports){
 var $export   = require('./_export')
   , $parseInt = require('./_parse-int');
 // 18.2.5 parseInt(string, radix)
 $export($export.G + $export.F * (parseInt != $parseInt), {parseInt: $parseInt});
-},{"./_export":105,"./_parse-int":155}],271:[function(require,module,exports){
-arguments[4][73][0].apply(exports,arguments)
-},{"./_a-function":76,"./_an-instance":79,"./_classof":90,"./_core":96,"./_ctx":98,"./_export":105,"./_for-of":110,"./_global":111,"./_is-object":122,"./_iter-detect":127,"./_library":131,"./_microtask":137,"./_redefine-all":159,"./_set-species":164,"./_set-to-string-tag":165,"./_species-constructor":168,"./_task":177,"./_wks":190,"dup":73}],272:[function(require,module,exports){
+},{"./_export":135,"./_parse-int":185}],301:[function(require,module,exports){
+arguments[4][103][0].apply(exports,arguments)
+},{"./_a-function":106,"./_an-instance":109,"./_classof":120,"./_core":126,"./_ctx":128,"./_export":135,"./_for-of":140,"./_global":141,"./_is-object":152,"./_iter-detect":157,"./_library":161,"./_microtask":167,"./_redefine-all":189,"./_set-species":194,"./_set-to-string-tag":195,"./_species-constructor":198,"./_task":207,"./_wks":220,"dup":103}],302:[function(require,module,exports){
 // 26.1.1 Reflect.apply(target, thisArgument, argumentsList)
 var $export   = require('./_export')
   , aFunction = require('./_a-function')
@@ -9762,7 +17662,7 @@ $export($export.S + $export.F * !require('./_fails')(function(){
     return rApply ? rApply(T, thisArgument, L) : fApply.call(T, thisArgument, L);
   }
 });
-},{"./_a-function":76,"./_an-object":80,"./_export":105,"./_fails":107,"./_global":111}],273:[function(require,module,exports){
+},{"./_a-function":106,"./_an-object":110,"./_export":135,"./_fails":137,"./_global":141}],303:[function(require,module,exports){
 // 26.1.2 Reflect.construct(target, argumentsList [, newTarget])
 var $export    = require('./_export')
   , create     = require('./_object-create')
@@ -9810,7 +17710,7 @@ $export($export.S + $export.F * (NEW_TARGET_BUG || ARGS_BUG), 'Reflect', {
     return isObject(result) ? result : instance;
   }
 });
-},{"./_a-function":76,"./_an-object":80,"./_bind":89,"./_export":105,"./_fails":107,"./_global":111,"./_is-object":122,"./_object-create":139}],274:[function(require,module,exports){
+},{"./_a-function":106,"./_an-object":110,"./_bind":119,"./_export":135,"./_fails":137,"./_global":141,"./_is-object":152,"./_object-create":169}],304:[function(require,module,exports){
 // 26.1.3 Reflect.defineProperty(target, propertyKey, attributes)
 var dP          = require('./_object-dp')
   , $export     = require('./_export')
@@ -9833,7 +17733,7 @@ $export($export.S + $export.F * require('./_fails')(function(){
     }
   }
 });
-},{"./_an-object":80,"./_export":105,"./_fails":107,"./_object-dp":140,"./_to-primitive":183}],275:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_fails":137,"./_object-dp":170,"./_to-primitive":213}],305:[function(require,module,exports){
 // 26.1.4 Reflect.deleteProperty(target, propertyKey)
 var $export  = require('./_export')
   , gOPD     = require('./_object-gopd').f
@@ -9845,7 +17745,7 @@ $export($export.S, 'Reflect', {
     return desc && !desc.configurable ? false : delete target[propertyKey];
   }
 });
-},{"./_an-object":80,"./_export":105,"./_object-gopd":143}],276:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_object-gopd":173}],306:[function(require,module,exports){
 'use strict';
 // 26.1.5 Reflect.enumerate(target)
 var $export  = require('./_export')
@@ -9872,7 +17772,7 @@ $export($export.S, 'Reflect', {
     return new Enumerate(target);
   }
 });
-},{"./_an-object":80,"./_export":105,"./_iter-create":125}],277:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_iter-create":155}],307:[function(require,module,exports){
 // 26.1.7 Reflect.getOwnPropertyDescriptor(target, propertyKey)
 var gOPD     = require('./_object-gopd')
   , $export  = require('./_export')
@@ -9883,7 +17783,7 @@ $export($export.S, 'Reflect', {
     return gOPD.f(anObject(target), propertyKey);
   }
 });
-},{"./_an-object":80,"./_export":105,"./_object-gopd":143}],278:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_object-gopd":173}],308:[function(require,module,exports){
 // 26.1.8 Reflect.getPrototypeOf(target)
 var $export  = require('./_export')
   , getProto = require('./_object-gpo')
@@ -9894,7 +17794,7 @@ $export($export.S, 'Reflect', {
     return getProto(anObject(target));
   }
 });
-},{"./_an-object":80,"./_export":105,"./_object-gpo":147}],279:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_object-gpo":177}],309:[function(require,module,exports){
 // 26.1.6 Reflect.get(target, propertyKey [, receiver])
 var gOPD           = require('./_object-gopd')
   , getPrototypeOf = require('./_object-gpo')
@@ -9916,7 +17816,7 @@ function get(target, propertyKey/*, receiver*/){
 }
 
 $export($export.S, 'Reflect', {get: get});
-},{"./_an-object":80,"./_export":105,"./_has":112,"./_is-object":122,"./_object-gopd":143,"./_object-gpo":147}],280:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_has":142,"./_is-object":152,"./_object-gopd":173,"./_object-gpo":177}],310:[function(require,module,exports){
 // 26.1.9 Reflect.has(target, propertyKey)
 var $export = require('./_export');
 
@@ -9925,7 +17825,7 @@ $export($export.S, 'Reflect', {
     return propertyKey in target;
   }
 });
-},{"./_export":105}],281:[function(require,module,exports){
+},{"./_export":135}],311:[function(require,module,exports){
 // 26.1.10 Reflect.isExtensible(target)
 var $export       = require('./_export')
   , anObject      = require('./_an-object')
@@ -9937,12 +17837,12 @@ $export($export.S, 'Reflect', {
     return $isExtensible ? $isExtensible(target) : true;
   }
 });
-},{"./_an-object":80,"./_export":105}],282:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135}],312:[function(require,module,exports){
 // 26.1.11 Reflect.ownKeys(target)
 var $export = require('./_export');
 
 $export($export.S, 'Reflect', {ownKeys: require('./_own-keys')});
-},{"./_export":105,"./_own-keys":153}],283:[function(require,module,exports){
+},{"./_export":135,"./_own-keys":183}],313:[function(require,module,exports){
 // 26.1.12 Reflect.preventExtensions(target)
 var $export            = require('./_export')
   , anObject           = require('./_an-object')
@@ -9959,7 +17859,7 @@ $export($export.S, 'Reflect', {
     }
   }
 });
-},{"./_an-object":80,"./_export":105}],284:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135}],314:[function(require,module,exports){
 // 26.1.14 Reflect.setPrototypeOf(target, proto)
 var $export  = require('./_export')
   , setProto = require('./_set-proto');
@@ -9975,7 +17875,7 @@ if(setProto)$export($export.S, 'Reflect', {
     }
   }
 });
-},{"./_export":105,"./_set-proto":163}],285:[function(require,module,exports){
+},{"./_export":135,"./_set-proto":193}],315:[function(require,module,exports){
 // 26.1.13 Reflect.set(target, propertyKey, V [, receiver])
 var dP             = require('./_object-dp')
   , gOPD           = require('./_object-gopd')
@@ -10007,7 +17907,7 @@ function set(target, propertyKey, V/*, receiver*/){
 }
 
 $export($export.S, 'Reflect', {set: set});
-},{"./_an-object":80,"./_export":105,"./_has":112,"./_is-object":122,"./_object-dp":140,"./_object-gopd":143,"./_object-gpo":147,"./_property-desc":158}],286:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_has":142,"./_is-object":152,"./_object-dp":170,"./_object-gopd":173,"./_object-gpo":177,"./_property-desc":188}],316:[function(require,module,exports){
 var global            = require('./_global')
   , inheritIfRequired = require('./_inherit-if-required')
   , dP                = require('./_object-dp').f
@@ -10051,13 +17951,13 @@ if(require('./_descriptors') && (!CORRECT_NEW || require('./_fails')(function(){
 }
 
 require('./_set-species')('RegExp');
-},{"./_descriptors":101,"./_fails":107,"./_flags":109,"./_global":111,"./_inherit-if-required":116,"./_is-regexp":123,"./_object-dp":140,"./_object-gopn":145,"./_redefine":160,"./_set-species":164,"./_wks":190}],287:[function(require,module,exports){
+},{"./_descriptors":131,"./_fails":137,"./_flags":139,"./_global":141,"./_inherit-if-required":146,"./_is-regexp":153,"./_object-dp":170,"./_object-gopn":175,"./_redefine":190,"./_set-species":194,"./_wks":220}],317:[function(require,module,exports){
 // 21.2.5.3 get RegExp.prototype.flags()
 if(require('./_descriptors') && /./g.flags != 'g')require('./_object-dp').f(RegExp.prototype, 'flags', {
   configurable: true,
   get: require('./_flags')
 });
-},{"./_descriptors":101,"./_flags":109,"./_object-dp":140}],288:[function(require,module,exports){
+},{"./_descriptors":131,"./_flags":139,"./_object-dp":170}],318:[function(require,module,exports){
 // @@match logic
 require('./_fix-re-wks')('match', 1, function(defined, MATCH, $match){
   // 21.1.3.11 String.prototype.match(regexp)
@@ -10068,7 +17968,7 @@ require('./_fix-re-wks')('match', 1, function(defined, MATCH, $match){
     return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[MATCH](String(O));
   }, $match];
 });
-},{"./_fix-re-wks":108}],289:[function(require,module,exports){
+},{"./_fix-re-wks":138}],319:[function(require,module,exports){
 // @@replace logic
 require('./_fix-re-wks')('replace', 2, function(defined, REPLACE, $replace){
   // 21.1.3.14 String.prototype.replace(searchValue, replaceValue)
@@ -10081,7 +17981,7 @@ require('./_fix-re-wks')('replace', 2, function(defined, REPLACE, $replace){
       : $replace.call(String(O), searchValue, replaceValue);
   }, $replace];
 });
-},{"./_fix-re-wks":108}],290:[function(require,module,exports){
+},{"./_fix-re-wks":138}],320:[function(require,module,exports){
 // @@search logic
 require('./_fix-re-wks')('search', 1, function(defined, SEARCH, $search){
   // 21.1.3.15 String.prototype.search(regexp)
@@ -10092,7 +17992,7 @@ require('./_fix-re-wks')('search', 1, function(defined, SEARCH, $search){
     return fn !== undefined ? fn.call(regexp, O) : new RegExp(regexp)[SEARCH](String(O));
   }, $search];
 });
-},{"./_fix-re-wks":108}],291:[function(require,module,exports){
+},{"./_fix-re-wks":138}],321:[function(require,module,exports){
 // @@split logic
 require('./_fix-re-wks')('split', 2, function(defined, SPLIT, $split){
   'use strict';
@@ -10163,7 +18063,7 @@ require('./_fix-re-wks')('split', 2, function(defined, SPLIT, $split){
     return fn !== undefined ? fn.call(separator, O, limit) : $split.call(String(O), separator, limit);
   }, $split];
 });
-},{"./_fix-re-wks":108,"./_is-regexp":123}],292:[function(require,module,exports){
+},{"./_fix-re-wks":138,"./_is-regexp":153}],322:[function(require,module,exports){
 'use strict';
 require('./es6.regexp.flags');
 var anObject    = require('./_an-object')
@@ -10189,7 +18089,7 @@ if(require('./_fails')(function(){ return $toString.call({source: 'a', flags: 'b
     return $toString.call(this);
   });
 }
-},{"./_an-object":80,"./_descriptors":101,"./_fails":107,"./_flags":109,"./_redefine":160,"./es6.regexp.flags":287}],293:[function(require,module,exports){
+},{"./_an-object":110,"./_descriptors":131,"./_fails":137,"./_flags":139,"./_redefine":190,"./es6.regexp.flags":317}],323:[function(require,module,exports){
 'use strict';
 var strong = require('./_collection-strong');
 
@@ -10202,7 +18102,7 @@ module.exports = require('./_collection')('Set', function(get){
     return strong.def(this, value = value === 0 ? 0 : value, value);
   }
 }, strong);
-},{"./_collection":95,"./_collection-strong":92}],294:[function(require,module,exports){
+},{"./_collection":125,"./_collection-strong":122}],324:[function(require,module,exports){
 'use strict';
 // B.2.3.2 String.prototype.anchor(name)
 require('./_string-html')('anchor', function(createHTML){
@@ -10210,7 +18110,7 @@ require('./_string-html')('anchor', function(createHTML){
     return createHTML(this, 'a', 'name', name);
   }
 });
-},{"./_string-html":172}],295:[function(require,module,exports){
+},{"./_string-html":202}],325:[function(require,module,exports){
 'use strict';
 // B.2.3.3 String.prototype.big()
 require('./_string-html')('big', function(createHTML){
@@ -10218,7 +18118,7 @@ require('./_string-html')('big', function(createHTML){
     return createHTML(this, 'big', '', '');
   }
 });
-},{"./_string-html":172}],296:[function(require,module,exports){
+},{"./_string-html":202}],326:[function(require,module,exports){
 'use strict';
 // B.2.3.4 String.prototype.blink()
 require('./_string-html')('blink', function(createHTML){
@@ -10226,7 +18126,7 @@ require('./_string-html')('blink', function(createHTML){
     return createHTML(this, 'blink', '', '');
   }
 });
-},{"./_string-html":172}],297:[function(require,module,exports){
+},{"./_string-html":202}],327:[function(require,module,exports){
 'use strict';
 // B.2.3.5 String.prototype.bold()
 require('./_string-html')('bold', function(createHTML){
@@ -10234,7 +18134,7 @@ require('./_string-html')('bold', function(createHTML){
     return createHTML(this, 'b', '', '');
   }
 });
-},{"./_string-html":172}],298:[function(require,module,exports){
+},{"./_string-html":202}],328:[function(require,module,exports){
 'use strict';
 var $export = require('./_export')
   , $at     = require('./_string-at')(false);
@@ -10244,7 +18144,7 @@ $export($export.P, 'String', {
     return $at(this, pos);
   }
 });
-},{"./_export":105,"./_string-at":170}],299:[function(require,module,exports){
+},{"./_export":135,"./_string-at":200}],329:[function(require,module,exports){
 // 21.1.3.6 String.prototype.endsWith(searchString [, endPosition])
 'use strict';
 var $export   = require('./_export')
@@ -10265,7 +18165,7 @@ $export($export.P + $export.F * require('./_fails-is-regexp')(ENDS_WITH), 'Strin
       : that.slice(end - search.length, end) === search;
   }
 });
-},{"./_export":105,"./_fails-is-regexp":106,"./_string-context":171,"./_to-length":181}],300:[function(require,module,exports){
+},{"./_export":135,"./_fails-is-regexp":136,"./_string-context":201,"./_to-length":211}],330:[function(require,module,exports){
 'use strict';
 // B.2.3.6 String.prototype.fixed()
 require('./_string-html')('fixed', function(createHTML){
@@ -10273,7 +18173,7 @@ require('./_string-html')('fixed', function(createHTML){
     return createHTML(this, 'tt', '', '');
   }
 });
-},{"./_string-html":172}],301:[function(require,module,exports){
+},{"./_string-html":202}],331:[function(require,module,exports){
 'use strict';
 // B.2.3.7 String.prototype.fontcolor(color)
 require('./_string-html')('fontcolor', function(createHTML){
@@ -10281,7 +18181,7 @@ require('./_string-html')('fontcolor', function(createHTML){
     return createHTML(this, 'font', 'color', color);
   }
 });
-},{"./_string-html":172}],302:[function(require,module,exports){
+},{"./_string-html":202}],332:[function(require,module,exports){
 'use strict';
 // B.2.3.8 String.prototype.fontsize(size)
 require('./_string-html')('fontsize', function(createHTML){
@@ -10289,7 +18189,7 @@ require('./_string-html')('fontsize', function(createHTML){
     return createHTML(this, 'font', 'size', size);
   }
 });
-},{"./_string-html":172}],303:[function(require,module,exports){
+},{"./_string-html":202}],333:[function(require,module,exports){
 var $export        = require('./_export')
   , toIndex        = require('./_to-index')
   , fromCharCode   = String.fromCharCode
@@ -10313,7 +18213,7 @@ $export($export.S + $export.F * (!!$fromCodePoint && $fromCodePoint.length != 1)
     } return res.join('');
   }
 });
-},{"./_export":105,"./_to-index":178}],304:[function(require,module,exports){
+},{"./_export":135,"./_to-index":208}],334:[function(require,module,exports){
 // 21.1.3.7 String.prototype.includes(searchString, position = 0)
 'use strict';
 var $export  = require('./_export')
@@ -10326,7 +18226,7 @@ $export($export.P + $export.F * require('./_fails-is-regexp')(INCLUDES), 'String
       .indexOf(searchString, arguments.length > 1 ? arguments[1] : undefined);
   }
 });
-},{"./_export":105,"./_fails-is-regexp":106,"./_string-context":171}],305:[function(require,module,exports){
+},{"./_export":135,"./_fails-is-regexp":136,"./_string-context":201}],335:[function(require,module,exports){
 'use strict';
 // B.2.3.9 String.prototype.italics()
 require('./_string-html')('italics', function(createHTML){
@@ -10334,9 +18234,9 @@ require('./_string-html')('italics', function(createHTML){
     return createHTML(this, 'i', '', '');
   }
 });
-},{"./_string-html":172}],306:[function(require,module,exports){
-arguments[4][74][0].apply(exports,arguments)
-},{"./_iter-define":126,"./_string-at":170,"dup":74}],307:[function(require,module,exports){
+},{"./_string-html":202}],336:[function(require,module,exports){
+arguments[4][104][0].apply(exports,arguments)
+},{"./_iter-define":156,"./_string-at":200,"dup":104}],337:[function(require,module,exports){
 'use strict';
 // B.2.3.10 String.prototype.link(url)
 require('./_string-html')('link', function(createHTML){
@@ -10344,7 +18244,7 @@ require('./_string-html')('link', function(createHTML){
     return createHTML(this, 'a', 'href', url);
   }
 });
-},{"./_string-html":172}],308:[function(require,module,exports){
+},{"./_string-html":202}],338:[function(require,module,exports){
 var $export   = require('./_export')
   , toIObject = require('./_to-iobject')
   , toLength  = require('./_to-length');
@@ -10363,14 +18263,14 @@ $export($export.S, 'String', {
     } return res.join('');
   }
 });
-},{"./_export":105,"./_to-iobject":180,"./_to-length":181}],309:[function(require,module,exports){
+},{"./_export":135,"./_to-iobject":210,"./_to-length":211}],339:[function(require,module,exports){
 var $export = require('./_export');
 
 $export($export.P, 'String', {
   // 21.1.3.13 String.prototype.repeat(count)
   repeat: require('./_string-repeat')
 });
-},{"./_export":105,"./_string-repeat":174}],310:[function(require,module,exports){
+},{"./_export":135,"./_string-repeat":204}],340:[function(require,module,exports){
 'use strict';
 // B.2.3.11 String.prototype.small()
 require('./_string-html')('small', function(createHTML){
@@ -10378,7 +18278,7 @@ require('./_string-html')('small', function(createHTML){
     return createHTML(this, 'small', '', '');
   }
 });
-},{"./_string-html":172}],311:[function(require,module,exports){
+},{"./_string-html":202}],341:[function(require,module,exports){
 // 21.1.3.18 String.prototype.startsWith(searchString [, position ])
 'use strict';
 var $export     = require('./_export')
@@ -10397,7 +18297,7 @@ $export($export.P + $export.F * require('./_fails-is-regexp')(STARTS_WITH), 'Str
       : that.slice(index, index + search.length) === search;
   }
 });
-},{"./_export":105,"./_fails-is-regexp":106,"./_string-context":171,"./_to-length":181}],312:[function(require,module,exports){
+},{"./_export":135,"./_fails-is-regexp":136,"./_string-context":201,"./_to-length":211}],342:[function(require,module,exports){
 'use strict';
 // B.2.3.12 String.prototype.strike()
 require('./_string-html')('strike', function(createHTML){
@@ -10405,7 +18305,7 @@ require('./_string-html')('strike', function(createHTML){
     return createHTML(this, 'strike', '', '');
   }
 });
-},{"./_string-html":172}],313:[function(require,module,exports){
+},{"./_string-html":202}],343:[function(require,module,exports){
 'use strict';
 // B.2.3.13 String.prototype.sub()
 require('./_string-html')('sub', function(createHTML){
@@ -10413,7 +18313,7 @@ require('./_string-html')('sub', function(createHTML){
     return createHTML(this, 'sub', '', '');
   }
 });
-},{"./_string-html":172}],314:[function(require,module,exports){
+},{"./_string-html":202}],344:[function(require,module,exports){
 'use strict';
 // B.2.3.14 String.prototype.sup()
 require('./_string-html')('sup', function(createHTML){
@@ -10421,7 +18321,7 @@ require('./_string-html')('sup', function(createHTML){
     return createHTML(this, 'sup', '', '');
   }
 });
-},{"./_string-html":172}],315:[function(require,module,exports){
+},{"./_string-html":202}],345:[function(require,module,exports){
 'use strict';
 // 21.1.3.25 String.prototype.trim()
 require('./_string-trim')('trim', function($trim){
@@ -10429,7 +18329,7 @@ require('./_string-trim')('trim', function($trim){
     return $trim(this, 3);
   };
 });
-},{"./_string-trim":175}],316:[function(require,module,exports){
+},{"./_string-trim":205}],346:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var global         = require('./_global')
@@ -10665,7 +18565,7 @@ setToStringTag($Symbol, 'Symbol');
 setToStringTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setToStringTag(global.JSON, 'JSON', true);
-},{"./_an-object":80,"./_descriptors":101,"./_enum-keys":104,"./_export":105,"./_fails":107,"./_global":111,"./_has":112,"./_hide":113,"./_is-array":120,"./_keyof":130,"./_library":131,"./_meta":135,"./_object-create":139,"./_object-dp":140,"./_object-gopd":143,"./_object-gopn":145,"./_object-gopn-ext":144,"./_object-gops":146,"./_object-keys":149,"./_object-pie":150,"./_property-desc":158,"./_redefine":160,"./_set-to-string-tag":165,"./_shared":167,"./_to-iobject":180,"./_to-primitive":183,"./_uid":187,"./_wks":190,"./_wks-define":188,"./_wks-ext":189}],317:[function(require,module,exports){
+},{"./_an-object":110,"./_descriptors":131,"./_enum-keys":134,"./_export":135,"./_fails":137,"./_global":141,"./_has":142,"./_hide":143,"./_is-array":150,"./_keyof":160,"./_library":161,"./_meta":165,"./_object-create":169,"./_object-dp":170,"./_object-gopd":173,"./_object-gopn":175,"./_object-gopn-ext":174,"./_object-gops":176,"./_object-keys":179,"./_object-pie":180,"./_property-desc":188,"./_redefine":190,"./_set-to-string-tag":195,"./_shared":197,"./_to-iobject":210,"./_to-primitive":213,"./_uid":217,"./_wks":220,"./_wks-define":218,"./_wks-ext":219}],347:[function(require,module,exports){
 'use strict';
 var $export      = require('./_export')
   , $typed       = require('./_typed')
@@ -10712,66 +18612,66 @@ $export($export.P + $export.U + $export.F * require('./_fails')(function(){
 });
 
 require('./_set-species')(ARRAY_BUFFER);
-},{"./_an-object":80,"./_export":105,"./_fails":107,"./_global":111,"./_is-object":122,"./_set-species":164,"./_species-constructor":168,"./_to-index":178,"./_to-length":181,"./_typed":186,"./_typed-buffer":185}],318:[function(require,module,exports){
+},{"./_an-object":110,"./_export":135,"./_fails":137,"./_global":141,"./_is-object":152,"./_set-species":194,"./_species-constructor":198,"./_to-index":208,"./_to-length":211,"./_typed":216,"./_typed-buffer":215}],348:[function(require,module,exports){
 var $export = require('./_export');
 $export($export.G + $export.W + $export.F * !require('./_typed').ABV, {
   DataView: require('./_typed-buffer').DataView
 });
-},{"./_export":105,"./_typed":186,"./_typed-buffer":185}],319:[function(require,module,exports){
+},{"./_export":135,"./_typed":216,"./_typed-buffer":215}],349:[function(require,module,exports){
 require('./_typed-array')('Float32', 4, function(init){
   return function Float32Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],320:[function(require,module,exports){
+},{"./_typed-array":214}],350:[function(require,module,exports){
 require('./_typed-array')('Float64', 8, function(init){
   return function Float64Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],321:[function(require,module,exports){
+},{"./_typed-array":214}],351:[function(require,module,exports){
 require('./_typed-array')('Int16', 2, function(init){
   return function Int16Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],322:[function(require,module,exports){
+},{"./_typed-array":214}],352:[function(require,module,exports){
 require('./_typed-array')('Int32', 4, function(init){
   return function Int32Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],323:[function(require,module,exports){
+},{"./_typed-array":214}],353:[function(require,module,exports){
 require('./_typed-array')('Int8', 1, function(init){
   return function Int8Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],324:[function(require,module,exports){
+},{"./_typed-array":214}],354:[function(require,module,exports){
 require('./_typed-array')('Uint16', 2, function(init){
   return function Uint16Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],325:[function(require,module,exports){
+},{"./_typed-array":214}],355:[function(require,module,exports){
 require('./_typed-array')('Uint32', 4, function(init){
   return function Uint32Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],326:[function(require,module,exports){
+},{"./_typed-array":214}],356:[function(require,module,exports){
 require('./_typed-array')('Uint8', 1, function(init){
   return function Uint8Array(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 });
-},{"./_typed-array":184}],327:[function(require,module,exports){
+},{"./_typed-array":214}],357:[function(require,module,exports){
 require('./_typed-array')('Uint8', 1, function(init){
   return function Uint8ClampedArray(data, byteOffset, length){
     return init(this, data, byteOffset, length);
   };
 }, true);
-},{"./_typed-array":184}],328:[function(require,module,exports){
+},{"./_typed-array":214}],358:[function(require,module,exports){
 'use strict';
 var each         = require('./_array-methods')(0)
   , redefine     = require('./_redefine')
@@ -10828,7 +18728,7 @@ if(new $WeakMap().set((Object.freeze || Object)(tmp), 7).get(tmp) != 7){
     });
   });
 }
-},{"./_array-methods":85,"./_collection":95,"./_collection-weak":94,"./_is-object":122,"./_meta":135,"./_object-assign":138,"./_redefine":160}],329:[function(require,module,exports){
+},{"./_array-methods":115,"./_collection":125,"./_collection-weak":124,"./_is-object":152,"./_meta":165,"./_object-assign":168,"./_redefine":190}],359:[function(require,module,exports){
 'use strict';
 var weak = require('./_collection-weak');
 
@@ -10841,7 +18741,7 @@ require('./_collection')('WeakSet', function(get){
     return weak.def(this, value, true);
   }
 }, weak, false, true);
-},{"./_collection":95,"./_collection-weak":94}],330:[function(require,module,exports){
+},{"./_collection":125,"./_collection-weak":124}],360:[function(require,module,exports){
 'use strict';
 // https://github.com/tc39/Array.prototype.includes
 var $export   = require('./_export')
@@ -10854,7 +18754,7 @@ $export($export.P, 'Array', {
 });
 
 require('./_add-to-unscopables')('includes');
-},{"./_add-to-unscopables":78,"./_array-includes":84,"./_export":105}],331:[function(require,module,exports){
+},{"./_add-to-unscopables":108,"./_array-includes":114,"./_export":135}],361:[function(require,module,exports){
 // https://github.com/rwaldron/tc39-notes/blob/master/es6/2014-09/sept-25.md#510-globalasap-for-enqueuing-a-microtask
 var $export   = require('./_export')
   , microtask = require('./_microtask')()
@@ -10867,7 +18767,7 @@ $export($export.G, {
     microtask(domain ? domain.bind(fn) : fn);
   }
 });
-},{"./_cof":91,"./_export":105,"./_global":111,"./_microtask":137}],332:[function(require,module,exports){
+},{"./_cof":121,"./_export":135,"./_global":141,"./_microtask":167}],362:[function(require,module,exports){
 // https://github.com/ljharb/proposal-is-error
 var $export = require('./_export')
   , cof     = require('./_cof');
@@ -10877,12 +18777,12 @@ $export($export.S, 'Error', {
     return cof(it) === 'Error';
   }
 });
-},{"./_cof":91,"./_export":105}],333:[function(require,module,exports){
+},{"./_cof":121,"./_export":135}],363:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export  = require('./_export');
 
 $export($export.P + $export.R, 'Map', {toJSON: require('./_collection-to-json')('Map')});
-},{"./_collection-to-json":93,"./_export":105}],334:[function(require,module,exports){
+},{"./_collection-to-json":123,"./_export":135}],364:[function(require,module,exports){
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export = require('./_export');
 
@@ -10894,7 +18794,7 @@ $export($export.S, 'Math', {
     return $x1 + (y1 >>> 0) + (($x0 & $y0 | ($x0 | $y0) & ~($x0 + $y0 >>> 0)) >>> 31) | 0;
   }
 });
-},{"./_export":105}],335:[function(require,module,exports){
+},{"./_export":135}],365:[function(require,module,exports){
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export = require('./_export');
 
@@ -10911,7 +18811,7 @@ $export($export.S, 'Math', {
     return u1 * v1 + (t >> 16) + ((u0 * v1 >>> 0) + (t & UINT16) >> 16);
   }
 });
-},{"./_export":105}],336:[function(require,module,exports){
+},{"./_export":135}],366:[function(require,module,exports){
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export = require('./_export');
 
@@ -10923,7 +18823,7 @@ $export($export.S, 'Math', {
     return $x1 - (y1 >>> 0) - ((~$x0 & $y0 | ~($x0 ^ $y0) & $x0 - $y0 >>> 0) >>> 31) | 0;
   }
 });
-},{"./_export":105}],337:[function(require,module,exports){
+},{"./_export":135}],367:[function(require,module,exports){
 // https://gist.github.com/BrendanEich/4294d5c212a6d2254703
 var $export = require('./_export');
 
@@ -10940,7 +18840,7 @@ $export($export.S, 'Math', {
     return u1 * v1 + (t >>> 16) + ((u0 * v1 >>> 0) + (t & UINT16) >>> 16);
   }
 });
-},{"./_export":105}],338:[function(require,module,exports){
+},{"./_export":135}],368:[function(require,module,exports){
 'use strict';
 var $export         = require('./_export')
   , toObject        = require('./_to-object')
@@ -10953,7 +18853,7 @@ require('./_descriptors') && $export($export.P + require('./_object-forced-pam')
     $defineProperty.f(toObject(this), P, {get: aFunction(getter), enumerable: true, configurable: true});
   }
 });
-},{"./_a-function":76,"./_descriptors":101,"./_export":105,"./_object-dp":140,"./_object-forced-pam":142,"./_to-object":182}],339:[function(require,module,exports){
+},{"./_a-function":106,"./_descriptors":131,"./_export":135,"./_object-dp":170,"./_object-forced-pam":172,"./_to-object":212}],369:[function(require,module,exports){
 'use strict';
 var $export         = require('./_export')
   , toObject        = require('./_to-object')
@@ -10966,7 +18866,7 @@ require('./_descriptors') && $export($export.P + require('./_object-forced-pam')
     $defineProperty.f(toObject(this), P, {set: aFunction(setter), enumerable: true, configurable: true});
   }
 });
-},{"./_a-function":76,"./_descriptors":101,"./_export":105,"./_object-dp":140,"./_object-forced-pam":142,"./_to-object":182}],340:[function(require,module,exports){
+},{"./_a-function":106,"./_descriptors":131,"./_export":135,"./_object-dp":170,"./_object-forced-pam":172,"./_to-object":212}],370:[function(require,module,exports){
 // https://github.com/tc39/proposal-object-values-entries
 var $export  = require('./_export')
   , $entries = require('./_object-to-array')(true);
@@ -10976,7 +18876,7 @@ $export($export.S, 'Object', {
     return $entries(it);
   }
 });
-},{"./_export":105,"./_object-to-array":152}],341:[function(require,module,exports){
+},{"./_export":135,"./_object-to-array":182}],371:[function(require,module,exports){
 // https://github.com/tc39/proposal-object-getownpropertydescriptors
 var $export        = require('./_export')
   , ownKeys        = require('./_own-keys')
@@ -10996,7 +18896,7 @@ $export($export.S, 'Object', {
     return result;
   }
 });
-},{"./_create-property":97,"./_export":105,"./_object-gopd":143,"./_own-keys":153,"./_to-iobject":180}],342:[function(require,module,exports){
+},{"./_create-property":127,"./_export":135,"./_object-gopd":173,"./_own-keys":183,"./_to-iobject":210}],372:[function(require,module,exports){
 'use strict';
 var $export                  = require('./_export')
   , toObject                 = require('./_to-object')
@@ -11015,7 +18915,7 @@ require('./_descriptors') && $export($export.P + require('./_object-forced-pam')
     } while(O = getPrototypeOf(O));
   }
 });
-},{"./_descriptors":101,"./_export":105,"./_object-forced-pam":142,"./_object-gopd":143,"./_object-gpo":147,"./_to-object":182,"./_to-primitive":183}],343:[function(require,module,exports){
+},{"./_descriptors":131,"./_export":135,"./_object-forced-pam":172,"./_object-gopd":173,"./_object-gpo":177,"./_to-object":212,"./_to-primitive":213}],373:[function(require,module,exports){
 'use strict';
 var $export                  = require('./_export')
   , toObject                 = require('./_to-object')
@@ -11034,7 +18934,7 @@ require('./_descriptors') && $export($export.P + require('./_object-forced-pam')
     } while(O = getPrototypeOf(O));
   }
 });
-},{"./_descriptors":101,"./_export":105,"./_object-forced-pam":142,"./_object-gopd":143,"./_object-gpo":147,"./_to-object":182,"./_to-primitive":183}],344:[function(require,module,exports){
+},{"./_descriptors":131,"./_export":135,"./_object-forced-pam":172,"./_object-gopd":173,"./_object-gpo":177,"./_to-object":212,"./_to-primitive":213}],374:[function(require,module,exports){
 // https://github.com/tc39/proposal-object-values-entries
 var $export = require('./_export')
   , $values = require('./_object-to-array')(false);
@@ -11044,7 +18944,7 @@ $export($export.S, 'Object', {
     return $values(it);
   }
 });
-},{"./_export":105,"./_object-to-array":152}],345:[function(require,module,exports){
+},{"./_export":135,"./_object-to-array":182}],375:[function(require,module,exports){
 'use strict';
 // https://github.com/zenparsing/es-observable
 var $export     = require('./_export')
@@ -11244,7 +19144,7 @@ hide($Observable.prototype, OBSERVABLE, function(){ return this; });
 $export($export.G, {Observable: $Observable});
 
 require('./_set-species')('Observable');
-},{"./_a-function":76,"./_an-instance":79,"./_an-object":80,"./_core":96,"./_export":105,"./_for-of":110,"./_global":111,"./_hide":113,"./_microtask":137,"./_redefine-all":159,"./_set-species":164,"./_wks":190}],346:[function(require,module,exports){
+},{"./_a-function":106,"./_an-instance":109,"./_an-object":110,"./_core":126,"./_export":135,"./_for-of":140,"./_global":141,"./_hide":143,"./_microtask":167,"./_redefine-all":189,"./_set-species":194,"./_wks":220}],376:[function(require,module,exports){
 var metadata                  = require('./_metadata')
   , anObject                  = require('./_an-object')
   , toMetaKey                 = metadata.key
@@ -11253,7 +19153,7 @@ var metadata                  = require('./_metadata')
 metadata.exp({defineMetadata: function defineMetadata(metadataKey, metadataValue, target, targetKey){
   ordinaryDefineOwnMetadata(metadataKey, metadataValue, anObject(target), toMetaKey(targetKey));
 }});
-},{"./_an-object":80,"./_metadata":136}],347:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166}],377:[function(require,module,exports){
 var metadata               = require('./_metadata')
   , anObject               = require('./_an-object')
   , toMetaKey              = metadata.key
@@ -11269,7 +19169,7 @@ metadata.exp({deleteMetadata: function deleteMetadata(metadataKey, target /*, ta
   targetMetadata['delete'](targetKey);
   return !!targetMetadata.size || store['delete'](target);
 }});
-},{"./_an-object":80,"./_metadata":136}],348:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166}],378:[function(require,module,exports){
 var Set                     = require('./es6.set')
   , from                    = require('./_array-from-iterable')
   , metadata                = require('./_metadata')
@@ -11289,7 +19189,7 @@ var ordinaryMetadataKeys = function(O, P){
 metadata.exp({getMetadataKeys: function getMetadataKeys(target /*, targetKey */){
   return ordinaryMetadataKeys(anObject(target), arguments.length < 2 ? undefined : toMetaKey(arguments[1]));
 }});
-},{"./_an-object":80,"./_array-from-iterable":83,"./_metadata":136,"./_object-gpo":147,"./es6.set":293}],349:[function(require,module,exports){
+},{"./_an-object":110,"./_array-from-iterable":113,"./_metadata":166,"./_object-gpo":177,"./es6.set":323}],379:[function(require,module,exports){
 var metadata               = require('./_metadata')
   , anObject               = require('./_an-object')
   , getPrototypeOf         = require('./_object-gpo')
@@ -11307,7 +19207,7 @@ var ordinaryGetMetadata = function(MetadataKey, O, P){
 metadata.exp({getMetadata: function getMetadata(metadataKey, target /*, targetKey */){
   return ordinaryGetMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
 }});
-},{"./_an-object":80,"./_metadata":136,"./_object-gpo":147}],350:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166,"./_object-gpo":177}],380:[function(require,module,exports){
 var metadata                = require('./_metadata')
   , anObject                = require('./_an-object')
   , ordinaryOwnMetadataKeys = metadata.keys
@@ -11316,7 +19216,7 @@ var metadata                = require('./_metadata')
 metadata.exp({getOwnMetadataKeys: function getOwnMetadataKeys(target /*, targetKey */){
   return ordinaryOwnMetadataKeys(anObject(target), arguments.length < 2 ? undefined : toMetaKey(arguments[1]));
 }});
-},{"./_an-object":80,"./_metadata":136}],351:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166}],381:[function(require,module,exports){
 var metadata               = require('./_metadata')
   , anObject               = require('./_an-object')
   , ordinaryGetOwnMetadata = metadata.get
@@ -11326,7 +19226,7 @@ metadata.exp({getOwnMetadata: function getOwnMetadata(metadataKey, target /*, ta
   return ordinaryGetOwnMetadata(metadataKey, anObject(target)
     , arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
 }});
-},{"./_an-object":80,"./_metadata":136}],352:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166}],382:[function(require,module,exports){
 var metadata               = require('./_metadata')
   , anObject               = require('./_an-object')
   , getPrototypeOf         = require('./_object-gpo')
@@ -11343,7 +19243,7 @@ var ordinaryHasMetadata = function(MetadataKey, O, P){
 metadata.exp({hasMetadata: function hasMetadata(metadataKey, target /*, targetKey */){
   return ordinaryHasMetadata(metadataKey, anObject(target), arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
 }});
-},{"./_an-object":80,"./_metadata":136,"./_object-gpo":147}],353:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166,"./_object-gpo":177}],383:[function(require,module,exports){
 var metadata               = require('./_metadata')
   , anObject               = require('./_an-object')
   , ordinaryHasOwnMetadata = metadata.has
@@ -11353,7 +19253,7 @@ metadata.exp({hasOwnMetadata: function hasOwnMetadata(metadataKey, target /*, ta
   return ordinaryHasOwnMetadata(metadataKey, anObject(target)
     , arguments.length < 3 ? undefined : toMetaKey(arguments[2]));
 }});
-},{"./_an-object":80,"./_metadata":136}],354:[function(require,module,exports){
+},{"./_an-object":110,"./_metadata":166}],384:[function(require,module,exports){
 var metadata                  = require('./_metadata')
   , anObject                  = require('./_an-object')
   , aFunction                 = require('./_a-function')
@@ -11369,12 +19269,12 @@ metadata.exp({metadata: function metadata(metadataKey, metadataValue){
     );
   };
 }});
-},{"./_a-function":76,"./_an-object":80,"./_metadata":136}],355:[function(require,module,exports){
+},{"./_a-function":106,"./_an-object":110,"./_metadata":166}],385:[function(require,module,exports){
 // https://github.com/DavidBruant/Map-Set.prototype.toJSON
 var $export  = require('./_export');
 
 $export($export.P + $export.R, 'Set', {toJSON: require('./_collection-to-json')('Set')});
-},{"./_collection-to-json":93,"./_export":105}],356:[function(require,module,exports){
+},{"./_collection-to-json":123,"./_export":135}],386:[function(require,module,exports){
 'use strict';
 // https://github.com/mathiasbynens/String.prototype.at
 var $export = require('./_export')
@@ -11385,7 +19285,7 @@ $export($export.P, 'String', {
     return $at(this, pos);
   }
 });
-},{"./_export":105,"./_string-at":170}],357:[function(require,module,exports){
+},{"./_export":135,"./_string-at":200}],387:[function(require,module,exports){
 'use strict';
 // https://tc39.github.io/String.prototype.matchAll/
 var $export     = require('./_export')
@@ -11416,7 +19316,7 @@ $export($export.P, 'String', {
     return new $RegExpStringIterator(rx, S);
   }
 });
-},{"./_defined":100,"./_export":105,"./_flags":109,"./_is-regexp":123,"./_iter-create":125,"./_to-length":181}],358:[function(require,module,exports){
+},{"./_defined":130,"./_export":135,"./_flags":139,"./_is-regexp":153,"./_iter-create":155,"./_to-length":211}],388:[function(require,module,exports){
 'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 var $export = require('./_export')
@@ -11427,7 +19327,7 @@ $export($export.P, 'String', {
     return $pad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, false);
   }
 });
-},{"./_export":105,"./_string-pad":173}],359:[function(require,module,exports){
+},{"./_export":135,"./_string-pad":203}],389:[function(require,module,exports){
 'use strict';
 // https://github.com/tc39/proposal-string-pad-start-end
 var $export = require('./_export')
@@ -11438,7 +19338,7 @@ $export($export.P, 'String', {
     return $pad(this, maxLength, arguments.length > 1 ? arguments[1] : undefined, true);
   }
 });
-},{"./_export":105,"./_string-pad":173}],360:[function(require,module,exports){
+},{"./_export":135,"./_string-pad":203}],390:[function(require,module,exports){
 'use strict';
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
 require('./_string-trim')('trimLeft', function($trim){
@@ -11446,7 +19346,7 @@ require('./_string-trim')('trimLeft', function($trim){
     return $trim(this, 1);
   };
 }, 'trimStart');
-},{"./_string-trim":175}],361:[function(require,module,exports){
+},{"./_string-trim":205}],391:[function(require,module,exports){
 'use strict';
 // https://github.com/sebmarkbage/ecmascript-string-left-right-trim
 require('./_string-trim')('trimRight', function($trim){
@@ -11454,16 +19354,16 @@ require('./_string-trim')('trimRight', function($trim){
     return $trim(this, 2);
   };
 }, 'trimEnd');
-},{"./_string-trim":175}],362:[function(require,module,exports){
+},{"./_string-trim":205}],392:[function(require,module,exports){
 require('./_wks-define')('asyncIterator');
-},{"./_wks-define":188}],363:[function(require,module,exports){
+},{"./_wks-define":218}],393:[function(require,module,exports){
 require('./_wks-define')('observable');
-},{"./_wks-define":188}],364:[function(require,module,exports){
+},{"./_wks-define":218}],394:[function(require,module,exports){
 // https://github.com/ljharb/proposal-global
 var $export = require('./_export');
 
 $export($export.S, 'System', {global: require('./_global')});
-},{"./_export":105,"./_global":111}],365:[function(require,module,exports){
+},{"./_export":135,"./_global":141}],395:[function(require,module,exports){
 var $iterators    = require('./es6.array.iterator')
   , redefine      = require('./_redefine')
   , global        = require('./_global')
@@ -11486,14 +19386,14 @@ for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList'
     for(key in $iterators)if(!proto[key])redefine(proto, key, $iterators[key], true);
   }
 }
-},{"./_global":111,"./_hide":113,"./_iterators":129,"./_redefine":160,"./_wks":190,"./es6.array.iterator":203}],366:[function(require,module,exports){
+},{"./_global":141,"./_hide":143,"./_iterators":159,"./_redefine":190,"./_wks":220,"./es6.array.iterator":233}],396:[function(require,module,exports){
 var $export = require('./_export')
   , $task   = require('./_task');
 $export($export.G + $export.B, {
   setImmediate:   $task.set,
   clearImmediate: $task.clear
 });
-},{"./_export":105,"./_task":177}],367:[function(require,module,exports){
+},{"./_export":135,"./_task":207}],397:[function(require,module,exports){
 // ie9- setTimeout & setInterval additional parameters fix
 var global     = require('./_global')
   , $export    = require('./_export')
@@ -11514,7 +19414,7 @@ $export($export.G + $export.B + $export.F * MSIE, {
   setTimeout:  wrap(global.setTimeout),
   setInterval: wrap(global.setInterval)
 });
-},{"./_export":105,"./_global":111,"./_invoke":117,"./_partial":156}],368:[function(require,module,exports){
+},{"./_export":135,"./_global":141,"./_invoke":147,"./_partial":186}],398:[function(require,module,exports){
 require('./modules/es6.symbol');
 require('./modules/es6.object.create');
 require('./modules/es6.object.define-property');
@@ -11691,7 +19591,7 @@ require('./modules/web.timers');
 require('./modules/web.immediate');
 require('./modules/web.dom.iterable');
 module.exports = require('./modules/_core');
-},{"./modules/_core":96,"./modules/es6.array.copy-within":193,"./modules/es6.array.every":194,"./modules/es6.array.fill":195,"./modules/es6.array.filter":196,"./modules/es6.array.find":198,"./modules/es6.array.find-index":197,"./modules/es6.array.for-each":199,"./modules/es6.array.from":200,"./modules/es6.array.index-of":201,"./modules/es6.array.is-array":202,"./modules/es6.array.iterator":203,"./modules/es6.array.join":204,"./modules/es6.array.last-index-of":205,"./modules/es6.array.map":206,"./modules/es6.array.of":207,"./modules/es6.array.reduce":209,"./modules/es6.array.reduce-right":208,"./modules/es6.array.slice":210,"./modules/es6.array.some":211,"./modules/es6.array.sort":212,"./modules/es6.array.species":213,"./modules/es6.date.now":214,"./modules/es6.date.to-iso-string":215,"./modules/es6.date.to-json":216,"./modules/es6.date.to-primitive":217,"./modules/es6.date.to-string":218,"./modules/es6.function.bind":219,"./modules/es6.function.has-instance":220,"./modules/es6.function.name":221,"./modules/es6.map":222,"./modules/es6.math.acosh":223,"./modules/es6.math.asinh":224,"./modules/es6.math.atanh":225,"./modules/es6.math.cbrt":226,"./modules/es6.math.clz32":227,"./modules/es6.math.cosh":228,"./modules/es6.math.expm1":229,"./modules/es6.math.fround":230,"./modules/es6.math.hypot":231,"./modules/es6.math.imul":232,"./modules/es6.math.log10":233,"./modules/es6.math.log1p":234,"./modules/es6.math.log2":235,"./modules/es6.math.sign":236,"./modules/es6.math.sinh":237,"./modules/es6.math.tanh":238,"./modules/es6.math.trunc":239,"./modules/es6.number.constructor":240,"./modules/es6.number.epsilon":241,"./modules/es6.number.is-finite":242,"./modules/es6.number.is-integer":243,"./modules/es6.number.is-nan":244,"./modules/es6.number.is-safe-integer":245,"./modules/es6.number.max-safe-integer":246,"./modules/es6.number.min-safe-integer":247,"./modules/es6.number.parse-float":248,"./modules/es6.number.parse-int":249,"./modules/es6.number.to-fixed":250,"./modules/es6.number.to-precision":251,"./modules/es6.object.assign":252,"./modules/es6.object.create":253,"./modules/es6.object.define-properties":254,"./modules/es6.object.define-property":255,"./modules/es6.object.freeze":256,"./modules/es6.object.get-own-property-descriptor":257,"./modules/es6.object.get-own-property-names":258,"./modules/es6.object.get-prototype-of":259,"./modules/es6.object.is":263,"./modules/es6.object.is-extensible":260,"./modules/es6.object.is-frozen":261,"./modules/es6.object.is-sealed":262,"./modules/es6.object.keys":264,"./modules/es6.object.prevent-extensions":265,"./modules/es6.object.seal":266,"./modules/es6.object.set-prototype-of":267,"./modules/es6.object.to-string":268,"./modules/es6.parse-float":269,"./modules/es6.parse-int":270,"./modules/es6.promise":271,"./modules/es6.reflect.apply":272,"./modules/es6.reflect.construct":273,"./modules/es6.reflect.define-property":274,"./modules/es6.reflect.delete-property":275,"./modules/es6.reflect.enumerate":276,"./modules/es6.reflect.get":279,"./modules/es6.reflect.get-own-property-descriptor":277,"./modules/es6.reflect.get-prototype-of":278,"./modules/es6.reflect.has":280,"./modules/es6.reflect.is-extensible":281,"./modules/es6.reflect.own-keys":282,"./modules/es6.reflect.prevent-extensions":283,"./modules/es6.reflect.set":285,"./modules/es6.reflect.set-prototype-of":284,"./modules/es6.regexp.constructor":286,"./modules/es6.regexp.flags":287,"./modules/es6.regexp.match":288,"./modules/es6.regexp.replace":289,"./modules/es6.regexp.search":290,"./modules/es6.regexp.split":291,"./modules/es6.regexp.to-string":292,"./modules/es6.set":293,"./modules/es6.string.anchor":294,"./modules/es6.string.big":295,"./modules/es6.string.blink":296,"./modules/es6.string.bold":297,"./modules/es6.string.code-point-at":298,"./modules/es6.string.ends-with":299,"./modules/es6.string.fixed":300,"./modules/es6.string.fontcolor":301,"./modules/es6.string.fontsize":302,"./modules/es6.string.from-code-point":303,"./modules/es6.string.includes":304,"./modules/es6.string.italics":305,"./modules/es6.string.iterator":306,"./modules/es6.string.link":307,"./modules/es6.string.raw":308,"./modules/es6.string.repeat":309,"./modules/es6.string.small":310,"./modules/es6.string.starts-with":311,"./modules/es6.string.strike":312,"./modules/es6.string.sub":313,"./modules/es6.string.sup":314,"./modules/es6.string.trim":315,"./modules/es6.symbol":316,"./modules/es6.typed.array-buffer":317,"./modules/es6.typed.data-view":318,"./modules/es6.typed.float32-array":319,"./modules/es6.typed.float64-array":320,"./modules/es6.typed.int16-array":321,"./modules/es6.typed.int32-array":322,"./modules/es6.typed.int8-array":323,"./modules/es6.typed.uint16-array":324,"./modules/es6.typed.uint32-array":325,"./modules/es6.typed.uint8-array":326,"./modules/es6.typed.uint8-clamped-array":327,"./modules/es6.weak-map":328,"./modules/es6.weak-set":329,"./modules/es7.array.includes":330,"./modules/es7.asap":331,"./modules/es7.error.is-error":332,"./modules/es7.map.to-json":333,"./modules/es7.math.iaddh":334,"./modules/es7.math.imulh":335,"./modules/es7.math.isubh":336,"./modules/es7.math.umulh":337,"./modules/es7.object.define-getter":338,"./modules/es7.object.define-setter":339,"./modules/es7.object.entries":340,"./modules/es7.object.get-own-property-descriptors":341,"./modules/es7.object.lookup-getter":342,"./modules/es7.object.lookup-setter":343,"./modules/es7.object.values":344,"./modules/es7.observable":345,"./modules/es7.reflect.define-metadata":346,"./modules/es7.reflect.delete-metadata":347,"./modules/es7.reflect.get-metadata":349,"./modules/es7.reflect.get-metadata-keys":348,"./modules/es7.reflect.get-own-metadata":351,"./modules/es7.reflect.get-own-metadata-keys":350,"./modules/es7.reflect.has-metadata":352,"./modules/es7.reflect.has-own-metadata":353,"./modules/es7.reflect.metadata":354,"./modules/es7.set.to-json":355,"./modules/es7.string.at":356,"./modules/es7.string.match-all":357,"./modules/es7.string.pad-end":358,"./modules/es7.string.pad-start":359,"./modules/es7.string.trim-left":360,"./modules/es7.string.trim-right":361,"./modules/es7.symbol.async-iterator":362,"./modules/es7.symbol.observable":363,"./modules/es7.system.global":364,"./modules/web.dom.iterable":365,"./modules/web.immediate":366,"./modules/web.timers":367}],369:[function(require,module,exports){
+},{"./modules/_core":126,"./modules/es6.array.copy-within":223,"./modules/es6.array.every":224,"./modules/es6.array.fill":225,"./modules/es6.array.filter":226,"./modules/es6.array.find":228,"./modules/es6.array.find-index":227,"./modules/es6.array.for-each":229,"./modules/es6.array.from":230,"./modules/es6.array.index-of":231,"./modules/es6.array.is-array":232,"./modules/es6.array.iterator":233,"./modules/es6.array.join":234,"./modules/es6.array.last-index-of":235,"./modules/es6.array.map":236,"./modules/es6.array.of":237,"./modules/es6.array.reduce":239,"./modules/es6.array.reduce-right":238,"./modules/es6.array.slice":240,"./modules/es6.array.some":241,"./modules/es6.array.sort":242,"./modules/es6.array.species":243,"./modules/es6.date.now":244,"./modules/es6.date.to-iso-string":245,"./modules/es6.date.to-json":246,"./modules/es6.date.to-primitive":247,"./modules/es6.date.to-string":248,"./modules/es6.function.bind":249,"./modules/es6.function.has-instance":250,"./modules/es6.function.name":251,"./modules/es6.map":252,"./modules/es6.math.acosh":253,"./modules/es6.math.asinh":254,"./modules/es6.math.atanh":255,"./modules/es6.math.cbrt":256,"./modules/es6.math.clz32":257,"./modules/es6.math.cosh":258,"./modules/es6.math.expm1":259,"./modules/es6.math.fround":260,"./modules/es6.math.hypot":261,"./modules/es6.math.imul":262,"./modules/es6.math.log10":263,"./modules/es6.math.log1p":264,"./modules/es6.math.log2":265,"./modules/es6.math.sign":266,"./modules/es6.math.sinh":267,"./modules/es6.math.tanh":268,"./modules/es6.math.trunc":269,"./modules/es6.number.constructor":270,"./modules/es6.number.epsilon":271,"./modules/es6.number.is-finite":272,"./modules/es6.number.is-integer":273,"./modules/es6.number.is-nan":274,"./modules/es6.number.is-safe-integer":275,"./modules/es6.number.max-safe-integer":276,"./modules/es6.number.min-safe-integer":277,"./modules/es6.number.parse-float":278,"./modules/es6.number.parse-int":279,"./modules/es6.number.to-fixed":280,"./modules/es6.number.to-precision":281,"./modules/es6.object.assign":282,"./modules/es6.object.create":283,"./modules/es6.object.define-properties":284,"./modules/es6.object.define-property":285,"./modules/es6.object.freeze":286,"./modules/es6.object.get-own-property-descriptor":287,"./modules/es6.object.get-own-property-names":288,"./modules/es6.object.get-prototype-of":289,"./modules/es6.object.is":293,"./modules/es6.object.is-extensible":290,"./modules/es6.object.is-frozen":291,"./modules/es6.object.is-sealed":292,"./modules/es6.object.keys":294,"./modules/es6.object.prevent-extensions":295,"./modules/es6.object.seal":296,"./modules/es6.object.set-prototype-of":297,"./modules/es6.object.to-string":298,"./modules/es6.parse-float":299,"./modules/es6.parse-int":300,"./modules/es6.promise":301,"./modules/es6.reflect.apply":302,"./modules/es6.reflect.construct":303,"./modules/es6.reflect.define-property":304,"./modules/es6.reflect.delete-property":305,"./modules/es6.reflect.enumerate":306,"./modules/es6.reflect.get":309,"./modules/es6.reflect.get-own-property-descriptor":307,"./modules/es6.reflect.get-prototype-of":308,"./modules/es6.reflect.has":310,"./modules/es6.reflect.is-extensible":311,"./modules/es6.reflect.own-keys":312,"./modules/es6.reflect.prevent-extensions":313,"./modules/es6.reflect.set":315,"./modules/es6.reflect.set-prototype-of":314,"./modules/es6.regexp.constructor":316,"./modules/es6.regexp.flags":317,"./modules/es6.regexp.match":318,"./modules/es6.regexp.replace":319,"./modules/es6.regexp.search":320,"./modules/es6.regexp.split":321,"./modules/es6.regexp.to-string":322,"./modules/es6.set":323,"./modules/es6.string.anchor":324,"./modules/es6.string.big":325,"./modules/es6.string.blink":326,"./modules/es6.string.bold":327,"./modules/es6.string.code-point-at":328,"./modules/es6.string.ends-with":329,"./modules/es6.string.fixed":330,"./modules/es6.string.fontcolor":331,"./modules/es6.string.fontsize":332,"./modules/es6.string.from-code-point":333,"./modules/es6.string.includes":334,"./modules/es6.string.italics":335,"./modules/es6.string.iterator":336,"./modules/es6.string.link":337,"./modules/es6.string.raw":338,"./modules/es6.string.repeat":339,"./modules/es6.string.small":340,"./modules/es6.string.starts-with":341,"./modules/es6.string.strike":342,"./modules/es6.string.sub":343,"./modules/es6.string.sup":344,"./modules/es6.string.trim":345,"./modules/es6.symbol":346,"./modules/es6.typed.array-buffer":347,"./modules/es6.typed.data-view":348,"./modules/es6.typed.float32-array":349,"./modules/es6.typed.float64-array":350,"./modules/es6.typed.int16-array":351,"./modules/es6.typed.int32-array":352,"./modules/es6.typed.int8-array":353,"./modules/es6.typed.uint16-array":354,"./modules/es6.typed.uint32-array":355,"./modules/es6.typed.uint8-array":356,"./modules/es6.typed.uint8-clamped-array":357,"./modules/es6.weak-map":358,"./modules/es6.weak-set":359,"./modules/es7.array.includes":360,"./modules/es7.asap":361,"./modules/es7.error.is-error":362,"./modules/es7.map.to-json":363,"./modules/es7.math.iaddh":364,"./modules/es7.math.imulh":365,"./modules/es7.math.isubh":366,"./modules/es7.math.umulh":367,"./modules/es7.object.define-getter":368,"./modules/es7.object.define-setter":369,"./modules/es7.object.entries":370,"./modules/es7.object.get-own-property-descriptors":371,"./modules/es7.object.lookup-getter":372,"./modules/es7.object.lookup-setter":373,"./modules/es7.object.values":374,"./modules/es7.observable":375,"./modules/es7.reflect.define-metadata":376,"./modules/es7.reflect.delete-metadata":377,"./modules/es7.reflect.get-metadata":379,"./modules/es7.reflect.get-metadata-keys":378,"./modules/es7.reflect.get-own-metadata":381,"./modules/es7.reflect.get-own-metadata-keys":380,"./modules/es7.reflect.has-metadata":382,"./modules/es7.reflect.has-own-metadata":383,"./modules/es7.reflect.metadata":384,"./modules/es7.set.to-json":385,"./modules/es7.string.at":386,"./modules/es7.string.match-all":387,"./modules/es7.string.pad-end":388,"./modules/es7.string.pad-start":389,"./modules/es7.string.trim-left":390,"./modules/es7.string.trim-right":391,"./modules/es7.symbol.async-iterator":392,"./modules/es7.symbol.observable":393,"./modules/es7.system.global":394,"./modules/web.dom.iterable":395,"./modules/web.immediate":396,"./modules/web.timers":397}],399:[function(require,module,exports){
 /*
  *  Copyright 2011 Twitter, Inc.
  *  Licensed under the Apache License, Version 2.0 (the "License");
@@ -11934,7 +19834,7 @@ var Hogan = {};
 })(typeof exports !== 'undefined' ? exports : Hogan);
 
 
-},{}],370:[function(require,module,exports){
+},{}],400:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.2.4
  * http://jquery.com/
@@ -21750,7 +29650,7 @@ if ( !noGlobal ) {
 return jQuery;
 }));
 
-},{}],371:[function(require,module,exports){
+},{}],401:[function(require,module,exports){
 /*!
  * JavaScript Cookie v2.1.3
  * https://github.com/js-cookie/js-cookie
@@ -21908,7 +29808,7 @@ return jQuery;
 	return init(function () {});
 }));
 
-},{}],372:[function(require,module,exports){
+},{}],402:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -22090,13 +29990,13 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],373:[function(require,module,exports){
+},{}],403:[function(require,module,exports){
 'use strict';
 module.exports = function () {
 	return Math.random() >= 0.5;
 };
 
-},{}],374:[function(require,module,exports){
+},{}],404:[function(require,module,exports){
 (function (global){
 // This method of obtaining a reference to the global object needs to be
 // kept identical to the way it is obtained in runtime.js
@@ -22131,7 +30031,7 @@ if (hadRuntime) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./runtime":375}],375:[function(require,module,exports){
+},{"./runtime":405}],405:[function(require,module,exports){
 (function (process,global){
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -22818,7 +30718,7 @@ if (hadRuntime) {
 );
 
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":372}],376:[function(require,module,exports){
+},{"_process":402}],406:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22867,7 +30767,7 @@ var AsyncSubject = (function (_super) {
 }(Subject_1.Subject));
 exports.AsyncSubject = AsyncSubject;
 
-},{"./Subject":386,"./Subscription":389}],377:[function(require,module,exports){
+},{"./Subject":416,"./Subscription":419}],407:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22917,7 +30817,7 @@ var BehaviorSubject = (function (_super) {
 }(Subject_1.Subject));
 exports.BehaviorSubject = BehaviorSubject;
 
-},{"./Subject":386,"./util/ObjectUnsubscribedError":696}],378:[function(require,module,exports){
+},{"./Subject":416,"./util/ObjectUnsubscribedError":726}],408:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -22954,7 +30854,7 @@ var InnerSubscriber = (function (_super) {
 }(Subscriber_1.Subscriber));
 exports.InnerSubscriber = InnerSubscriber;
 
-},{"./Subscriber":388}],379:[function(require,module,exports){
+},{"./Subscriber":418}],409:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('./Observable');
 /**
@@ -23082,7 +30982,7 @@ var Notification = (function () {
 }());
 exports.Notification = Notification;
 
-},{"./Observable":380}],380:[function(require,module,exports){
+},{"./Observable":410}],410:[function(require,module,exports){
 "use strict";
 var root_1 = require('./util/root');
 var toSubscriber_1 = require('./util/toSubscriber');
@@ -23212,7 +31112,7 @@ var Observable = (function () {
 }());
 exports.Observable = Observable;
 
-},{"./symbol/observable":682,"./util/root":712,"./util/toSubscriber":714}],381:[function(require,module,exports){
+},{"./symbol/observable":712,"./util/root":742,"./util/toSubscriber":744}],411:[function(require,module,exports){
 "use strict";
 exports.empty = {
     closed: true,
@@ -23221,7 +31121,7 @@ exports.empty = {
     complete: function () { }
 };
 
-},{}],382:[function(require,module,exports){
+},{}],412:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23252,7 +31152,7 @@ var OuterSubscriber = (function (_super) {
 }(Subscriber_1.Subscriber));
 exports.OuterSubscriber = OuterSubscriber;
 
-},{"./Subscriber":388}],383:[function(require,module,exports){
+},{"./Subscriber":418}],413:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23355,7 +31255,7 @@ var ReplayEvent = (function () {
     return ReplayEvent;
 }());
 
-},{"./Subject":386,"./SubjectSubscription":387,"./Subscription":389,"./operator/observeOn":618,"./scheduler/queue":680,"./util/ObjectUnsubscribedError":696}],384:[function(require,module,exports){
+},{"./Subject":416,"./SubjectSubscription":417,"./Subscription":419,"./operator/observeOn":648,"./scheduler/queue":710,"./util/ObjectUnsubscribedError":726}],414:[function(require,module,exports){
 "use strict";
 /* tslint:disable:no-unused-variable */
 // Subject imported before Observable to bypass circular dependency issue since
@@ -23583,7 +31483,7 @@ var Symbol = {
 };
 exports.Symbol = Symbol;
 
-},{"./AsyncSubject":376,"./BehaviorSubject":377,"./Notification":379,"./Observable":380,"./ReplaySubject":383,"./Subject":386,"./Subscriber":388,"./Subscription":389,"./add/observable/bindCallback":390,"./add/observable/bindNodeCallback":391,"./add/observable/combineLatest":392,"./add/observable/concat":393,"./add/observable/defer":394,"./add/observable/dom/ajax":395,"./add/observable/dom/webSocket":396,"./add/observable/empty":397,"./add/observable/forkJoin":398,"./add/observable/from":399,"./add/observable/fromEvent":400,"./add/observable/fromEventPattern":401,"./add/observable/fromPromise":402,"./add/observable/generate":403,"./add/observable/if":404,"./add/observable/interval":405,"./add/observable/merge":406,"./add/observable/never":407,"./add/observable/of":408,"./add/observable/onErrorResumeNext":409,"./add/observable/pairs":410,"./add/observable/race":411,"./add/observable/range":412,"./add/observable/throw":413,"./add/observable/timer":414,"./add/observable/using":415,"./add/observable/zip":416,"./add/operator/audit":417,"./add/operator/auditTime":418,"./add/operator/buffer":419,"./add/operator/bufferCount":420,"./add/operator/bufferTime":421,"./add/operator/bufferToggle":422,"./add/operator/bufferWhen":423,"./add/operator/catch":424,"./add/operator/combineAll":425,"./add/operator/combineLatest":426,"./add/operator/concat":427,"./add/operator/concatAll":428,"./add/operator/concatMap":429,"./add/operator/concatMapTo":430,"./add/operator/count":431,"./add/operator/debounce":432,"./add/operator/debounceTime":433,"./add/operator/defaultIfEmpty":434,"./add/operator/delay":435,"./add/operator/delayWhen":436,"./add/operator/dematerialize":437,"./add/operator/distinct":438,"./add/operator/distinctUntilChanged":439,"./add/operator/distinctUntilKeyChanged":440,"./add/operator/do":441,"./add/operator/elementAt":442,"./add/operator/every":443,"./add/operator/exhaust":444,"./add/operator/exhaustMap":445,"./add/operator/expand":446,"./add/operator/filter":447,"./add/operator/finally":448,"./add/operator/find":449,"./add/operator/findIndex":450,"./add/operator/first":451,"./add/operator/groupBy":452,"./add/operator/ignoreElements":453,"./add/operator/isEmpty":454,"./add/operator/last":455,"./add/operator/let":456,"./add/operator/map":457,"./add/operator/mapTo":458,"./add/operator/materialize":459,"./add/operator/max":460,"./add/operator/merge":461,"./add/operator/mergeAll":462,"./add/operator/mergeMap":463,"./add/operator/mergeMapTo":464,"./add/operator/mergeScan":465,"./add/operator/min":466,"./add/operator/multicast":467,"./add/operator/observeOn":468,"./add/operator/onErrorResumeNext":469,"./add/operator/pairwise":470,"./add/operator/partition":471,"./add/operator/pluck":472,"./add/operator/publish":473,"./add/operator/publishBehavior":474,"./add/operator/publishLast":475,"./add/operator/publishReplay":476,"./add/operator/race":477,"./add/operator/reduce":478,"./add/operator/repeat":479,"./add/operator/repeatWhen":480,"./add/operator/retry":481,"./add/operator/retryWhen":482,"./add/operator/sample":483,"./add/operator/sampleTime":484,"./add/operator/scan":485,"./add/operator/sequenceEqual":486,"./add/operator/share":487,"./add/operator/single":488,"./add/operator/skip":489,"./add/operator/skipUntil":490,"./add/operator/skipWhile":491,"./add/operator/startWith":492,"./add/operator/subscribeOn":493,"./add/operator/switch":494,"./add/operator/switchMap":495,"./add/operator/switchMapTo":496,"./add/operator/take":497,"./add/operator/takeLast":498,"./add/operator/takeUntil":499,"./add/operator/takeWhile":500,"./add/operator/throttle":501,"./add/operator/throttleTime":502,"./add/operator/timeInterval":503,"./add/operator/timeout":504,"./add/operator/timeoutWith":505,"./add/operator/timestamp":506,"./add/operator/toArray":507,"./add/operator/toPromise":508,"./add/operator/window":509,"./add/operator/windowCount":510,"./add/operator/windowTime":511,"./add/operator/windowToggle":512,"./add/operator/windowWhen":513,"./add/operator/withLatestFrom":514,"./add/operator/zip":515,"./add/operator/zipAll":516,"./observable/ConnectableObservable":521,"./observable/dom/AjaxObservable":546,"./operator/timeInterval":653,"./operator/timestamp":656,"./scheduler/VirtualTimeScheduler":676,"./scheduler/animationFrame":677,"./scheduler/asap":678,"./scheduler/async":679,"./scheduler/queue":680,"./symbol/iterator":681,"./symbol/observable":682,"./symbol/rxSubscriber":683,"./testing/TestScheduler":688,"./util/ArgumentOutOfRangeError":690,"./util/EmptyError":691,"./util/ObjectUnsubscribedError":696,"./util/TimeoutError":698,"./util/UnsubscriptionError":699}],385:[function(require,module,exports){
+},{"./AsyncSubject":406,"./BehaviorSubject":407,"./Notification":409,"./Observable":410,"./ReplaySubject":413,"./Subject":416,"./Subscriber":418,"./Subscription":419,"./add/observable/bindCallback":420,"./add/observable/bindNodeCallback":421,"./add/observable/combineLatest":422,"./add/observable/concat":423,"./add/observable/defer":424,"./add/observable/dom/ajax":425,"./add/observable/dom/webSocket":426,"./add/observable/empty":427,"./add/observable/forkJoin":428,"./add/observable/from":429,"./add/observable/fromEvent":430,"./add/observable/fromEventPattern":431,"./add/observable/fromPromise":432,"./add/observable/generate":433,"./add/observable/if":434,"./add/observable/interval":435,"./add/observable/merge":436,"./add/observable/never":437,"./add/observable/of":438,"./add/observable/onErrorResumeNext":439,"./add/observable/pairs":440,"./add/observable/race":441,"./add/observable/range":442,"./add/observable/throw":443,"./add/observable/timer":444,"./add/observable/using":445,"./add/observable/zip":446,"./add/operator/audit":447,"./add/operator/auditTime":448,"./add/operator/buffer":449,"./add/operator/bufferCount":450,"./add/operator/bufferTime":451,"./add/operator/bufferToggle":452,"./add/operator/bufferWhen":453,"./add/operator/catch":454,"./add/operator/combineAll":455,"./add/operator/combineLatest":456,"./add/operator/concat":457,"./add/operator/concatAll":458,"./add/operator/concatMap":459,"./add/operator/concatMapTo":460,"./add/operator/count":461,"./add/operator/debounce":462,"./add/operator/debounceTime":463,"./add/operator/defaultIfEmpty":464,"./add/operator/delay":465,"./add/operator/delayWhen":466,"./add/operator/dematerialize":467,"./add/operator/distinct":468,"./add/operator/distinctUntilChanged":469,"./add/operator/distinctUntilKeyChanged":470,"./add/operator/do":471,"./add/operator/elementAt":472,"./add/operator/every":473,"./add/operator/exhaust":474,"./add/operator/exhaustMap":475,"./add/operator/expand":476,"./add/operator/filter":477,"./add/operator/finally":478,"./add/operator/find":479,"./add/operator/findIndex":480,"./add/operator/first":481,"./add/operator/groupBy":482,"./add/operator/ignoreElements":483,"./add/operator/isEmpty":484,"./add/operator/last":485,"./add/operator/let":486,"./add/operator/map":487,"./add/operator/mapTo":488,"./add/operator/materialize":489,"./add/operator/max":490,"./add/operator/merge":491,"./add/operator/mergeAll":492,"./add/operator/mergeMap":493,"./add/operator/mergeMapTo":494,"./add/operator/mergeScan":495,"./add/operator/min":496,"./add/operator/multicast":497,"./add/operator/observeOn":498,"./add/operator/onErrorResumeNext":499,"./add/operator/pairwise":500,"./add/operator/partition":501,"./add/operator/pluck":502,"./add/operator/publish":503,"./add/operator/publishBehavior":504,"./add/operator/publishLast":505,"./add/operator/publishReplay":506,"./add/operator/race":507,"./add/operator/reduce":508,"./add/operator/repeat":509,"./add/operator/repeatWhen":510,"./add/operator/retry":511,"./add/operator/retryWhen":512,"./add/operator/sample":513,"./add/operator/sampleTime":514,"./add/operator/scan":515,"./add/operator/sequenceEqual":516,"./add/operator/share":517,"./add/operator/single":518,"./add/operator/skip":519,"./add/operator/skipUntil":520,"./add/operator/skipWhile":521,"./add/operator/startWith":522,"./add/operator/subscribeOn":523,"./add/operator/switch":524,"./add/operator/switchMap":525,"./add/operator/switchMapTo":526,"./add/operator/take":527,"./add/operator/takeLast":528,"./add/operator/takeUntil":529,"./add/operator/takeWhile":530,"./add/operator/throttle":531,"./add/operator/throttleTime":532,"./add/operator/timeInterval":533,"./add/operator/timeout":534,"./add/operator/timeoutWith":535,"./add/operator/timestamp":536,"./add/operator/toArray":537,"./add/operator/toPromise":538,"./add/operator/window":539,"./add/operator/windowCount":540,"./add/operator/windowTime":541,"./add/operator/windowToggle":542,"./add/operator/windowWhen":543,"./add/operator/withLatestFrom":544,"./add/operator/zip":545,"./add/operator/zipAll":546,"./observable/ConnectableObservable":551,"./observable/dom/AjaxObservable":576,"./operator/timeInterval":683,"./operator/timestamp":686,"./scheduler/VirtualTimeScheduler":706,"./scheduler/animationFrame":707,"./scheduler/asap":708,"./scheduler/async":709,"./scheduler/queue":710,"./symbol/iterator":711,"./symbol/observable":712,"./symbol/rxSubscriber":713,"./testing/TestScheduler":718,"./util/ArgumentOutOfRangeError":720,"./util/EmptyError":721,"./util/ObjectUnsubscribedError":726,"./util/TimeoutError":728,"./util/UnsubscriptionError":729}],415:[function(require,module,exports){
 "use strict";
 /**
  * An execution context and a data structure to order tasks and schedule their
@@ -23633,7 +31533,7 @@ var Scheduler = (function () {
 }());
 exports.Scheduler = Scheduler;
 
-},{}],386:[function(require,module,exports){
+},{}],416:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23794,7 +31694,7 @@ var AnonymousSubject = (function (_super) {
 }(Subject));
 exports.AnonymousSubject = AnonymousSubject;
 
-},{"./Observable":380,"./SubjectSubscription":387,"./Subscriber":388,"./Subscription":389,"./symbol/rxSubscriber":683,"./util/ObjectUnsubscribedError":696}],387:[function(require,module,exports){
+},{"./Observable":410,"./SubjectSubscription":417,"./Subscriber":418,"./Subscription":419,"./symbol/rxSubscriber":713,"./util/ObjectUnsubscribedError":726}],417:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -23835,7 +31735,7 @@ var SubjectSubscription = (function (_super) {
 }(Subscription_1.Subscription));
 exports.SubjectSubscription = SubjectSubscription;
 
-},{"./Subscription":389}],388:[function(require,module,exports){
+},{"./Subscription":419}],418:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24085,7 +31985,7 @@ var SafeSubscriber = (function (_super) {
     return SafeSubscriber;
 }(Subscriber));
 
-},{"./Observer":381,"./Subscription":389,"./symbol/rxSubscriber":683,"./util/isFunction":705}],389:[function(require,module,exports){
+},{"./Observer":411,"./Subscription":419,"./symbol/rxSubscriber":713,"./util/isFunction":735}],419:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -24264,776 +32164,776 @@ function flattenUnsubscriptionErrors(errors) {
     return errors.reduce(function (errs, err) { return errs.concat((err instanceof UnsubscriptionError_1.UnsubscriptionError) ? err.errors : err); }, []);
 }
 
-},{"./util/UnsubscriptionError":699,"./util/errorObject":702,"./util/isArray":703,"./util/isFunction":705,"./util/isObject":707,"./util/tryCatch":715}],390:[function(require,module,exports){
+},{"./util/UnsubscriptionError":729,"./util/errorObject":732,"./util/isArray":733,"./util/isFunction":735,"./util/isObject":737,"./util/tryCatch":745}],420:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bindCallback_1 = require('../../observable/bindCallback');
 Observable_1.Observable.bindCallback = bindCallback_1.bindCallback;
 
-},{"../../Observable":380,"../../observable/bindCallback":541}],391:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/bindCallback":571}],421:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bindNodeCallback_1 = require('../../observable/bindNodeCallback');
 Observable_1.Observable.bindNodeCallback = bindNodeCallback_1.bindNodeCallback;
 
-},{"../../Observable":380,"../../observable/bindNodeCallback":542}],392:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/bindNodeCallback":572}],422:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var combineLatest_1 = require('../../observable/combineLatest');
 Observable_1.Observable.combineLatest = combineLatest_1.combineLatest;
 
-},{"../../Observable":380,"../../observable/combineLatest":543}],393:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/combineLatest":573}],423:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var concat_1 = require('../../observable/concat');
 Observable_1.Observable.concat = concat_1.concat;
 
-},{"../../Observable":380,"../../observable/concat":544}],394:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/concat":574}],424:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var defer_1 = require('../../observable/defer');
 Observable_1.Observable.defer = defer_1.defer;
 
-},{"../../Observable":380,"../../observable/defer":545}],395:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/defer":575}],425:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../../Observable');
 var ajax_1 = require('../../../observable/dom/ajax');
 Observable_1.Observable.ajax = ajax_1.ajax;
 
-},{"../../../Observable":380,"../../../observable/dom/ajax":548}],396:[function(require,module,exports){
+},{"../../../Observable":410,"../../../observable/dom/ajax":578}],426:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../../Observable');
 var webSocket_1 = require('../../../observable/dom/webSocket');
 Observable_1.Observable.webSocket = webSocket_1.webSocket;
 
-},{"../../../Observable":380,"../../../observable/dom/webSocket":549}],397:[function(require,module,exports){
+},{"../../../Observable":410,"../../../observable/dom/webSocket":579}],427:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var empty_1 = require('../../observable/empty');
 Observable_1.Observable.empty = empty_1.empty;
 
-},{"../../Observable":380,"../../observable/empty":550}],398:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/empty":580}],428:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var forkJoin_1 = require('../../observable/forkJoin');
 Observable_1.Observable.forkJoin = forkJoin_1.forkJoin;
 
-},{"../../Observable":380,"../../observable/forkJoin":551}],399:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/forkJoin":581}],429:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var from_1 = require('../../observable/from');
 Observable_1.Observable.from = from_1.from;
 
-},{"../../Observable":380,"../../observable/from":552}],400:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/from":582}],430:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var fromEvent_1 = require('../../observable/fromEvent');
 Observable_1.Observable.fromEvent = fromEvent_1.fromEvent;
 
-},{"../../Observable":380,"../../observable/fromEvent":553}],401:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/fromEvent":583}],431:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var fromEventPattern_1 = require('../../observable/fromEventPattern');
 Observable_1.Observable.fromEventPattern = fromEventPattern_1.fromEventPattern;
 
-},{"../../Observable":380,"../../observable/fromEventPattern":554}],402:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/fromEventPattern":584}],432:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var fromPromise_1 = require('../../observable/fromPromise');
 Observable_1.Observable.fromPromise = fromPromise_1.fromPromise;
 
-},{"../../Observable":380,"../../observable/fromPromise":555}],403:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/fromPromise":585}],433:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var GenerateObservable_1 = require('../../observable/GenerateObservable');
 Observable_1.Observable.generate = GenerateObservable_1.GenerateObservable.create;
 
-},{"../../Observable":380,"../../observable/GenerateObservable":529}],404:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/GenerateObservable":559}],434:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var if_1 = require('../../observable/if');
 Observable_1.Observable.if = if_1._if;
 
-},{"../../Observable":380,"../../observable/if":556}],405:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/if":586}],435:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var interval_1 = require('../../observable/interval');
 Observable_1.Observable.interval = interval_1.interval;
 
-},{"../../Observable":380,"../../observable/interval":557}],406:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/interval":587}],436:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var merge_1 = require('../../observable/merge');
 Observable_1.Observable.merge = merge_1.merge;
 
-},{"../../Observable":380,"../../observable/merge":558}],407:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/merge":588}],437:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var never_1 = require('../../observable/never');
 Observable_1.Observable.never = never_1.never;
 
-},{"../../Observable":380,"../../observable/never":559}],408:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/never":589}],438:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var of_1 = require('../../observable/of');
 Observable_1.Observable.of = of_1.of;
 
-},{"../../Observable":380,"../../observable/of":560}],409:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/of":590}],439:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var onErrorResumeNext_1 = require('../../operator/onErrorResumeNext');
 Observable_1.Observable.onErrorResumeNext = onErrorResumeNext_1.onErrorResumeNextStatic;
 
-},{"../../Observable":380,"../../operator/onErrorResumeNext":619}],410:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/onErrorResumeNext":649}],440:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var pairs_1 = require('../../observable/pairs');
 Observable_1.Observable.pairs = pairs_1.pairs;
 
-},{"../../Observable":380,"../../observable/pairs":561}],411:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/pairs":591}],441:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var race_1 = require('../../operator/race');
 Observable_1.Observable.race = race_1.raceStatic;
 
-},{"../../Observable":380,"../../operator/race":627}],412:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/race":657}],442:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var range_1 = require('../../observable/range');
 Observable_1.Observable.range = range_1.range;
 
-},{"../../Observable":380,"../../observable/range":562}],413:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/range":592}],443:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var throw_1 = require('../../observable/throw');
 Observable_1.Observable.throw = throw_1._throw;
 
-},{"../../Observable":380,"../../observable/throw":563}],414:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/throw":593}],444:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var timer_1 = require('../../observable/timer');
 Observable_1.Observable.timer = timer_1.timer;
 
-},{"../../Observable":380,"../../observable/timer":564}],415:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/timer":594}],445:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var using_1 = require('../../observable/using');
 Observable_1.Observable.using = using_1.using;
 
-},{"../../Observable":380,"../../observable/using":565}],416:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/using":595}],446:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var zip_1 = require('../../observable/zip');
 Observable_1.Observable.zip = zip_1.zip;
 
-},{"../../Observable":380,"../../observable/zip":566}],417:[function(require,module,exports){
+},{"../../Observable":410,"../../observable/zip":596}],447:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var audit_1 = require('../../operator/audit');
 Observable_1.Observable.prototype.audit = audit_1.audit;
 
-},{"../../Observable":380,"../../operator/audit":567}],418:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/audit":597}],448:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var auditTime_1 = require('../../operator/auditTime');
 Observable_1.Observable.prototype.auditTime = auditTime_1.auditTime;
 
-},{"../../Observable":380,"../../operator/auditTime":568}],419:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/auditTime":598}],449:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var buffer_1 = require('../../operator/buffer');
 Observable_1.Observable.prototype.buffer = buffer_1.buffer;
 
-},{"../../Observable":380,"../../operator/buffer":569}],420:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/buffer":599}],450:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bufferCount_1 = require('../../operator/bufferCount');
 Observable_1.Observable.prototype.bufferCount = bufferCount_1.bufferCount;
 
-},{"../../Observable":380,"../../operator/bufferCount":570}],421:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/bufferCount":600}],451:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bufferTime_1 = require('../../operator/bufferTime');
 Observable_1.Observable.prototype.bufferTime = bufferTime_1.bufferTime;
 
-},{"../../Observable":380,"../../operator/bufferTime":571}],422:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/bufferTime":601}],452:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bufferToggle_1 = require('../../operator/bufferToggle');
 Observable_1.Observable.prototype.bufferToggle = bufferToggle_1.bufferToggle;
 
-},{"../../Observable":380,"../../operator/bufferToggle":572}],423:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/bufferToggle":602}],453:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var bufferWhen_1 = require('../../operator/bufferWhen');
 Observable_1.Observable.prototype.bufferWhen = bufferWhen_1.bufferWhen;
 
-},{"../../Observable":380,"../../operator/bufferWhen":573}],424:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/bufferWhen":603}],454:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var catch_1 = require('../../operator/catch');
 Observable_1.Observable.prototype.catch = catch_1._catch;
 Observable_1.Observable.prototype._catch = catch_1._catch;
 
-},{"../../Observable":380,"../../operator/catch":574}],425:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/catch":604}],455:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var combineAll_1 = require('../../operator/combineAll');
 Observable_1.Observable.prototype.combineAll = combineAll_1.combineAll;
 
-},{"../../Observable":380,"../../operator/combineAll":575}],426:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/combineAll":605}],456:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var combineLatest_1 = require('../../operator/combineLatest');
 Observable_1.Observable.prototype.combineLatest = combineLatest_1.combineLatest;
 
-},{"../../Observable":380,"../../operator/combineLatest":576}],427:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/combineLatest":606}],457:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var concat_1 = require('../../operator/concat');
 Observable_1.Observable.prototype.concat = concat_1.concat;
 
-},{"../../Observable":380,"../../operator/concat":577}],428:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/concat":607}],458:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var concatAll_1 = require('../../operator/concatAll');
 Observable_1.Observable.prototype.concatAll = concatAll_1.concatAll;
 
-},{"../../Observable":380,"../../operator/concatAll":578}],429:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/concatAll":608}],459:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var concatMap_1 = require('../../operator/concatMap');
 Observable_1.Observable.prototype.concatMap = concatMap_1.concatMap;
 
-},{"../../Observable":380,"../../operator/concatMap":579}],430:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/concatMap":609}],460:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var concatMapTo_1 = require('../../operator/concatMapTo');
 Observable_1.Observable.prototype.concatMapTo = concatMapTo_1.concatMapTo;
 
-},{"../../Observable":380,"../../operator/concatMapTo":580}],431:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/concatMapTo":610}],461:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var count_1 = require('../../operator/count');
 Observable_1.Observable.prototype.count = count_1.count;
 
-},{"../../Observable":380,"../../operator/count":581}],432:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/count":611}],462:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var debounce_1 = require('../../operator/debounce');
 Observable_1.Observable.prototype.debounce = debounce_1.debounce;
 
-},{"../../Observable":380,"../../operator/debounce":582}],433:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/debounce":612}],463:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var debounceTime_1 = require('../../operator/debounceTime');
 Observable_1.Observable.prototype.debounceTime = debounceTime_1.debounceTime;
 
-},{"../../Observable":380,"../../operator/debounceTime":583}],434:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/debounceTime":613}],464:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var defaultIfEmpty_1 = require('../../operator/defaultIfEmpty');
 Observable_1.Observable.prototype.defaultIfEmpty = defaultIfEmpty_1.defaultIfEmpty;
 
-},{"../../Observable":380,"../../operator/defaultIfEmpty":584}],435:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/defaultIfEmpty":614}],465:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var delay_1 = require('../../operator/delay');
 Observable_1.Observable.prototype.delay = delay_1.delay;
 
-},{"../../Observable":380,"../../operator/delay":585}],436:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/delay":615}],466:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var delayWhen_1 = require('../../operator/delayWhen');
 Observable_1.Observable.prototype.delayWhen = delayWhen_1.delayWhen;
 
-},{"../../Observable":380,"../../operator/delayWhen":586}],437:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/delayWhen":616}],467:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var dematerialize_1 = require('../../operator/dematerialize');
 Observable_1.Observable.prototype.dematerialize = dematerialize_1.dematerialize;
 
-},{"../../Observable":380,"../../operator/dematerialize":587}],438:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/dematerialize":617}],468:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var distinct_1 = require('../../operator/distinct');
 Observable_1.Observable.prototype.distinct = distinct_1.distinct;
 
-},{"../../Observable":380,"../../operator/distinct":588}],439:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/distinct":618}],469:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var distinctUntilChanged_1 = require('../../operator/distinctUntilChanged');
 Observable_1.Observable.prototype.distinctUntilChanged = distinctUntilChanged_1.distinctUntilChanged;
 
-},{"../../Observable":380,"../../operator/distinctUntilChanged":589}],440:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/distinctUntilChanged":619}],470:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var distinctUntilKeyChanged_1 = require('../../operator/distinctUntilKeyChanged');
 Observable_1.Observable.prototype.distinctUntilKeyChanged = distinctUntilKeyChanged_1.distinctUntilKeyChanged;
 
-},{"../../Observable":380,"../../operator/distinctUntilKeyChanged":590}],441:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/distinctUntilKeyChanged":620}],471:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var do_1 = require('../../operator/do');
 Observable_1.Observable.prototype.do = do_1._do;
 Observable_1.Observable.prototype._do = do_1._do;
 
-},{"../../Observable":380,"../../operator/do":591}],442:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/do":621}],472:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var elementAt_1 = require('../../operator/elementAt');
 Observable_1.Observable.prototype.elementAt = elementAt_1.elementAt;
 
-},{"../../Observable":380,"../../operator/elementAt":592}],443:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/elementAt":622}],473:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var every_1 = require('../../operator/every');
 Observable_1.Observable.prototype.every = every_1.every;
 
-},{"../../Observable":380,"../../operator/every":593}],444:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/every":623}],474:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var exhaust_1 = require('../../operator/exhaust');
 Observable_1.Observable.prototype.exhaust = exhaust_1.exhaust;
 
-},{"../../Observable":380,"../../operator/exhaust":594}],445:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/exhaust":624}],475:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var exhaustMap_1 = require('../../operator/exhaustMap');
 Observable_1.Observable.prototype.exhaustMap = exhaustMap_1.exhaustMap;
 
-},{"../../Observable":380,"../../operator/exhaustMap":595}],446:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/exhaustMap":625}],476:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var expand_1 = require('../../operator/expand');
 Observable_1.Observable.prototype.expand = expand_1.expand;
 
-},{"../../Observable":380,"../../operator/expand":596}],447:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/expand":626}],477:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var filter_1 = require('../../operator/filter');
 Observable_1.Observable.prototype.filter = filter_1.filter;
 
-},{"../../Observable":380,"../../operator/filter":597}],448:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/filter":627}],478:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var finally_1 = require('../../operator/finally');
 Observable_1.Observable.prototype.finally = finally_1._finally;
 Observable_1.Observable.prototype._finally = finally_1._finally;
 
-},{"../../Observable":380,"../../operator/finally":598}],449:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/finally":628}],479:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var find_1 = require('../../operator/find');
 Observable_1.Observable.prototype.find = find_1.find;
 
-},{"../../Observable":380,"../../operator/find":599}],450:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/find":629}],480:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var findIndex_1 = require('../../operator/findIndex');
 Observable_1.Observable.prototype.findIndex = findIndex_1.findIndex;
 
-},{"../../Observable":380,"../../operator/findIndex":600}],451:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/findIndex":630}],481:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var first_1 = require('../../operator/first');
 Observable_1.Observable.prototype.first = first_1.first;
 
-},{"../../Observable":380,"../../operator/first":601}],452:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/first":631}],482:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var groupBy_1 = require('../../operator/groupBy');
 Observable_1.Observable.prototype.groupBy = groupBy_1.groupBy;
 
-},{"../../Observable":380,"../../operator/groupBy":602}],453:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/groupBy":632}],483:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var ignoreElements_1 = require('../../operator/ignoreElements');
 Observable_1.Observable.prototype.ignoreElements = ignoreElements_1.ignoreElements;
 
-},{"../../Observable":380,"../../operator/ignoreElements":603}],454:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/ignoreElements":633}],484:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var isEmpty_1 = require('../../operator/isEmpty');
 Observable_1.Observable.prototype.isEmpty = isEmpty_1.isEmpty;
 
-},{"../../Observable":380,"../../operator/isEmpty":604}],455:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/isEmpty":634}],485:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var last_1 = require('../../operator/last');
 Observable_1.Observable.prototype.last = last_1.last;
 
-},{"../../Observable":380,"../../operator/last":605}],456:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/last":635}],486:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var let_1 = require('../../operator/let');
 Observable_1.Observable.prototype.let = let_1.letProto;
 Observable_1.Observable.prototype.letBind = let_1.letProto;
 
-},{"../../Observable":380,"../../operator/let":606}],457:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/let":636}],487:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var map_1 = require('../../operator/map');
 Observable_1.Observable.prototype.map = map_1.map;
 
-},{"../../Observable":380,"../../operator/map":607}],458:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/map":637}],488:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var mapTo_1 = require('../../operator/mapTo');
 Observable_1.Observable.prototype.mapTo = mapTo_1.mapTo;
 
-},{"../../Observable":380,"../../operator/mapTo":608}],459:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/mapTo":638}],489:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var materialize_1 = require('../../operator/materialize');
 Observable_1.Observable.prototype.materialize = materialize_1.materialize;
 
-},{"../../Observable":380,"../../operator/materialize":609}],460:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/materialize":639}],490:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var max_1 = require('../../operator/max');
 Observable_1.Observable.prototype.max = max_1.max;
 
-},{"../../Observable":380,"../../operator/max":610}],461:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/max":640}],491:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var merge_1 = require('../../operator/merge');
 Observable_1.Observable.prototype.merge = merge_1.merge;
 
-},{"../../Observable":380,"../../operator/merge":611}],462:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/merge":641}],492:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var mergeAll_1 = require('../../operator/mergeAll');
 Observable_1.Observable.prototype.mergeAll = mergeAll_1.mergeAll;
 
-},{"../../Observable":380,"../../operator/mergeAll":612}],463:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/mergeAll":642}],493:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var mergeMap_1 = require('../../operator/mergeMap');
 Observable_1.Observable.prototype.mergeMap = mergeMap_1.mergeMap;
 Observable_1.Observable.prototype.flatMap = mergeMap_1.mergeMap;
 
-},{"../../Observable":380,"../../operator/mergeMap":613}],464:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/mergeMap":643}],494:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var mergeMapTo_1 = require('../../operator/mergeMapTo');
 Observable_1.Observable.prototype.flatMapTo = mergeMapTo_1.mergeMapTo;
 Observable_1.Observable.prototype.mergeMapTo = mergeMapTo_1.mergeMapTo;
 
-},{"../../Observable":380,"../../operator/mergeMapTo":614}],465:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/mergeMapTo":644}],495:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var mergeScan_1 = require('../../operator/mergeScan');
 Observable_1.Observable.prototype.mergeScan = mergeScan_1.mergeScan;
 
-},{"../../Observable":380,"../../operator/mergeScan":615}],466:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/mergeScan":645}],496:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var min_1 = require('../../operator/min');
 Observable_1.Observable.prototype.min = min_1.min;
 
-},{"../../Observable":380,"../../operator/min":616}],467:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/min":646}],497:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var multicast_1 = require('../../operator/multicast');
 Observable_1.Observable.prototype.multicast = multicast_1.multicast;
 
-},{"../../Observable":380,"../../operator/multicast":617}],468:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/multicast":647}],498:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var observeOn_1 = require('../../operator/observeOn');
 Observable_1.Observable.prototype.observeOn = observeOn_1.observeOn;
 
-},{"../../Observable":380,"../../operator/observeOn":618}],469:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/observeOn":648}],499:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var onErrorResumeNext_1 = require('../../operator/onErrorResumeNext');
 Observable_1.Observable.prototype.onErrorResumeNext = onErrorResumeNext_1.onErrorResumeNext;
 
-},{"../../Observable":380,"../../operator/onErrorResumeNext":619}],470:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/onErrorResumeNext":649}],500:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var pairwise_1 = require('../../operator/pairwise');
 Observable_1.Observable.prototype.pairwise = pairwise_1.pairwise;
 
-},{"../../Observable":380,"../../operator/pairwise":620}],471:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/pairwise":650}],501:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var partition_1 = require('../../operator/partition');
 Observable_1.Observable.prototype.partition = partition_1.partition;
 
-},{"../../Observable":380,"../../operator/partition":621}],472:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/partition":651}],502:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var pluck_1 = require('../../operator/pluck');
 Observable_1.Observable.prototype.pluck = pluck_1.pluck;
 
-},{"../../Observable":380,"../../operator/pluck":622}],473:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/pluck":652}],503:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var publish_1 = require('../../operator/publish');
 Observable_1.Observable.prototype.publish = publish_1.publish;
 
-},{"../../Observable":380,"../../operator/publish":623}],474:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/publish":653}],504:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var publishBehavior_1 = require('../../operator/publishBehavior');
 Observable_1.Observable.prototype.publishBehavior = publishBehavior_1.publishBehavior;
 
-},{"../../Observable":380,"../../operator/publishBehavior":624}],475:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/publishBehavior":654}],505:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var publishLast_1 = require('../../operator/publishLast');
 Observable_1.Observable.prototype.publishLast = publishLast_1.publishLast;
 
-},{"../../Observable":380,"../../operator/publishLast":625}],476:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/publishLast":655}],506:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var publishReplay_1 = require('../../operator/publishReplay');
 Observable_1.Observable.prototype.publishReplay = publishReplay_1.publishReplay;
 
-},{"../../Observable":380,"../../operator/publishReplay":626}],477:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/publishReplay":656}],507:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var race_1 = require('../../operator/race');
 Observable_1.Observable.prototype.race = race_1.race;
 
-},{"../../Observable":380,"../../operator/race":627}],478:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/race":657}],508:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var reduce_1 = require('../../operator/reduce');
 Observable_1.Observable.prototype.reduce = reduce_1.reduce;
 
-},{"../../Observable":380,"../../operator/reduce":628}],479:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/reduce":658}],509:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var repeat_1 = require('../../operator/repeat');
 Observable_1.Observable.prototype.repeat = repeat_1.repeat;
 
-},{"../../Observable":380,"../../operator/repeat":629}],480:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/repeat":659}],510:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var repeatWhen_1 = require('../../operator/repeatWhen');
 Observable_1.Observable.prototype.repeatWhen = repeatWhen_1.repeatWhen;
 
-},{"../../Observable":380,"../../operator/repeatWhen":630}],481:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/repeatWhen":660}],511:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var retry_1 = require('../../operator/retry');
 Observable_1.Observable.prototype.retry = retry_1.retry;
 
-},{"../../Observable":380,"../../operator/retry":631}],482:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/retry":661}],512:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var retryWhen_1 = require('../../operator/retryWhen');
 Observable_1.Observable.prototype.retryWhen = retryWhen_1.retryWhen;
 
-},{"../../Observable":380,"../../operator/retryWhen":632}],483:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/retryWhen":662}],513:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var sample_1 = require('../../operator/sample');
 Observable_1.Observable.prototype.sample = sample_1.sample;
 
-},{"../../Observable":380,"../../operator/sample":633}],484:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/sample":663}],514:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var sampleTime_1 = require('../../operator/sampleTime');
 Observable_1.Observable.prototype.sampleTime = sampleTime_1.sampleTime;
 
-},{"../../Observable":380,"../../operator/sampleTime":634}],485:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/sampleTime":664}],515:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var scan_1 = require('../../operator/scan');
 Observable_1.Observable.prototype.scan = scan_1.scan;
 
-},{"../../Observable":380,"../../operator/scan":635}],486:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/scan":665}],516:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var sequenceEqual_1 = require('../../operator/sequenceEqual');
 Observable_1.Observable.prototype.sequenceEqual = sequenceEqual_1.sequenceEqual;
 
-},{"../../Observable":380,"../../operator/sequenceEqual":636}],487:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/sequenceEqual":666}],517:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var share_1 = require('../../operator/share');
 Observable_1.Observable.prototype.share = share_1.share;
 
-},{"../../Observable":380,"../../operator/share":637}],488:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/share":667}],518:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var single_1 = require('../../operator/single');
 Observable_1.Observable.prototype.single = single_1.single;
 
-},{"../../Observable":380,"../../operator/single":638}],489:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/single":668}],519:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var skip_1 = require('../../operator/skip');
 Observable_1.Observable.prototype.skip = skip_1.skip;
 
-},{"../../Observable":380,"../../operator/skip":639}],490:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/skip":669}],520:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var skipUntil_1 = require('../../operator/skipUntil');
 Observable_1.Observable.prototype.skipUntil = skipUntil_1.skipUntil;
 
-},{"../../Observable":380,"../../operator/skipUntil":640}],491:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/skipUntil":670}],521:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var skipWhile_1 = require('../../operator/skipWhile');
 Observable_1.Observable.prototype.skipWhile = skipWhile_1.skipWhile;
 
-},{"../../Observable":380,"../../operator/skipWhile":641}],492:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/skipWhile":671}],522:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var startWith_1 = require('../../operator/startWith');
 Observable_1.Observable.prototype.startWith = startWith_1.startWith;
 
-},{"../../Observable":380,"../../operator/startWith":642}],493:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/startWith":672}],523:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var subscribeOn_1 = require('../../operator/subscribeOn');
 Observable_1.Observable.prototype.subscribeOn = subscribeOn_1.subscribeOn;
 
-},{"../../Observable":380,"../../operator/subscribeOn":643}],494:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/subscribeOn":673}],524:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var switch_1 = require('../../operator/switch');
 Observable_1.Observable.prototype.switch = switch_1._switch;
 Observable_1.Observable.prototype._switch = switch_1._switch;
 
-},{"../../Observable":380,"../../operator/switch":644}],495:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/switch":674}],525:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var switchMap_1 = require('../../operator/switchMap');
 Observable_1.Observable.prototype.switchMap = switchMap_1.switchMap;
 
-},{"../../Observable":380,"../../operator/switchMap":645}],496:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/switchMap":675}],526:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var switchMapTo_1 = require('../../operator/switchMapTo');
 Observable_1.Observable.prototype.switchMapTo = switchMapTo_1.switchMapTo;
 
-},{"../../Observable":380,"../../operator/switchMapTo":646}],497:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/switchMapTo":676}],527:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var take_1 = require('../../operator/take');
 Observable_1.Observable.prototype.take = take_1.take;
 
-},{"../../Observable":380,"../../operator/take":647}],498:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/take":677}],528:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var takeLast_1 = require('../../operator/takeLast');
 Observable_1.Observable.prototype.takeLast = takeLast_1.takeLast;
 
-},{"../../Observable":380,"../../operator/takeLast":648}],499:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/takeLast":678}],529:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var takeUntil_1 = require('../../operator/takeUntil');
 Observable_1.Observable.prototype.takeUntil = takeUntil_1.takeUntil;
 
-},{"../../Observable":380,"../../operator/takeUntil":649}],500:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/takeUntil":679}],530:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var takeWhile_1 = require('../../operator/takeWhile');
 Observable_1.Observable.prototype.takeWhile = takeWhile_1.takeWhile;
 
-},{"../../Observable":380,"../../operator/takeWhile":650}],501:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/takeWhile":680}],531:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var throttle_1 = require('../../operator/throttle');
 Observable_1.Observable.prototype.throttle = throttle_1.throttle;
 
-},{"../../Observable":380,"../../operator/throttle":651}],502:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/throttle":681}],532:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var throttleTime_1 = require('../../operator/throttleTime');
 Observable_1.Observable.prototype.throttleTime = throttleTime_1.throttleTime;
 
-},{"../../Observable":380,"../../operator/throttleTime":652}],503:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/throttleTime":682}],533:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var timeInterval_1 = require('../../operator/timeInterval');
 Observable_1.Observable.prototype.timeInterval = timeInterval_1.timeInterval;
 
-},{"../../Observable":380,"../../operator/timeInterval":653}],504:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/timeInterval":683}],534:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var timeout_1 = require('../../operator/timeout');
 Observable_1.Observable.prototype.timeout = timeout_1.timeout;
 
-},{"../../Observable":380,"../../operator/timeout":654}],505:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/timeout":684}],535:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var timeoutWith_1 = require('../../operator/timeoutWith');
 Observable_1.Observable.prototype.timeoutWith = timeoutWith_1.timeoutWith;
 
-},{"../../Observable":380,"../../operator/timeoutWith":655}],506:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/timeoutWith":685}],536:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var timestamp_1 = require('../../operator/timestamp');
 Observable_1.Observable.prototype.timestamp = timestamp_1.timestamp;
 
-},{"../../Observable":380,"../../operator/timestamp":656}],507:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/timestamp":686}],537:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var toArray_1 = require('../../operator/toArray');
 Observable_1.Observable.prototype.toArray = toArray_1.toArray;
 
-},{"../../Observable":380,"../../operator/toArray":657}],508:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/toArray":687}],538:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var toPromise_1 = require('../../operator/toPromise');
 Observable_1.Observable.prototype.toPromise = toPromise_1.toPromise;
 
-},{"../../Observable":380,"../../operator/toPromise":658}],509:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/toPromise":688}],539:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var window_1 = require('../../operator/window');
 Observable_1.Observable.prototype.window = window_1.window;
 
-},{"../../Observable":380,"../../operator/window":659}],510:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/window":689}],540:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var windowCount_1 = require('../../operator/windowCount');
 Observable_1.Observable.prototype.windowCount = windowCount_1.windowCount;
 
-},{"../../Observable":380,"../../operator/windowCount":660}],511:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/windowCount":690}],541:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var windowTime_1 = require('../../operator/windowTime');
 Observable_1.Observable.prototype.windowTime = windowTime_1.windowTime;
 
-},{"../../Observable":380,"../../operator/windowTime":661}],512:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/windowTime":691}],542:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var windowToggle_1 = require('../../operator/windowToggle');
 Observable_1.Observable.prototype.windowToggle = windowToggle_1.windowToggle;
 
-},{"../../Observable":380,"../../operator/windowToggle":662}],513:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/windowToggle":692}],543:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var windowWhen_1 = require('../../operator/windowWhen');
 Observable_1.Observable.prototype.windowWhen = windowWhen_1.windowWhen;
 
-},{"../../Observable":380,"../../operator/windowWhen":663}],514:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/windowWhen":693}],544:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var withLatestFrom_1 = require('../../operator/withLatestFrom');
 Observable_1.Observable.prototype.withLatestFrom = withLatestFrom_1.withLatestFrom;
 
-},{"../../Observable":380,"../../operator/withLatestFrom":664}],515:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/withLatestFrom":694}],545:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var zip_1 = require('../../operator/zip');
 Observable_1.Observable.prototype.zip = zip_1.zipProto;
 
-},{"../../Observable":380,"../../operator/zip":665}],516:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/zip":695}],546:[function(require,module,exports){
 "use strict";
 var Observable_1 = require('../../Observable');
 var zipAll_1 = require('../../operator/zipAll');
 Observable_1.Observable.prototype.zipAll = zipAll_1.zipAll;
 
-},{"../../Observable":380,"../../operator/zipAll":666}],517:[function(require,module,exports){
+},{"../../Observable":410,"../../operator/zipAll":696}],547:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25104,7 +33004,7 @@ var ArrayLikeObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.ArrayLikeObservable = ArrayLikeObservable;
 
-},{"../Observable":380,"./EmptyObservable":523,"./ScalarObservable":537}],518:[function(require,module,exports){
+},{"../Observable":410,"./EmptyObservable":553,"./ScalarObservable":567}],548:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25227,7 +33127,7 @@ var ArrayObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.ArrayObservable = ArrayObservable;
 
-},{"../Observable":380,"../util/isScheduler":709,"./EmptyObservable":523,"./ScalarObservable":537}],519:[function(require,module,exports){
+},{"../Observable":410,"../util/isScheduler":739,"./EmptyObservable":553,"./ScalarObservable":567}],549:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25392,7 +33292,7 @@ function dispatchError(arg) {
     subject.error(err);
 }
 
-},{"../AsyncSubject":376,"../Observable":380,"../util/errorObject":702,"../util/tryCatch":715}],520:[function(require,module,exports){
+},{"../AsyncSubject":406,"../Observable":410,"../util/errorObject":732,"../util/tryCatch":745}],550:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25569,7 +33469,7 @@ function dispatchError(arg) {
     subject.error(err);
 }
 
-},{"../AsyncSubject":376,"../Observable":380,"../util/errorObject":702,"../util/tryCatch":715}],521:[function(require,module,exports){
+},{"../AsyncSubject":406,"../Observable":410,"../util/errorObject":732,"../util/tryCatch":745}],551:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25732,7 +33632,7 @@ var RefCountSubscriber = (function (_super) {
     return RefCountSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Observable":380,"../Subject":386,"../Subscriber":388,"../Subscription":389}],522:[function(require,module,exports){
+},{"../Observable":410,"../Subject":416,"../Subscriber":418,"../Subscription":419}],552:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25832,7 +33732,7 @@ var DeferSubscriber = (function (_super) {
     return DeferSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../Observable":380,"../OuterSubscriber":382,"../util/subscribeToResult":713}],523:[function(require,module,exports){
+},{"../Observable":410,"../OuterSubscriber":412,"../util/subscribeToResult":743}],553:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25914,7 +33814,7 @@ var EmptyObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.EmptyObservable = EmptyObservable;
 
-},{"../Observable":380}],524:[function(require,module,exports){
+},{"../Observable":410}],554:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -25997,7 +33897,7 @@ var ErrorObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.ErrorObservable = ErrorObservable;
 
-},{"../Observable":380}],525:[function(require,module,exports){
+},{"../Observable":410}],555:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26110,7 +34010,7 @@ var ForkJoinSubscriber = (function (_super) {
     return ForkJoinSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../Observable":380,"../OuterSubscriber":382,"../util/isArray":703,"../util/subscribeToResult":713,"./EmptyObservable":523}],526:[function(require,module,exports){
+},{"../Observable":410,"../OuterSubscriber":412,"../util/isArray":733,"../util/subscribeToResult":743,"./EmptyObservable":553}],556:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26251,7 +34151,7 @@ var FromEventObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.FromEventObservable = FromEventObservable;
 
-},{"../Observable":380,"../Subscription":389,"../util/errorObject":702,"../util/isFunction":705,"../util/tryCatch":715}],527:[function(require,module,exports){
+},{"../Observable":410,"../Subscription":419,"../util/errorObject":732,"../util/isFunction":735,"../util/tryCatch":745}],557:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26360,7 +34260,7 @@ var FromEventPatternObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.FromEventPatternObservable = FromEventPatternObservable;
 
-},{"../Observable":380,"../Subscription":389}],528:[function(require,module,exports){
+},{"../Observable":410,"../Subscription":419}],558:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26483,7 +34383,7 @@ var FromObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.FromObservable = FromObservable;
 
-},{"../Observable":380,"../operator/observeOn":618,"../symbol/iterator":681,"../symbol/observable":682,"../util/isArray":703,"../util/isPromise":708,"./ArrayLikeObservable":517,"./ArrayObservable":518,"./IteratorObservable":532,"./PromiseObservable":535}],529:[function(require,module,exports){
+},{"../Observable":410,"../operator/observeOn":648,"../symbol/iterator":711,"../symbol/observable":712,"../util/isArray":733,"../util/isPromise":738,"./ArrayLikeObservable":547,"./ArrayObservable":548,"./IteratorObservable":562,"./PromiseObservable":565}],559:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26619,7 +34519,7 @@ var GenerateObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.GenerateObservable = GenerateObservable;
 
-},{"../Observable":380,"../util/isScheduler":709}],530:[function(require,module,exports){
+},{"../Observable":410,"../util/isScheduler":739}],560:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26681,7 +34581,7 @@ var IfSubscriber = (function (_super) {
     return IfSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../Observable":380,"../OuterSubscriber":382,"../util/subscribeToResult":713}],531:[function(require,module,exports){
+},{"../Observable":410,"../OuterSubscriber":412,"../util/subscribeToResult":743}],561:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26770,7 +34670,7 @@ var IntervalObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.IntervalObservable = IntervalObservable;
 
-},{"../Observable":380,"../scheduler/async":679,"../util/isNumeric":706}],532:[function(require,module,exports){
+},{"../Observable":410,"../scheduler/async":709,"../util/isNumeric":736}],562:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26934,7 +34834,7 @@ function sign(value) {
     return valueAsNumber < 0 ? -1 : 1;
 }
 
-},{"../Observable":380,"../symbol/iterator":681,"../util/root":712}],533:[function(require,module,exports){
+},{"../Observable":410,"../symbol/iterator":711,"../util/root":742}],563:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -26994,7 +34894,7 @@ var NeverObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.NeverObservable = NeverObservable;
 
-},{"../Observable":380,"../util/noop":710}],534:[function(require,module,exports){
+},{"../Observable":410,"../util/noop":740}],564:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27080,7 +34980,7 @@ var PairsObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.PairsObservable = PairsObservable;
 
-},{"../Observable":380}],535:[function(require,module,exports){
+},{"../Observable":410}],565:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27202,7 +35102,7 @@ function dispatchError(arg) {
     }
 }
 
-},{"../Observable":380,"../util/root":712}],536:[function(require,module,exports){
+},{"../Observable":410,"../util/root":742}],566:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27299,7 +35199,7 @@ var RangeObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.RangeObservable = RangeObservable;
 
-},{"../Observable":380}],537:[function(require,module,exports){
+},{"../Observable":410}],567:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27358,7 +35258,7 @@ var ScalarObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.ScalarObservable = ScalarObservable;
 
-},{"../Observable":380}],538:[function(require,module,exports){
+},{"../Observable":410}],568:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27410,7 +35310,7 @@ var SubscribeOnObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.SubscribeOnObservable = SubscribeOnObservable;
 
-},{"../Observable":380,"../scheduler/asap":678,"../util/isNumeric":706}],539:[function(require,module,exports){
+},{"../Observable":410,"../scheduler/asap":708,"../util/isNumeric":736}],569:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27518,7 +35418,7 @@ var TimerObservable = (function (_super) {
 }(Observable_1.Observable));
 exports.TimerObservable = TimerObservable;
 
-},{"../Observable":380,"../scheduler/async":679,"../util/isDate":704,"../util/isNumeric":706,"../util/isScheduler":709}],540:[function(require,module,exports){
+},{"../Observable":410,"../scheduler/async":709,"../util/isDate":734,"../util/isNumeric":736,"../util/isScheduler":739}],570:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -27580,17 +35480,17 @@ var UsingSubscriber = (function (_super) {
     return UsingSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../Observable":380,"../OuterSubscriber":382,"../util/subscribeToResult":713}],541:[function(require,module,exports){
+},{"../Observable":410,"../OuterSubscriber":412,"../util/subscribeToResult":743}],571:[function(require,module,exports){
 "use strict";
 var BoundCallbackObservable_1 = require('./BoundCallbackObservable');
 exports.bindCallback = BoundCallbackObservable_1.BoundCallbackObservable.create;
 
-},{"./BoundCallbackObservable":519}],542:[function(require,module,exports){
+},{"./BoundCallbackObservable":549}],572:[function(require,module,exports){
 "use strict";
 var BoundNodeCallbackObservable_1 = require('./BoundNodeCallbackObservable');
 exports.bindNodeCallback = BoundNodeCallbackObservable_1.BoundNodeCallbackObservable.create;
 
-},{"./BoundNodeCallbackObservable":520}],543:[function(require,module,exports){
+},{"./BoundNodeCallbackObservable":550}],573:[function(require,module,exports){
 "use strict";
 var isScheduler_1 = require('../util/isScheduler');
 var isArray_1 = require('../util/isArray');
@@ -27667,17 +35567,17 @@ function combineLatest() {
 }
 exports.combineLatest = combineLatest;
 
-},{"../operator/combineLatest":576,"../util/isArray":703,"../util/isScheduler":709,"./ArrayObservable":518}],544:[function(require,module,exports){
+},{"../operator/combineLatest":606,"../util/isArray":733,"../util/isScheduler":739,"./ArrayObservable":548}],574:[function(require,module,exports){
 "use strict";
 var concat_1 = require('../operator/concat');
 exports.concat = concat_1.concatStatic;
 
-},{"../operator/concat":577}],545:[function(require,module,exports){
+},{"../operator/concat":607}],575:[function(require,module,exports){
 "use strict";
 var DeferObservable_1 = require('./DeferObservable');
 exports.defer = DeferObservable_1.DeferObservable.create;
 
-},{"./DeferObservable":522}],546:[function(require,module,exports){
+},{"./DeferObservable":552}],576:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28086,7 +35986,7 @@ var AjaxTimeoutError = (function (_super) {
 }(AjaxError));
 exports.AjaxTimeoutError = AjaxTimeoutError;
 
-},{"../../Observable":380,"../../Subscriber":388,"../../operator/map":607,"../../util/errorObject":702,"../../util/root":712,"../../util/tryCatch":715}],547:[function(require,module,exports){
+},{"../../Observable":410,"../../Subscriber":418,"../../operator/map":637,"../../util/errorObject":732,"../../util/root":742,"../../util/tryCatch":745}],577:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28303,102 +36203,102 @@ var WebSocketSubject = (function (_super) {
 }(Subject_1.AnonymousSubject));
 exports.WebSocketSubject = WebSocketSubject;
 
-},{"../../Observable":380,"../../ReplaySubject":383,"../../Subject":386,"../../Subscriber":388,"../../Subscription":389,"../../util/assign":701,"../../util/errorObject":702,"../../util/root":712,"../../util/tryCatch":715}],548:[function(require,module,exports){
+},{"../../Observable":410,"../../ReplaySubject":413,"../../Subject":416,"../../Subscriber":418,"../../Subscription":419,"../../util/assign":731,"../../util/errorObject":732,"../../util/root":742,"../../util/tryCatch":745}],578:[function(require,module,exports){
 "use strict";
 var AjaxObservable_1 = require('./AjaxObservable');
 exports.ajax = AjaxObservable_1.AjaxObservable.create;
 
-},{"./AjaxObservable":546}],549:[function(require,module,exports){
+},{"./AjaxObservable":576}],579:[function(require,module,exports){
 "use strict";
 var WebSocketSubject_1 = require('./WebSocketSubject');
 exports.webSocket = WebSocketSubject_1.WebSocketSubject.create;
 
-},{"./WebSocketSubject":547}],550:[function(require,module,exports){
+},{"./WebSocketSubject":577}],580:[function(require,module,exports){
 "use strict";
 var EmptyObservable_1 = require('./EmptyObservable');
 exports.empty = EmptyObservable_1.EmptyObservable.create;
 
-},{"./EmptyObservable":523}],551:[function(require,module,exports){
+},{"./EmptyObservable":553}],581:[function(require,module,exports){
 "use strict";
 var ForkJoinObservable_1 = require('./ForkJoinObservable');
 exports.forkJoin = ForkJoinObservable_1.ForkJoinObservable.create;
 
-},{"./ForkJoinObservable":525}],552:[function(require,module,exports){
+},{"./ForkJoinObservable":555}],582:[function(require,module,exports){
 "use strict";
 var FromObservable_1 = require('./FromObservable');
 exports.from = FromObservable_1.FromObservable.create;
 
-},{"./FromObservable":528}],553:[function(require,module,exports){
+},{"./FromObservable":558}],583:[function(require,module,exports){
 "use strict";
 var FromEventObservable_1 = require('./FromEventObservable');
 exports.fromEvent = FromEventObservable_1.FromEventObservable.create;
 
-},{"./FromEventObservable":526}],554:[function(require,module,exports){
+},{"./FromEventObservable":556}],584:[function(require,module,exports){
 "use strict";
 var FromEventPatternObservable_1 = require('./FromEventPatternObservable');
 exports.fromEventPattern = FromEventPatternObservable_1.FromEventPatternObservable.create;
 
-},{"./FromEventPatternObservable":527}],555:[function(require,module,exports){
+},{"./FromEventPatternObservable":557}],585:[function(require,module,exports){
 "use strict";
 var PromiseObservable_1 = require('./PromiseObservable');
 exports.fromPromise = PromiseObservable_1.PromiseObservable.create;
 
-},{"./PromiseObservable":535}],556:[function(require,module,exports){
+},{"./PromiseObservable":565}],586:[function(require,module,exports){
 "use strict";
 var IfObservable_1 = require('./IfObservable');
 exports._if = IfObservable_1.IfObservable.create;
 
-},{"./IfObservable":530}],557:[function(require,module,exports){
+},{"./IfObservable":560}],587:[function(require,module,exports){
 "use strict";
 var IntervalObservable_1 = require('./IntervalObservable');
 exports.interval = IntervalObservable_1.IntervalObservable.create;
 
-},{"./IntervalObservable":531}],558:[function(require,module,exports){
+},{"./IntervalObservable":561}],588:[function(require,module,exports){
 "use strict";
 var merge_1 = require('../operator/merge');
 exports.merge = merge_1.mergeStatic;
 
-},{"../operator/merge":611}],559:[function(require,module,exports){
+},{"../operator/merge":641}],589:[function(require,module,exports){
 "use strict";
 var NeverObservable_1 = require('./NeverObservable');
 exports.never = NeverObservable_1.NeverObservable.create;
 
-},{"./NeverObservable":533}],560:[function(require,module,exports){
+},{"./NeverObservable":563}],590:[function(require,module,exports){
 "use strict";
 var ArrayObservable_1 = require('./ArrayObservable');
 exports.of = ArrayObservable_1.ArrayObservable.of;
 
-},{"./ArrayObservable":518}],561:[function(require,module,exports){
+},{"./ArrayObservable":548}],591:[function(require,module,exports){
 "use strict";
 var PairsObservable_1 = require('./PairsObservable');
 exports.pairs = PairsObservable_1.PairsObservable.create;
 
-},{"./PairsObservable":534}],562:[function(require,module,exports){
+},{"./PairsObservable":564}],592:[function(require,module,exports){
 "use strict";
 var RangeObservable_1 = require('./RangeObservable');
 exports.range = RangeObservable_1.RangeObservable.create;
 
-},{"./RangeObservable":536}],563:[function(require,module,exports){
+},{"./RangeObservable":566}],593:[function(require,module,exports){
 "use strict";
 var ErrorObservable_1 = require('./ErrorObservable');
 exports._throw = ErrorObservable_1.ErrorObservable.create;
 
-},{"./ErrorObservable":524}],564:[function(require,module,exports){
+},{"./ErrorObservable":554}],594:[function(require,module,exports){
 "use strict";
 var TimerObservable_1 = require('./TimerObservable');
 exports.timer = TimerObservable_1.TimerObservable.create;
 
-},{"./TimerObservable":539}],565:[function(require,module,exports){
+},{"./TimerObservable":569}],595:[function(require,module,exports){
 "use strict";
 var UsingObservable_1 = require('./UsingObservable');
 exports.using = UsingObservable_1.UsingObservable.create;
 
-},{"./UsingObservable":540}],566:[function(require,module,exports){
+},{"./UsingObservable":570}],596:[function(require,module,exports){
 "use strict";
 var zip_1 = require('../operator/zip');
 exports.zip = zip_1.zipStatic;
 
-},{"../operator/zip":665}],567:[function(require,module,exports){
+},{"../operator/zip":695}],597:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28509,7 +36409,7 @@ var AuditSubscriber = (function (_super) {
     return AuditSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],568:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],598:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28614,7 +36514,7 @@ function dispatchNext(subscriber) {
     subscriber.clearThrottle();
 }
 
-},{"../Subscriber":388,"../scheduler/async":679}],569:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],599:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28691,7 +36591,7 @@ var BufferSubscriber = (function (_super) {
     return BufferSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],570:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],600:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28799,7 +36699,7 @@ var BufferCountSubscriber = (function (_super) {
     return BufferCountSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],571:[function(require,module,exports){
+},{"../Subscriber":418}],601:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -28999,7 +36899,7 @@ function dispatchBufferClose(arg) {
     subscriber.closeContext(context);
 }
 
-},{"../Subscriber":388,"../scheduler/async":679,"../util/isScheduler":709}],572:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709,"../util/isScheduler":739}],602:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29152,7 +37052,7 @@ var BufferToggleSubscriber = (function (_super) {
     return BufferToggleSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subscription":389,"../util/subscribeToResult":713}],573:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subscription":419,"../util/subscribeToResult":743}],603:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29275,7 +37175,7 @@ var BufferWhenSubscriber = (function (_super) {
     return BufferWhenSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subscription":389,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],574:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subscription":419,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],604:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29342,7 +37242,7 @@ var CatchSubscriber = (function (_super) {
     return CatchSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],575:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],605:[function(require,module,exports){
 "use strict";
 var combineLatest_1 = require('./combineLatest');
 /**
@@ -29390,7 +37290,7 @@ function combineAll(project) {
 }
 exports.combineAll = combineAll;
 
-},{"./combineLatest":576}],576:[function(require,module,exports){
+},{"./combineLatest":606}],606:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29543,7 +37443,7 @@ var CombineLatestSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.CombineLatestSubscriber = CombineLatestSubscriber;
 
-},{"../OuterSubscriber":382,"../observable/ArrayObservable":518,"../util/isArray":703,"../util/subscribeToResult":713}],577:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../observable/ArrayObservable":548,"../util/isArray":733,"../util/subscribeToResult":743}],607:[function(require,module,exports){
 "use strict";
 var isScheduler_1 = require('../util/isScheduler');
 var ArrayObservable_1 = require('../observable/ArrayObservable');
@@ -29674,7 +37574,7 @@ function concatStatic() {
 }
 exports.concatStatic = concatStatic;
 
-},{"../observable/ArrayObservable":518,"../util/isScheduler":709,"./mergeAll":612}],578:[function(require,module,exports){
+},{"../observable/ArrayObservable":548,"../util/isScheduler":739,"./mergeAll":642}],608:[function(require,module,exports){
 "use strict";
 var mergeAll_1 = require('./mergeAll');
 /* tslint:disable:max-line-length */
@@ -29731,7 +37631,7 @@ function concatAll() {
 }
 exports.concatAll = concatAll;
 
-},{"./mergeAll":612}],579:[function(require,module,exports){
+},{"./mergeAll":642}],609:[function(require,module,exports){
 "use strict";
 var mergeMap_1 = require('./mergeMap');
 /* tslint:disable:max-line-length */
@@ -29802,7 +37702,7 @@ function concatMap(project, resultSelector) {
 }
 exports.concatMap = concatMap;
 
-},{"./mergeMap":613}],580:[function(require,module,exports){
+},{"./mergeMap":643}],610:[function(require,module,exports){
 "use strict";
 var mergeMapTo_1 = require('./mergeMapTo');
 /* tslint:disable:max-line-length */
@@ -29867,7 +37767,7 @@ function concatMapTo(innerObservable, resultSelector) {
 }
 exports.concatMapTo = concatMapTo;
 
-},{"./mergeMapTo":614}],581:[function(require,module,exports){
+},{"./mergeMapTo":644}],611:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -29979,7 +37879,7 @@ var CountSubscriber = (function (_super) {
     return CountSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],582:[function(require,module,exports){
+},{"../Subscriber":418}],612:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30107,7 +38007,7 @@ var DebounceSubscriber = (function (_super) {
     return DebounceSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],583:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],613:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30224,7 +38124,7 @@ function dispatchNext(subscriber) {
     subscriber.debouncedNext();
 }
 
-},{"../Subscriber":388,"../scheduler/async":679}],584:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],614:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30302,7 +38202,7 @@ var DefaultIfEmptySubscriber = (function (_super) {
     return DefaultIfEmptySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],585:[function(require,module,exports){
+},{"../Subscriber":418}],615:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30438,7 +38338,7 @@ var DelayMessage = (function () {
     return DelayMessage;
 }());
 
-},{"../Notification":379,"../Subscriber":388,"../scheduler/async":679,"../util/isDate":704}],586:[function(require,module,exports){
+},{"../Notification":409,"../Subscriber":418,"../scheduler/async":709,"../util/isDate":734}],616:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30629,7 +38529,7 @@ var SubscriptionDelaySubscriber = (function (_super) {
     return SubscriptionDelaySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Observable":380,"../OuterSubscriber":382,"../Subscriber":388,"../util/subscribeToResult":713}],587:[function(require,module,exports){
+},{"../Observable":410,"../OuterSubscriber":412,"../Subscriber":418,"../util/subscribeToResult":743}],617:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30705,7 +38605,7 @@ var DeMaterializeSubscriber = (function (_super) {
     return DeMaterializeSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],588:[function(require,module,exports){
+},{"../Subscriber":418}],618:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30826,7 +38726,7 @@ var DistinctSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.DistinctSubscriber = DistinctSubscriber;
 
-},{"../OuterSubscriber":382,"../util/Set":697,"../util/subscribeToResult":713}],589:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/Set":727,"../util/subscribeToResult":743}],619:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -30935,7 +38835,7 @@ var DistinctUntilChangedSubscriber = (function (_super) {
     return DistinctUntilChangedSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/errorObject":702,"../util/tryCatch":715}],590:[function(require,module,exports){
+},{"../Subscriber":418,"../util/errorObject":732,"../util/tryCatch":745}],620:[function(require,module,exports){
 "use strict";
 var distinctUntilChanged_1 = require('./distinctUntilChanged');
 /* tslint:disable:max-line-length */
@@ -31006,7 +38906,7 @@ function distinctUntilKeyChanged(key, compare) {
 }
 exports.distinctUntilKeyChanged = distinctUntilKeyChanged;
 
-},{"./distinctUntilChanged":589}],591:[function(require,module,exports){
+},{"./distinctUntilChanged":619}],621:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31120,7 +39020,7 @@ var DoSubscriber = (function (_super) {
     return DoSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],592:[function(require,module,exports){
+},{"../Subscriber":418}],622:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31221,7 +39121,7 @@ var ElementAtSubscriber = (function (_super) {
     return ElementAtSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/ArgumentOutOfRangeError":690}],593:[function(require,module,exports){
+},{"../Subscriber":418,"../util/ArgumentOutOfRangeError":720}],623:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31296,7 +39196,7 @@ var EverySubscriber = (function (_super) {
     return EverySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],594:[function(require,module,exports){
+},{"../Subscriber":418}],624:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31387,7 +39287,7 @@ var SwitchFirstSubscriber = (function (_super) {
     return SwitchFirstSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],595:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],625:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31526,7 +39426,7 @@ var SwitchFirstMapSubscriber = (function (_super) {
     return SwitchFirstMapSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],596:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],626:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31678,7 +39578,7 @@ var ExpandSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.ExpandSubscriber = ExpandSubscriber;
 
-},{"../OuterSubscriber":382,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],597:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],627:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31772,7 +39672,7 @@ var FilterSubscriber = (function (_super) {
     return FilterSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],598:[function(require,module,exports){
+},{"../Subscriber":418}],628:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31816,7 +39716,7 @@ var FinallySubscriber = (function (_super) {
     return FinallySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../Subscription":389}],599:[function(require,module,exports){
+},{"../Subscriber":418,"../Subscription":419}],629:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -31918,7 +39818,7 @@ var FindValueSubscriber = (function (_super) {
 }(Subscriber_1.Subscriber));
 exports.FindValueSubscriber = FindValueSubscriber;
 
-},{"../Subscriber":388}],600:[function(require,module,exports){
+},{"../Subscriber":418}],630:[function(require,module,exports){
 "use strict";
 var find_1 = require('./find');
 /**
@@ -31960,7 +39860,7 @@ function findIndex(predicate, thisArg) {
 }
 exports.findIndex = findIndex;
 
-},{"./find":599}],601:[function(require,module,exports){
+},{"./find":629}],631:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32113,7 +40013,7 @@ var FirstSubscriber = (function (_super) {
     return FirstSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/EmptyError":691}],602:[function(require,module,exports){
+},{"../Subscriber":418,"../util/EmptyError":721}],632:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32349,7 +40249,7 @@ var InnerRefCountSubscription = (function (_super) {
     return InnerRefCountSubscription;
 }(Subscription_1.Subscription));
 
-},{"../Observable":380,"../Subject":386,"../Subscriber":388,"../Subscription":389,"../util/FastMap":692,"../util/Map":694}],603:[function(require,module,exports){
+},{"../Observable":410,"../Subject":416,"../Subscriber":418,"../Subscription":419,"../util/FastMap":722,"../util/Map":724}],633:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32397,7 +40297,7 @@ var IgnoreElementsSubscriber = (function (_super) {
     return IgnoreElementsSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/noop":710}],604:[function(require,module,exports){
+},{"../Subscriber":418,"../util/noop":740}],634:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32450,7 +40350,7 @@ var IsEmptySubscriber = (function (_super) {
     return IsEmptySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],605:[function(require,module,exports){
+},{"../Subscriber":418}],635:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32570,7 +40470,7 @@ var LastSubscriber = (function (_super) {
     return LastSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/EmptyError":691}],606:[function(require,module,exports){
+},{"../Subscriber":418,"../util/EmptyError":721}],636:[function(require,module,exports){
 "use strict";
 /**
  * @param func
@@ -32583,7 +40483,7 @@ function letProto(func) {
 }
 exports.letProto = letProto;
 
-},{}],607:[function(require,module,exports){
+},{}],637:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32671,7 +40571,7 @@ var MapSubscriber = (function (_super) {
     return MapSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],608:[function(require,module,exports){
+},{"../Subscriber":418}],638:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32735,7 +40635,7 @@ var MapToSubscriber = (function (_super) {
     return MapToSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],609:[function(require,module,exports){
+},{"../Subscriber":418}],639:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -32826,7 +40726,7 @@ var MaterializeSubscriber = (function (_super) {
     return MaterializeSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Notification":379,"../Subscriber":388}],610:[function(require,module,exports){
+},{"../Notification":409,"../Subscriber":418}],640:[function(require,module,exports){
 "use strict";
 var reduce_1 = require('./reduce');
 /**
@@ -32868,7 +40768,7 @@ function max(comparer) {
 }
 exports.max = max;
 
-},{"./reduce":628}],611:[function(require,module,exports){
+},{"./reduce":658}],641:[function(require,module,exports){
 "use strict";
 var ArrayObservable_1 = require('../observable/ArrayObservable');
 var mergeAll_1 = require('./mergeAll');
@@ -33013,7 +40913,7 @@ function mergeStatic() {
 }
 exports.mergeStatic = mergeStatic;
 
-},{"../observable/ArrayObservable":518,"../util/isScheduler":709,"./mergeAll":612}],612:[function(require,module,exports){
+},{"../observable/ArrayObservable":548,"../util/isScheduler":739,"./mergeAll":642}],642:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33125,7 +41025,7 @@ var MergeAllSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.MergeAllSubscriber = MergeAllSubscriber;
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],613:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],643:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33297,7 +41197,7 @@ var MergeMapSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.MergeMapSubscriber = MergeMapSubscriber;
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],614:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],644:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33453,7 +41353,7 @@ var MergeMapToSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.MergeMapToSubscriber = MergeMapToSubscriber;
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],615:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],645:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33560,7 +41460,7 @@ var MergeScanSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.MergeScanSubscriber = MergeScanSubscriber;
 
-},{"../OuterSubscriber":382,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],616:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],646:[function(require,module,exports){
 "use strict";
 var reduce_1 = require('./reduce');
 /**
@@ -33601,7 +41501,7 @@ function min(comparer) {
 }
 exports.min = min;
 
-},{"./reduce":628}],617:[function(require,module,exports){
+},{"./reduce":658}],647:[function(require,module,exports){
 "use strict";
 var ConnectableObservable_1 = require('../observable/ConnectableObservable');
 /* tslint:disable:max-line-length */
@@ -33659,7 +41559,7 @@ var MulticastOperator = (function () {
 }());
 exports.MulticastOperator = MulticastOperator;
 
-},{"../observable/ConnectableObservable":521}],618:[function(require,module,exports){
+},{"../observable/ConnectableObservable":551}],648:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33739,7 +41639,7 @@ var ObserveOnMessage = (function () {
 }());
 exports.ObserveOnMessage = ObserveOnMessage;
 
-},{"../Notification":379,"../Subscriber":388}],619:[function(require,module,exports){
+},{"../Notification":409,"../Subscriber":418}],649:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33816,7 +41716,7 @@ var OnErrorResumeNextSubscriber = (function (_super) {
     return OnErrorResumeNextSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../observable/FromObservable":528,"../util/isArray":703,"../util/subscribeToResult":713}],620:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../observable/FromObservable":558,"../util/isArray":733,"../util/subscribeToResult":743}],650:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -33894,7 +41794,7 @@ var PairwiseSubscriber = (function (_super) {
     return PairwiseSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],621:[function(require,module,exports){
+},{"../Subscriber":418}],651:[function(require,module,exports){
 "use strict";
 var not_1 = require('../util/not');
 var filter_1 = require('./filter');
@@ -33947,7 +41847,7 @@ function partition(predicate, thisArg) {
 }
 exports.partition = partition;
 
-},{"../util/not":711,"./filter":597}],622:[function(require,module,exports){
+},{"../util/not":741,"./filter":627}],652:[function(require,module,exports){
 "use strict";
 var map_1 = require('./map');
 /**
@@ -34006,7 +41906,7 @@ function plucker(props, length) {
     return mapper;
 }
 
-},{"./map":607}],623:[function(require,module,exports){
+},{"./map":637}],653:[function(require,module,exports){
 "use strict";
 var Subject_1 = require('../Subject');
 var multicast_1 = require('./multicast');
@@ -34030,7 +41930,7 @@ function publish(selector) {
 }
 exports.publish = publish;
 
-},{"../Subject":386,"./multicast":617}],624:[function(require,module,exports){
+},{"../Subject":416,"./multicast":647}],654:[function(require,module,exports){
 "use strict";
 var BehaviorSubject_1 = require('../BehaviorSubject');
 var multicast_1 = require('./multicast');
@@ -34045,7 +41945,7 @@ function publishBehavior(value) {
 }
 exports.publishBehavior = publishBehavior;
 
-},{"../BehaviorSubject":377,"./multicast":617}],625:[function(require,module,exports){
+},{"../BehaviorSubject":407,"./multicast":647}],655:[function(require,module,exports){
 "use strict";
 var AsyncSubject_1 = require('../AsyncSubject');
 var multicast_1 = require('./multicast');
@@ -34059,7 +41959,7 @@ function publishLast() {
 }
 exports.publishLast = publishLast;
 
-},{"../AsyncSubject":376,"./multicast":617}],626:[function(require,module,exports){
+},{"../AsyncSubject":406,"./multicast":647}],656:[function(require,module,exports){
 "use strict";
 var ReplaySubject_1 = require('../ReplaySubject');
 var multicast_1 = require('./multicast');
@@ -34078,7 +41978,7 @@ function publishReplay(bufferSize, windowTime, scheduler) {
 }
 exports.publishReplay = publishReplay;
 
-},{"../ReplaySubject":383,"./multicast":617}],627:[function(require,module,exports){
+},{"../ReplaySubject":413,"./multicast":647}],657:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34190,7 +42090,7 @@ var RaceSubscriber = (function (_super) {
 }(OuterSubscriber_1.OuterSubscriber));
 exports.RaceSubscriber = RaceSubscriber;
 
-},{"../OuterSubscriber":382,"../observable/ArrayObservable":518,"../util/isArray":703,"../util/subscribeToResult":713}],628:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../observable/ArrayObservable":548,"../util/isArray":733,"../util/subscribeToResult":743}],658:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34314,7 +42214,7 @@ var ReduceSubscriber = (function (_super) {
 }(Subscriber_1.Subscriber));
 exports.ReduceSubscriber = ReduceSubscriber;
 
-},{"../Subscriber":388}],629:[function(require,module,exports){
+},{"../Subscriber":418}],659:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34390,7 +42290,7 @@ var RepeatSubscriber = (function (_super) {
     return RepeatSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../observable/EmptyObservable":523}],630:[function(require,module,exports){
+},{"../Subscriber":418,"../observable/EmptyObservable":553}],660:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34497,7 +42397,7 @@ var RepeatWhenSubscriber = (function (_super) {
     return RepeatWhenSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subject":386,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],631:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subject":416,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],661:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34567,7 +42467,7 @@ var RetrySubscriber = (function (_super) {
     return RetrySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],632:[function(require,module,exports){
+},{"../Subscriber":418}],662:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34674,7 +42574,7 @@ var RetryWhenSubscriber = (function (_super) {
     return RetryWhenSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subject":386,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],633:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subject":416,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],663:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34763,7 +42663,7 @@ var SampleSubscriber = (function (_super) {
     return SampleSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],634:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],664:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34855,7 +42755,7 @@ function dispatchNotification(state) {
     this.schedule(state, period);
 }
 
-},{"../Subscriber":388,"../scheduler/async":679}],635:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],665:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -34975,7 +42875,7 @@ var ScanSubscriber = (function (_super) {
     return ScanSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],636:[function(require,module,exports){
+},{"../Subscriber":418}],666:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35140,7 +43040,7 @@ var SequenceEqualCompareToSubscriber = (function (_super) {
     return SequenceEqualCompareToSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/errorObject":702,"../util/tryCatch":715}],637:[function(require,module,exports){
+},{"../Subscriber":418,"../util/errorObject":732,"../util/tryCatch":745}],667:[function(require,module,exports){
 "use strict";
 var multicast_1 = require('./multicast');
 var Subject_1 = require('../Subject');
@@ -35165,7 +43065,7 @@ function share() {
 exports.share = share;
 ;
 
-},{"../Subject":386,"./multicast":617}],638:[function(require,module,exports){
+},{"../Subject":416,"./multicast":647}],668:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35261,7 +43161,7 @@ var SingleSubscriber = (function (_super) {
     return SingleSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../util/EmptyError":691}],639:[function(require,module,exports){
+},{"../Subscriber":418,"../util/EmptyError":721}],669:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35313,7 +43213,7 @@ var SkipSubscriber = (function (_super) {
     return SkipSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],640:[function(require,module,exports){
+},{"../Subscriber":418}],670:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35385,7 +43285,7 @@ var SkipUntilSubscriber = (function (_super) {
     return SkipUntilSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],641:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],671:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35452,7 +43352,7 @@ var SkipWhileSubscriber = (function (_super) {
     return SkipWhileSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],642:[function(require,module,exports){
+},{"../Subscriber":418}],672:[function(require,module,exports){
 "use strict";
 var ArrayObservable_1 = require('../observable/ArrayObservable');
 var ScalarObservable_1 = require('../observable/ScalarObservable');
@@ -35497,7 +43397,7 @@ function startWith() {
 }
 exports.startWith = startWith;
 
-},{"../observable/ArrayObservable":518,"../observable/EmptyObservable":523,"../observable/ScalarObservable":537,"../util/isScheduler":709,"./concat":577}],643:[function(require,module,exports){
+},{"../observable/ArrayObservable":548,"../observable/EmptyObservable":553,"../observable/ScalarObservable":567,"../util/isScheduler":739,"./concat":607}],673:[function(require,module,exports){
 "use strict";
 var SubscribeOnObservable_1 = require('../observable/SubscribeOnObservable');
 /**
@@ -35527,7 +43427,7 @@ var SubscribeOnOperator = (function () {
     return SubscribeOnOperator;
 }());
 
-},{"../observable/SubscribeOnObservable":538}],644:[function(require,module,exports){
+},{"../observable/SubscribeOnObservable":568}],674:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35636,7 +43536,7 @@ var SwitchSubscriber = (function (_super) {
     return SwitchSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],645:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],675:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35777,7 +43677,7 @@ var SwitchMapSubscriber = (function (_super) {
     return SwitchMapSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],646:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],676:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35905,7 +43805,7 @@ var SwitchMapToSubscriber = (function (_super) {
     return SwitchMapToSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],647:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],677:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -35995,7 +43895,7 @@ var TakeSubscriber = (function (_super) {
     return TakeSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../observable/EmptyObservable":523,"../util/ArgumentOutOfRangeError":690}],648:[function(require,module,exports){
+},{"../Subscriber":418,"../observable/EmptyObservable":553,"../util/ArgumentOutOfRangeError":720}],678:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36103,7 +44003,7 @@ var TakeLastSubscriber = (function (_super) {
     return TakeLastSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../observable/EmptyObservable":523,"../util/ArgumentOutOfRangeError":690}],649:[function(require,module,exports){
+},{"../Subscriber":418,"../observable/EmptyObservable":553,"../util/ArgumentOutOfRangeError":720}],679:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36179,7 +44079,7 @@ var TakeUntilSubscriber = (function (_super) {
     return TakeUntilSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],650:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],680:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36272,7 +44172,7 @@ var TakeWhileSubscriber = (function (_super) {
     return TakeWhileSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],651:[function(require,module,exports){
+},{"../Subscriber":418}],681:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36381,7 +44281,7 @@ var ThrottleSubscriber = (function (_super) {
     return ThrottleSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],652:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],682:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36477,7 +44377,7 @@ function dispatchNext(arg) {
     subscriber.clearThrottle();
 }
 
-},{"../Subscriber":388,"../scheduler/async":679}],653:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],683:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36537,7 +44437,7 @@ var TimeIntervalSubscriber = (function (_super) {
     return TimeIntervalSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../scheduler/async":679}],654:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],684:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36639,7 +44539,7 @@ var TimeoutSubscriber = (function (_super) {
     return TimeoutSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../scheduler/async":679,"../util/TimeoutError":698,"../util/isDate":704}],655:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709,"../util/TimeoutError":728,"../util/isDate":734}],685:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36751,7 +44651,7 @@ var TimeoutWithSubscriber = (function (_super) {
     return TimeoutWithSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../scheduler/async":679,"../util/isDate":704,"../util/subscribeToResult":713}],656:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../scheduler/async":709,"../util/isDate":734,"../util/subscribeToResult":743}],686:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36802,7 +44702,7 @@ var TimestampSubscriber = (function (_super) {
     return TimestampSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388,"../scheduler/async":679}],657:[function(require,module,exports){
+},{"../Subscriber":418,"../scheduler/async":709}],687:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36848,7 +44748,7 @@ var ToArraySubscriber = (function (_super) {
     return ToArraySubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subscriber":388}],658:[function(require,module,exports){
+},{"../Subscriber":418}],688:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 /* tslint:disable:max-line-length */
@@ -36878,7 +44778,7 @@ function toPromise(PromiseCtor) {
 }
 exports.toPromise = toPromise;
 
-},{"../util/root":712}],659:[function(require,module,exports){
+},{"../util/root":742}],689:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -36989,7 +44889,7 @@ var WindowSubscriber = (function (_super) {
     return WindowSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subject":386,"../util/subscribeToResult":713}],660:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subject":416,"../util/subscribeToResult":743}],690:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37121,7 +45021,7 @@ var WindowCountSubscriber = (function (_super) {
     return WindowCountSubscriber;
 }(Subscriber_1.Subscriber));
 
-},{"../Subject":386,"../Subscriber":388}],661:[function(require,module,exports){
+},{"../Subject":416,"../Subscriber":418}],691:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37291,7 +45191,7 @@ function dispatchWindowClose(arg) {
     subscriber.closeWindow(window);
 }
 
-},{"../Subject":386,"../Subscriber":388,"../scheduler/async":679}],662:[function(require,module,exports){
+},{"../Subject":416,"../Subscriber":418,"../scheduler/async":709}],692:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37472,7 +45372,7 @@ var WindowToggleSubscriber = (function (_super) {
     return WindowToggleSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subject":386,"../Subscription":389,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],663:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subject":416,"../Subscription":419,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],693:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37600,7 +45500,7 @@ var WindowSubscriber = (function (_super) {
     return WindowSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subject":386,"../util/errorObject":702,"../util/subscribeToResult":713,"../util/tryCatch":715}],664:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subject":416,"../util/errorObject":732,"../util/subscribeToResult":743,"../util/tryCatch":745}],694:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -37731,7 +45631,7 @@ var WithLatestFromSubscriber = (function (_super) {
     return WithLatestFromSubscriber;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../util/subscribeToResult":713}],665:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../util/subscribeToResult":743}],695:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38007,7 +45907,7 @@ var ZipBufferIterator = (function (_super) {
     return ZipBufferIterator;
 }(OuterSubscriber_1.OuterSubscriber));
 
-},{"../OuterSubscriber":382,"../Subscriber":388,"../observable/ArrayObservable":518,"../symbol/iterator":681,"../util/isArray":703,"../util/subscribeToResult":713}],666:[function(require,module,exports){
+},{"../OuterSubscriber":412,"../Subscriber":418,"../observable/ArrayObservable":548,"../symbol/iterator":711,"../util/isArray":733,"../util/subscribeToResult":743}],696:[function(require,module,exports){
 "use strict";
 var zip_1 = require('./zip');
 /**
@@ -38021,7 +45921,7 @@ function zipAll(project) {
 }
 exports.zipAll = zipAll;
 
-},{"./zip":665}],667:[function(require,module,exports){
+},{"./zip":695}],697:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38066,7 +45966,7 @@ var Action = (function (_super) {
 }(Subscription_1.Subscription));
 exports.Action = Action;
 
-},{"../Subscription":389}],668:[function(require,module,exports){
+},{"../Subscription":419}],698:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38122,7 +46022,7 @@ var AnimationFrameAction = (function (_super) {
 }(AsyncAction_1.AsyncAction));
 exports.AnimationFrameAction = AnimationFrameAction;
 
-},{"../util/AnimationFrame":689,"./AsyncAction":672}],669:[function(require,module,exports){
+},{"../util/AnimationFrame":719,"./AsyncAction":702}],699:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38160,7 +46060,7 @@ var AnimationFrameScheduler = (function (_super) {
 }(AsyncScheduler_1.AsyncScheduler));
 exports.AnimationFrameScheduler = AnimationFrameScheduler;
 
-},{"./AsyncScheduler":673}],670:[function(require,module,exports){
+},{"./AsyncScheduler":703}],700:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38216,7 +46116,7 @@ var AsapAction = (function (_super) {
 }(AsyncAction_1.AsyncAction));
 exports.AsapAction = AsapAction;
 
-},{"../util/Immediate":693,"./AsyncAction":672}],671:[function(require,module,exports){
+},{"../util/Immediate":723,"./AsyncAction":702}],701:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38254,7 +46154,7 @@ var AsapScheduler = (function (_super) {
 }(AsyncScheduler_1.AsyncScheduler));
 exports.AsapScheduler = AsapScheduler;
 
-},{"./AsyncScheduler":673}],672:[function(require,module,exports){
+},{"./AsyncScheduler":703}],702:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38397,7 +46297,7 @@ var AsyncAction = (function (_super) {
 }(Action_1.Action));
 exports.AsyncAction = AsyncAction;
 
-},{"../util/root":712,"./Action":667}],673:[function(require,module,exports){
+},{"../util/root":742,"./Action":697}],703:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38449,7 +46349,7 @@ var AsyncScheduler = (function (_super) {
 }(Scheduler_1.Scheduler));
 exports.AsyncScheduler = AsyncScheduler;
 
-},{"../Scheduler":385}],674:[function(require,module,exports){
+},{"../Scheduler":415}],704:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38499,7 +46399,7 @@ var QueueAction = (function (_super) {
 }(AsyncAction_1.AsyncAction));
 exports.QueueAction = QueueAction;
 
-},{"./AsyncAction":672}],675:[function(require,module,exports){
+},{"./AsyncAction":702}],705:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38516,7 +46416,7 @@ var QueueScheduler = (function (_super) {
 }(AsyncScheduler_1.AsyncScheduler));
 exports.QueueScheduler = QueueScheduler;
 
-},{"./AsyncScheduler":673}],676:[function(require,module,exports){
+},{"./AsyncScheduler":703}],706:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38623,31 +46523,31 @@ var VirtualAction = (function (_super) {
 }(AsyncAction_1.AsyncAction));
 exports.VirtualAction = VirtualAction;
 
-},{"./AsyncAction":672,"./AsyncScheduler":673}],677:[function(require,module,exports){
+},{"./AsyncAction":702,"./AsyncScheduler":703}],707:[function(require,module,exports){
 "use strict";
 var AnimationFrameAction_1 = require('./AnimationFrameAction');
 var AnimationFrameScheduler_1 = require('./AnimationFrameScheduler');
 exports.animationFrame = new AnimationFrameScheduler_1.AnimationFrameScheduler(AnimationFrameAction_1.AnimationFrameAction);
 
-},{"./AnimationFrameAction":668,"./AnimationFrameScheduler":669}],678:[function(require,module,exports){
+},{"./AnimationFrameAction":698,"./AnimationFrameScheduler":699}],708:[function(require,module,exports){
 "use strict";
 var AsapAction_1 = require('./AsapAction');
 var AsapScheduler_1 = require('./AsapScheduler');
 exports.asap = new AsapScheduler_1.AsapScheduler(AsapAction_1.AsapAction);
 
-},{"./AsapAction":670,"./AsapScheduler":671}],679:[function(require,module,exports){
+},{"./AsapAction":700,"./AsapScheduler":701}],709:[function(require,module,exports){
 "use strict";
 var AsyncAction_1 = require('./AsyncAction');
 var AsyncScheduler_1 = require('./AsyncScheduler');
 exports.async = new AsyncScheduler_1.AsyncScheduler(AsyncAction_1.AsyncAction);
 
-},{"./AsyncAction":672,"./AsyncScheduler":673}],680:[function(require,module,exports){
+},{"./AsyncAction":702,"./AsyncScheduler":703}],710:[function(require,module,exports){
 "use strict";
 var QueueAction_1 = require('./QueueAction');
 var QueueScheduler_1 = require('./QueueScheduler');
 exports.queue = new QueueScheduler_1.QueueScheduler(QueueAction_1.QueueAction);
 
-},{"./QueueAction":674,"./QueueScheduler":675}],681:[function(require,module,exports){
+},{"./QueueAction":704,"./QueueScheduler":705}],711:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 function symbolIteratorPonyfill(root) {
@@ -38682,7 +46582,7 @@ function symbolIteratorPonyfill(root) {
 exports.symbolIteratorPonyfill = symbolIteratorPonyfill;
 exports.$$iterator = symbolIteratorPonyfill(root_1.root);
 
-},{"../util/root":712}],682:[function(require,module,exports){
+},{"../util/root":742}],712:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 function getSymbolObservable(context) {
@@ -38705,14 +46605,14 @@ function getSymbolObservable(context) {
 exports.getSymbolObservable = getSymbolObservable;
 exports.$$observable = getSymbolObservable(root_1.root);
 
-},{"../util/root":712}],683:[function(require,module,exports){
+},{"../util/root":742}],713:[function(require,module,exports){
 "use strict";
 var root_1 = require('../util/root');
 var Symbol = root_1.root.Symbol;
 exports.$$rxSubscriber = (typeof Symbol === 'function' && typeof Symbol.for === 'function') ?
     Symbol.for('rxSubscriber') : '@@rxSubscriber';
 
-},{"../util/root":712}],684:[function(require,module,exports){
+},{"../util/root":742}],714:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38759,7 +46659,7 @@ var ColdObservable = (function (_super) {
 exports.ColdObservable = ColdObservable;
 applyMixins_1.applyMixins(ColdObservable, [SubscriptionLoggable_1.SubscriptionLoggable]);
 
-},{"../Observable":380,"../Subscription":389,"../util/applyMixins":700,"./SubscriptionLoggable":687}],685:[function(require,module,exports){
+},{"../Observable":410,"../Subscription":419,"../util/applyMixins":730,"./SubscriptionLoggable":717}],715:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -38808,7 +46708,7 @@ var HotObservable = (function (_super) {
 exports.HotObservable = HotObservable;
 applyMixins_1.applyMixins(HotObservable, [SubscriptionLoggable_1.SubscriptionLoggable]);
 
-},{"../Subject":386,"../Subscription":389,"../util/applyMixins":700,"./SubscriptionLoggable":687}],686:[function(require,module,exports){
+},{"../Subject":416,"../Subscription":419,"../util/applyMixins":730,"./SubscriptionLoggable":717}],716:[function(require,module,exports){
 "use strict";
 var SubscriptionLog = (function () {
     function SubscriptionLog(subscribedFrame, unsubscribedFrame) {
@@ -38820,7 +46720,7 @@ var SubscriptionLog = (function () {
 }());
 exports.SubscriptionLog = SubscriptionLog;
 
-},{}],687:[function(require,module,exports){
+},{}],717:[function(require,module,exports){
 "use strict";
 var SubscriptionLog_1 = require('./SubscriptionLog');
 var SubscriptionLoggable = (function () {
@@ -38840,7 +46740,7 @@ var SubscriptionLoggable = (function () {
 }());
 exports.SubscriptionLoggable = SubscriptionLoggable;
 
-},{"./SubscriptionLog":686}],688:[function(require,module,exports){
+},{"./SubscriptionLog":716}],718:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39064,7 +46964,7 @@ var TestScheduler = (function (_super) {
 }(VirtualTimeScheduler_1.VirtualTimeScheduler));
 exports.TestScheduler = TestScheduler;
 
-},{"../Notification":379,"../Observable":380,"../scheduler/VirtualTimeScheduler":676,"./ColdObservable":684,"./HotObservable":685,"./SubscriptionLog":686}],689:[function(require,module,exports){
+},{"../Notification":409,"../Observable":410,"../scheduler/VirtualTimeScheduler":706,"./ColdObservable":714,"./HotObservable":715,"./SubscriptionLog":716}],719:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 var RequestAnimationFrameDefinition = (function () {
@@ -39099,7 +46999,7 @@ var RequestAnimationFrameDefinition = (function () {
 exports.RequestAnimationFrameDefinition = RequestAnimationFrameDefinition;
 exports.AnimationFrame = new RequestAnimationFrameDefinition(root_1.root);
 
-},{"./root":712}],690:[function(require,module,exports){
+},{"./root":742}],720:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39128,7 +47028,7 @@ var ArgumentOutOfRangeError = (function (_super) {
 }(Error));
 exports.ArgumentOutOfRangeError = ArgumentOutOfRangeError;
 
-},{}],691:[function(require,module,exports){
+},{}],721:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39157,7 +47057,7 @@ var EmptyError = (function (_super) {
 }(Error));
 exports.EmptyError = EmptyError;
 
-},{}],692:[function(require,module,exports){
+},{}],722:[function(require,module,exports){
 "use strict";
 var FastMap = (function () {
     function FastMap() {
@@ -39189,7 +47089,7 @@ var FastMap = (function () {
 }());
 exports.FastMap = FastMap;
 
-},{}],693:[function(require,module,exports){
+},{}],723:[function(require,module,exports){
 /**
 Some credit for this helper goes to http://github.com/YuzuJS/setImmediate
 */
@@ -39399,13 +47299,13 @@ var ImmediateDefinition = (function () {
 exports.ImmediateDefinition = ImmediateDefinition;
 exports.Immediate = new ImmediateDefinition(root_1.root);
 
-},{"./root":712}],694:[function(require,module,exports){
+},{"./root":742}],724:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 var MapPolyfill_1 = require('./MapPolyfill');
 exports.Map = root_1.root.Map || (function () { return MapPolyfill_1.MapPolyfill; })();
 
-},{"./MapPolyfill":695,"./root":712}],695:[function(require,module,exports){
+},{"./MapPolyfill":725,"./root":742}],725:[function(require,module,exports){
 "use strict";
 var MapPolyfill = (function () {
     function MapPolyfill() {
@@ -39453,7 +47353,7 @@ var MapPolyfill = (function () {
 }());
 exports.MapPolyfill = MapPolyfill;
 
-},{}],696:[function(require,module,exports){
+},{}],726:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39481,7 +47381,7 @@ var ObjectUnsubscribedError = (function (_super) {
 }(Error));
 exports.ObjectUnsubscribedError = ObjectUnsubscribedError;
 
-},{}],697:[function(require,module,exports){
+},{}],727:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 function minimalSetImpl() {
@@ -39515,7 +47415,7 @@ function minimalSetImpl() {
 exports.minimalSetImpl = minimalSetImpl;
 exports.Set = root_1.root.Set || minimalSetImpl();
 
-},{"./root":712}],698:[function(require,module,exports){
+},{"./root":742}],728:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39541,7 +47441,7 @@ var TimeoutError = (function (_super) {
 }(Error));
 exports.TimeoutError = TimeoutError;
 
-},{}],699:[function(require,module,exports){
+},{}],729:[function(require,module,exports){
 "use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
@@ -39567,7 +47467,7 @@ var UnsubscriptionError = (function (_super) {
 }(Error));
 exports.UnsubscriptionError = UnsubscriptionError;
 
-},{}],700:[function(require,module,exports){
+},{}],730:[function(require,module,exports){
 "use strict";
 function applyMixins(derivedCtor, baseCtors) {
     for (var i = 0, len = baseCtors.length; i < len; i++) {
@@ -39581,7 +47481,7 @@ function applyMixins(derivedCtor, baseCtors) {
 }
 exports.applyMixins = applyMixins;
 
-},{}],701:[function(require,module,exports){
+},{}],731:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 function assignImpl(target) {
@@ -39608,30 +47508,30 @@ function getAssign(root) {
 exports.getAssign = getAssign;
 exports.assign = getAssign(root_1.root);
 
-},{"./root":712}],702:[function(require,module,exports){
+},{"./root":742}],732:[function(require,module,exports){
 "use strict";
 // typeof any so that it we don't have to cast when comparing a result to the error object
 exports.errorObject = { e: {} };
 
-},{}],703:[function(require,module,exports){
+},{}],733:[function(require,module,exports){
 "use strict";
 exports.isArray = Array.isArray || (function (x) { return x && typeof x.length === 'number'; });
 
-},{}],704:[function(require,module,exports){
+},{}],734:[function(require,module,exports){
 "use strict";
 function isDate(value) {
     return value instanceof Date && !isNaN(+value);
 }
 exports.isDate = isDate;
 
-},{}],705:[function(require,module,exports){
+},{}],735:[function(require,module,exports){
 "use strict";
 function isFunction(x) {
     return typeof x === 'function';
 }
 exports.isFunction = isFunction;
 
-},{}],706:[function(require,module,exports){
+},{}],736:[function(require,module,exports){
 "use strict";
 var isArray_1 = require('../util/isArray');
 function isNumeric(val) {
@@ -39644,34 +47544,34 @@ function isNumeric(val) {
 exports.isNumeric = isNumeric;
 ;
 
-},{"../util/isArray":703}],707:[function(require,module,exports){
+},{"../util/isArray":733}],737:[function(require,module,exports){
 "use strict";
 function isObject(x) {
     return x != null && typeof x === 'object';
 }
 exports.isObject = isObject;
 
-},{}],708:[function(require,module,exports){
+},{}],738:[function(require,module,exports){
 "use strict";
 function isPromise(value) {
     return value && typeof value.subscribe !== 'function' && typeof value.then === 'function';
 }
 exports.isPromise = isPromise;
 
-},{}],709:[function(require,module,exports){
+},{}],739:[function(require,module,exports){
 "use strict";
 function isScheduler(value) {
     return value && typeof value.schedule === 'function';
 }
 exports.isScheduler = isScheduler;
 
-},{}],710:[function(require,module,exports){
+},{}],740:[function(require,module,exports){
 "use strict";
 /* tslint:disable:no-empty */
 function noop() { }
 exports.noop = noop;
 
-},{}],711:[function(require,module,exports){
+},{}],741:[function(require,module,exports){
 "use strict";
 function not(pred, thisArg) {
     function notPred() {
@@ -39683,7 +47583,7 @@ function not(pred, thisArg) {
 }
 exports.not = not;
 
-},{}],712:[function(require,module,exports){
+},{}],742:[function(require,module,exports){
 (function (global){
 "use strict";
 /**
@@ -39699,7 +47599,7 @@ if (!exports.root) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],713:[function(require,module,exports){
+},{}],743:[function(require,module,exports){
 "use strict";
 var root_1 = require('./root');
 var isArray_1 = require('./isArray');
@@ -39778,7 +47678,7 @@ function subscribeToResult(outerSubscriber, result, outerValue, outerIndex) {
 }
 exports.subscribeToResult = subscribeToResult;
 
-},{"../InnerSubscriber":378,"../Observable":380,"../symbol/iterator":681,"../symbol/observable":682,"./isArray":703,"./isObject":707,"./isPromise":708,"./root":712}],714:[function(require,module,exports){
+},{"../InnerSubscriber":408,"../Observable":410,"../symbol/iterator":711,"../symbol/observable":712,"./isArray":733,"./isObject":737,"./isPromise":738,"./root":742}],744:[function(require,module,exports){
 "use strict";
 var Subscriber_1 = require('../Subscriber');
 var rxSubscriber_1 = require('../symbol/rxSubscriber');
@@ -39799,7 +47699,7 @@ function toSubscriber(nextOrObserver, error, complete) {
 }
 exports.toSubscriber = toSubscriber;
 
-},{"../Observer":381,"../Subscriber":388,"../symbol/rxSubscriber":683}],715:[function(require,module,exports){
+},{"../Observer":411,"../Subscriber":418,"../symbol/rxSubscriber":713}],745:[function(require,module,exports){
 "use strict";
 var errorObject_1 = require('./errorObject');
 var tryCatchTarget;
@@ -39819,7 +47719,7 @@ function tryCatch(fn) {
 exports.tryCatch = tryCatch;
 ;
 
-},{"./errorObject":702}],716:[function(require,module,exports){
+},{"./errorObject":732}],746:[function(require,module,exports){
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
@@ -83165,7 +91065,7 @@ exports.tryCatch = tryCatch;
 
 })));
 
-},{}],717:[function(require,module,exports){
+},{}],747:[function(require,module,exports){
 (function (process){
 /**
  * Tween.js - Licensed under the MIT license
@@ -84039,7906 +91939,4 @@ TWEEN.Interpolation = {
 })(this);
 
 }).call(this,require('_process'))
-},{"_process":372}],718:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var Color = exports.Color = {
-    background: 0x13BAAA,
-    particles: 0xffffff,
-    protagonist: {
-        body: 0xffffff,
-        head: 0xffffff
-    },
-    palette: [{
-        name: 'blue pink light',
-        background: 0x3E9598,
-        way: 0xC9B693,
-        box: 0xF29C9E,
-        ring: 0x82BF45
-    }, {
-        name: 'pink blue strong',
-        background: 0x781152,
-        way: 0x1CB4C5,
-        box: 0x096388,
-        ring: 0x096388
-    }, {
-        name: 'light brown',
-        background: 0xFDF1CD,
-        way: 0xE0C17E,
-        box: 0x9E614D,
-        ring: 0x7BAAB1,
-        cone: 0xEA9C00
-    }, {
-        name: 'black',
-        background: 0x030303,
-        way: 0x878E9A,
-        box: 0xEEEEEE,
-        ring: 0xA6FDFD,
-        cone: 0x404040
-    }, {
-        name: 'orange black',
-        background: 0x140F0C,
-        way: 0xFF9056,
-        box: 0xFD6E4E,
-        ring: 0x8A5C45,
-        cone: 0x463F2F
-    }]
-};
-
-},{}],719:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var $ = require('jquery');
-var templates = {
-  successScreen: require('./templates/success.mustache'),
-  gameoverScreen: require('./templates/gameover.mustache'),
-  shopScreen: require('./templates/shop.mustache'),
-  modalContentShopScreen: require('./templates/shopModalContent.mustache')
-};
-
-var GUI = exports.GUI = {
-  /**
-   * updates amount of diamonds in scoreboard
-   * @param {number} diamonds
-   */
-  setDiamondsInScoreBoard: function setDiamondsInScoreBoard(diamonds) {
-    $('.scores .diamonds span').html(diamonds);
-  },
-
-  /**
-   * shows screen on successful end of level
-   * @param {Object} obj - obj to render template successScreen
-   */
-  showSuccessScreen: function showSuccessScreen(obj) {
-    var html = templates.successScreen.render(obj);
-    $('body').append(html);
-  },
-
-  /**
-   * shows screen on game over
-   * @param {Object} obj - obj to render template gameoverScreen
-   */
-  showGameOverScreen: function showGameOverScreen(obj) {
-    var html = templates.gameoverScreen.render(obj);
-    $('body').append(html);
-  },
-
-  /**
-   * renders modal for shop screen
-   * @param {Object} - render object
-   */
-  fillShopModal: function fillShopModal(obj) {
-    return templates.modalContentShopScreen.render(obj);
-  },
-
-  /**
-   * renders shop screen and adds it
-   * @param {Object} - render object
-   */
-  showShopScreen: function showShopScreen(obj) {
-    var html = templates.shopScreen.render({
-      content: GUI.fillShopModal(obj)
-    });
-    $('div.shopScreen').append(html);
-  },
-
-  /**
-   * updates shop shopScreen
-   * @param {Object} - render Object
-   */
-  updateShopScreen: function updateShopScreen(obj) {
-    var html = templates.modalContentShopScreen.render(obj);
-    $('#shopModal').empty();
-    $('#shopModal').append(html);
-  },
-
-  /**
-   * fades in game name
-   */
-  startingAnimationFadeIn: function startingAnimationFadeIn() {
-    $('.game-name').fadeIn(3000);
-    $('.intro').fadeIn(3000);
-  },
-
-  /**
-   * fades out game name
-   * @param {number} fadeTime - in milliseconds
-   */
-  startingAnimationFadeOut: function startingAnimationFadeOut(fadeTime) {
-    $('.game-name').fadeOut(fadeTime);
-    $('.intro').fadeOut(fadeTime);
-  },
-
-  /**
-   * shows loading icon
-   */
-  showLoadingIcon: function showLoadingIcon() {
-    var height = $('.sk-folding-cube').height() + $('.loading p').height();
-    $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
-  },
-
-  /**
-   * removes loading icon
-   */
-  removeLoadingIcon: function removeLoadingIcon() {
-    $(".sk-folding-cube").remove();
-    $(".loading p").remove();
-    var fadeTime = 3000;
-    $(".loading").fadeOut(fadeTime);
-  },
-
-  /**
-   * checks if button is enabled
-   * @param {$} button
-   * @returns {boolean} - true if button is enabled
-   */
-  buttonIsEnabled: function buttonIsEnabled(button) {
-    if (button.hasClass('disabled')) return false;
-    return true;
-  },
-
-  /**
-   * gets powerup id from button
-   * @param {Object} e - event
-   * @returns {number} - powerup id
-   */
-  getPowerupIdFromButton: function getPowerupIdFromButton(e) {
-    return e.target.id.replace('buy-powerup-', '');
-  },
-
-  /**
-   * updates next-level-button in success screen
-   */
-  updateNextLevelButton: function updateNextLevelButton() {
-    if ($('.button.success.reload').length) {
-      $('.button.success.reload').removeClass('disabled');
-      $('.callout.alert').remove();
-    }
-  },
-
-  /**
-   * fades in intro slide show
-   */
-  introFadeIn: function introFadeIn() {
-    $('.blackOverlay').fadeOut(1000);
-  },
-
-  /**
-   * updates distance in scoreboard
-   * @param {number} distance
-   */
-  updateDistance: function updateDistance(distance) {
-    $('.scores .distance span').html(distance);
-  },
-
-  /**
-   * fades in scoreboard
-   */
-  fadeInScoreboard: function fadeInScoreboard() {
-    $('.scores').fadeIn(1000);
-  },
-
-  /**
-   * fades in soundswitch
-   */
-  fadeInSoundSwitch: function fadeInSoundSwitch() {
-    $('.sound').fadeIn(1000);
-  },
-
-  /**
-   * returns whether sound is on or not
-   * @returns {boolean} - true if sound is enabled
-   */
-  getSoundSwitch: function getSoundSwitch() {
-    if ($('#soundSwitch').is(':checked')) return true;
-    return false;
-  },
-
-  /**
-   * unchecks sound switch
-   */
-  uncheckSoundSwitch: function uncheckSoundSwitch() {
-    $('#soundSwitch').attr('checked', false);
-  }
-};
-
-},{"./templates/gameover.mustache":738,"./templates/shop.mustache":739,"./templates/shopModalContent.mustache":740,"./templates/success.mustache":741,"jquery":370}],720:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Keybindings = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Rx = require('rxjs/Rx');
-
-var _Rx2 = _interopRequireDefault(_Rx);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var $ = require('jquery');
-
-/**
- * handles key events
- */
-var Keybindings = exports.Keybindings = function () {
-    function Keybindings() {
-        (0, _classCallCheck3.default)(this, Keybindings);
-    }
-
-    (0, _createClass3.default)(Keybindings, null, [{
-        key: 'handleKeyCode',
-
-        /**
-         * Handles key code and returns fitting string like 'left' or 'right'
-         * @param {number} code - keycode
-         * @returns {string}
-         */
-        value: function handleKeyCode(code) {
-            switch (code) {
-                case 37:
-                case 65:
-                    return 'left';
-                case 39:
-                case 68:
-                    return 'right';
-                case 32:
-                case 87:
-                case 38:
-                    return 'up';
-                case 40:
-                    return 'boost';
-                default:
-                    return 'anyKey';
-            }
-        }
-
-        /**
-         * Binds a given event to document
-         * @param {string} ev - like 'keydown'
-         * @param {Scene} scene
-         * @param {function()} doSomething - should be called on key event
-         */
-
-    }, {
-        key: 'keyBind',
-        value: function keyBind(ev) {
-            return _Rx2.default.Observable.fromEvent(document, ev).map(function (ev) {
-                return Keybindings.handleKeyCode(ev.keyCode);
-            });
-        }
-    }]);
-    return Keybindings;
-}();
-
-;
-
-},{"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"jquery":370,"rxjs/Rx":384}],721:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Particles = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-var Particles = exports.Particles = function () {
-    /**
-     * Represents Particles
-     * @param {number} minX - minimum x value
-     * @param {number} maxX -maximum x value
-     * @param {number} minY - minimum y value
-     * @param {number} maxY - maximum y value
-     * @param {number} minZ - minimum z value
-     * @param {number} maxZ - maximum z value
-     * @param {number} amount - amount of particles distributed in given space
-     * @constructor
-     */
-    function Particles(minX, maxX, minY, maxY, minZ, maxZ, amount) {
-        (0, _classCallCheck3.default)(this, Particles);
-
-        this.group = new THREE.Group();
-        this.particle = null;
-        this.amount = amount;
-        this.x = {
-            min: minX,
-            max: maxX
-        };
-        this.y = {
-            min: minY,
-            max: maxY
-        };
-        this.z = {
-            min: minZ,
-            max: maxZ
-        };
-        this.init();
-    }
-
-    /**
-     * adds the particles to the mainScene
-     */
-
-
-    (0, _createClass3.default)(Particles, [{
-        key: 'init',
-        value: function init() {
-            var self = this;
-            for (var i = 0; i < self.amount; i++) {
-                self.particle = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial());
-                self.particle.position.x = Particles.randomIntFromInterval(self.x.min, self.x.max);
-                self.particle.position.y = Particles.randomIntFromInterval(self.y.min, self.y.max);
-                self.particle.position.z = Particles.randomIntFromInterval(self.z.min, self.z.max);
-                self.group.add(self.particle);
-            }
-        }
-    }, {
-        key: 'animate',
-
-
-        /**
-         * animates the particles in the mainScene
-         */
-        value: function animate() {
-            this.group.rotation.z += 0.0004;
-        }
-    }, {
-        key: 'rotate',
-
-
-        /**
-         * rotates the way around the z axis according to given angle
-         * @param {number} angle
-         */
-        value: function rotate(angle) {
-            this.group.rotation.z += angle;
-        }
-    }, {
-        key: 'position',
-
-
-        /**
-         * positions particles according to given coordinates
-         * @param {number} x - x position of particles group
-         * @param {number} y - y position of particles group
-         * @param {number} z - z position of particles group
-         */
-        value: function position(x, y, z) {
-            this.group.position.set(x, y, z);
-        }
-    }, {
-        key: 'addToScene',
-
-
-        /**
-         * adds particles to given scene
-         * @param {THREE.Scene} scene - scene to which the particles will be added
-         */
-        value: function addToScene(scene) {
-            scene.add(this.group);
-        }
-    }, {
-        key: 'removeFromScene',
-
-
-        /**
-         * removes particles from given scene
-         * @param {THREE.Scene} scene - scene from which the particles will be removed
-         */
-        value: function removeFromScene(scene) {
-            scene.remove(this.group);
-        }
-    }], [{
-        key: 'randomIntFromInterval',
-
-
-        /**
-         * calculates random integer from interval
-         * @param {number} min
-         * @param {number} max
-         * @returns {number}
-         */
-        value: function randomIntFromInterval(min, max) {
-            return Math.floor(Math.random() * (max - min + 1) + min);
-        }
-    }]);
-    return Particles;
-}();
-
-},{"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],722:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Scene = undefined;
-
-var _regenerator = require('babel-runtime/regenerator');
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Protagonist = require('./protagonist/Protagonist');
-
-var _Particles = require('./Particles');
-
-var _Color = require('./Color');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-require('babel-polyfill');
-
-var THREE = require('three');
-var async = require('async');
-var TWEEN = require('tween.js');
-var Cookies = require('js-cookie');
-
-/**
- * Represents Scene
- */
-
-var Scene = exports.Scene = function () {
-
-    /**
-     * Represents Scene
-     * @param {number} width - width of browser window
-     * @param {number} height - height of browser window
-     * @constructor
-     */
-    function Scene(width, height, background) {
-        (0, _classCallCheck3.default)(this, Scene);
-
-        this.width = width;
-        this.height = height;
-        this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
-        this.scene = new THREE.Scene();
-        this.setSceneBackground(background);
-        this.powerupUsed = false;
-        this.boostNotUsed = true;
-        this.renderer = new THREE.WebGLRenderer();
-        this.setRendererSize();
-        this.enableShadowMap(false);
-        this.objects = {
-            particles: new _Particles.Particles(-600, 600, -600, 600, -300, 0, 100),
-            introParticles: new _Particles.Particles(20, -300, 100, 1300, -500, 0, 30),
-            protagonist: new _Protagonist.Protagonist()
-        };
-        this.lights = {
-            hemisphere: null,
-            shadow: null
-        };
-        this.move = {
-            left: false,
-            right: false,
-            up: false,
-            continue: false,
-            boost: false
-        };
-        this.addLights();
-    }
-
-    /**
-     * sets background color of scene
-     * @param {Number} background hexadecimal number e.g. 7868754
-     */
-
-
-    (0, _createClass3.default)(Scene, [{
-        key: 'setSceneBackground',
-        value: function setSceneBackground(background) {
-            this.scene.background = new THREE.Color(background);
-        }
-
-        /**
-         * sets size of renderer according to given width and height
-         */
-
-    }, {
-        key: 'setRendererSize',
-        value: function setRendererSize() {
-            this.renderer.setSize(this.width, this.height);
-        }
-
-        /**
-         * enables shadow map of renderer
-         * @param {Boolean} to default true
-         */
-
-    }, {
-        key: 'enableShadowMap',
-        value: function enableShadowMap() {
-            var to = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
-
-            this.renderer.shadowMap.enabled = false;
-        }
-
-        /**
-         * adds lights to scene
-         */
-
-    }, {
-        key: 'addLights',
-        value: function addLights() {
-            this.lights.hemisphere = new THREE.HemisphereLight(0xd3edec, _Color.Color.way, 0.8);
-            this.lights.shadow = new THREE.DirectionalLight(0xffffff, 0.005);
-            this.lights.shadow.position.set(0, 200, 0);
-            this.lights.shadow.position.copy(this.camera.position);
-            this.lights.shadow.position.y += 1000;
-            this.lights.shadow.target.position.set(0, 0, 0);
-            this.lights.shadow.castShadow = true;
-            //visible area of the projected shadow
-            this.lights.shadow.shadow.camera.left = -1000;
-            this.lights.shadow.shadow.camera.right = 1000;
-            this.lights.shadow.shadow.camera.top = 1000;
-            this.lights.shadow.shadow.camera.bottom = -1000;
-            this.lights.shadow.shadow.camera.near = 1;
-            this.lights.shadow.shadow.camera.far = 2000;
-            //resolution
-            this.lights.shadow.shadow.mapSize.width = 2048;
-            this.lights.shadow.shadow.mapSize.height = 2048;
-            //this.lights.shadow.shadowDarkness = 0.1;
-            this.scene.add(this.lights.hemisphere);
-            this.scene.add(this.lights.shadow);
-            this.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-        }
-    }, {
-        key: 'showIntro',
-
-
-        /**
-         * positions and creates intro view
-         */
-        value: function showIntro() {
-            this.camera.position.set(250, 1000, 50);
-            //add particles
-            this.objects.particles.position(0, 0, -500);
-            this.objects.particles.addToScene(this.scene);
-            //add particles for intro
-            this.objects.introParticles.position(0, 0, 250);
-            this.objects.introParticles.addToScene(this.scene);
-            //add protagonist
-            this.objects.protagonist.position(0, 950, 0);
-            this.objects.protagonist.rotate('y', Math.PI);
-            this.objects.protagonist.addToScene(this.scene);
-            this.camera.lookAt(this.objects.protagonist.currentPosition);
-        }
-    }, {
-        key: 'render',
-
-
-        /**
-         * Renders scene and starts basic animations like particles
-         */
-        value: function render() {
-            this.objects.particles.animate();
-            this.renderer.render(this.scene, this.camera);
-        }
-    }, {
-        key: 'startingAnimation1',
-
-
-        /**
-         * starting animation  part 1
-         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
-         */
-        value: function startingAnimation1(obj) {
-            var t = 150;
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                var fall = function fall() {
-                    self.objects.protagonist.decreasePosition('y');
-                    t--;
-                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
-                    self.objects.protagonist.body.position.x = obj.position * -5;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else resolve(obj);
-                };
-                fall();
-            });
-        }
-
-        /**
-         * starting animation part 2
-         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
-         */
-
-    }, {
-        key: 'startingAnimation2',
-        value: function startingAnimation2(obj) {
-            var t = 800;
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                var fall = function fall() {
-                    self.objects.protagonist.decreasePosition('y');
-                    self.camera.position.y--;
-                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
-                    self.objects.protagonist.body.position.x = obj.position * -5;
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else resolve(obj);
-                };
-                fall();
-            });
-        }
-
-        /**
-         * starting animation part 3
-         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
-         */
-
-    }, {
-        key: 'startingAnimation3',
-        value: function startingAnimation3(obj) {
-            var t = 150;
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                var fall = function fall() {
-                    self.camera.position.y--;
-                    t--;
-                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
-                    self.objects.protagonist.body.position.x = obj.position * -5;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.currentPosition);
-                        resolve(obj);
-                    }
-                };
-                fall();
-            });
-        }
-
-        /**
-         * starting animation part 4
-         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
-         */
-
-    }, {
-        key: 'startingAnimation4',
-        value: function startingAnimation4(obj) {
-            var t = 250;
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                var fall = function fall() {
-                    self.camera.position.x--;
-                    self.camera.position.z += 0.5;
-                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
-                    self.objects.protagonist.body.position.x = obj.position * -5;
-                    self.camera.lookAt(self.objects.protagonist.currentPosition);
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            fall();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.currentPosition);
-                        resolve(obj);
-                    }
-                };
-                fall();
-            });
-        }
-
-        /**
-         * starting animation part 5
-         * @param {{position: number, clock: THREE.Clock}} obj contains current position and clock
-         */
-
-    }, {
-        key: 'startingAnimation5',
-        value: function startingAnimation5(obj) {
-            var t = 80;
-            var self = this;
-            return new Promise(function (resolve, reject) {
-                var zoom = function zoom() {
-                    self.camera.position.z--;
-                    self.camera.lookAt(self.objects.protagonist.currentPosition);
-                    obj.position = Math.sin(obj.clock.getElapsedTime() * 10) * 1;
-                    self.objects.protagonist.body.position.x = obj.position * -5;
-                    t--;
-                    if (t > 0) {
-                        setTimeout(function () {
-                            zoom();
-                        }, 1);
-                    } else {
-                        self.camera.lookAt(self.objects.protagonist.currentPosition);
-                        resolve(obj);
-                    }
-                };
-                zoom();
-            });
-        }
-
-        /**
-         * creates the animation for starting the game
-         * @param {Promise}
-         */
-
-    }, {
-        key: 'startingAnimation',
-        value: function () {
-            var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-                var obj;
-                return _regenerator2.default.wrap(function _callee$(_context) {
-                    while (1) {
-                        switch (_context.prev = _context.next) {
-                            case 0:
-                                obj = {
-                                    position: null,
-                                    clock: new THREE.Clock(true)
-                                };
-                                _context.next = 3;
-                                return this.startingAnimation1(obj);
-
-                            case 3:
-                                obj = _context.sent;
-                                _context.next = 6;
-                                return this.startingAnimation2(obj);
-
-                            case 6:
-                                obj = _context.sent;
-                                _context.next = 9;
-                                return this.startingAnimation3(obj);
-
-                            case 9:
-                                obj = _context.sent;
-                                _context.next = 12;
-                                return this.startingAnimation4(obj);
-
-                            case 12:
-                                obj = _context.sent;
-                                _context.next = 15;
-                                return this.startingAnimation5(obj);
-
-                            case 15:
-                                obj = _context.sent;
-
-                                this.objects.introParticles.removeFromScene(this.scene);
-                                return _context.abrupt('return');
-
-                            case 18:
-                            case 'end':
-                                return _context.stop();
-                        }
-                    }
-                }, _callee, this);
-            }));
-
-            function startingAnimation() {
-                return _ref.apply(this, arguments);
-            }
-
-            return startingAnimation;
-        }()
-    }, {
-        key: 'addLevel',
-
-
-        /**
-         * adds current level objects to scene
-         * @param {Level} level - current level
-         */
-        value: function addLevel(level) {
-            this.objects.way = level.way;
-            this.objects.way.addToScene(this.scene);
-        }
-    }, {
-        key: 'turn',
-
-
-        /**
-         * turns camera and protagonist until told to stop
-         */
-        value: function turn(level) {
-            var self = this;
-            if (self.move.continue) {
-                if (self.move.left) {
-                    self.objects.way.rotate(-Math.PI * 0.01);
-                    self.objects.particles.rotate(-Math.PI * 0.01);
-                }
-                if (self.move.right) {
-                    self.objects.way.rotate(Math.PI * 0.01);
-                    self.objects.particles.rotate(Math.PI * 0.01);
-                }
-                if (self.move.up) self.objects.protagonist.jump();
-                if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought") {
-                    level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
-                    level.powerupActive = true;
-                    self.boostNotUsed = false;
-                }
-            }
-        }
-    }, {
-        key: 'getProtagonist',
-
-
-        /**
-         * returns the THREE group of the protagonist
-         * @returns {THREE.Object3D} group of protagonist
-         */
-        value: function getProtagonist() {
-            return this.objects.protagonist.group;
-        }
-    }, {
-        key: 'simpleIntro',
-
-
-        /**
-         * sets camera to the right position
-         */
-        value: function simpleIntro() {
-            this.camera.position.set(0, 50, 95);
-            this.objects.particles.position(0, 0, -500);
-            this.objects.particles.addToScene(this.scene);
-            this.objects.protagonist.position(0, 5, 0);
-            this.objects.protagonist.rotate('y', Math.PI);
-            this.objects.protagonist.addToScene(this.scene);
-            this.camera.lookAt(this.objects.protagonist.currentPosition);
-        }
-    }], [{
-        key: 'stopMovingProtagonist',
-
-
-        /**
-         * disables turning in the given direction
-         * @param {Scene} scene
-         * @param {string} direction - "left" or "right"
-         */
-        value: function stopMovingProtagonist(scene, direction) {
-            scene.move[direction] = false;
-        }
-    }, {
-        key: 'startMovingProtagonist',
-
-
-        /**
-         * enables turning in the given direction
-         * @param {Scene} scene
-         * @param {string} direction - "left" or "right"
-         */
-        value: function startMovingProtagonist(scene, direction) {
-            scene.move[direction] = true;
-        }
-    }]);
-    return Scene;
-}();
-
-},{"./Color":718,"./Particles":721,"./protagonist/Protagonist":737,"async":1,"babel-polyfill":2,"babel-runtime/helpers/asyncToGenerator":5,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"babel-runtime/regenerator":8,"js-cookie":371,"three":716,"tween.js":717}],723:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var Cookies = require('js-cookie');
-
-var audio = {
-  hitDiamond: new Audio('/sound/hitDiamond.mp3'),
-  hitObstacle: new Audio('/sound/hitObstacle.mp3')
-};
-
-var Sound = exports.Sound = {
-  /**
-   * plays sound
-   * @param {String} sound - name of the sound
-   */
-  play: function play(sound) {
-    audio[sound].currentTime = 0;
-    audio[sound].play();
-  },
-
-  /**
-   * stops sound
-   * @param {String} sound - name of the sound
-   */
-  stop: function stop(sound) {
-    audio[sound].stop();
-  },
-
-  /**
-   * checks in cookies whether sound is on
-   * @returns {boolean} - true if sound is on
-   */
-  isMusicOn: function isMusicOn() {
-    if (Cookies.get('sound') === "on") return true;
-    if (Cookies.get('sound') === "undefined") {
-      _setMusicSettings(true);
-      return true;
-    }
-    return false;
-  },
-
-  /**
-   * sets music settings in Cookies
-   * @param {boolean} isOn
-   */
-  setMusicSettings: function setMusicSettings(isOn) {
-    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
-  }
-};
-
-},{"js-cookie":371}],724:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-var Util = exports.Util = {
-  /**
-   * converts degrees to radians
-   * @param {number} degrees
-   * @returns {number}
-   */
-  convertDegreesToRadians: function convertDegreesToRadians(degrees) {
-    return degrees * (Math.PI / 180);
-  },
-
-  /**
-   * converts radians to degrees
-   * @param {number} radians
-   * @returns {number}
-   */
-  convertRadiansToDegrees: function convertRadiansToDegrees(radians) {
-    return radians * (180 / Math.PI);
-  },
-
-  /**
-   * Returns a random number between min (inclusive) and max (exclusive)
-   * @returns {number}
-   */
-  randomNumberInRange: function randomNumberInRange(min, max) {
-    return Math.random() * (max - min) + min;
-  },
-
-  /**
-   * Returns a random int between min (inclusive) and max (exclusive)
-   * @returns {number}
-   */
-  randomIntInRange: function randomIntInRange(min, max) {
-    return Math.round(Util.randomNumberInRange(min, max));
-  },
-
-  /**
-   * normalizes angle
-   * @param {number} angle - in degrees
-   */
-  normalizeAngle: function normalizeAngle(angle) {
-    //if (angle < 0) angle = angle + 360; //always positive
-    angle = angle % 360; //always <360
-    return angle;
-  }
-};
-
-},{}],725:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Level = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Protagonist = require('../protagonist/Protagonist');
-
-var _Powerups = require('./Powerups');
-
-var _Way = require('../way/Way');
-
-var _CollisionDetector = require('../protagonist/CollisionDetector');
-
-var _GUI = require('../GUI');
-
-var _Sound = require('../Sound');
-
-var _level = require('./level1');
-
-var _level2 = require('./level2');
-
-var _level3 = require('./level3');
-
-var _level4 = require('./level4');
-
-var _level5 = require('./level5');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var Obstacle = require('../way/obstacles/Obstacle');
-var $ = require('jquery');
-var Cookies = require('js-cookie');
-
-
-var levels = [_level.level1, _level2.level2, _level3.level3, _level4.level4, _level5.level5];
-
-/**
- * Represents Level
- */
-
-var Level = exports.Level = function () {
-    /**
-     * Represents Level
-     * @param {number} current - number starting at 1 representing current level
-     * @constructor
-     */
-    function Level(current) {
-        (0, _classCallCheck3.default)(this, Level);
-
-        this.current = current;
-        this.way = null;
-        this.speed = 1;
-        this.collisionDetector = null;
-        this.gameOver = false;
-        this.diamonds = 0;
-        this.lastDiamond = null;
-        this.powerupActive = false;
-        this.powerupActiveDuration = 0;
-        this.powerUpDistance = 0;
-        this.opacityHelper = -375;
-        this.playSound = true;
-        this.checkedCollision = false;
-    }
-
-    /**
-     * generates and positions meshes for the current level
-     */
-
-
-    (0, _createClass3.default)(Level, [{
-        key: 'prepare',
-        value: function prepare() {
-            var current = levels[this.current - 1];
-            this.way = new _Way.Way(current.way.length, current.speed, current.way.color);
-            this.way.addObstacles(current.way.obstacles);
-            this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
-            this.way.position();
-        }
-    }, {
-        key: 'checkCollision',
-
-
-        /**
-         * calls collision detector and returns true if game needs to be ended
-         * @param {THREE.Object3D} protagonist
-         * @returns {boolean} - true if gameover (collision with box or ring)
-         */
-        value: function checkCollision(protagonist) {
-            if (!this.checkedCollision) {
-                this.checkedCollision = true;
-                //check whether collision
-                this.way.currentPosition.height = protagonist.position.y;
-                var collObj = this.collisionDetector.collision(this.way.currentPosition);
-                switch (collObj.type) {
-                    case "box":
-                    case "ring":
-                    case "cone":
-                        // no collsion detection, if powerup 4 is active
-                        if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
-                        this.gameOver = true;
-                        if (this.playSound) _Sound.Sound.play('hitObstacle');
-                        return true;
-                    case "diamond":
-                        this.hitDiamond(collObj);
-                        return false;
-                }
-            } else this.checkedCollision = false;
-        }
-    }, {
-        key: 'animateProtagonist',
-
-
-        /**
-         * calls animation functions of protagonist
-         * @param {THREE.Object3D} protagonist
-         * @param {THREE.Clock} clock
-         * @param {number} speedMulti
-         */
-        value: function animateProtagonist(protagonist, clock, speedMulti) {
-            var position = Math.sin(clock.getElapsedTime() * 10) * 1;
-            _Protagonist.Protagonist.move(protagonist, position);
-            if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
-                var opacity = 0.3;
-                if (this.opacityHelper >= 0) {
-                    opacity = 0.7 / 149625 * (this.opacityHelper * this.opacityHelper) + 0.3;
-                }
-                this.opacityHelper += speedMulti;
-                _Protagonist.Protagonist.makeGroupTransparent(protagonist, opacity);
-                this.powerUpDistance += speedMulti;
-            }
-        }
-    }, {
-        key: 'begin',
-
-
-        /**
-         * starts level
-         * @param {function} cb - callback function
-         * @param {THREE.Object3D} protagonist - group of meshes of protagonist
-         */
-        value: function begin(protagonist) {
-            var self = this;
-            //reset diamonds
-            self.lastDiamond = null;
-            self.diamonds = 0;
-            //reset way
-            var t = self.way.length - 80;
-            var speedMulti = 2;
-            var clock = new THREE.Clock(true);
-            return new Promise(function (resolve, reject) {
-                var animate = function animate() {
-                    t -= speedMulti;
-                    self.animateProtagonist(protagonist, clock, speedMulti);
-                    self.way.moveForwardTillEnd(self.speed * speedMulti);
-                    if (t <= 0 || self.checkCollision(protagonist)) {
-                        resolve();
-                        return;
-                    }
-                    setTimeout(function () {
-                        animate();
-                    }, self.speed);
-                };
-                animate(); //once
-            });
-        }
-    }, {
-        key: 'hitDiamond',
-
-
-        /**
-         * increases score on diamond hit and removes it
-         * @param {Obstacle} collObj - diamond whitch which the collision happened
-         */
-        value: function hitDiamond(collObj) {
-            var self = this;
-            if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
-                if (self.playSound) _Sound.Sound.play('hitDiamond');
-                self.lastDiamond = collObj;
-                self.diamonds++;
-                self.lastDiamond.mesh.visible = false;
-                _GUI.GUI.setDiamondsInScoreBoard(self.diamonds);
-            }
-        }
-    }, {
-        key: 'showSuccessScreen',
-
-
-        /**
-         * renders hogan tempalte success.mustache and adds it to html-body
-         */
-        value: function showSuccessScreen() {
-            var last = '';
-            var canNotBePlayed = void 0,
-                disableNextLevel = void 0,
-                showOutro = void 0;
-            if (this.current === levels.length) {
-                last = "gone";
-                showOutro = "true";
-            }
-            if (!Level.canBePlayed(this.current + 1)) {
-                canNotBePlayed = "true";
-                disableNextLevel = "disabled";
-            }
-            _GUI.GUI.showSuccessScreen({
-                score: this.diamonds,
-                level: this.current,
-                next: this.current + 1,
-                last: last,
-                canNotBePlayed: canNotBePlayed,
-                disableNextLevel: disableNextLevel,
-                showOutro: showOutro
-            });
-            this.showShopScreen();
-        }
-    }, {
-        key: 'showGameOverScreen',
-
-
-        /**
-         * renders hogan template gameover.mustache and adds it to html-body
-         */
-        value: function showGameOverScreen() {
-            _GUI.GUI.showGameOverScreen({
-                score: this.diamonds,
-                level: this.current
-            });
-        }
-    }, {
-        key: 'showShopScreen',
-
-
-        /**
-         * adds shop screen
-         */
-        value: function showShopScreen() {
-            var self = this;
-            var powerups = _Powerups.Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-            _GUI.GUI.showShopScreen({
-                total: Level.getTotalDiamonds(),
-                powerups: powerups
-            });
-        }
-    }, {
-        key: 'updateShopScreen',
-
-
-        /**
-         * updates shop screen
-         */
-        value: function updateShopScreen() {
-            var self = this;
-            var powerups = _Powerups.Powerups.getPowerupsForTemplate(Level.getTotalDiamonds());
-            _GUI.GUI.updateShopScreen({
-                total: Level.getTotalDiamonds(),
-                powerups: powerups
-            });
-        }
-    }, {
-        key: 'setCookie',
-
-
-        /**
-         * stores the score and success in cookie
-         * @param {boolean} success - whether current level has been ended with success
-         */
-        value: function setCookie(success) {
-            if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
-            var obj = Cookies.get();
-            if (isNaN(Cookies.get('total'))) {
-                Cookies.set('total', this.diamonds);
-            } else {
-                var sum = parseInt(Cookies.get('total'));
-                sum += this.diamonds;
-                Cookies.set('total', sum);
-            }
-        }
-    }, {
-        key: 'background',
-
-
-        /**
-         * returns background color for level
-         * @returns {number} color as hexdecimal
-         */
-        value: function background() {
-            var current = levels[this.current - 1];
-            return current.background;
-        }
-    }], [{
-        key: 'getTotalDiamonds',
-
-
-        /**
-         * returns total amount of diamonds
-         * @returns {number}
-         */
-        value: function getTotalDiamonds() {
-            return Cookies.get('total');
-        }
-    }, {
-        key: 'canBePlayed',
-
-
-        /**
-         * checks whether the level can be played
-         * @param {number} level - that should be played
-         * @returns {boolean}
-         */
-        value: function canBePlayed(level) {
-            if (level == 1) return true;
-            level--;
-            if (Cookies.get(level + '-success') == "true") {
-                //managed level
-                if (level <= _Powerups.Powerups.amount()) {
-                    //powerup exists
-                    if (level <= _Powerups.Powerups.amountOfBought()) return true;
-                    return false;
-                } else {
-                    //no powerup exist
-                    return true;
-                }
-            }
-            return false;
-        }
-    }]);
-    return Level;
-}();
-
-},{"../GUI":719,"../Sound":723,"../protagonist/CollisionDetector":734,"../protagonist/Protagonist":737,"../way/Way":742,"../way/obstacles/Obstacle":746,"./Powerups":726,"./level1":727,"./level2":728,"./level3":729,"./level4":730,"./level5":731,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"jquery":370,"js-cookie":371}],726:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var Cookies = require('js-cookie');
-var powerups = [{
-    id: 1,
-    description: 'Sister Alice has very wide legs. Free her and you will be able to <b>dodge faster</b>.',
-    diamonds: 10,
-    img: '/img/powerups/wideleg.jpg'
-}, {
-    id: 2,
-    description: 'With his very long legs, Bob can jump very high. To <b>jump higher</b> free him.',
-    diamonds: 20,
-    img: '/img/powerups/longleg.jpg'
-}, {
-    id: 3,
-    description: 'Mother Carol likes her magnet hat. Free her and <b>collecting diamonds</b> will be easier.',
-    diamonds: 30,
-    img: '/img/powerups/magnet.jpg'
-}, {
-    id: 4,
-    description: 'Father Dave is a doc. During a run you can activate him with <kbd><i class="fa fa-long-arrow-down" aria-hidden="true"></i></kbd>. That will make you <b>invulnerable</b> for a certain distance. ',
-    diamonds: 40,
-    img: '/img/powerups/invulnerable.jpg'
-}];
-
-var Powerups = exports.Powerups = {
-
-    /**
-     * returns array with all powerups
-     * @return {Array} powerups - array with all powerups
-     */
-    getPowerups: function getPowerups() {
-        return powerups;
-    },
-
-    /**
-     * buys powerup according to powerup id
-     * @param {number} id - id of powerup
-     */
-    buy: function buy(id) {
-        powerups.forEach(function (powerup) {
-            if (powerup.id == id) {
-                var total = Cookies.get('total');
-                Cookies.set('powerup-' + powerup.id, 'bought');
-                total -= powerup.diamonds;
-                console.log('total: ' + total);
-                Cookies.set('total', total);
-                return total;
-            }
-        });
-    },
-
-    /**
-     * checks whether powerup has been bought already
-     * @param {boolean} - is true if powerup has been bought
-     */
-    boughtAlready: function boughtAlready(id) {
-        if (Cookies.get('powerup-' + id) == "bought") {
-            return true;
-        } else {
-            return false;
-        }
-    },
-
-    getPowerupsForTemplate: function getPowerupsForTemplate(totalDiamonds) {
-        powerups.forEach(function (powerup) {
-            powerup.disabled = "disabled";
-            if (Powerups.boughtAlready(powerup.id)) {
-                powerup.disabled = "hidden";
-            } else if (powerup.diamonds <= totalDiamonds) {
-                powerup.disabled = "";
-            }
-        });
-        return powerups;
-    },
-
-    amount: function amount() {
-        return powerups.length;
-    },
-
-    amountOfBought: function amountOfBought() {
-        var bought = 0;
-        for (var i = 1; i <= powerups.length; i++) {
-            if (Cookies.get('powerup-' + i) === "bought") bought++;
-        }
-        return bought;
-    }
-};
-
-},{"js-cookie":371}],727:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.level1 = undefined;
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var boxColor = _Color.Color.palette[1].box;
-var level1 = exports.level1 = {
-    level: 1,
-    speed: 1,
-    background: _Color.Color.palette[1].background,
-    way: {
-        length: 2230,
-        color: _Color.Color.palette[1].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 500,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 760,
-                angle: 340
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 824,
-                angle: 315
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 863,
-                angle: 71
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 892,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1057,
-                angle: 152
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1068,
-                angle: 282
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1162,
-                angle: 37
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 324
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 240
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 10,
-                height: 500
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1532,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1550,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 230
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'diamond',
-
-            position: {
-                distance: 300,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 42
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 44
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 46
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 48
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
-                angle: 30
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 25
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1375,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1450,
-                angle: 15
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1700,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1750,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 2
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 330
-            }
-        }]
-    }
-};
-
-},{"../Color":718,"../Util":724}],728:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.level2 = undefined;
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var boxColor = _Color.Color.palette[0].box;
-var ringColor = _Color.Color.palette[0].ring;
-
-var level2 = exports.level2 = {
-    level: 2,
-    speed: 1,
-    background: _Color.Color.palette[0].background,
-    way: {
-        length: 3230,
-        color: _Color.Color.palette[0].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 546,
-                angle: 193
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 760,
-                angle: 340
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 824,
-                angle: 315
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 863,
-                angle: 71
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 892,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1057,
-                angle: 152
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1068,
-                angle: 282
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1162,
-                angle: 37
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1290,
-                angle: 159
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1357,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 350
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1507,
-                angle: 310
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1520,
-                angle: 125
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1532,
-                angle: 258
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1721,
-                angle: 9
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1740,
-                angle: 109
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 55,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1820,
-                angle: 131
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 230
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2080,
-                angle: 110
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2120,
-                angle: 160
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2298,
-                angle: 284
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2438,
-                angle: 269
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2567,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2675,
-                angle: 265
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2750,
-                angle: 207
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2865,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2964,
-                angle: 333
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 100,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 3050,
-                angle: 138
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 3100,
-                angle: 43
-            }
-        },
-        //End fo Boxes
-
-        {
-            type: 'diamond',
-            position: {
-                distance: 300,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 42
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 44
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 46
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 48
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
-                angle: 30
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 25
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1375,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1450,
-                angle: 15
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1700,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-
-            position: {
-                distance: 1750,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2500,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2550,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2600,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2650,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2750,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2800,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2900,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3000,
-                angle: 310
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(500, 600) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(750, 850) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1000, 1100) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1300, 1350) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
-            }
-        }]
-    }
-};
-
-},{"../Color":718,"../Util":724}],729:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.level3 = undefined;
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var boxColor = _Color.Color.palette[2].box;
-var ringColor = _Color.Color.palette[2].ring;
-var coneColor = _Color.Color.palette[2].cone;
-
-var level3 = exports.level3 = {
-    level: 3,
-    speed: 1,
-    background: _Color.Color.palette[2].background,
-    way: {
-        length: 4230,
-        color: _Color.Color.palette[2].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 500,
-                angle: 34
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 546,
-                angle: 264
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 300,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 557,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 300,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 557,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 580,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 15,
-                height: 35
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 760,
-                angle: 210
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 834,
-                angle: 283
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 875,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 900,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 80,
-                height: 50
-            },
-            color: boxColor,
-            position: {
-                distance: 950,
-                angle: 100
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1060,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1070,
-                angle: 290
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1140,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1150,
-                angle: 137
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1200,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1290,
-                angle: 159
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1350,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1450,
-                angle: 350
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1450,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 30
-            },
-            color: boxColor,
-            position: {
-                distance: 1470,
-                angle: 310
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 40
-            },
-            color: boxColor,
-            position: {
-                distance: 1475,
-                angle: 110
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 60
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 100
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1560,
-                angle: 260
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1721,
-                angle: 19
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 15,
-                length: 55,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 320
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 60,
-                length: 5,
-                height: 40
-            },
-            color: boxColor,
-            position: {
-                distance: 2000,
-                angle: 30
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2298,
-                angle: 284
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2438,
-                angle: 269
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2567,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2675,
-                angle: 265
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 100,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 2679,
-                angle: 310
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2750,
-                angle: 207
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2865,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2964,
-                angle: 333
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 100,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3050,
-                angle: 138
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3100,
-                angle: 43
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3150,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3170,
-                angle: 273
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3200,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3210,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3270,
-                angle: 75
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3300,
-                angle: 145
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3340,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3370,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3375,
-                angle: 140
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-
-                distance: 3400,
-                angle: 220
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 210
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 330
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 30
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3700,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3700,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3750,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3800,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3800,
-                angle: 30
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3900,
-                angle: 50
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 35,
-                length: 25,
-                height: 70
-            },
-            color: boxColor,
-            position: {
-                distance: 3950,
-                angle: 350
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 4000,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 300,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
-                angle: 290
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 290
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1375,
-                angle: 290
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1450,
-                angle: 290
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1700,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1750,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 130
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2100,
-                angle: 135
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2150,
-                angle: 140
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2200,
-                angle: 145
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2250,
-                angle: 150
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2300,
-                angle: 155
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2500,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2550,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2600,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2650,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2750,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2800,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2900,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3000,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3100,
-                angle: 38
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3500,
-                angle: 183
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 192
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3700,
-                angle: 210
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3140,
-                angle: 45
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3240,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3300,
-                angle: 55
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 10
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3650,
-                angle: 10
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3675,
-                angle: 10
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(500, 700) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(750, 950) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1050, 1200) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1300, 1400) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1900, 2000) * 2
-            }
-        }, {
-            type: 'cone',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: coneColor,
-            position: {
-                distance: 4100,
-                angle: 340
-            }
-        }]
-    }
-};
-
-},{"../Color":718,"../Util":724}],730:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.level4 = undefined;
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var boxColor = _Color.Color.palette[3].box;
-var ringColor = _Color.Color.palette[3].ring;
-var coneColor = _Color.Color.palette[3].cone;
-var level4 = exports.level4 = {
-    level: 4,
-    speed: 1,
-    background: _Color.Color.palette[3].background,
-    way: {
-        length: 4230,
-        color: _Color.Color.palette[3].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 230
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 35,
-                length: 15,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 500,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 35,
-                length: 15,
-                height: 300
-            },
-            color: boxColor,
-            position: {
-                distance: 500,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 550,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 40
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 80
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 130
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 720,
-                angle: 220
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 850,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 950,
-                angle: 75
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1075,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1050,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1080,
-                angle: 240
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1160,
-                angle: 240
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1180,
-                angle: 130
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1350,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1350,
-                angle: 175
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 400,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 130
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 400,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 60,
-                length: 25,
-                height: 40
-            },
-            color: boxColor,
-            position: {
-                distance: 1600,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1700,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 80
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 140
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 260
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 320
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 100,
-                length: 25,
-                height: 35
-            },
-            color: boxColor,
-            position: {
-                distance: 2000,
-                angle: 50
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 250,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2100,
-                angle: 110
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2100,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2150,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2250,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2400,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2450,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 75,
-                length: 25,
-                height: 50
-            },
-            color: boxColor,
-            position: {
-                distance: 2500,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2550,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2650,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2700,
-                angle: 300
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2800,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2950,
-                angle: 45
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 10,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3000,
-                angle: 95
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 10,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3050,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3174,
-                angle: 86
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3250,
-                angle: 240
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3260,
-                angle: 100
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3400,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3400,
-                angle: 10
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 295
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3600,
-                angle: 30
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 3650,
-                angle: 155
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 10,
-                height: 100
-            },
-            color: boxColor,
-            position: {
-                distance: 3750,
-                angle: 160
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 4000,
-                angle: 45
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 4000,
-                angle: 135
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 4000,
-                angle: 225
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 400
-            },
-            color: boxColor,
-            position: {
-                distance: 4000,
-                angle: 315
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 300,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 630,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 650,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 680,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 730,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 750,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 780,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1150,
-                angle: 15
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1200,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1350,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1340,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1380,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1420,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1460,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1500,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1550,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1600,
-                angle: 110
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2100,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2150,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2200,
-                angle: 90
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2350,
-                angle: 180
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2500,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2550,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2600,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2650,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2750,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2800,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2900,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3000,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3100,
-                angle: 38
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3500,
-                angle: 183
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 192
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3700,
-                angle: 170
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3140,
-                angle: 45
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3240,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3300,
-                angle: 55
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3650,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3675,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 4050,
-                angle: 25
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 4200,
-                angle: 30
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 300
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 300
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 300
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 260
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 260
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 260
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 240
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 240
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 240
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 220
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 220
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 220
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 200
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 200
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 200
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 180
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 180
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 180
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 160
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 160
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 160
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 140
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 140
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 140
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 120
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 120
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 120
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 100
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 100
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 100
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 80
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 80
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 80
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 60
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3800,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3850,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 320
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(500, 600) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(700, 800) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1050, 1060) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1300, 1320) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1450, 1500) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1600, 1625) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(1900, 2100) * 2
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 700,
-                angle: 0
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 1100,
-                angle: 90
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 1500,
-                angle: 180
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 1900,
-                angle: 270
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 2300,
-                angle: 0
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 2700,
-                angle: 90
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3100,
-                angle: 180
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3500,
-                angle: 270
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3900,
-                angle: 0
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 4100,
-                angle: 90
-            }
-        }]
-    }
-};
-
-},{"../Color":718,"../Util":724}],731:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.level5 = undefined;
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var boxColor = _Color.Color.palette[4].box;
-var ringColor = _Color.Color.palette[4].ring;
-var coneColor = _Color.Color.palette[4].cone;
-
-var level5 = exports.level5 = {
-    level: 5,
-    speed: 1,
-    background: _Color.Color.palette[4].background,
-    way: {
-        length: 4000,
-        color: _Color.Color.palette[4].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 50,
-                length: 80,
-                height: 50
-            },
-            color: boxColor,
-            position: {
-                distance: 1300,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1800,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 80,
-                length: 20,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2100,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 80,
-                length: 20,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2800,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 100,
-                length: 20,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2800,
-                angle: 100
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 10
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 546,
-                angle: 193
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 35
-            },
-            color: boxColor,
-            position: {
-                distance: 560,
-                angle: 340
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 35
-            },
-            color: boxColor,
-            position: {
-                distance: 660,
-                angle: 193
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 730,
-                angle: 168
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 824,
-                angle: 315
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 863,
-                angle: 71
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 892,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 80,
-                height: 50
-            },
-            color: boxColor,
-            position: {
-                distance: 934,
-                angle: 83
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 80,
-                height: 50
-            },
-            color: boxColor,
-            position: {
-                distance: 970,
-                angle: 120
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1057,
-                angle: 152
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1078,
-                angle: 282
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1162,
-                angle: 37
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1290,
-                angle: 159
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1357,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 324
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 30
-            },
-            color: boxColor,
-            position: {
-                distance: 1447,
-                angle: 281
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 40
-            },
-            color: boxColor,
-            position: {
-                distance: 1457,
-                angle: 310
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 60
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1532,
-                angle: 258
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 300,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1600,
-                angle: 150
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 300,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1600,
-                angle: 200
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 5,
-                height: 1
-            },
-            color: boxColor,
-            position: {
-                distance: 1721,
-                angle: 9
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 290
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2000,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2298,
-                angle: 284
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2438,
-                angle: 269
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2567,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2675,
-                angle: 265
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 5,
-                length: 100,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 2679,
-                angle: 290
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2750,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2865,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 25
-            },
-            color: boxColor,
-            position: {
-                distance: 2964,
-                angle: 333
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 2500,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 2500,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 2500,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 2500,
-                angle: 270
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 0
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 90
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 200
-            },
-            color: boxColor,
-            position: {
-                distance: 3500,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 300,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 42
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 44
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 46
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 48
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
-                angle: 30
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1300,
-                angle: 25
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1375,
-                angle: 20
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1450,
-                angle: 15
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1700,
-                angle: 345
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1750,
-                angle: 340
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1800,
-                angle: 335
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1950,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2000,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2050,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2500,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2550,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2600,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2650,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2750,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2800,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2900,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3000,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3100,
-                angle: 38
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3500,
-                angle: 183
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 192
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3700,
-                angle: 170
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3140,
-                angle: 45
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3240,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3300,
-                angle: 55
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3600,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3650,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3675,
-                angle: 0
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 3900,
-                angle: 20
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(500, 700) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: _Util.Util.randomIntInRange(800, 900) * 2
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: 2000
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: 2300
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: 2600
-            }
-        }, {
-            type: 'ring',
-            color: ringColor,
-            position: {
-                distance: 3000
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 1000,
-                angle: 0
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 2000,
-                angle: 90
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3000,
-                angle: 180
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3650,
-                angle: 90
-            }
-        }, {
-            type: 'cone',
-            color: coneColor,
-            position: {
-                distance: 3850,
-                angle: 0
-            }
-        }]
-    }
-};
-
-},{"../Color":718,"../Util":724}],732:[function(require,module,exports){
-'use strict';
-//noinspection JSUnresolvedFunction
-
-var _regenerator = require('babel-runtime/regenerator');
-
-var _regenerator2 = _interopRequireDefault(_regenerator);
-
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-/**
- * initiates the game with intro
- */
-var gameWithIntro = function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-        return _regenerator2.default.wrap(function _callee$(_context) {
-            while (1) {
-                switch (_context.prev = _context.next) {
-                    case 0:
-                        _GUI.GUI.startingAnimationFadeIn();
-                        mainScene.showIntro();
-                        addLevel();
-                        _context.next = 5;
-                        return render();
-
-                    case 5:
-                        _context.next = 7;
-                        return _Keybindings.Keybindings.keyBind('keydown').first().toPromise();
-
-                    case 7:
-                        _context.next = 9;
-                        return startingAnimation();
-
-                    case 9:
-                        _context.next = 11;
-                        return startLevel();
-
-                    case 11:
-                        _context.next = 13;
-                        return showScreen();
-
-                    case 13:
-                    case 'end':
-                        return _context.stop();
-                }
-            }
-        }, _callee, this);
-    }));
-
-    return function gameWithIntro() {
-        return _ref.apply(this, arguments);
-    };
-}();
-
-/**
- * starts animation on homepage
- * @return {Promise}
- */
-
-
-/**
- * starts game without intro
- * @return {Promise}
- */
-var gameWithoutIntro = function () {
-    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
-            while (1) {
-                switch (_context3.prev = _context3.next) {
-                    case 0:
-                        // TODO preload everything
-                        mainScene.simpleIntro();
-                        addLevel();
-                        _context3.next = 4;
-                        return render();
-
-                    case 4:
-                        _context3.next = 6;
-                        return startLevel();
-
-                    case 6:
-                        showScreen();
-
-                    case 7:
-                    case 'end':
-                        return _context3.stop();
-                }
-            }
-        }, _callee3, this);
-    }));
-
-    return function gameWithoutIntro() {
-        return _ref3.apply(this, arguments);
-    };
-}();
-
-/**
- * renders game
- */
-
-
-/**
- * starts current level
- * @return {Promise}
- */
-var startLevel = function () {
-    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
-        var subs, protagonist;
-        return _regenerator2.default.wrap(function _callee4$(_context4) {
-            while (1) {
-                switch (_context4.prev = _context4.next) {
-                    case 0:
-                        subs = [];
-
-                        _GUI.GUI.fadeInScoreboard();
-                        _GUI.GUI.fadeInSoundSwitch();
-                        subs.push(_Keybindings.Keybindings.keyBind('keydown').subscribe(function (direction) {
-                            return _Scene.Scene.startMovingProtagonist(mainScene, direction);
-                        }));
-                        subs.push(_Keybindings.Keybindings.keyBind('keyup').subscribe(function (direction) {
-                            return _Scene.Scene.stopMovingProtagonist(mainScene, direction);
-                        }));
-                        //start moving way
-                        mainScene.move.continue = true;
-                        protagonist = mainScene.getProtagonist();
-                        _context4.next = 9;
-                        return level[currentLevel].begin(protagonist);
-
-                    case 9:
-                        mainScene.move.continue = false;
-                        subs.forEach(function (sub) {
-                            return sub.unsubscribe();
-                        });
-
-                    case 11:
-                    case 'end':
-                        return _context4.stop();
-                }
-            }
-        }, _callee4, this);
-    }));
-
-    return function startLevel() {
-        return _ref4.apply(this, arguments);
-    };
-}();
-
-/**
- * shows gameover or successcreen at the end of the level and updates Cookies
- */
-
-
-var _Protagonist = require('./protagonist/Protagonist');
-
-var _Scene = require('./Scene');
-
-var _Level = require('./level/Level');
-
-var _Keybindings = require('./Keybindings');
-
-var _Powerups = require('./level/Powerups');
-
-var _GUI = require('./GUI');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var $ = require('jquery');
-var THREE = require('three');
-var async = require('async');
-var TWEEN = require('tween.js');
-var Cookies = require('js-cookie');
-
-//because some three js modules need a global THREE-letiable....
-window.THREE = THREE;
-
-var mainScene = void 0;
-var level = [{}, new _Level.Level(1), new _Level.Level(2), new _Level.Level(3), new _Level.Level(4), new _Level.Level(5)];
-var currentLevel = 1;
-var URLpath = '';
-window.initMe = 0;
-
-var music = new Audio('/sound/music.mp3');
-
-if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function startingAnimation() {
-    var _this = this;
-
-    var fadeTime = 1000;
-    _GUI.GUI.startingAnimationFadeOut(fadeTime);
-    return new Promise(function (resolve) {
-        setTimeout((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-            return _regenerator2.default.wrap(function _callee2$(_context2) {
-                while (1) {
-                    switch (_context2.prev = _context2.next) {
-                        case 0:
-                            _context2.next = 2;
-                            return mainScene.startingAnimation();
-
-                        case 2:
-                            resolve();
-
-                        case 3:
-                        case 'end':
-                            return _context2.stop();
-                    }
-                }
-            }, _callee2, _this);
-        })), fadeTime);
-    });
-}function render() {
-    return new Promise(function (resolve) {
-        requestAnimationFrame(function () {
-            render();
-            resolve();
-        });
-        mainScene.render();
-        mainScene.turn(level[currentLevel]);
-        TWEEN.update();
-    });
-}
-
-/**
- * adds current level to scene
- */
-function addLevel() {
-    level[currentLevel].prepare();
-    mainScene.addLevel(level[currentLevel]);
-}function showScreen() {
-    if (!level[currentLevel].gameOver) {
-        //success
-        level[currentLevel].setCookie(true);
-        level[currentLevel].showSuccessScreen();
-    } else {
-        //gameover
-        level[currentLevel].setCookie(false);
-        level[currentLevel].showGameOverScreen();
-    }
-}
-
-/**
- * checks whether level is allowed to be played, if yes return true
- * @param {number} level
- * @returns {boolean}
- */
-function playThisLevel() {
-    if (currentLevel === 1) return true;
-    return _Level.Level.canBePlayed(currentLevel);
-}
-
-/**
- * checks in cookies whether sound is on
- * @returns {boolean} - true if sound is on
- */
-function isMusicOn() {
-    if (Cookies.get('sound') === "on") return true;
-    if (Cookies.get('sound')) {
-        level[currentLevel].playSound = false;
-        return false;
-    }
-    setMusicSettings(true);
-    return true;
-}
-
-/**
- * sets music settings in Cookies
- */
-function setMusicSettings(isOn) {
-    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
-}
-
-/**
- * main function for game
- * @return {Promise}
- */
-var main = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5() {
-        var URL, background, newURL;
-        return _regenerator2.default.wrap(function _callee5$(_context5) {
-            while (1) {
-                switch (_context5.prev = _context5.next) {
-                    case 0:
-                        URL = window.location.href;
-
-                        URLpath = URL.replace(/http:\/\/.+\//g, '');
-                        if (URLpath !== "") currentLevel = URLpath.replace('#', '');
-                        _GUI.GUI.showLoadingIcon();
-                        _context5.next = 6;
-                        return _Protagonist.Protagonist.init();
-
-                    case 6:
-                        background = level[currentLevel].background();
-
-                        mainScene = new _Scene.Scene(window.innerWidth, window.innerHeight, background);
-                        document.body.appendChild(mainScene.renderer.domElement);
-                        _GUI.GUI.removeLoadingIcon();
-
-                        if (!(URLpath == "")) {
-                            _context5.next = 15;
-                            break;
-                        }
-
-                        _context5.next = 13;
-                        return gameWithIntro();
-
-                    case 13:
-                        _context5.next = 16;
-                        break;
-
-                    case 15:
-                        if (playThisLevel()) gameWithoutIntro();else {
-                            newURL = URL.replace(URLpath, '');
-
-                            window.location.href = newURL;
-                        }
-
-                    case 16:
-                    case 'end':
-                        return _context5.stop();
-                }
-            }
-        }, _callee5, this);
-    }));
-
-    return function main() {
-        return _ref5.apply(this, arguments);
-    };
-}();
-
-/**
- * main function of /
- */
-var intro = function intro() {
-    _GUI.GUI.introFadeIn();
-};
-
-//reloads page
-$(document).on('click', '.button.reload', function () {
-    location.reload();
-});
-
-//buys powerup on click
-$(document).on('click', '.powerup .button', function (event) {
-    if (_GUI.GUI.buttonIsEnabled($(this))) {
-        var powerup = _GUI.GUI.getPowerupIdFromButton(event);
-        var total = _Powerups.Powerups.buy(powerup);
-        level[currentLevel].updateShopScreen();
-        if (_Level.Level.canBePlayed(parseInt(currentLevel) + 1)) _GUI.GUI.updateNextLevelButton();
-    }
-});
-
-//enables and disables sound
-$(document).on('click', '#soundSwitch', function (event) {
-    level[currentLevel].playSound = _GUI.GUI.getSoundSwitch();
-    setMusicSettings(level[currentLevel].playSound);
-    if (level[currentLevel].playSound) music.play();else music.pause();
-});
-
-//resets cookies to play game from start
-$(document).on('click', '#playagain', function (event) {
-    var object = Cookies.get();
-    for (var property in object) {
-        if (object.hasOwnProperty(property)) {
-            Cookies.remove(property);
-        }
-    }
-});
-
-music.addEventListener('ended', function () {
-    if (level[currentLevel].playSound) {
-        this.currentTime = 0;
-        this.play();
-    }
-}, false);
-
-//store functions to window
-window.intro = intro;
-window.main = main;
-
-},{"./GUI":719,"./Keybindings":720,"./Scene":722,"./level/Level":725,"./level/Powerups":726,"./protagonist/Protagonist":737,"async":1,"babel-runtime/helpers/asyncToGenerator":5,"babel-runtime/regenerator":8,"jquery":370,"js-cookie":371,"three":716,"tween.js":717}],733:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.Body = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Color = require('../Color');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-/**
- * body of protagonist
- */
-
-var Body = exports.Body = function () {
-
-  /**
-   * generates mesh for body
-   */
-  function Body() {
-    (0, _classCallCheck3.default)(this, Body);
-
-    this.material = new THREE.MeshLambertMaterial({
-      color: 0xffffff,
-      transparent: false,
-      opacity: 0.8
-    });
-    this.mesh = new THREE.Mesh(Body.geometry, this.material);
-  }
-
-  /**
-   * positions the body according to given coordinates
-   * @param {number} x
-   * @param {number} y
-   * @param {number} z
-   */
-
-
-  (0, _createClass3.default)(Body, [{
-    key: 'position',
-    value: function position(x, y, z) {
-      this.mesh.position.set(x, y, z);
-    }
-
-    /**
-     * adds the body to a group
-     * @param {THREE.Group} group
-     */
-
-  }, {
-    key: 'addToGroup',
-    value: function addToGroup(group) {
-      group.add(this.mesh);
-    }
-
-    /**
-     * loads the body from json file (blender)
-     * @param {Promise} promise
-     */
-
-  }], [{
-    key: 'init',
-    value: function init(cb) {
-      var loader = new THREE.JSONLoader();
-      return new Promise(function (resolve, reject) {
-        loader.load('/js/blender/body.json', function (geometry, materials) {
-          Body.geometry = geometry;
-          resolve();
-        });
-      });
-    }
-  }]);
-  return Body;
-}();
-
-},{"../Color":718,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],734:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.CollisionDetector = undefined;
-
-var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require("babel-runtime/helpers/createClass");
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var CollisionDetector = exports.CollisionDetector = function () {
-
-    /**
-     * @param {Obstacle[]} obstacles
-     * @constructor
-     */
-    function CollisionDetector(obstacles) {
-        (0, _classCallCheck3.default)(this, CollisionDetector);
-
-        //sort by distance to save performance
-        obstacles = obstacles.sort(function (a, b) {
-            try {
-                var keyA = CollisionDetector.getMaxDistance(a);
-                keyB = CollisionDetector.getMaxDistance(b);
-                // Compare the 2 keys
-                if (keyA < keyB) return -1;
-                if (keyA > keyB) return 1;
-            } catch (e) {}
-            return 0;
-        });
-        this.obstacles = obstacles;
-    }
-
-    /**
-     * @param {Obstacle} obstacle
-     * @return {number}
-     * @private
-     */
-
-
-    (0, _createClass3.default)(CollisionDetector, [{
-        key: "collision",
-
-
-        /**
-         * @param {{distance: number}} currentPosition - contains the current distance and angle
-         * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
-         */
-        value: function collision(currentPosition) {
-            var self = this;
-            var ret = {
-                collision: false,
-                type: null,
-                mesh: null
-            };
-            self.obstacles.forEach(function (obstacle, i) {
-                if (ret.collision) return;
-                // check if obstacle should not be checked anymore
-                // remove from array with the next garbage-collection
-                if (CollisionDetector.getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
-
-                if (
-                // check if obstacle is near enough otherwise don't even check whether collision
-                obstacle.collisionData.distance.min < currentPosition.distance + 100 &&
-                //other collision with left body half
-                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
-                //other collisions from right body half.
-                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemax && currentPosition.anglemax < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
-                //ring collision
-                obstacle.collisionData.type == "ring" && CollisionDetector.getMaxDistance(obstacle) == currentPosition.distance && obstacle.collisionData.size.height > currentPosition.height ||
-                //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
-                //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
-
-                    ret = {
-                        collision: true,
-                        type: obstacle.collisionData.type,
-                        mesh: obstacle.mesh
-                    };
-                }
-            });
-            return ret;
-        }
-    }], [{
-        key: "getMaxDistance",
-        value: function getMaxDistance(obstacle) {
-            if (obstacle.type == 'ring') return obstacle.collisionData.distance;
-            return obstacle.collisionData.distance.max;
-        }
-    }]);
-    return CollisionDetector;
-}();
-
-},{"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7}],735:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Head = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Color = require('../Color');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-/**
- * head of protagonist
- */
-
-var Head = exports.Head = function () {
-    /**
-     * generates mesh for head of Protagonist
-     */
-    function Head() {
-        (0, _classCallCheck3.default)(this, Head);
-
-        this.material = new THREE.MeshLambertMaterial({
-            color: 0xffffff,
-            transparent: false,
-            opacity: 0.8
-        });
-        this.mesh = new THREE.Mesh(Head.geometry, this.material);
-    }
-
-    /**
-     * positions the head according to given coordinates
-     * @param {number} x
-     * @param {number} y
-     * @param {number} z
-     */
-
-
-    (0, _createClass3.default)(Head, [{
-        key: 'position',
-        value: function position(x, y, z) {
-            this.mesh.position.set(x, y, z);
-        }
-
-        /**
-         * adds the head to a group
-         * @param {THREE.Group} group
-         */
-
-    }, {
-        key: 'addToGroup',
-        value: function addToGroup(group) {
-            group.add(this.mesh);
-        }
-
-        /**
-         * loads the head from json file (blender)
-         * @param {Promise} promise
-         */
-
-    }], [{
-        key: 'init',
-        value: function init() {
-            var loader = new THREE.JSONLoader();
-            return new Promise(function (resolve, reject) {
-                loader.load('/js/blender/head.json', function (geometry, materials) {
-                    Head.geometry = geometry;
-                    resolve();
-                });
-            });
-        }
-    }]);
-    return Head;
-}();
-
-},{"../Color":718,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],736:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Leg = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Color = require('../Color');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-/**
- * leg of protagonist
- */
-
-var Leg = exports.Leg = function () {
-    function Leg() {
-        (0, _classCallCheck3.default)(this, Leg);
-
-        this.material = new THREE.MeshLambertMaterial({
-            color: 0xffffff,
-            transparent: false,
-            opacity: 0.8
-        });
-        this.mesh = new THREE.Mesh(Leg.geometry, this.material);
-    }
-
-    /**
-     * positions the leg according to given coordinates
-     * @param {number} x
-     * @param {number} y
-     * @param {number} z
-     */
-
-
-    (0, _createClass3.default)(Leg, [{
-        key: 'position',
-        value: function position(x, y, z) {
-            this.mesh.position.set(x, y, z);
-        }
-    }, {
-        key: 'addToGroup',
-
-
-        /**
-         * adds the leg to a group
-         * @param {THREE.Group} group
-         */
-        value: function addToGroup(group) {
-            group.add(this.mesh);
-        }
-    }], [{
-        key: 'init',
-
-
-        /**
-         * loads the leg from json file (blender)
-         * @param {Promise} promise
-         */
-        value: function init() {
-            var loader = new THREE.JSONLoader();
-            return new Promise(function (resolve, reject) {
-                loader.load('/js/blender/leg.json', function (geometry, materials) {
-                    Leg.geometry = geometry;
-                    resolve();
-                });
-            });
-        }
-    }]);
-    return Leg;
-}();
-
-},{"../Color":718,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],737:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Protagonist = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Body = require('./Body');
-
-var _Head = require('./Head');
-
-var _Leg = require('./Leg');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-var TWEEN = require('tween.js');
-var Cookies = require('js-cookie');
-
-var Protagonist = exports.Protagonist = function () {
-    function Protagonist() {
-        (0, _classCallCheck3.default)(this, Protagonist);
-
-        this.object3D = new THREE.Object3D();
-        this.body = new _Body.Body();
-        this.head = new _Head.Head();
-        this.left = {
-            leg: new _Leg.Leg()
-        };
-        this.right = {
-            leg: new _Leg.Leg()
-        };
-        this.groupBodyParts();
-        this.scaleBodyParts();
-        this.isJumping = false;
-    }
-
-    /**
-     * scales body parts to proper setSize
-     */
-
-
-    (0, _createClass3.default)(Protagonist, [{
-        key: 'scaleBodyParts',
-        value: function scaleBodyParts() {
-            this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
-        }
-
-        /**
-         * groups the body parts of protagonist and positions them
-         */
-
-    }, {
-        key: 'groupBodyParts',
-        value: function groupBodyParts() {
-            this.body.position(0, 0, 0);
-            this.body.addToGroup(this.object3D);
-            this.head.position(0, 0.1, 0);
-            this.head.addToGroup(this.object3D);
-            this.right.leg.position(0.5, 0, 0);
-            this.right.leg.addToGroup(this.object3D);
-            this.left.leg.position(0, 0, 0);
-            this.left.leg.addToGroup(this.object3D);
-        }
-
-        /**
-         * Makes protagonist jump a given height
-         */
-
-    }, {
-        key: 'jump',
-        value: function jump() {
-            var height = 40;
-            if (Cookies.get('powerup-2') == "bought") height = 70;
-            var self = this;
-            if (!self.isJumping) {
-                self.isJumping = true;
-                var tween = new TWEEN.Tween({
-                    jump: 0
-                }).to({
-                    jump: Math.PI
-                }, 700).onUpdate(function () {
-                    self.group.position.y = 70 * Math.sin(this.jump);
-                }).start();
-                tween.onComplete(function () {
-                    self.isJumping = false;
-                });
-            }
-        }
-
-        /**
-         * positions protagonist according to given coordinates
-         * @param {number} x - x position of particles group
-         * @param {number} y - y position of particles group
-         * @param {number} z - z position of particles group
-         */
-
-    }, {
-        key: 'position',
-        value: function position(x, y, z) {
-            this.object3D.position.set(x, y, z);
-        }
-
-        /**
-         * rotates the protagonist according to axis and angle
-         * @param {string} axis - "x", "y" or "z"
-         * @param {number} angle - in radians
-         */
-
-    }, {
-        key: 'rotate',
-        value: function rotate(axis, angle) {
-            switch (axis) {
-                case 'x':
-                    this.object3D.rotateX(angle);
-                    break;
-                case 'y':
-                    this.object3D.rotateY(angle);
-                    break;
-                case 'z':
-                    this.object3D.rotateZ(angle);
-                    break;
-            }
-        }
-
-        /**
-         * adds protagonist to given scene
-         * @param {THREE.Scene} scene - scene to which the protagonist will be added
-         */
-
-    }, {
-        key: 'addToScene',
-        value: function addToScene(scene) {
-            scene.add(this.object3D);
-        }
-
-        /**
-         * returns the current position of the Protagonist
-         * @returns {Object}
-         */
-
-    }, {
-        key: 'decreasePosition',
-
-
-        /**
-         * decreases the position of the protagonist according to given axis
-         * @param {string} axis - "x", "y" or "z"
-         */
-        value: function decreasePosition(axis) {
-            switch (axis) {
-                case "x":
-                    this.object3D.position.x--;
-                    break;
-                case "y":
-                    this.object3D.position.y--;
-                    break;
-                case "z":
-                    this.object3D.position.z--;
-                    break;
-            }
-        }
-
-        /**
-         * returns the group of meshes of the protagonist
-         * @returns {THREE.Object3D}
-         */
-
-    }, {
-        key: 'currentPosition',
-        get: function get() {
-            return this.object3D.position;
-        }
-    }, {
-        key: 'group',
-        get: function get() {
-            return this.object3D;
-        }
-
-        /**
-         * changes opacity of protagonist
-         * @param {THREE.Object3D} group - contains meshes of protagonist
-         * @param {number} opacity - from 0 to 1
-         */
-
-    }], [{
-        key: 'makeGroupTransparent',
-        value: function makeGroupTransparent(group, opacity) {
-            group.children.forEach(function (parts) {
-                parts.material.transparent = true;
-                parts.material.opacity = opacity;
-            });
-        }
-
-        /**
-         * moves group of protagonist
-         * @param {THREE.Object3D} group - contains meshes of protagonist
-         *
-         */
-
-    }, {
-        key: 'move',
-        value: function move(group, position) {
-            group.children[0].position.x = position * -0.05;
-            group.children[3].position.z = position * 1;
-            group.children[2].position.z = position * -1;
-        }
-
-        /**
-         * loads blender files for protagonist
-         * @param {Promise} promise
-         */
-
-    }, {
-        key: 'init',
-        value: function init() {
-            return Promise.all([_Leg.Leg.init(), _Head.Head.init(), _Body.Body.init()]);
-        }
-    }]);
-    return Protagonist;
-}();
-
-},{"./Body":733,"./Head":735,"./Leg":736,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"js-cookie":371,"three":716,"tween.js":717}],738:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":369}],739:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div class=\"reveal large\" id=\"shopModal\" data-reveal>");_.b("\n" + i);_.b("    ");_.b(_.t(_.f("content",c,p,0)));_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":369}],740:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<h3>Free family members</h3>");_.b("\n" + i);_.b("<p>With your collected diamonds you are able to free family members. Freeing your family enlarges your skill set, like turning faster.</p>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12 total-diamonds\">");_.b("\n" + i);_.b("    <b>");_.b("\n" + i);_.b("      <span>Total:");_.b("\n" + i);_.b("        <span class=\"diamonds\">");_.b(_.v(_.f("total",c,p,0)));_.b("</span>");_.b("\n" + i);_.b("        <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("      </span>");_.b("\n" + i);_.b("    </b>");_.b("\n" + i);_.b("</div>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<br>");_.b("\n" + i);_.b("<div class=\"large-12 medium-12 small-12\">");_.b("\n" + i);if(_.s(_.f("powerups",c,p,1),c,p,0,456,1069,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("        <div class=\"small-6 medium-6 large-3 columns powerup\">");_.b("\n" + i);_.b("            <div class=\"image-wrapper overlay-slide-in-left\">");_.b("\n" + i);_.b("                <img src=\"");_.b(_.v(_.f("img",c,p,0)));_.b("\" />");_.b("\n" + i);_.b("                <div class=\"image-overlay-content\">");_.b("\n" + i);_.b("                    <div class=\"content\">");_.b("\n" + i);_.b("                        <p>");_.b(_.t(_.f("description",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("                        <a class=\"button secondary ");_.b(_.v(_.f("disabled",c,p,0)));_.b("\" id=\"buy-powerup-");_.b(_.v(_.f("id",c,p,0)));_.b("\">");_.b("\n" + i);_.b("                  Free for");_.b("\n" + i);_.b("                  ");_.b(_.v(_.f("diamonds",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i>");_.b("\n" + i);_.b("                </a>");_.b("\n" + i);_.b("                    </div>");_.b("\n" + i);_.b("                </div>");_.b("\n" + i);_.b("            </div>");_.b("\n" + i);_.b("        </div>");_.b("\n");});c.pop();}_.b("</div>");_.b("\n" + i);_.b("<button class=\"close-button\" data-close aria-label=\"Close modal\" type=\"button\">");_.b("\n" + i);_.b("    <span aria-hidden=\"true\">&times;</span>");_.b("\n" + i);_.b("</button>");_.b("\n" + i);_.b("\n" + i);_.b("<script>");_.b("\n" + i);_.b("    $(document).foundation();");_.b("\n" + i);_.b("</script>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":369}],741:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i> Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a data-open=\"shopModal\" class=\"button\">");_.b("\n" + i);_.b("            Free family members");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,602,801,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"callout alert\">");_.b("\n" + i);_.b("                <h5>Free your Family!</h5>");_.b("\n" + i);_.b("                <p>Next Level can only be played by freeing the next family member.</p>");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
-},{"hogan.js/lib/template":369}],742:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Way = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Color = require('../Color');
-
-var _Util = require('../Util');
-
-var _GUI = require('../GUI');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-var Obstacle = require('./obstacles/Obstacle');
-var Cookies = require('js-cookie');
-var randomBoolean = require('random-boolean');
-
-var Way = exports.Way = function () {
-    /**
-     * Represents way
-     * @param {number} length how long the way is
-     * @param {number} speed how fast the way should move
-     * @constructor
-     */
-    function Way(length, speed, color) {
-        (0, _classCallCheck3.default)(this, Way);
-
-        this.length = length;
-        this.speed = speed;
-        this.group = new THREE.Object3D();
-        this.obstacles = [];
-        this.radius = 80;
-        this.segments = 1000;
-        this.geometry = new THREE.CylinderGeometry(this.radius, this.radius, this.length, this.segments);
-        this.material = new THREE.MeshLambertMaterial({
-            color: color
-        });
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-        this.group.add(this.mesh);
-        this.currentPosition = {
-            angle: 0,
-            anglemin: -5,
-            anglemax: 5,
-            distance: 50,
-            height: 0
-        };
-    }
-
-    /**
-     * positions way properly into the scene
-     * @param {number} y y position
-     * @param {number} z z position
-     */
-
-
-    (0, _createClass3.default)(Way, [{
-        key: 'position',
-        value: function position() {
-            this.group.rotation.x = Math.PI / 2;
-            this.group.position.y = -this.radius - 18;
-            this.group.position.z = -this.length * 0.5 + 50;
-        }
-    }, {
-        key: 'moveForwardTillEnd',
-
-
-        /**
-         * moves way direction z positive
-         * @param {number} speed
-         */
-        value: function moveForwardTillEnd(speed) {
-            this.group.position.z = this.group.position.z + speed;
-            this.currentPosition.distance = this.currentPosition.distance + speed;
-            this.moveRandomObstacles();
-            _GUI.GUI.updateDistance(this.currentPosition.distance);
-        }
-    }, {
-        key: 'setCurrentPosition',
-
-
-        /**
-         * sets current position
-         */
-        value: function setCurrentPosition() {
-            // anglemin and anglemax are hitbox for protagonist
-            this.currentPosition.anglemin = this.currentPosition.angle - 5;
-            if (this.currentPosition.anglemin < 0) this.currentPosition.anglemin = this.currentPosition.anglemin + 360;
-            if (this.currentPosition.anglemax > 360) this.currentPosition.anglemax = this.currentPosition.anglemax - 360;
-            this.currentPosition.anglemax = this.currentPosition.angle + 5;
-        }
-    }, {
-        key: 'rotate',
-
-
-        /**
-         * rotates the way around the y axis according to given angle
-         * @param {number} angle
-         */
-        value: function rotate(angle) {
-            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
-            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = _Util.Util.convertDegreesToRadians(360);
-
-            // rotates faster with powerup 1
-            if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
-            this.group.rotation.y += angle;
-            this.currentPosition.angle = _Util.Util.convertRadiansToDegrees(this.group.rotation.y);
-
-            this.setCurrentPosition();
-        }
-    }, {
-        key: 'moveRandomObstacles',
-
-
-        /**
-         * moves the random obstacles
-         */
-        value: function moveRandomObstacles() {
-            this.obstacles.forEach(function (obstacle) {
-                if (!obstacle.randomMoving) return;
-                obstacle.directionChangeIndex++;
-                if (obstacle.directionChangeIndex == 15) {
-                    obstacle.directionChangeIndex = 0;
-                    obstacle.direction = randomBoolean();
-                }
-                //move it
-                obstacle.move(obstacle.direction);
-            });
-        }
-    }, {
-        key: 'addObstacles',
-
-
-        /**
-         * creates Obstacles out of array and adds them to the way
-         * @param {[{}]} obstacles
-         */
-        value: function addObstacles(obstacles) {
-            var self = this;
-            self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
-            self.obstacles.forEach(function (obstacle) {
-                if (obstacle.distance < self.length) {
-                    self.group.add(obstacle.mesh);
-                } else {
-                    console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
-                }
-            });
-        }
-    }, {
-        key: 'addToScene',
-
-
-        /**
-         * adds way to given scene
-         * @param {THREE.Scene} scene - scene to which the way will be added
-         */
-        value: function addToScene(scene) {
-            scene.add(this.group);
-        }
-    }]);
-    return Way;
-}();
-
-},{"../Color":718,"../GUI":719,"../Util":724,"./obstacles/Obstacle":746,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"js-cookie":371,"random-boolean":373,"three":716}],743:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Box = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Util = require('../../Util');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-var Box = exports.Box = function () {
-
-    /**
-     * Represents the obstacle "Box"
-     * @param {Object} box - structure as in levelX.js
-     * @constructor
-     */
-    function Box(box) {
-        (0, _classCallCheck3.default)(this, Box);
-
-        this.material = new THREE.MeshLambertMaterial({ color: box.color });
-        this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-    }
-
-    /**
-     * Positions the box on way
-     * @param {number} angle - angle of position in degrees
-     * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of way
-     * @param {number} radius - radius of way
-     */
-
-
-    (0, _createClass3.default)(Box, [{
-        key: 'position',
-        value: function position(angle, distance, length, radius) {
-            angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
-            var y = length / 2 - distance;
-            var x = radius * Math.cos(angle);
-            var z = -(radius * Math.sin(angle));
-            this.mesh.rotation.y += angle;
-            this.mesh.position.set(x, y, z);
-        }
-    }], [{
-        key: 'prepareForCollisionDetection',
-
-
-        /**
-         * converts box object from levelX.js into a format that can be used for detecting collisions
-         * @param {Object} obstacle - with structure as in levelX.js
-         * @param radius - radius of way
-         * @returns {Object} - object ret that is fitted for detecting collisions
-         */
-        value: function prepareForCollisionDetection(obstacle, radius) {
-            var b = obstacle.size.width * 0.5;
-            var angleRight = Math.atan(b / radius);
-            return {
-                type: 'box',
-                size: obstacle.size,
-                angle: {
-                    center: obstacle.position.angle,
-                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
-                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
-                },
-                distance: {
-                    center: obstacle.position.distance,
-                    min: obstacle.position.distance - 0.5 * obstacle.size.length,
-                    max: obstacle.position.distance + 0.5 * obstacle.size.length
-                }
-            };
-        }
-    }]);
-    return Box;
-}();
-
-},{"../../Util":724,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],744:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Cone = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Util = require('../../Util');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-
-var height = 30;
-var radius = 15;
-
-var Cone = exports.Cone = function () {
-    /**
-     * Represenst cone that moves randomly around the way
-     */
-    function Cone(cone) {
-        (0, _classCallCheck3.default)(this, Cone);
-
-        this.material = new THREE.MeshLambertMaterial({ color: cone.color });
-        this.geometry = new THREE.ConeGeometry(radius, height, 100, 100);
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-    }
-
-    /**
-     * positions cone on way
-     * @param {number} angle - angle of position in degrees
-     * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of way
-     * @param {number} radius - radius of way
-     */
-
-
-    (0, _createClass3.default)(Cone, [{
-        key: 'position',
-        value: function position(angle, distance, length, radius) {
-            radius += height * 0.5;
-            this.mesh.rotation.z -= Math.PI / 2;
-            angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
-            var y = length / 2 - distance;
-            var x = radius * Math.cos(angle);
-            var z = -(radius * Math.sin(angle));
-            this.mesh.rotation.y += angle;
-            this.mesh.position.set(x, y, z);
-        }
-    }], [{
-        key: 'prepareForCollisionDetection',
-        value: function prepareForCollisionDetection(obstacle, radius) {
-            var a = radius - 0.5 * height;
-            var b = height * 0.5;
-            var angleRight = Math.atan(b / a);
-            return {
-                type: 'cone',
-                size: {
-                    width: height,
-                    length: height,
-                    height: height
-                },
-                angle: {
-                    center: obstacle.position.angle,
-                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
-                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
-                },
-                distance: {
-                    center: obstacle.position.distance,
-                    min: obstacle.position.distance - 0.5 * height,
-                    max: obstacle.position.distance + 0.5 * height
-                }
-            };
-        }
-    }]);
-    return Cone;
-}();
-
-},{"../../Util":724,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}],745:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Diamond = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _Util = require('../../Util');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-
-var Cookies = require('js-cookie');
-
-var size = 10;
-var heightFromWay = 20;
-
-var Diamond = exports.Diamond = function () {
-    /**
-     * Represents the "obstacle" "diamond" (that can be collected)
-     * @param {Object} diamond - structure as in levelX.js
-     * @constructor
-     */
-    function Diamond(diamond) {
-        (0, _classCallCheck3.default)(this, Diamond);
-
-        this.geometry = new THREE.OctahedronGeometry(size, 0);
-        this.material = new THREE.MeshLambertMaterial({
-            color: 0xffffff,
-            transparent: true,
-            opacity: 0.6
-        });
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.castShadow = true;
-    }
-
-    /**
-     * Positions the diamond on way
-     * @param {number} angle - angle of position in degrees
-     * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of way
-     * @param {number} radius - radius of way
-     */
-
-
-    (0, _createClass3.default)(Diamond, [{
-        key: 'position',
-        value: function position(angle, distance, length, radius) {
-            angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
-            radius += heightFromWay;
-            var y = length / 2 - distance;
-            var x = radius * Math.cos(angle);
-            var z = -(radius * Math.sin(angle));
-            this.mesh.rotation.y += angle;
-            this.mesh.position.set(x, y, z);
-        }
-    }], [{
-        key: 'prepareForCollisionDetection',
-
-
-        /**
-         * converts diamond object from levelX.js into a format that can be used for detecting collisions
-         * @param {Object} obstacle - with structure as in levelX.js
-         * @param radius - radius of way
-         * @returns {Object} ret - object ret that is fitted for detecting collisions
-         */
-        value: function prepareForCollisionDetection(obstacle, radius) {
-            var angle = 10;
-            if (Cookies.get('powerup-3') == "bought") angle = 35;
-            return {
-                type: 'diamond',
-                size: {
-                    height: heightFromWay
-                },
-                angle: {
-                    center: obstacle.position.angle,
-                    min: obstacle.position.angle - angle,
-                    max: obstacle.position.angle + angle
-                },
-                distance: {
-                    center: obstacle.position.distance,
-                    min: obstacle.position.distance - 10,
-                    max: obstacle.position.distance + 10
-                }
-
-            };
-        }
-    }]);
-    return Diamond;
-}();
-
-},{"../../Util":724,"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"js-cookie":371,"three":716}],746:[function(require,module,exports){
-'use strict';
-
-var _Box = require('./Box');
-
-var _Cone = require('./Cone');
-
-var _Diamond = require('./Diamond');
-
-var _Ring = require('./Ring');
-
-var _Util = require('../../Util');
-
-module.exports = function () {
-    var _obstacleTypes = {
-        box: _Box.Box,
-        ring: _Ring.Ring,
-        diamond: _Diamond.Diamond,
-        cone: _Cone.Cone
-    };
-
-    /**
-     * Represents an Obstacle on wthe way
-     * @param {String} type - string like "cube"
-     * @param {THREE.Mesh} mesh - mesh of obstacle
-     * @param {number} distance - from starting point of way up to obstacle
-     * @param {number} angle - in radiant, on which side the obstacle is positioned
-     * @constructor
-     */
-    function Obstacle(type, mesh, distance, angle, collisionData) {
-        this.type = type;
-        this.mesh = mesh;
-        this.distance = distance;
-        this.angle = angle;
-        this.collisionData = collisionData;
-        this.randomMoving = false;
-
-        //used if moving obstacle
-        if (type == 'cone') {
-            this.randomMoving = true;
-            this.directionChangeIndex = 0;
-            this.direction = true; //true == 'right', false == 'left'
-        }
-    }
-
-    /**
-     * creates from array obstacles and returns them
-     * @param {Array} obstacles - contains information to generate obstacles
-     * @returns {Array} ret - containing obstacle objects
-     */
-    Obstacle.generateFromArray = function (obstacles, wayLength, radius) {
-        var ret = [];
-        obstacles.forEach(function (o) {
-            var obstacle = new _obstacleTypes[o.type](o);
-            obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
-            var collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
-            ret.push(new Obstacle(o.type, obstacle.mesh, o.position.distance, o.position.angle, collisionData));
-        });
-        return ret;
-    };
-
-    Obstacle.prototype.move = function (direction) {
-        if (direction) this.angle += 1;else this.angle -= 1;
-
-        this.angle = _Util.Util.normalizeAngle(this.angle);
-
-        var radius = 80 + 15;
-        var angle = -(this.angle - 90);
-        angle = _Util.Util.convertDegreesToRadians(angle);
-        var x = radius * Math.cos(angle);
-        var z = -(radius * Math.sin(angle));
-        this.mesh.rotation.y = angle;
-        this.mesh.position.x = x;
-        this.mesh.position.z = z;
-
-        //neue angle ist this.angle
-        var a = radius - 0.5 * 30;
-        var b = 30 * 0.5;
-        var angleRight = _Util.Util.convertRadiansToDegrees(Math.atan(b / a));
-        this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = _Util.Util.normalizeAngle(this.angle - angleRight);
-        this.collisionData.angle.max = _Util.Util.normalizeAngle(this.angle + angleRight);
-    };
-
-    return Obstacle;
-}();
-
-},{"../../Util":724,"./Box":743,"./Cone":744,"./Diamond":745,"./Ring":747}],747:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Ring = undefined;
-
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
-
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
-
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var THREE = require('three');
-var radius = 100;
-
-var Ring = exports.Ring = function () {
-    /**
-     * Represents the obstacle "Ring"
-     * @param {Object} ring - structure as in levelX.js
-     * @constructor
-     */
-    function Ring(ring) {
-        (0, _classCallCheck3.default)(this, Ring);
-
-        this.material = new THREE.MeshLambertMaterial({
-            color: ring.color
-        });
-        this.geometry = new THREE.TorusGeometry(radius, 3, 16, 100);
-        this.mesh = new THREE.Mesh(this.geometry, this.material);
-        this.mesh.receiveShadow = true;
-        this.mesh.castShadow = true;
-    }
-
-    /**
-     * Positions the Ring on way
-     * @param {number} angle - angle of position in degrees
-     * @param {number} distance - distance from starting point of way
-     * @param {number} length - length of way
-     * @param {number} radius - radius of way
-     */
-
-
-    (0, _createClass3.default)(Ring, [{
-        key: 'position',
-        value: function position(angle, distance, length, radius) {
-            this.mesh.rotation.x += Math.PI / 2;
-            this.mesh.position.y = length / 2 - distance;
-        }
-    }], [{
-        key: 'prepareForCollisionDetection',
-
-
-        /**
-         * converts ring object from levelX.js into a format that can be used for detecting collisions
-         * @param {Object} obstacle - with structure as in levelX.js
-         * @returns {Object} ret - object ret that is fitted for detecting collisions
-         */
-        value: function prepareForCollisionDetection(obstacle, r) {
-            return {
-                type: 'ring',
-                size: {
-                    height: radius - 80
-                },
-                angle: {
-                    center: 0,
-                    min: 0,
-                    max: 360
-                },
-                distance: obstacle.position.distance
-            };
-        }
-    }]);
-    return Ring;
-}();
-
-},{"babel-runtime/helpers/classCallCheck":6,"babel-runtime/helpers/createClass":7,"three":716}]},{},[732]);
+},{"_process":402}]},{},[15]);

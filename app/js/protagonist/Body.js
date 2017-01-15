@@ -43,7 +43,7 @@ export class Body{
    static init(cb){
        let loader = new THREE.JSONLoader();
        return new Promise((resolve, reject)=>{
-         loader.load('/js/blender/body.json', function(geometry, materials) {
+         loader.load('/blender/body.json', function(geometry, materials) {
              Body.geometry = geometry;
              resolve();
          });

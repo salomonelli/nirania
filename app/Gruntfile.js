@@ -5,7 +5,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         browserify: {
-            'public/gen/js.js': ['public/js/main.js'],
+            'public/gen/js.js': ['js/main.js'],
             options: {
                 transform: [
                     'browserify-hogan',
@@ -16,7 +16,7 @@ module.exports = function(grunt) {
         watch: {
             app: {
                 files: [
-                    'public/js/**',
+                    'js/**',
                     '!node_modules/**',
                     '!public/gen/**'
                 ],

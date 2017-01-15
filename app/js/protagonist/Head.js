@@ -42,7 +42,7 @@ export class Head {
     static init() {
         let loader = new THREE.JSONLoader();
         return new Promise((resolve, reject)=>{
-          loader.load('/js/blender/head.json', function(geometry, materials) {
+          loader.load('/blender/head.json', function(geometry, materials) {
               Head.geometry = geometry;
               resolve();
           });

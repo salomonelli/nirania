@@ -66,7 +66,6 @@ export class Level {
         this.powerUpDistance = 0;
         this.opacityHelper = -375;
         this.playSound = true;
-        this.checkedCollision = false;
     }
 
     /**
@@ -86,25 +85,23 @@ export class Level {
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
     checkCollision(protagonist) {
-        if (!this.checkedCollision) {
-            this.checkedCollision = true;
-            //check whether collision
-            this.way.currentPosition.height = protagonist.position.y;
-            let collObj = this.collisionDetector.collision(this.way.currentPosition);
-            switch (collObj.type) {
-                case "box":
-                case "ring":
-                case "cone":
-                    // no collsion detection, if powerup 4 is active
-                    if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
-                    this.gameOver = true;
-                    if (this.playSound) Sound.play('hitObstacle');
-                    return true;
-                case "diamond":
-                    this.hitDiamond(collObj);
-                    return false;
-            }
-        } else this.checkedCollision = false;
+      this.checkedCollision = true;
+      //check whether collision
+      this.way.currentPosition.height = protagonist.position.y;
+      let collObj = this.collisionDetector.collision(this.way.currentPosition);
+      switch (collObj.type) {
+          case "box":
+          case "ring":
+          case "cone":
+              // no collsion detection, if powerup 4 is active
+              if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
+              this.gameOver = true;
+              if (this.playSound) Sound.play('hitObstacle');
+              return true;
+          case "diamond":
+              this.hitDiamond(collObj);
+              return false;
+      }
     };
 
     /**

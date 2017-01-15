@@ -39,7 +39,7 @@ export class Leg{
   static init() {
       let loader = new THREE.JSONLoader();
       return new Promise((resolve, reject) =>{
-        loader.load('/js/blender/leg.json', function (geometry, materials) {
+        loader.load('/blender/leg.json', function (geometry, materials) {
             Leg.geometry = geometry;
             resolve();
         });
