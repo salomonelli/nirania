@@ -45,7 +45,11 @@ export class Ring {
                 min: 0,
                 max: 360
             },
-            distance: obstacle.position.distance,
+            distance: {
+                center: obstacle.position.distance,
+                min: obstacle.position.distance -1,
+                max: obstacle.position.distance + 1
+            },
         };
     };
 }

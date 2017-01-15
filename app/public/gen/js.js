@@ -6390,20 +6390,13 @@ var CollisionDetector = exports.CollisionDetector = function () {
     }
 
     /**
-     * @param {Obstacle} obstacle
-     * @return {number}
-     * @private
+     * @param {{distance: number}} currentPosition - contains the current distance and angle
+     * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
      */
 
 
     (0, _createClass3.default)(CollisionDetector, [{
         key: "collision",
-
-
-        /**
-         * @param {{distance: number}} currentPosition - contains the current distance and angle
-         * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
-         */
         value: function collision(currentPosition) {
             var self = this;
             var ret = {
@@ -6415,21 +6408,19 @@ var CollisionDetector = exports.CollisionDetector = function () {
                 if (ret.collision) return;
                 // check if obstacle should not be checked anymore
                 // remove from array with the next garbage-collection
-                if (CollisionDetector.getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
+                if (obstacle.collisionData.distance.max < currentPosition.distance) delete self.obstacles[i];
 
                 if (
                 // check if obstacle is near enough otherwise don't even check whether collision
                 obstacle.collisionData.distance.min < currentPosition.distance + 100 &&
                 //other collision with left body half
-                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
+                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
                 //other collisions from right body half.
-                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemax && currentPosition.anglemax < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
-                //ring collision
-                obstacle.collisionData.type == "ring" && CollisionDetector.getMaxDistance(obstacle) == currentPosition.distance && obstacle.collisionData.size.height > currentPosition.height ||
+                obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.angle.min < currentPosition.anglemax && currentPosition.anglemax < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
                 //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
+                obstacle.collisionData.type == "cone" && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
                 //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
+                obstacle.collisionData.type == "cone" && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
 
                     ret = {
                         collision: true,
@@ -6439,12 +6430,6 @@ var CollisionDetector = exports.CollisionDetector = function () {
                 }
             });
             return ret;
-        }
-    }], [{
-        key: "getMaxDistance",
-        value: function getMaxDistance(obstacle) {
-            if (obstacle.type == 'ring') return obstacle.collisionData.distance;
-            return obstacle.collisionData.distance.max;
         }
     }]);
     return CollisionDetector;
@@ -7475,7 +7460,11 @@ var Ring = exports.Ring = function () {
                     min: 0,
                     max: 360
                 },
-                distance: obstacle.position.distance
+                distance: {
+                    center: obstacle.position.distance,
+                    min: obstacle.position.distance - 1,
+                    max: obstacle.position.distance + 1
+                }
             };
         }
     }]);
