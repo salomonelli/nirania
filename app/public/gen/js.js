@@ -1662,6 +1662,42 @@ var level1 = exports.level1 = {
                 distance: 900,
                 angle: 0
             }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 900,
+                angle: 90
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 900,
+                angle: 180
+            }
+        }, {
+            type: 'box',
+            size: {
+                width: 25,
+                length: 25,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 900,
+                angle: 270
+            }
         }]
     }
 };
