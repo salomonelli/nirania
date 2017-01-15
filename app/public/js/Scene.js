@@ -342,6 +342,5 @@ export class Scene {
      */
     static startMovingProtagonist(scene, direction) {
         scene.move[direction] = true;
-        console.log(scene.move[direction]);
     };
 }

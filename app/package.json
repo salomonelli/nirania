@@ -34,6 +34,7 @@
     "jquery": "^2.2.0",
     "js-cookie": "*",
     "random-boolean": "*",
+    "rxjs": "^5.0.3",
     "three": "*",
     "tween.js": "*"
   }

@@ -47,19 +47,16 @@ else GUI.uncheckSoundSwitch();
 
 /**
  * initiates the game with intro
- * @return {Promise}
  */
 async function gameWithIntro() {
     GUI.startingAnimationFadeIn();
     mainScene.showIntro();
     render();
     addLevel();
-    Keybindings.keyBind('keydown', mainScene, async() => {
-        Keybindings.unbind('keydown');
-        await startingAnimation();
-        await startLevel();
-        await showScreen();
-    });
+    await Keybindings.keyBind('keydown').first().toPromise();
+    await startingAnimation();
+    await startLevel();
+    await showScreen();
 }
 
 /**
@@ -115,17 +112,23 @@ function addLevel() {
  * @return {Promise}
  */
 async function startLevel() {
+    const subs = [];
     GUI.fadeInScoreboard();
     GUI.fadeInSoundSwitch();
-    Keybindings.keyBind('keydown', mainScene, Scene.startMovingProtagonist);
-    Keybindings.keyBind('keyup', mainScene, Scene.stopMovingProtagonist);
+    subs.push(
+        Keybindings.keyBind('keydown')
+        .subscribe(direction => Scene.startMovingProtagonist(mainScene, direction))
+    );
+    subs.push(
+        Keybindings.keyBind('keyup')
+        .subscribe(direction => Scene.stopMovingProtagonist(mainScene, direction))
+    );
     //start moving way
     mainScene.move.continue = true;
     const protagonist = mainScene.getProtagonist();
     await level[currentLevel].begin(protagonist);
     mainScene.move.continue = false;
-    Keybindings.unbind('keydown');
-    Keybindings.unbind('keyup');
+    subs.forEach(sub => sub.unsubscribe());
 }
 
 /**
@@ -178,7 +181,7 @@ function setMusicSettings(isOn) {
 
 /**
  * main function for game
- * @return {Promise} 
+ * @return {Promise}
  */
 let main = async function() {
     let URL = window.location.href;
@@ -190,7 +193,7 @@ let main = async function() {
     mainScene = new Scene(window.innerWidth, window.innerHeight, background);
     document.body.appendChild(mainScene.renderer.domElement);
     GUI.removeLoadingIcon();
-    if (URLpath == "") gameWithIntro();
+    if (URLpath == "") await gameWithIntro();
     else {
         if (playThisLevel()) gameWithoutIntro();
         else {
