@@ -117,6 +117,7 @@ export class Level {
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
     checkCollision(protagonist) {
+      this.checkCollisionDetection = false;
       let currentPosition = this.getCurrentPosition(protagonist);
       let collObj = this.getCollisionObject(currentPosition);
       switch (collObj.type) {
@@ -273,7 +274,7 @@ export class Level {
             canNotBePlayed: canNotBePlayed,
             disableNextLevel: disableNextLevel,
             showOutro: showOutro
-        }); 
+        });
     };
 
     /**

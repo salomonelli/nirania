@@ -1150,6 +1150,7 @@ var Level = function () {
          * @returns {boolean} - true if gameover (collision with box or ring)
          */
         value: function checkCollision(protagonist) {
+            this.checkCollisionDetection = false;
             var currentPosition = this.getCurrentPosition(protagonist);
             var collObj = this.getCollisionObject(currentPosition);
             switch (collObj.type) {

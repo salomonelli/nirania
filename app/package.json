@@ -33,7 +33,12 @@
     "jit-grunt": "^0.9.1",
     "jquery": "^2.2.0",
     "js-cookie": "*",
+    "pouchdb-adapter-http": "^6.1.1",
+    "pouchdb-adapter-localstorage": "^6.1.1",
+    "pouchdb-replication": "^6.1.1",
+    "pouchdb-server": "^2.0.1",
     "random-boolean": "*",
+    "rxdb": "^1.7.7",
     "rxjs": "^5.0.3",
     "three": "*",
     "tween.js": "*"
