@@ -90360,24 +90360,27 @@ var gameWithIntro = function () {
                     case 0:
                         _GUI.GUI.startingAnimationFadeIn();
                         mainScene.showIntro();
-                        render();
                         addLevel();
-                        _context.next = 6;
+                        _context.next = 5;
+                        return render();
+
+                    case 5:
+                        _context.next = 7;
                         return _Keybindings.Keybindings.keyBind('keydown').first().toPromise();
 
-                    case 6:
-                        _context.next = 8;
+                    case 7:
+                        _context.next = 9;
                         return startingAnimation();
 
-                    case 8:
-                        _context.next = 10;
+                    case 9:
+                        _context.next = 11;
                         return startLevel();
 
-                    case 10:
-                        _context.next = 12;
+                    case 11:
+                        _context.next = 13;
                         return showScreen();
 
-                    case 12:
+                    case 13:
                     case 'end':
                         return _context.stop();
                 }
@@ -90408,15 +90411,18 @@ var gameWithoutIntro = function () {
                     case 0:
                         // TODO preload everything
                         mainScene.simpleIntro();
-                        render();
                         addLevel();
-                        _context3.next = 5;
+                        _context3.next = 4;
+                        return render();
+
+                    case 4:
+                        _context3.next = 6;
                         return startLevel();
 
-                    case 5:
+                    case 6:
                         showScreen();
 
-                    case 6:
+                    case 7:
                     case 'end':
                         return _context3.stop();
                 }
@@ -90542,10 +90548,15 @@ if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function starti
         })), fadeTime);
     });
 }function render() {
-    requestAnimationFrame(render);
-    mainScene.render();
-    mainScene.turn(level[currentLevel]);
-    TWEEN.update();
+    return new Promise(function (resolve) {
+        requestAnimationFrame(function () {
+            render();
+            resolve();
+        });
+        mainScene.render();
+        mainScene.turn(level[currentLevel]);
+        TWEEN.update();
+    });
 }
 
 /**
@@ -90863,7 +90874,7 @@ var CollisionDetector = exports.CollisionDetector = function () {
 
                 if (
                 // check if obstacle is near enough otherwise don't even check whether collision
-                obstacle.collisionData.distance.min < currentPosition.distance + 200 &&
+                obstacle.collisionData.distance.min < currentPosition.distance + 100 &&
                 //other collision with left body half
                 obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < CollisionDetector.getMaxDistance(obstacle) && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
                 //other collisions from right body half.

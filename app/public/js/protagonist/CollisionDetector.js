@@ -8,7 +8,7 @@ export class CollisionDetector{
     //sort by distance to save performance
     obstacles = obstacles.sort(function(a, b) {
         try {
-            var keyA = CollisionDetector.getMaxDistance(a);
+            let keyA = CollisionDetector.getMaxDistance(a);
             keyB = CollisionDetector.getMaxDistance(b);
             // Compare the 2 keys
             if (keyA < keyB) return -1;
@@ -35,23 +35,21 @@ export class CollisionDetector{
    * @returns {{collision: boolean, type: ?string, mesh: ?THREE.Mesh}}
    */
    collision(currentPosition){
-      var self = this;
-      var ret = {
+      let self = this;
+      let ret = {
           collision: false,
           type: null,
           mesh: null
       };
-      self.obstacles.forEach(function(obstacle, i) {
+      self.obstacles.forEach((obstacle, i) =>{
           if (ret.collision) return;
           // check if obstacle should not be checked anymore
           // remove from array with the next garbage-collection
           if (CollisionDetector.getMaxDistance(obstacle) < currentPosition.distance) delete self.obstacles[i];
 
           if (
-              (
                 // check if obstacle is near enough otherwise don't even check whether collision
-                obstacle.collisionData.distance.min < (currentPosition.distance + 200)
-              ) &&
+                obstacle.collisionData.distance.min < (currentPosition.distance + 100) &&
               (
                   //other collision with left body half
                   obstacle.collisionData.distance.min < currentPosition.distance &&

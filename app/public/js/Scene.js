@@ -3,8 +3,12 @@ require('babel-polyfill');
 import {
     Protagonist
 } from './protagonist/Protagonist';
-import { Particles } from './Particles';
-import { Color } from './Color';
+import {
+    Particles
+} from './Particles';
+import {
+    Color
+} from './Color';
 const THREE = require('three');
 const async = require('async');
 const TWEEN = require('tween.js');

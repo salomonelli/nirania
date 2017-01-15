@@ -51,8 +51,8 @@ else GUI.uncheckSoundSwitch();
 async function gameWithIntro() {
     GUI.startingAnimationFadeIn();
     mainScene.showIntro();
-    render();
     addLevel();
+    await render();
     await Keybindings.keyBind('keydown').first().toPromise();
     await startingAnimation();
     await startLevel();
@@ -83,8 +83,8 @@ function startingAnimation() {
 async function gameWithoutIntro() {
     // TODO preload everything
     mainScene.simpleIntro();
-    render();
     addLevel();
+    await render();
     await startLevel();
     showScreen();
 }
@@ -93,10 +93,15 @@ async function gameWithoutIntro() {
  * renders game
  */
 function render() {
-    requestAnimationFrame(render);
-    mainScene.render();
-    mainScene.turn(level[currentLevel]);
-    TWEEN.update();
+    return new Promise(resolve =>{
+      requestAnimationFrame(()=>{
+        render();
+        resolve();
+      });
+      mainScene.render();
+      mainScene.turn(level[currentLevel]);
+      TWEEN.update();
+    });
 }
 
 /**
