@@ -75,13 +75,46 @@ export class Level {
      */
     prepare() {
         let current = levels[this.current - 1];
-        if (current.instruction) this.instruction = current.instruction;
-        if (current.requiredDiamonds) this.requiredDiamonds = current.requiredDiamonds;
-        GUI.showInstruction(this.instruction);
-        this.way = new Way(current.way.length, current.speed, current.way.color);
-        this.way.addObstacles(current.way.obstacles);
-        this.collisionDetector = new CollisionDetector(this.way.obstacles);
-        this.way.position();
+        this.initInstruction(current.instruction);
+        this.initRequiredDiamonds(current.requiredDiamonds);
+        this.initWay(current.way.length, current.speed, current.way.color, current.way.obstacles);
+        this.initCollisionDetector();
+    };
+
+    /**
+     * creates way
+     * @param {number} length length of way
+     * @param {number} speed speed with which the protagonist moves
+     * @param {String} color color of way
+     * @param {Object[]} obstacles obstacles on way<
+     */
+    initWay(length, speed, color, obstacles){
+      this.way = new Way(length, speed, color);
+      this.way.addObstacles(obstacles);
+      this.way.position();
+    };
+
+    /**
+     * initiates collision detection
+     */
+    initCollisionDetector(){
+      this.collisionDetector = new CollisionDetector(this.way.obstacles);
+    };
+
+    /**
+     * sets instruction if not null
+     * @param {String} instruction explanation for the level that is displayed to the user
+     */
+    initInstruction(instruction){
+      if (instruction) this.instruction = instruction;
+    };
+
+    /**
+     * sets requiredDiamonds if not null
+     * @param {String} requiredDiamonds amaount of diamonds that is needed to get to the next level
+     */
+    initRequiredDiamonds(diamonds){
+      if (diamonds) this.requiredDiamonds = diamonds;
     };
 
     /**
@@ -90,24 +123,72 @@ export class Level {
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
     checkCollision(protagonist) {
-      this.checkedCollision = true;
-      //check whether collision
-      this.way.currentPosition.height = protagonist.position.y;
-      let collObj = this.collisionDetector.collision(this.way.currentPosition);
+      let currentPosition = this.getCurrentPosition(protagonist);
+      let collObj = this.getCollisionObject(currentPosition);
       switch (collObj.type) {
           case "box":
           case "ring":
           case "cone":
-              // no collsion detection, if powerup 4 is active
-              if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
-              this.gameOver = true;
-              if (this.playSound) Sound.play('hitObstacle');
+              if (this.powerup4IsActive()) return false;
+              this.hitObstacle();
               return true;
           case "diamond":
               this.hitDiamond(collObj);
               return false;
+          default:
+              return false;
       }
     };
+
+    /**
+     * is called when obstacle (except diamond) was hit
+     */
+    hitObstacle(){
+      this.gameOver = true;
+      this.sound('hitObstacle');
+    };
+
+    /**
+     * plays sound
+     * @param {String} sound
+     */
+    sound(sound){
+      if(!this.playSound) return;
+      switch (sound) {
+        case 'hitObstacle':
+          Sound.play('hitObstacle');
+          break;
+      }
+    };
+
+
+    /**
+     * checks if powerup 4 is active
+     * @return {Boolean} true if active
+     */
+    powerup4IsActive(){
+      if(this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return true;
+      else return false;
+    };
+
+    /**
+     * gets current position of protagonist
+     * @param {Protagonist} protagonist
+     * @return {Way.currentPosition}
+     */
+    getCurrentPosition(protagonist){
+      this.way.currentPosition.height = protagonist.position.y;
+      return this.way.currentPosition;
+    };
+
+    /**
+     * gets collision object
+     * @return {Object}
+     */
+    getCollisionObject(currentPosition){
+      return this.collisionDetector.collision(currentPosition);
+    }
+
 
     /**
      * calls animation functions of protagonist
@@ -116,17 +197,42 @@ export class Level {
      * @param {number} speedMulti
      */
     animateProtagonist(protagonist, clock, speedMulti) {
-        let position = Math.sin(clock.getElapsedTime() * 10) * 1;
-        Protagonist.move(protagonist, position);
-        if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
-            let opacity = 0.3;
-            if (this.opacityHelper >= 0) {
-                opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
-            }
-            this.opacityHelper += speedMulti;
-            Protagonist.makeGroupTransparent(protagonist, opacity);
-            this.powerUpDistance += speedMulti;
-        }
+        this.moveProtagonist(protagonist, clock);
+        this.animatePowerup4(protagonist, speedMulti);
+    };
+
+    /**
+     * animates powerup 4 if active
+     * @param {THREE.Object3D} protagonist
+     * @param {number} speedMulti
+     */
+    animatePowerup4(protagonist, speedMulti){
+      if (this.powerup4IsActive()) {
+          let opacity = 0.3;
+          if (this.opacityHelper >= 0)  opacity = (0.7 / 149625) * (this.opacityHelper * this.opacityHelper) + 0.3;
+          this.opacityHelper += speedMulti;
+          this.makeProtagonistTransparent(protagonist, opacity);
+          this.powerUpDistance += speedMulti;
+      }
+    };
+
+    /**
+     * sets transparency of protagonist
+     * @param {THREE.Object3D} protagonist
+     * @param {number} opacity
+     */
+    makeProtagonistTransparent(protagonist, opacity){
+      Protagonist.makeGroupTransparent(protagonist, opacity);
+    }
+
+    /**
+     * moves protagonist to position (body and legs)
+     * @param {THREE.Object3D} protagonist
+     * @param {THREE.clock} clock
+     */
+    moveProtagonist(protagonist, clock){
+      let position = Math.sin(clock.getElapsedTime() * 10) * 1;
+      Protagonist.move(protagonist, position);
     };
 
     /**
@@ -136,6 +242,7 @@ export class Level {
      */
     begin(protagonist) {
         let self = this;
+        if(this.instruction) GUI.showInstruction(this.instruction);
         //reset diamonds
         self.lastDiamond = null;
         self.diamonds = 0;
@@ -150,6 +257,7 @@ export class Level {
                 self.way.moveForwardTillEnd(self.speed * speedMulti);
                 if (t <= 0 || self.checkCollision(protagonist)) {
                     Cookies.set('diamonds-' + self.current, self.diamonds);
+                    GUI.hideInstruction();
                     resolve();
                     return;
                 }

@@ -51,189 +51,196 @@ var Color = exports.Color = {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 var $ = require('jquery');
 var templates = {
-  successScreen: require('./templates/success.mustache'),
-  gameoverScreen: require('./templates/gameover.mustache'),
-  shopScreen: require('./templates/shop.mustache'),
-  modalContentShopScreen: require('./templates/shopModalContent.mustache')
+    successScreen: require('./templates/success.mustache'),
+    gameoverScreen: require('./templates/gameover.mustache'),
+    shopScreen: require('./templates/shop.mustache'),
+    modalContentShopScreen: require('./templates/shopModalContent.mustache')
 };
 
 var GUI = exports.GUI = {
-  /**
-   * updates amount of diamonds in scoreboard
-   * @param {number} diamonds
-   */
-  setDiamondsInScoreBoard: function setDiamondsInScoreBoard(diamonds) {
-    $('.scores .diamonds span').html(diamonds);
-  },
+    /**
+     * updates amount of diamonds in scoreboard
+     * @param {number} diamonds
+     */
+    setDiamondsInScoreBoard: function setDiamondsInScoreBoard(diamonds) {
+        $('.scores .diamonds span').html(diamonds);
+    },
 
-  /**
-   * shows screen on successful end of level
-   * @param {Object} obj - obj to render template successScreen
-   */
-  showSuccessScreen: function showSuccessScreen(obj) {
-    var html = templates.successScreen.render(obj);
-    $('body').append(html);
-  },
+    /**
+     * shows screen on successful end of level
+     * @param {Object} obj - obj to render template successScreen
+     */
+    showSuccessScreen: function showSuccessScreen(obj) {
+        var html = templates.successScreen.render(obj);
+        $('body').append(html);
+    },
 
-  /**
-   * shows screen on game over
-   * @param {Object} obj - obj to render template gameoverScreen
-   */
-  showGameOverScreen: function showGameOverScreen(obj) {
-    var html = templates.gameoverScreen.render(obj);
-    $('body').append(html);
-  },
+    /**
+     * shows screen on game over
+     * @param {Object} obj - obj to render template gameoverScreen
+     */
+    showGameOverScreen: function showGameOverScreen(obj) {
+        var html = templates.gameoverScreen.render(obj);
+        $('body').append(html);
+    },
 
-  /**
-   * renders modal for shop screen
-   * @param {Object} - render object
-   */
-  fillShopModal: function fillShopModal(obj) {
-    return templates.modalContentShopScreen.render(obj);
-  },
+    /**
+     * renders modal for shop screen
+     * @param {Object} - render object
+     */
+    fillShopModal: function fillShopModal(obj) {
+        return templates.modalContentShopScreen.render(obj);
+    },
 
-  /**
-   * renders shop screen and adds it
-   * @param {Object} - render object
-   */
-  showShopScreen: function showShopScreen(obj) {
-    var html = templates.shopScreen.render({
-      content: GUI.fillShopModal(obj)
-    });
-    $('div.shopScreen').append(html);
-  },
+    /**
+     * renders shop screen and adds it
+     * @param {Object} - render object
+     */
+    showShopScreen: function showShopScreen(obj) {
+        var html = templates.shopScreen.render({
+            content: GUI.fillShopModal(obj)
+        });
+        $('div.shopScreen').append(html);
+    },
 
-  /**
-   * updates shop shopScreen
-   * @param {Object} - render Object
-   */
-  updateShopScreen: function updateShopScreen(obj) {
-    var html = templates.modalContentShopScreen.render(obj);
-    $('#shopModal').empty();
-    $('#shopModal').append(html);
-  },
+    /**
+     * updates shop shopScreen
+     * @param {Object} - render Object
+     */
+    updateShopScreen: function updateShopScreen(obj) {
+        var html = templates.modalContentShopScreen.render(obj);
+        $('#shopModal').empty();
+        $('#shopModal').append(html);
+    },
 
-  /**
-   * fades in game name
-   */
-  startingAnimationFadeIn: function startingAnimationFadeIn() {
-    $('.game-name').fadeIn(3000);
-    $('.intro').fadeIn(3000);
-  },
+    /**
+     * fades in game name
+     */
+    startingAnimationFadeIn: function startingAnimationFadeIn() {
+        $('.game-name').fadeIn(3000);
+        $('.intro').fadeIn(3000);
+    },
 
-  /**
-   * fades out game name
-   * @param {number} fadeTime - in milliseconds
-   */
-  startingAnimationFadeOut: function startingAnimationFadeOut(fadeTime) {
-    $('.game-name').fadeOut(fadeTime);
-    $('.intro').fadeOut(fadeTime);
-  },
+    /**
+     * fades out game name
+     * @param {number} fadeTime - in milliseconds
+     */
+    startingAnimationFadeOut: function startingAnimationFadeOut(fadeTime) {
+        $('.game-name').fadeOut(fadeTime);
+        $('.intro').fadeOut(fadeTime);
+    },
 
-  /**
-   * shows loading icon
-   */
-  showLoadingIcon: function showLoadingIcon() {
-    var height = $('.sk-folding-cube').height() + $('.loading p').height();
-    $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
-  },
+    /**
+     * shows loading icon
+     */
+    showLoadingIcon: function showLoadingIcon() {
+        var height = $('.sk-folding-cube').height() + $('.loading p').height();
+        $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
+    },
 
-  /**
-   * removes loading icon
-   */
-  removeLoadingIcon: function removeLoadingIcon() {
-    $(".sk-folding-cube").remove();
-    $(".loading p").remove();
-    var fadeTime = 3000;
-    $(".loading").fadeOut(fadeTime);
-  },
+    /**
+     * removes loading icon
+     */
+    removeLoadingIcon: function removeLoadingIcon() {
+        $(".sk-folding-cube").remove();
+        $(".loading p").remove();
+        var fadeTime = 3000;
+        $(".loading").fadeOut(fadeTime);
+    },
 
-  /**
-   * checks if button is enabled
-   * @param {$} button
-   * @returns {boolean} - true if button is enabled
-   */
-  buttonIsEnabled: function buttonIsEnabled(button) {
-    if (button.hasClass('disabled')) return false;
-    return true;
-  },
+    /**
+     * checks if button is enabled
+     * @param {$} button
+     * @returns {boolean} - true if button is enabled
+     */
+    buttonIsEnabled: function buttonIsEnabled(button) {
+        if (button.hasClass('disabled')) return false;
+        return true;
+    },
 
-  /**
-   * gets powerup id from button
-   * @param {Object} e - event
-   * @returns {number} - powerup id
-   */
-  getPowerupIdFromButton: function getPowerupIdFromButton(e) {
-    return e.target.id.replace('buy-powerup-', '');
-  },
+    /**
+     * gets powerup id from button
+     * @param {Object} e - event
+     * @returns {number} - powerup id
+     */
+    getPowerupIdFromButton: function getPowerupIdFromButton(e) {
+        return e.target.id.replace('buy-powerup-', '');
+    },
 
-  /**
-   * updates next-level-button in success screen
-   */
-  updateNextLevelButton: function updateNextLevelButton() {
-    if ($('.button.success.reload').length) {
-      $('.button.success.reload').removeClass('disabled');
-      $('.callout.alert').remove();
+    /**
+     * updates next-level-button in success screen
+     */
+    updateNextLevelButton: function updateNextLevelButton() {
+        if ($('.button.success.reload').length) {
+            $('.button.success.reload').removeClass('disabled');
+            $('.callout.alert').remove();
+        }
+    },
+
+    /**
+     * fades in intro slide show
+     */
+    introFadeIn: function introFadeIn() {
+        $('.blackOverlay').fadeOut(1000);
+    },
+
+    /**
+     * updates distance in scoreboard
+     * @param {number} distance
+     */
+    updateDistance: function updateDistance(distance) {
+        $('.scores .distance span').html(distance);
+    },
+
+    /**
+     * fades in scoreboard
+     */
+    fadeInScoreboard: function fadeInScoreboard() {
+        $('.scores').fadeIn(1000);
+    },
+
+    /**
+     * fades in soundswitch
+     */
+    fadeInSoundSwitch: function fadeInSoundSwitch() {
+        $('.sound').fadeIn(1000);
+    },
+
+    /**
+     * returns whether sound is on or not
+     * @returns {boolean} - true if sound is enabled
+     */
+    getSoundSwitch: function getSoundSwitch() {
+        if ($('#soundSwitch').is(':checked')) return true;
+        return false;
+    },
+
+    /**
+     * unchecks sound switch
+     */
+    uncheckSoundSwitch: function uncheckSoundSwitch() {
+        $('#soundSwitch').attr('checked', false);
+    },
+
+    /**
+     * shows instruction
+     * @param  {String} instruction
+     */
+    showInstruction: function showInstruction(instruction) {
+        $('.instruction span').html(instruction);
+        $('.instruction').removeClass('gone');
+    },
+
+    /**
+     * hides instruction
+     */
+    hideInstruction: function hideInstruction() {
+        $('.instruction').addClass('gone');
     }
-  },
-
-  /**
-   * fades in intro slide show
-   */
-  introFadeIn: function introFadeIn() {
-    $('.blackOverlay').fadeOut(1000);
-  },
-
-  /**
-   * updates distance in scoreboard
-   * @param {number} distance
-   */
-  updateDistance: function updateDistance(distance) {
-    $('.scores .distance span').html(distance);
-  },
-
-  /**
-   * fades in scoreboard
-   */
-  fadeInScoreboard: function fadeInScoreboard() {
-    $('.scores').fadeIn(1000);
-  },
-
-  /**
-   * fades in soundswitch
-   */
-  fadeInSoundSwitch: function fadeInSoundSwitch() {
-    $('.sound').fadeIn(1000);
-  },
-
-  /**
-   * returns whether sound is on or not
-   * @returns {boolean} - true if sound is enabled
-   */
-  getSoundSwitch: function getSoundSwitch() {
-    if ($('#soundSwitch').is(':checked')) return true;
-    return false;
-  },
-
-  /**
-   * unchecks sound switch
-   */
-  uncheckSoundSwitch: function uncheckSoundSwitch() {
-    $('#soundSwitch').attr('checked', false);
-  },
-
-  /**
-   * shows instruction
-   * @param  {String} instruction
-   */
-  showInstruction: function showInstruction(instruction) {
-    console.log(instruction);
-    $('.instruction span').html(instruction);
-  }
 };
 
 },{"./templates/gameover.mustache":21,"./templates/shop.mustache":22,"./templates/shopModalContent.mustache":23,"./templates/success.mustache":24,"jquery":400}],3:[function(require,module,exports){
@@ -1091,7 +1098,7 @@ var levels = [_level.level1, _level2.level2, _level3.level3, _level4.level4, _le
  * Represents Level
  */
 
-var Level = exports.Level = function () {
+var Level = function () {
     /**
      * Represents Level
      * @param {number} current - number starting at 1 representing current level
@@ -1125,13 +1132,58 @@ var Level = exports.Level = function () {
         key: 'prepare',
         value: function prepare() {
             var current = levels[this.current - 1];
-            if (current.instruction) this.instruction = current.instruction;
-            if (current.requiredDiamonds) this.requiredDiamonds = current.requiredDiamonds;
-            _GUI.GUI.showInstruction(this.instruction);
-            this.way = new _Way.Way(current.way.length, current.speed, current.way.color);
-            this.way.addObstacles(current.way.obstacles);
-            this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
+            this.initInstruction(current.instruction);
+            this.initRequiredDiamonds(current.requiredDiamonds);
+            this.initWay(current.way.length, current.speed, current.way.color, current.way.obstacles);
+            this.initCollisionDetector();
+        }
+    }, {
+        key: 'initWay',
+
+
+        /**
+         * creates way
+         * @param {number} length length of way
+         * @param {number} speed speed with which the protagonist moves
+         * @param {String} color color of way
+         * @param {Object[]} obstacles obstacles on way<
+         */
+        value: function initWay(length, speed, color, obstacles) {
+            this.way = new _Way.Way(length, speed, color);
+            this.way.addObstacles(obstacles);
             this.way.position();
+        }
+    }, {
+        key: 'initCollisionDetector',
+
+
+        /**
+         * initiates collision detection
+         */
+        value: function initCollisionDetector() {
+            this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
+        }
+    }, {
+        key: 'initInstruction',
+
+
+        /**
+         * sets instruction if not null
+         * @param {String} instruction explanation for the level that is displayed to the user
+         */
+        value: function initInstruction(instruction) {
+            if (instruction) this.instruction = instruction;
+        }
+    }, {
+        key: 'initRequiredDiamonds',
+
+
+        /**
+         * sets requiredDiamonds if not null
+         * @param {String} requiredDiamonds amaount of diamonds that is needed to get to the next level
+         */
+        value: function initRequiredDiamonds(diamonds) {
+            if (diamonds) this.requiredDiamonds = diamonds;
         }
     }, {
         key: 'checkCollision',
@@ -1143,27 +1195,84 @@ var Level = exports.Level = function () {
          * @returns {boolean} - true if gameover (collision with box or ring)
          */
         value: function checkCollision(protagonist) {
-            this.checkedCollision = true;
-            //check whether collision
-            this.way.currentPosition.height = protagonist.position.y;
-            var collObj = this.collisionDetector.collision(this.way.currentPosition);
+            var currentPosition = this.getCurrentPosition(protagonist);
+            var collObj = this.getCollisionObject(currentPosition);
             switch (collObj.type) {
                 case "box":
                 case "ring":
                 case "cone":
-                    // no collsion detection, if powerup 4 is active
-                    if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return false;
-                    this.gameOver = true;
-                    if (this.playSound) _Sound.Sound.play('hitObstacle');
+                    if (this.powerup4IsActive()) return false;
+                    this.hitObstacle();
                     return true;
                 case "diamond":
                     this.hitDiamond(collObj);
                     return false;
+                default:
+                    return false;
             }
         }
     }, {
-        key: 'animateProtagonist',
+        key: 'hitObstacle',
 
+
+        /**
+         * is called when obstacle (except diamond) was hit
+         */
+        value: function hitObstacle() {
+            this.gameOver = true;
+            this.sound('hitObstacle');
+        }
+    }, {
+        key: 'sound',
+
+
+        /**
+         * plays sound
+         * @param {String} sound
+         */
+        value: function sound(_sound) {
+            if (!this.playSound) return;
+            switch (_sound) {
+                case 'hitObstacle':
+                    _Sound.Sound.play('hitObstacle');
+                    break;
+            }
+        }
+    }, {
+        key: 'powerup4IsActive',
+
+
+        /**
+         * checks if powerup 4 is active
+         * @return {Boolean} true if active
+         */
+        value: function powerup4IsActive() {
+            if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) return true;else return false;
+        }
+    }, {
+        key: 'getCurrentPosition',
+
+
+        /**
+         * gets current position of protagonist
+         * @param {Protagonist} protagonist
+         * @return {Way.currentPosition}
+         */
+        value: function getCurrentPosition(protagonist) {
+            this.way.currentPosition.height = protagonist.position.y;
+            return this.way.currentPosition;
+        }
+    }, {
+        key: 'getCollisionObject',
+
+
+        /**
+         * gets collision object
+         * @return {Object}
+         */
+        value: function getCollisionObject(currentPosition) {
+            return this.collisionDetector.collision(currentPosition);
+        }
 
         /**
          * calls animation functions of protagonist
@@ -1171,18 +1280,55 @@ var Level = exports.Level = function () {
          * @param {THREE.Clock} clock
          * @param {number} speedMulti
          */
+
+    }, {
+        key: 'animateProtagonist',
         value: function animateProtagonist(protagonist, clock, speedMulti) {
-            var position = Math.sin(clock.getElapsedTime() * 10) * 1;
-            _Protagonist.Protagonist.move(protagonist, position);
-            if (this.powerupActive && this.powerupActiveDuration - this.powerUpDistance > 0) {
+            this.moveProtagonist(protagonist, clock);
+            this.animatePowerup4(protagonist, speedMulti);
+        }
+    }, {
+        key: 'animatePowerup4',
+
+
+        /**
+         * animates powerup 4 if active
+         * @param {THREE.Object3D} protagonist
+         * @param {number} speedMulti
+         */
+        value: function animatePowerup4(protagonist, speedMulti) {
+            if (this.powerup4IsActive()) {
                 var opacity = 0.3;
-                if (this.opacityHelper >= 0) {
-                    opacity = 0.7 / 149625 * (this.opacityHelper * this.opacityHelper) + 0.3;
-                }
+                if (this.opacityHelper >= 0) opacity = 0.7 / 149625 * (this.opacityHelper * this.opacityHelper) + 0.3;
                 this.opacityHelper += speedMulti;
-                _Protagonist.Protagonist.makeGroupTransparent(protagonist, opacity);
+                this.makeProtagonistTransparent(protagonist, opacity);
                 this.powerUpDistance += speedMulti;
             }
+        }
+    }, {
+        key: 'makeProtagonistTransparent',
+
+
+        /**
+         * sets transparency of protagonist
+         * @param {THREE.Object3D} protagonist
+         * @param {number} opacity
+         */
+        value: function makeProtagonistTransparent(protagonist, opacity) {
+            _Protagonist.Protagonist.makeGroupTransparent(protagonist, opacity);
+        }
+
+        /**
+         * moves protagonist to position (body and legs)
+         * @param {THREE.Object3D} protagonist
+         * @param {THREE.clock} clock
+         */
+
+    }, {
+        key: 'moveProtagonist',
+        value: function moveProtagonist(protagonist, clock) {
+            var position = Math.sin(clock.getElapsedTime() * 10) * 1;
+            _Protagonist.Protagonist.move(protagonist, position);
         }
     }, {
         key: 'begin',
@@ -1195,6 +1341,7 @@ var Level = exports.Level = function () {
          */
         value: function begin(protagonist) {
             var self = this;
+            if (this.instruction) _GUI.GUI.showInstruction(this.instruction);
             //reset diamonds
             self.lastDiamond = null;
             self.diamonds = 0;
@@ -1209,6 +1356,7 @@ var Level = exports.Level = function () {
                     self.way.moveForwardTillEnd(self.speed * speedMulti);
                     if (t <= 0 || self.checkCollision(protagonist)) {
                         Cookies.set('diamonds-' + self.current, self.diamonds);
+                        _GUI.GUI.hideInstruction();
                         resolve();
                         return;
                     }
@@ -1384,6 +1532,8 @@ var Level = exports.Level = function () {
     }]);
     return Level;
 }();
+
+exports.Level = Level;
 
 },{"../GUI":2,"../Sound":6,"../protagonist/CollisionDetector":17,"../protagonist/Protagonist":20,"../way/Way":25,"../way/obstacles/Obstacle":29,"./Powerups":9,"./level1":10,"./level2":11,"./level3":12,"./level4":13,"./level5":14,"babel-runtime/helpers/classCallCheck":36,"babel-runtime/helpers/createClass":37,"jquery":400,"js-cookie":401}],9:[function(require,module,exports){
 'use strict';
