@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 require('babel-polyfill');
 import {
     Protagonist
@@ -175,7 +175,7 @@ export class Scene {
                 } else resolve(obj);
             };
             fall();
-        })
+        });
     }
 
     /**
@@ -290,7 +290,7 @@ export class Scene {
      * turns camera and protagonist until told to stop
      */
     turn(level) {
-        var self = this;
+        let self = this;
         if (self.move.continue) {
             if (self.move.left) {
                 self.objects.way.rotate(-Math.PI * 0.01);
@@ -301,7 +301,7 @@ export class Scene {
                 self.objects.particles.rotate(Math.PI * 0.01);
             }
             if (self.move.up) self.objects.protagonist.jump();
-            if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought") {
+            if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == 'bought') {
                 level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
                 level.powerupActive = true;
                 self.boostNotUsed = false;
@@ -333,7 +333,7 @@ export class Scene {
     /**
      * disables turning in the given direction
      * @param {Scene} scene
-     * @param {string} direction - "left" or "right"
+     * @param {string} direction - 'left' or 'right'
      */
     static stopMovingProtagonist(scene, direction) {
         scene.move[direction] = false;
@@ -342,7 +342,7 @@ export class Scene {
     /**
      * enables turning in the given direction
      * @param {Scene} scene
-     * @param {string} direction - "left" or "right"
+     * @param {string} direction - 'left' or 'right'
      */
     static startMovingProtagonist(scene, direction) {
         scene.move[direction] = true;

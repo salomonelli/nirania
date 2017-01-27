@@ -53,7 +53,7 @@ export class Protagonist {
      */
     jump() {
         let height = 40;
-        if (Cookies.get('powerup-2') == "bought") height = 70;
+        if (Cookies.get('powerup-2') == 'bought') height = 70;
         let self = this;
         if (!self.isJumping) {
             self.isJumping = true;
@@ -87,7 +87,7 @@ export class Protagonist {
 
     /**
      * rotates the protagonist according to axis and angle
-     * @param {string} axis - "x", "y" or "z"
+     * @param {string} axis - 'x', 'y' or 'z'
      * @param {number} angle - in radians
      */
     rotate(axis, angle) {
@@ -122,17 +122,17 @@ export class Protagonist {
 
     /**
      * decreases the position of the protagonist according to given axis
-     * @param {string} axis - "x", "y" or "z"
+     * @param {string} axis - 'x', 'y' or 'z'
      */
     decreasePosition(axis) {
         switch (axis) {
-            case "x":
+            case 'x':
                 this.object3D.position.x--;
                 break;
-            case "y":
+            case 'y':
                 this.object3D.position.y--;
                 break;
-            case "z":
+            case 'z':
                 this.object3D.position.z--;
                 break;
         }

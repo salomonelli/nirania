@@ -57,7 +57,7 @@ export class CollisionDetector{
               ) ||
               (
                   //cone
-                  obstacle.collisionData.type == "cone" &&
+                  obstacle.collisionData.type == 'cone' &&
                   currentPosition.distance < obstacle.collisionData.distance.max &&
                   currentPosition.distance > obstacle.collisionData.distance.min &&
                   currentPosition.anglemin < obstacle.collisionData.angle.max &&
@@ -65,7 +65,7 @@ export class CollisionDetector{
               ) ||
               (
                   //cone
-                  obstacle.collisionData.type == "cone" &&
+                  obstacle.collisionData.type == 'cone' &&
                   currentPosition.distance < obstacle.collisionData.distance.max &&
                   currentPosition.distance > obstacle.collisionData.distance.min &&
                   currentPosition.anglemax < obstacle.collisionData.angle.max &&

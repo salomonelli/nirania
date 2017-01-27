@@ -19,7 +19,7 @@ export class Way {
      * @param {number} speed how fast the way should move
      * @constructor
      */
-     constructor(length, speed, color) {
+    constructor(length, speed, color) {
         this.length = length;
         this.speed = speed;
         this.group = new THREE.Object3D();
@@ -85,7 +85,7 @@ export class Way {
         if (Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = Util.convertDegreesToRadians(360);
 
         // rotates faster with powerup 1
-        if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
+        if (Cookies.get('powerup-1') == 'bought') angle = angle * 2;
         this.group.rotation.y += angle;
         this.currentPosition.angle = Util.convertRadiansToDegrees(this.group.rotation.y);
 
@@ -116,11 +116,8 @@ export class Way {
         let self = this;
         self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
         self.obstacles.forEach(function(obstacle) {
-            if (obstacle.distance < self.length) {
-                self.group.add(obstacle.mesh);
-            } else {
-                console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
-            }
+            if (obstacle.distance < self.length) self.group.add(obstacle.mesh);
+            else console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
         });
     };
 

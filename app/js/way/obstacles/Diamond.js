@@ -7,7 +7,7 @@ const heightFromWay = 20;
 
 export class Diamond{
   /**
-   * Represents the "obstacle" "diamond" (that can be collected)
+   * Represents the 'obstacle' 'diamond' (that can be collected)
    * @param {Object} diamond - structure as in levelX.js
    * @constructor
    */
@@ -48,7 +48,7 @@ export class Diamond{
    */
   static prepareForCollisionDetection(obstacle, radius) {
       let angle = 10;
-      if (Cookies.get('powerup-3') == "bought") angle = 35;
+      if (Cookies.get('powerup-3') == 'bought') angle = 35;
       return {
           type: 'diamond',
           size: {

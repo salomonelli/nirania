@@ -42,4 +42,4 @@ export let Util = {
     angle = angle % 360; //always <360
     return angle;
   }
-}
+};

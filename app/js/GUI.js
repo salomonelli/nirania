@@ -18,7 +18,7 @@ export let GUI = {
      * @param {Object} obj - obj to render template successScreen
      */
     showSuccessScreen: function(obj) {
-        var html = templates.successScreen.render(obj);
+        let html = templates.successScreen.render(obj);
         $('body').append(html);
     },
 
@@ -27,7 +27,7 @@ export let GUI = {
      * @param {Object} obj - obj to render template gameoverScreen
      */
     showGameOverScreen: function(obj) {
-        var html = templates.gameoverScreen.render(obj);
+        let html = templates.gameoverScreen.render(obj);
         $('body').append(html);
     },
 
@@ -52,7 +52,7 @@ export let GUI = {
      * shows loading icon
      */
     showLoadingIcon: function() {
-        var height = $('.sk-folding-cube').height() + $('.loading p').height();
+        let height = $('.sk-folding-cube').height() + $('.loading p').height();
         $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
     },
 
@@ -60,10 +60,10 @@ export let GUI = {
      * removes loading icon
      */
     removeLoadingIcon: function() {
-        $(".sk-folding-cube").remove();
-        $(".loading p").remove();
-        var fadeTime = 3000;
-        $(".loading").fadeOut(fadeTime);
+        $('.sk-folding-cube').remove();
+        $('.loading p').remove();
+        let fadeTime = 3000;
+        $('.loading').fadeOut(fadeTime);
     },
 
     /**
@@ -146,4 +146,4 @@ export let GUI = {
     hideInstruction: function() {
         $('.instruction').addClass('gone');
     }
-}
+};

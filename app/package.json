@@ -4,7 +4,8 @@
   "description": "",
   "scripts": {
     "dev": "concurrently --kill-others \"node app.js\" \"grunt --verbose\"",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint js"
   },
   "dependencies": {
     "babel-preset-es2015": "^6.18.0",
@@ -18,6 +19,7 @@
   "license": "ISC",
   "devDependencies": {
     "async": "^2.0.1",
+    "babel-eslint": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-polyfill": "^6.20.0",
     "babel-preset-latest": "^6.16.0",

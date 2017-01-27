@@ -51,7 +51,7 @@ var Color = exports.Color = {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.Database = undefined;
 
@@ -79,170 +79,170 @@ var DB = void 0,
     soundCollection = void 0;
 
 var levelSchema = {
-  title: 'level schema',
-  description: 'describes a level',
-  type: 'object',
-  properties: {
-    level: {
-      type: 'string',
-      primary: true
-    },
-    success: {
-      type: 'boolean'
-    },
-    diamonds: {
-      type: 'number'
+    title: 'level schema',
+    description: 'describes a level',
+    type: 'object',
+    properties: {
+        level: {
+            type: 'string',
+            primary: true
+        },
+        success: {
+            type: 'boolean'
+        },
+        diamonds: {
+            type: 'number'
+        }
     }
-  }
 };
 
 var soundSchema = {
-  title: 'settings schema',
-  description: 'describes user settings',
-  type: 'object',
-  properties: {
-    sound: {
-      type: 'boolean'
+    title: 'settings schema',
+    description: 'describes user settings',
+    type: 'object',
+    properties: {
+        sound: {
+            type: 'boolean'
+        }
     }
-  }
 };
 
 var Database = exports.Database = {
-  create: function () {
-    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-      return _regenerator2.default.wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              if (DB) {
-                _context.next = 10;
-                break;
-              }
+    create: function () {
+        var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+            return _regenerator2.default.wrap(function _callee$(_context) {
+                while (1) {
+                    switch (_context.prev = _context.next) {
+                        case 0:
+                            if (DB) {
+                                _context.next = 10;
+                                break;
+                            }
 
-              _context.next = 3;
-              return RxDB.create(DBName, 'idb');
+                            _context.next = 3;
+                            return RxDB.create(DBName, 'idb');
 
-            case 3:
-              DB = _context.sent;
-              _context.next = 6;
-              return DB.collection('level', levelSchema);
+                        case 3:
+                            DB = _context.sent;
+                            _context.next = 6;
+                            return DB.collection('level', levelSchema);
 
-            case 6:
-              levelCollection = _context.sent;
-              _context.next = 9;
-              return DB.collection('sound', soundSchema);
+                        case 6:
+                            levelCollection = _context.sent;
+                            _context.next = 9;
+                            return DB.collection('sound', soundSchema);
 
-            case 9:
-              soundCollection = _context.sent;
+                        case 9:
+                            soundCollection = _context.sent;
 
-            case 10:
-            case 'end':
-              return _context.stop();
-          }
+                        case 10:
+                        case 'end':
+                            return _context.stop();
+                    }
+                }
+            }, _callee, this);
+        }));
+
+        function create() {
+            return _ref.apply(this, arguments);
         }
-      }, _callee, this);
-    }));
 
-    function create() {
-      return _ref.apply(this, arguments);
-    }
+        return create;
+    }(),
+    updateLevel: function () {
+        var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(level, success, diamonds) {
+            var doc;
+            return _regenerator2.default.wrap(function _callee2$(_context2) {
+                while (1) {
+                    switch (_context2.prev = _context2.next) {
+                        case 0:
+                            _context2.next = 2;
+                            return levelCollection.findOne(level).exec();
 
-    return create;
-  }(),
-  updateLevel: function () {
-    var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(level, success, diamonds) {
-      var doc;
-      return _regenerator2.default.wrap(function _callee2$(_context2) {
-        while (1) {
-          switch (_context2.prev = _context2.next) {
-            case 0:
-              _context2.next = 2;
-              return levelCollection.findOne(level).exec();
+                        case 2:
+                            doc = _context2.sent;
 
-            case 2:
-              doc = _context2.sent;
+                            if (!doc) {
+                                _context2.next = 10;
+                                break;
+                            }
 
-              if (!doc) {
-                _context2.next = 10;
-                break;
-              }
+                            if (success) doc.set('success', success);
+                            if (!doc.get('diamonds') || diamonds > doc.get('diamonds')) doc.set('diamonds', diamonds);
+                            _context2.next = 8;
+                            return doc.save();
 
-              if (success) doc.set('success', success);
-              if (!doc.get('diamonds') || diamonds > doc.get('diamonds')) doc.set('diamonds', diamonds);
-              _context2.next = 8;
-              return doc.save();
+                        case 8:
+                            _context2.next = 12;
+                            break;
 
-            case 8:
-              _context2.next = 12;
-              break;
+                        case 10:
+                            _context2.next = 12;
+                            return levelCollection.insert({
+                                level: level + '',
+                                diamonds: diamonds,
+                                success: success
+                            });
 
-            case 10:
-              _context2.next = 12;
-              return levelCollection.insert({
-                level: level + '',
-                diamonds: diamonds,
-                success: success
-              });
+                        case 12:
+                        case 'end':
+                            return _context2.stop();
+                    }
+                }
+            }, _callee2, this);
+        }));
 
-            case 12:
-            case 'end':
-              return _context2.stop();
-          }
+        function updateLevel(_x, _x2, _x3) {
+            return _ref2.apply(this, arguments);
         }
-      }, _callee2, this);
-    }));
 
-    function updateLevel(_x, _x2, _x3) {
-      return _ref2.apply(this, arguments);
-    }
+        return updateLevel;
+    }(),
+    updateSound: function updateSound(sound) {
+        soundCollection.insert({
+            sound: sound
+        });
+    },
+    getSound: function getSound() {
+        return soundCollection.findOne();
+    },
+    getLevel: function () {
+        var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(level) {
+            var doc, ret;
+            return _regenerator2.default.wrap(function _callee3$(_context3) {
+                while (1) {
+                    switch (_context3.prev = _context3.next) {
+                        case 0:
+                            _context3.next = 2;
+                            return levelCollection.findOne(level).exec();
 
-    return updateLevel;
-  }(),
-  updateSound: function updateSound(sound) {
-    soundCollection.insert({
-      sound: sound
-    });
-  },
-  getSound: function getSound() {
-    return soundCollection.findOne();
-  },
-  getLevel: function () {
-    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(level) {
-      var doc, ret;
-      return _regenerator2.default.wrap(function _callee3$(_context3) {
-        while (1) {
-          switch (_context3.prev = _context3.next) {
-            case 0:
-              _context3.next = 2;
-              return levelCollection.findOne(level).exec();
+                        case 2:
+                            doc = _context3.sent;
+                            ret = {
+                                success: false,
+                                diamonds: 0
+                            };
 
-            case 2:
-              doc = _context3.sent;
-              ret = {
-                success: false,
-                diamonds: 0
-              };
+                            if (doc) {
+                                ret.success = doc.get('success');
+                                ret.diamonds = doc.get('diamonds');
+                            }
+                            return _context3.abrupt('return', ret);
 
-              if (doc) {
-                ret.success = doc.get('success');
-                ret.diamonds = doc.get('diamonds');
-              }
-              return _context3.abrupt('return', ret);
+                        case 6:
+                        case 'end':
+                            return _context3.stop();
+                    }
+                }
+            }, _callee3, this);
+        }));
 
-            case 6:
-            case 'end':
-              return _context3.stop();
-          }
+        function getLevel(_x4) {
+            return _ref3.apply(this, arguments);
         }
-      }, _callee3, this);
-    }));
 
-    function getLevel(_x4) {
-      return _ref3.apply(this, arguments);
-    }
-
-    return getLevel;
-  }()
+        return getLevel;
+    }()
 };
 
 },{"babel-runtime/helpers/asyncToGenerator":37,"babel-runtime/regenerator":42,"pouchdb-adapter-idb":453,"rxdb":512}],3:[function(require,module,exports){
@@ -313,10 +313,10 @@ var GUI = exports.GUI = {
      * removes loading icon
      */
     removeLoadingIcon: function removeLoadingIcon() {
-        $(".sk-folding-cube").remove();
-        $(".loading p").remove();
+        $('.sk-folding-cube').remove();
+        $('.loading p').remove();
         var fadeTime = 3000;
-        $(".loading").fadeOut(fadeTime);
+        $('.loading').fadeOut(fadeTime);
     },
 
     /**
@@ -624,7 +624,7 @@ var Particles = exports.Particles = function () {
 }();
 
 },{"babel-runtime/helpers/classCallCheck":38,"babel-runtime/helpers/createClass":39,"three":859}],6:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1038,7 +1038,7 @@ var Scene = exports.Scene = function () {
                     self.objects.particles.rotate(Math.PI * 0.01);
                 }
                 if (self.move.up) self.objects.protagonist.jump();
-                if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == "bought") {
+                if (self.move.boost && self.boostNotUsed && Cookies.get('powerup-4') == 'bought') {
                     level.powerupActiveDuration = self.objects.way.currentPosition.distance + 750;
                     level.powerupActive = true;
                     self.boostNotUsed = false;
@@ -1079,7 +1079,7 @@ var Scene = exports.Scene = function () {
         /**
          * disables turning in the given direction
          * @param {Scene} scene
-         * @param {string} direction - "left" or "right"
+         * @param {string} direction - 'left' or 'right'
          */
         value: function stopMovingProtagonist(scene, direction) {
             scene.move[direction] = false;
@@ -1091,7 +1091,7 @@ var Scene = exports.Scene = function () {
         /**
          * enables turning in the given direction
          * @param {Scene} scene
-         * @param {string} direction - "left" or "right"
+         * @param {string} direction - 'left' or 'right'
          */
         value: function startMovingProtagonist(scene, direction) {
             scene.move[direction] = true;
@@ -1136,8 +1136,8 @@ var Sound = exports.Sound = {
    * @returns {boolean} - true if sound is on
    */
   isMusicOn: function isMusicOn() {
-    if (Cookies.get('sound') === "on") return true;
-    if (Cookies.get('sound') === "undefined") {
+    if (Cookies.get('sound') === 'on') return true;
+    if (Cookies.get('sound') === 'undefined') {
       _setMusicSettings(true);
       return true;
     }
@@ -6484,7 +6484,7 @@ function addLevel() {
  * @returns {boolean} - true if sound is on
  */
 function isMusicOn() {
-    if (Cookies.get('sound') === "on") return true;
+    if (Cookies.get('sound') === 'on') return true;
     if (Cookies.get('sound')) {
         level[currentLevel].playSound = false;
         return false;
@@ -6533,7 +6533,7 @@ var main = function () {
                         URL = window.location.href;
 
                         URLpath = URL.replace(/http:\/\/.+\//g, '');
-                        if (URLpath !== "") currentLevel = URLpath.replace('#', '');
+                        if (URLpath !== '') currentLevel = URLpath.replace('#', '');
                         _GUI.GUI.showLoadingIcon();
                         _context6.next = 8;
                         return _Protagonist.Protagonist.init();
@@ -6545,7 +6545,7 @@ var main = function () {
                         document.body.appendChild(mainScene.renderer.domElement);
                         _GUI.GUI.removeLoadingIcon();
 
-                        if (!(URLpath == "")) {
+                        if (!(URLpath == '')) {
                             _context6.next = 17;
                             break;
                         }
@@ -6644,9 +6644,7 @@ $(document).on('click', '#soundSwitch', function (event) {
 $(document).on('click', '#playagain', function (event) {
     var object = Cookies.get();
     for (var property in object) {
-        if (object.hasOwnProperty(property)) {
-            Cookies.remove(property);
-        }
+        if (object.hasOwnProperty(property)) Cookies.remove(property);
     }
 });
 
@@ -6777,18 +6775,18 @@ var Body = exports.Body = function () {
 }();
 
 },{"../Color":1,"babel-runtime/helpers/classCallCheck":38,"babel-runtime/helpers/createClass":39,"three":859}],17:[function(require,module,exports){
-"use strict";
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.CollisionDetector = undefined;
 
-var _classCallCheck2 = require("babel-runtime/helpers/classCallCheck");
+var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
 var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 
-var _createClass2 = require("babel-runtime/helpers/createClass");
+var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
@@ -6824,7 +6822,7 @@ var CollisionDetector = exports.CollisionDetector = function () {
 
 
     (0, _createClass3.default)(CollisionDetector, [{
-        key: "collision",
+        key: 'collision',
         value: function collision(currentPosition) {
             var self = this;
             var ret = {
@@ -6846,9 +6844,9 @@ var CollisionDetector = exports.CollisionDetector = function () {
                 //other collisions from right body half.
                 obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.angle.min < currentPosition.anglemax && currentPosition.anglemax < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
                 //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
+                obstacle.collisionData.type == 'cone' && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
                 //cone
-                obstacle.collisionData.type == "cone" && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
+                obstacle.collisionData.type == 'cone' && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
 
                     ret = {
                         collision: true,
@@ -7114,7 +7112,7 @@ var Protagonist = exports.Protagonist = function () {
         key: 'jump',
         value: function jump() {
             var height = 40;
-            if (Cookies.get('powerup-2') == "bought") height = 70;
+            if (Cookies.get('powerup-2') == 'bought') height = 70;
             var self = this;
             if (!self.isJumping) {
                 self.isJumping = true;
@@ -7146,7 +7144,7 @@ var Protagonist = exports.Protagonist = function () {
 
         /**
          * rotates the protagonist according to axis and angle
-         * @param {string} axis - "x", "y" or "z"
+         * @param {string} axis - 'x', 'y' or 'z'
          * @param {number} angle - in radians
          */
 
@@ -7188,17 +7186,17 @@ var Protagonist = exports.Protagonist = function () {
 
         /**
          * decreases the position of the protagonist according to given axis
-         * @param {string} axis - "x", "y" or "z"
+         * @param {string} axis - 'x', 'y' or 'z'
          */
         value: function decreasePosition(axis) {
             switch (axis) {
-                case "x":
+                case 'x':
                     this.object3D.position.x--;
                     break;
-                case "y":
+                case 'y':
                     this.object3D.position.y--;
                     break;
-                case "z":
+                case 'z':
                     this.object3D.position.z--;
                     break;
             }
@@ -7384,7 +7382,7 @@ var Way = exports.Way = function () {
             if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = _Util.Util.convertDegreesToRadians(360);
 
             // rotates faster with powerup 1
-            if (Cookies.get('powerup-1') == "bought") angle = angle * 2;
+            if (Cookies.get('powerup-1') == 'bought') angle = angle * 2;
             this.group.rotation.y += angle;
             this.currentPosition.angle = _Util.Util.convertRadiansToDegrees(this.group.rotation.y);
 
@@ -7421,11 +7419,7 @@ var Way = exports.Way = function () {
             var self = this;
             self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
             self.obstacles.forEach(function (obstacle) {
-                if (obstacle.distance < self.length) {
-                    self.group.add(obstacle.mesh);
-                } else {
-                    console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
-                }
+                if (obstacle.distance < self.length) self.group.add(obstacle.mesh);else console.log('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
             });
         }
     }, {
@@ -7654,7 +7648,7 @@ var heightFromWay = 20;
 
 var Diamond = exports.Diamond = function () {
     /**
-     * Represents the "obstacle" "diamond" (that can be collected)
+     * Represents the 'obstacle' 'diamond' (that can be collected)
      * @param {Object} diamond - structure as in levelX.js
      * @constructor
      */
@@ -7704,7 +7698,7 @@ var Diamond = exports.Diamond = function () {
          */
         value: function prepareForCollisionDetection(obstacle, radius) {
             var angle = 10;
-            if (Cookies.get('powerup-3') == "bought") angle = 35;
+            if (Cookies.get('powerup-3') == 'bought') angle = 35;
             return {
                 type: 'diamond',
                 size: {
@@ -7750,7 +7744,7 @@ module.exports = function () {
 
     /**
      * Represents an Obstacle on wthe way
-     * @param {String} type - string like "cube"
+     * @param {String} type - string like 'cube'
      * @param {THREE.Mesh} mesh - mesh of obstacle
      * @param {number} distance - from starting point of way up to obstacle
      * @param {number} angle - in radiant, on which side the obstacle is positioned

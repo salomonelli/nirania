@@ -28,8 +28,8 @@ export let Sound = {
    * @returns {boolean} - true if sound is on
    */
   isMusicOn: function(){
-    if(Cookies.get('sound') === "on" ) return true;
-    if(Cookies.get('sound') === "undefined"){
+    if(Cookies.get('sound') === 'on' ) return true;
+    if(Cookies.get('sound') === 'undefined'){
       _setMusicSettings(true);
       return true;
     }
@@ -44,4 +44,4 @@ export let Sound = {
     if (isOn) Cookies.set('sound', 'on');
     else Cookies.set('sound', 'off');
   }
-}
+};

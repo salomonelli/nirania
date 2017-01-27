@@ -168,7 +168,7 @@ function playThisLevel() {
  * @returns {boolean} - true if sound is on
  */
 function isMusicOn() {
-    if (Cookies.get('sound') === "on") return true;
+    if (Cookies.get('sound') === 'on') return true;
     if (Cookies.get('sound')) {
         level[currentLevel].playSound = false;
         return false;
@@ -209,14 +209,14 @@ let main = async function() {
     await Database.create();
     let URL = window.location.href;
     URLpath = URL.replace(/http:\/\/.+\//g, '');
-    if (URLpath !== "") currentLevel = URLpath.replace('#', '');
+    if (URLpath !== '') currentLevel = URLpath.replace('#', '');
     GUI.showLoadingIcon();
     await Protagonist.init();
     let background = level[currentLevel].background();
     mainScene = new Scene(window.innerWidth, window.innerHeight, background);
     document.body.appendChild(mainScene.renderer.domElement);
     GUI.removeLoadingIcon();
-    if (URLpath == "") await gameWithIntro();
+    if (URLpath == '') await gameWithIntro();
     else {
         if (await playThisLevel()) gameWithoutIntro();
         else detectedCheating(URL, URLpath);
@@ -226,7 +226,7 @@ let main = async function() {
 let setLastSuccessfulLevel = async function() {
     await Database.create();
     lastLevel = await Level.lastSuccessfulLevel();
-}
+};
 
 
 /**
@@ -257,11 +257,7 @@ $(document).on('click', '#soundSwitch', function(event) {
 //resets cookies to play game from start
 $(document).on('click', '#playagain', function(event) {
     let object = Cookies.get();
-    for (let property in object) {
-        if (object.hasOwnProperty(property)) {
-            Cookies.remove(property);
-        }
-    }
+    for (let property in object) if (object.hasOwnProperty(property)) Cookies.remove(property);
 });
 
 $(document).on('click', '#lastSuccessfulLevel', async function(event) {
