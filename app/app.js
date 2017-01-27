@@ -23,6 +23,15 @@ app.get('/', function(req, res) {
 });
 
 
+app.get('/cheater', function(req, res) {
+    res.render('layout', {
+        partials: {
+            content: 'cantBePlayed',
+            callFunction: 'callLastSuccessfulLevel'
+        }
+    });
+});
+
 app.listen(18787, '0.0.0.0', function() {
     console.log('Listening on localhost!');
 });

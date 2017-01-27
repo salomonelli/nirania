@@ -238,3 +238,8 @@ a.disabled {
     margin-left: auto;
     margin-right: auto;
 }
+
+/***********CHEATER***************/
+.can-not-be-played{
+  color: white;
+}

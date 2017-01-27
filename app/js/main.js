@@ -15,6 +15,10 @@ import {
 import {
     GUI
 } from './GUI';
+import {
+    Database
+} from './Database';
+
 let $ = require('jquery');
 let THREE = require('three');
 let async = require('async');
@@ -34,6 +38,7 @@ let level = [{},
     new Level(5)
 ];
 let currentLevel = 1;
+let lastLevel = 1;
 let URLpath = '';
 window.initMe = 0;
 
@@ -90,14 +95,14 @@ async function gameWithoutIntro() {
  * renders game
  */
 function render() {
-    return new Promise(resolve =>{
-      requestAnimationFrame(()=>{
-        render();
-        resolve();
-      });
-      mainScene.render();
-      mainScene.turn(level[currentLevel]);
-      TWEEN.update();
+    return new Promise(resolve => {
+        requestAnimationFrame(() => {
+            render();
+            resolve();
+        });
+        mainScene.render();
+        mainScene.turn(level[currentLevel]);
+        TWEEN.update();
     });
 }
 
@@ -136,14 +141,14 @@ async function startLevel() {
 /**
  * shows gameover or successcreen at the end of the level and updates Cookies
  */
-function showScreen() {
+async function showScreen() {
     if (!level[currentLevel].gameOver) {
         //success
-        level[currentLevel].setCookie(true);
+        await level[currentLevel].storeToDB(true);
         level[currentLevel].showSuccessScreen();
     } else {
         //gameover
-        level[currentLevel].setCookie(false);
+        await level[currentLevel].storeToDB(false);
         level[currentLevel].showGameOverScreen();
     }
 }
@@ -184,8 +189,16 @@ function setMusicSettings(isOn) {
 /**
  * reloads page
  */
-function reloadPage(){
+function reloadPage() {
     location.reload();
+}
+
+/**
+ * calls /cheater - when somebody tries to cheat
+ */
+function detectedCheating(URL, URLpath) {
+  let newURL = URL.replace(URLpath, 'cheater');
+  window.location.href = newURL;
 }
 
 /**
@@ -193,6 +206,7 @@ function reloadPage(){
  * @return {Promise}
  */
 let main = async function() {
+    await Database.create();
     let URL = window.location.href;
     URLpath = URL.replace(/http:\/\/.+\//g, '');
     if (URLpath !== "") currentLevel = URLpath.replace('#', '');
@@ -204,13 +218,16 @@ let main = async function() {
     GUI.removeLoadingIcon();
     if (URLpath == "") await gameWithIntro();
     else {
-        if (playThisLevel()) gameWithoutIntro();
-        else {
-            let newURL = URL.replace(URLpath, '');
-            window.location.href = newURL;
-        }
+        if (await playThisLevel()) gameWithoutIntro();
+        else detectedCheating(URL, URLpath);
     }
 };
+
+let setLastSuccessfulLevel = async function() {
+    await Database.create();
+    lastLevel = await Level.lastSuccessfulLevel();
+}
+
 
 /**
  * main function of /
@@ -220,13 +237,13 @@ let intro = function() {
 };
 
 // reloads page on resize
-$(window).on('resize', function(){
-  reloadPage();
+$(window).on('resize', function() {
+    reloadPage();
 });
 
 // reloads page
 $(document).on('click', '.button.reload', function() {
-  reloadPage();
+    reloadPage();
 });
 
 //enables and disables sound
@@ -247,6 +264,13 @@ $(document).on('click', '#playagain', function(event) {
     }
 });
 
+$(document).on('click', '#lastSuccessfulLevel', async function(event) {
+  let URL = window.location.href;
+  URLpath = URL.replace(/http:\/\/.+\//g, '');
+  let newURL = URL.replace(URLpath, '#' + lastLevel);
+  window.location.href = newURL;
+});
+
 music.addEventListener('ended', function() {
     if (level[currentLevel].playSound) {
         this.currentTime = 0;
@@ -257,3 +281,4 @@ music.addEventListener('ended', function() {
 //store functions to window
 window.intro = intro;
 window.main = main;
+window.setLastSuccessfulLevel = setLastSuccessfulLevel;

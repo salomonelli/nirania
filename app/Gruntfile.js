@@ -6,8 +6,9 @@ module.exports = function(grunt) {
             'public/gen/js.js': ['js/main.js'],
             options: {
                 transform: [
-                    'browserify-hogan',
-                    ['babelify', { 'presets': ['latest'] }]
+                    'browserify-hogan', ['babelify', {
+                        'presets': ['latest']
+                    }]
                 ]
             }
         },

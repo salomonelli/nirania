@@ -7,6 +7,7 @@ import {
 import {
     CollisionDetector
 } from '../protagonist/CollisionDetector';
+import { Database } from '../Database.js';
 const Obstacle = require('../way/obstacles/Obstacle');
 const $ = require('jquery');
 const Cookies = require('js-cookie');
@@ -121,12 +122,12 @@ export class Level {
       let currentPosition = this.getCurrentPosition(protagonist);
       let collObj = this.getCollisionObject(currentPosition);
       switch (collObj.type) {
-          case "box":
-          case "ring":
-          case "cone":
+          case 'box':
+          case 'ring':
+          case 'cone':
               this.hitObstacle();
               return true;
-          case "diamond":
+          case 'diamond':
               this.hitDiamond(collObj);
               return false;
           default:
@@ -224,7 +225,6 @@ export class Level {
                 self.animateProtagonist(protagonist, clock, speedMulti);
                 self.way.moveForwardTillEnd(self.speed * speedMulti);
                 if (t <= 0 || self.checkCollision(protagonist)) {
-                    Cookies.set('diamonds-' + self.current, self.diamonds);
                     GUI.hideInstruction();
                     resolve();
                     return;
@@ -259,12 +259,12 @@ export class Level {
         let last = '';
         let canNotBePlayed, disableNextLevel, showOutro;
         if (this.current === levels.length) {
-            last = "gone";
-            showOutro = "true";
+            last = 'gone';
+            showOutro = 'true';
         }
         if (!Level.canBePlayed(this.current + 1)) {
-            canNotBePlayed = "true";
-            disableNextLevel = "disabled";
+            canNotBePlayed = 'true';
+            disableNextLevel = 'disabled';
         }
         GUI.showSuccessScreen({
             score: this.diamonds,
@@ -291,16 +291,8 @@ export class Level {
      * stores the score and success in cookie
      * @param {boolean} success - whether current level has been ended with success
      */
-    setCookie(success) {
-        if (Cookies.get(this.current + '-success') !== "true") Cookies.set(this.current + '-success', success);
-        let obj = Cookies.get();
-        if (isNaN(Cookies.get('total'))) {
-            Cookies.set('total', this.diamonds);
-        } else {
-            let sum = parseInt(Cookies.get('total'));
-            sum += this.diamonds;
-            Cookies.set('total', sum);
-        }
+    async storeToDB(success){
+      if(success) await Database.updateLevel(this.current, success, this.diamonds);
     };
 
     /**
@@ -325,15 +317,24 @@ export class Level {
      * @param {number} level - that should be played
      * @returns {boolean}
      */
-    static canBePlayed(level) {
+    static async canBePlayed(level) {
         if (level == 1) return true;
         level--;
+        let obj = await Database.getLevel(level);
         if (
-          Cookies.get(level + '-success') == "true" &&
-          Cookies.get('diamonds-'+level) >= levels[level-1].requiredDiamonds
-        ) {
-            return true;
-        }
+          obj.success &&
+          obj.diamonds >= levels[level-1].requiredDiamonds
+        ) return true;
         return false;
     };
+
+    static async lastSuccessfulLevel() {
+      let levelAmount = levels.length;
+      let playable;
+      for (let i = 1; i <= levels.length; i++) {
+        playable = await Level.canBePlayed(i);
+        if(!playable) return i - 1;
+      }
+      return 1;
+    }
 }
