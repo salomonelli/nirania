@@ -104,25 +104,6 @@ export class Scene {
         this.scene.add(this.lights.shadow);
         this.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
     };
-
-    /**
-     * positions and creates intro view
-     */
-    showIntro() {
-        this.camera.position.set(250, 1000, 50);
-        //add particles
-        this.objects.particles.position(0, 0, -500);
-        this.objects.particles.addToScene(this.scene);
-        //add particles for intro
-        this.objects.introParticles.position(0, 0, 250);
-        this.objects.introParticles.addToScene(this.scene);
-        //add protagonist
-        this.objects.protagonist.position(0, 950, 0);
-        this.objects.protagonist.rotate('y', Math.PI);
-        this.objects.protagonist.addToScene(this.scene);
-        this.camera.lookAt(this.objects.protagonist.currentPosition);
-    };
-
     /**
      * Renders scene and starts basic animations like particles
      */

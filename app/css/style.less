@@ -1,18 +1,44 @@
+@darkergrey: #333333;
+@darkgrey: #666666;
+@grey: #999999;
+@lightgrey: #CCCCCC;
+@green: #ABDB25;
+@darkgreen: #6e8c19;
+
 body {
     font-family: 'Ubuntu', sans-serif !important;
+    font-weight: lighter;
+    color: @darkgrey;
     overflow-x: hidden;
     overflow-y: hidden;
+
+    .gone {
+        display: none;
+    }
+
+    .button {
+        background: @grey;
+
+        &:focus,
+        &:hover {
+            background: @darkgrey;
+        }
+
+        &.success {
+            background: @green;
+
+            &:focus,
+            &:hover {
+                background: @darkgreen;
+            }
+        }
+    }
 
     .overlay {
         width: 100%;
         height: 100%;
         position: absolute;
-        color: black;
         z-index: 20;
-
-        span {
-            color: black;
-        }
 
         .intro-text {
             position: absolute;
@@ -28,6 +54,27 @@ body {
 
                 &.nirania {
                     font-size: 40px;
+                    font-weight: normal;
+                    color: @darkergrey;
+                }
+            }
+        }
+    }
+
+    .scores {
+        position: absolute;
+        right: 0;
+        background: none;
+        width: 150px;
+
+        table {
+            tbody {
+                border: none;
+                background: rgba(0, 0, 0, 0.56);
+                color: white;
+
+                tr {
+                    background: none;
                 }
             }
         }
@@ -50,6 +97,17 @@ body {
             position: absolute;
             text-align: center;
         }
+    }
+
+    .instruction {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.56);
+        width: 100%;
+        text-align: center;
+        padding-top: 40px;
+        padding-bottom: 40px;
+        color: white;
     }
 
     .dividers {

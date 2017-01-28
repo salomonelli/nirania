@@ -1,17 +1,32 @@
 body {
   font-family: 'Ubuntu', sans-serif !important;
+  font-weight: lighter;
+  color: #666666;
   overflow-x: hidden;
   overflow-y: hidden;
+}
+body .gone {
+  display: none;
+}
+body .button {
+  background: #999999;
+}
+body .button:focus,
+body .button:hover {
+  background: #666666;
+}
+body .button.success {
+  background: #ABDB25;
+}
+body .button.success:focus,
+body .button.success:hover {
+  background: #6e8c19;
 }
 body .overlay {
   width: 100%;
   height: 100%;
   position: absolute;
-  color: black;
   z-index: 20;
-}
-body .overlay span {
-  color: black;
 }
 body .overlay .intro-text {
   position: absolute;
@@ -27,6 +42,22 @@ body .overlay .intro-text span {
 }
 body .overlay .intro-text span.nirania {
   font-size: 40px;
+  font-weight: normal;
+  color: #333333;
+}
+body .scores {
+  position: absolute;
+  right: 0;
+  background: none;
+  width: 150px;
+}
+body .scores table tbody {
+  border: none;
+  background: rgba(0, 0, 0, 0.56);
+  color: white;
+}
+body .scores table tbody tr {
+  background: none;
 }
 body #gameoverScreen,
 body #successScreen {
@@ -45,6 +76,16 @@ body #successScreen .wrapper {
   width: 100%;
   position: absolute;
   text-align: center;
+}
+body .instruction {
+  position: absolute;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.56);
+  width: 100%;
+  text-align: center;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  color: white;
 }
 body .dividers {
   width: 100%;

@@ -51,24 +51,10 @@ else GUI.uncheckSoundSwitch();
  * initiates the game with intro
  */
 async function gameWithIntro() {
-    /*
-
-    // mainScene.showIntro();
-    addLevel();
-    await render();
-
-    await startingAnimation();
-    await startLevel();
-    await showScreen();
-     */
-
-    // TODO preload everything
     await GUI.startingAnimationFadeIn();
     await Keybindings.keyBind('keydown').first().toPromise();
     await GUI.fadeOverlayOut();
     await GUI.openDividers();
-    // fade out font
-    // open curtains wait and start
     mainScene.simpleIntro();
     addLevel();
     await render();
@@ -78,29 +64,12 @@ async function gameWithIntro() {
     await showScreen();
 }
 
-/**
- * starts animation on homepage
- * @return {Promise}
- */
-function startingAnimation() {
-    const fadeTime = 1000;
-    GUI.startingAnimationFadeOut(fadeTime);
-    return new Promise(resolve => {
-        setTimeout(async() => {
-            // await mainScene.startingAnimation();
-            resolve();
-        }, fadeTime);
-    });
-
-}
-
 
 /**
  * starts game without intro
  * @return {Promise}
  */
 async function gameWithoutIntro() {
-    // TODO preload everything
     await GUI.openDividers();
     mainScene.simpleIntro();
     addLevel();

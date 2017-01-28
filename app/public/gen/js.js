@@ -837,29 +837,7 @@ var Scene = exports.Scene = function () {
             this.scene.add(new THREE.AmbientLight(0xffffff, 0.3));
         }
     }, {
-        key: 'showIntro',
-
-
-        /**
-         * positions and creates intro view
-         */
-        value: function showIntro() {
-            this.camera.position.set(250, 1000, 50);
-            //add particles
-            this.objects.particles.position(0, 0, -500);
-            this.objects.particles.addToScene(this.scene);
-            //add particles for intro
-            this.objects.introParticles.position(0, 0, 250);
-            this.objects.introParticles.addToScene(this.scene);
-            //add protagonist
-            this.objects.protagonist.position(0, 950, 0);
-            this.objects.protagonist.rotate('y', Math.PI);
-            this.objects.protagonist.addToScene(this.scene);
-            this.camera.lookAt(this.objects.protagonist.currentPosition);
-        }
-    }, {
         key: 'render',
-
 
         /**
          * Renders scene and starts basic animations like particles
@@ -6342,8 +6320,6 @@ var gameWithIntro = function () {
                         return _GUI.GUI.openDividers();
 
                     case 8:
-                        // fade out font
-                        // open curtains wait and start
                         mainScene.simpleIntro();
                         addLevel();
                         _context.next = 12;
@@ -6375,52 +6351,48 @@ var gameWithIntro = function () {
 }();
 
 /**
- * starts animation on homepage
- * @return {Promise}
- */
-
-
-/**
  * starts game without intro
  * @return {Promise}
  */
+
+
 var gameWithoutIntro = function () {
-    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
+    var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
+        return _regenerator2.default.wrap(function _callee2$(_context2) {
             while (1) {
-                switch (_context3.prev = _context3.next) {
+                switch (_context2.prev = _context2.next) {
                     case 0:
-                        _context3.next = 2;
+                        _context2.next = 2;
                         return _GUI.GUI.openDividers();
 
                     case 2:
                         mainScene.simpleIntro();
                         addLevel();
-                        _context3.next = 6;
+                        _context2.next = 6;
                         return render();
 
                     case 6:
-                        _context3.next = 8;
+                        _context2.next = 8;
                         return startLevel();
 
                     case 8:
-                        _context3.next = 10;
+                        _context2.next = 10;
                         return _GUI.GUI.closeDividers();
 
                     case 10:
-                        _context3.next = 12;
+                        _context2.next = 12;
                         return showScreen();
 
                     case 12:
                     case 'end':
-                        return _context3.stop();
+                        return _context2.stop();
                 }
             }
-        }, _callee3, this);
+        }, _callee2, this);
     }));
 
     return function gameWithoutIntro() {
-        return _ref3.apply(this, arguments);
+        return _ref2.apply(this, arguments);
     };
 }();
 
@@ -6434,11 +6406,11 @@ var gameWithoutIntro = function () {
  * @return {Promise}
  */
 var startLevel = function () {
-    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
+    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3() {
         var subs, protagonist;
-        return _regenerator2.default.wrap(function _callee4$(_context4) {
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
             while (1) {
-                switch (_context4.prev = _context4.next) {
+                switch (_context3.prev = _context3.next) {
                     case 0:
                         subs = [];
 
@@ -6453,7 +6425,7 @@ var startLevel = function () {
                         //start moving way
                         mainScene.move.continue = true;
                         protagonist = mainScene.getProtagonist();
-                        _context4.next = 9;
+                        _context3.next = 9;
                         return level[currentLevel].begin(protagonist);
 
                     case 9:
@@ -6464,14 +6436,14 @@ var startLevel = function () {
 
                     case 11:
                     case 'end':
-                        return _context4.stop();
+                        return _context3.stop();
                 }
             }
-        }, _callee4, this);
+        }, _callee3, this);
     }));
 
     return function startLevel() {
-        return _ref4.apply(this, arguments);
+        return _ref3.apply(this, arguments);
     };
 }();
 
@@ -6481,45 +6453,45 @@ var startLevel = function () {
 
 
 var showScreen = function () {
-    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5() {
-        return _regenerator2.default.wrap(function _callee5$(_context5) {
+    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
+        return _regenerator2.default.wrap(function _callee4$(_context4) {
             while (1) {
-                switch (_context5.prev = _context5.next) {
+                switch (_context4.prev = _context4.next) {
                     case 0:
                         if (level[currentLevel].gameOver) {
-                            _context5.next = 7;
+                            _context4.next = 7;
                             break;
                         }
 
-                        _context5.next = 3;
+                        _context4.next = 3;
                         return level[currentLevel].storeToDB(true);
 
                     case 3:
-                        _context5.next = 5;
+                        _context4.next = 5;
                         return level[currentLevel].showSuccessScreen();
 
                     case 5:
-                        _context5.next = 11;
+                        _context4.next = 11;
                         break;
 
                     case 7:
-                        _context5.next = 9;
+                        _context4.next = 9;
                         return level[currentLevel].storeToDB(false);
 
                     case 9:
-                        _context5.next = 11;
+                        _context4.next = 11;
                         return level[currentLevel].showGameOverScreen();
 
                     case 11:
                     case 'end':
-                        return _context5.stop();
+                        return _context4.stop();
                 }
             }
-        }, _callee5, this);
+        }, _callee4, this);
     }));
 
     return function showScreen() {
-        return _ref5.apply(this, arguments);
+        return _ref4.apply(this, arguments);
     };
 }();
 
@@ -6562,29 +6534,7 @@ window.initMe = 0;
 
 var music = new Audio('/sound/music.mp3');
 
-if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function startingAnimation() {
-    var _this = this;
-
-    var fadeTime = 1000;
-    _GUI.GUI.startingAnimationFadeOut(fadeTime);
-    return new Promise(function (resolve) {
-        setTimeout((0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2() {
-            return _regenerator2.default.wrap(function _callee2$(_context2) {
-                while (1) {
-                    switch (_context2.prev = _context2.next) {
-                        case 0:
-                            // await mainScene.startingAnimation();
-                            resolve();
-
-                        case 1:
-                        case 'end':
-                            return _context2.stop();
-                    }
-                }
-            }, _callee2, _this);
-        })), fadeTime);
-    });
-}function render() {
+if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function render() {
     return new Promise(function (resolve) {
         requestAnimationFrame(function () {
             render();
@@ -6648,13 +6598,13 @@ function detectedCheating(URL, URLpath) {
  * @return {Promise}
  */
 var main = function () {
-    var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
+    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5() {
         var URL, background;
-        return _regenerator2.default.wrap(function _callee6$(_context6) {
+        return _regenerator2.default.wrap(function _callee5$(_context5) {
             while (1) {
-                switch (_context6.prev = _context6.next) {
+                switch (_context5.prev = _context5.next) {
                     case 0:
-                        _context6.next = 2;
+                        _context5.next = 2;
                         return _Database.Database.create();
 
                     case 2:
@@ -6663,7 +6613,7 @@ var main = function () {
                         URLpath = URL.replace(/http:\/\/.+\//g, '');
                         if (URLpath !== '') currentLevel = URLpath.replace('#', '');
                         _GUI.GUI.showLoadingIcon();
-                        _context6.next = 8;
+                        _context5.next = 8;
                         return _Protagonist.Protagonist.init();
 
                     case 8:
@@ -6674,29 +6624,29 @@ var main = function () {
                         _GUI.GUI.removeLoadingIcon();
 
                         if (!(URLpath == '')) {
-                            _context6.next = 17;
+                            _context5.next = 17;
                             break;
                         }
 
-                        _context6.next = 15;
+                        _context5.next = 15;
                         return gameWithIntro();
 
                     case 15:
-                        _context6.next = 24;
+                        _context5.next = 24;
                         break;
 
                     case 17:
-                        _context6.next = 19;
+                        _context5.next = 19;
                         return playThisLevel();
 
                     case 19:
-                        if (!_context6.sent) {
-                            _context6.next = 23;
+                        if (!_context5.sent) {
+                            _context5.next = 23;
                             break;
                         }
 
                         gameWithoutIntro();
-                        _context6.next = 24;
+                        _context5.next = 24;
                         break;
 
                     case 23:
@@ -6704,43 +6654,43 @@ var main = function () {
 
                     case 24:
                     case 'end':
+                        return _context5.stop();
+                }
+            }
+        }, _callee5, this);
+    }));
+
+    return function main() {
+        return _ref5.apply(this, arguments);
+    };
+}();
+
+var setLastSuccessfulLevel = function () {
+    var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
+        return _regenerator2.default.wrap(function _callee6$(_context6) {
+            while (1) {
+                switch (_context6.prev = _context6.next) {
+                    case 0:
+                        _context6.next = 2;
+                        return _Database.Database.create();
+
+                    case 2:
+                        _context6.next = 4;
+                        return _Level.Level.lastSuccessfulLevel();
+
+                    case 4:
+                        lastLevel = _context6.sent;
+
+                    case 5:
+                    case 'end':
                         return _context6.stop();
                 }
             }
         }, _callee6, this);
     }));
 
-    return function main() {
-        return _ref6.apply(this, arguments);
-    };
-}();
-
-var setLastSuccessfulLevel = function () {
-    var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee7() {
-        return _regenerator2.default.wrap(function _callee7$(_context7) {
-            while (1) {
-                switch (_context7.prev = _context7.next) {
-                    case 0:
-                        _context7.next = 2;
-                        return _Database.Database.create();
-
-                    case 2:
-                        _context7.next = 4;
-                        return _Level.Level.lastSuccessfulLevel();
-
-                    case 4:
-                        lastLevel = _context7.sent;
-
-                    case 5:
-                    case 'end':
-                        return _context7.stop();
-                }
-            }
-        }, _callee7, this);
-    }));
-
     return function setLastSuccessfulLevel() {
-        return _ref7.apply(this, arguments);
+        return _ref6.apply(this, arguments);
     };
 }();
 
@@ -6777,11 +6727,11 @@ $(document).on('click', '#playagain', function (event) {
 });
 
 $(document).on('click', '#lastSuccessfulLevel', function () {
-    var _ref8 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee8(event) {
+    var _ref7 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee7(event) {
         var URL, newURL;
-        return _regenerator2.default.wrap(function _callee8$(_context8) {
+        return _regenerator2.default.wrap(function _callee7$(_context7) {
             while (1) {
-                switch (_context8.prev = _context8.next) {
+                switch (_context7.prev = _context7.next) {
                     case 0:
                         URL = window.location.href;
 
@@ -6792,14 +6742,14 @@ $(document).on('click', '#lastSuccessfulLevel', function () {
 
                     case 4:
                     case 'end':
-                        return _context8.stop();
+                        return _context7.stop();
                 }
             }
-        }, _callee8, this);
+        }, _callee7, this);
     }));
 
     return function (_x) {
-        return _ref8.apply(this, arguments);
+        return _ref7.apply(this, arguments);
     };
 }());
 
