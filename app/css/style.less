@@ -1,0 +1,76 @@
+body {
+    font-family: 'Ubuntu', sans-serif !important;
+    overflow-x: hidden;
+    overflow-y: hidden;
+
+    .overlay {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        color: black;
+        z-index: 20;
+
+        span {
+            color: black;
+        }
+
+        .intro-text {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            display: none;
+
+            span {
+                width: 100%;
+                text-align: center;
+                display: block;
+
+                &.nirania {
+                    font-size: 40px;
+                }
+            }
+        }
+    }
+
+    #gameoverScreen,
+    #successScreen {
+        position: absolute;
+        background: none;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        display: none;
+        z-index: 20;
+
+        .wrapper {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            position: absolute;
+            text-align: center;
+        }
+    }
+
+    .dividers {
+        width: 100%;
+        height: 100%;
+        position: absolute;
+
+        .left,
+        .right {
+            width: 50%;
+            height: 100%;
+            background: white;
+            transition: width 2s;
+        }
+
+        .left {
+            float: left;
+        }
+
+        .right {
+            float: right;
+        }
+    }
+}

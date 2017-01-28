@@ -1,7 +1,16 @@
 module.exports = function(grunt) {
     require('jit-grunt')(grunt);
     grunt.loadNpmTasks('grunt-browserify');
+    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-less');
     grunt.initConfig({
+        less: {
+            production: {
+                files: {
+                    'public/css/style.css': 'css/style.less'
+                }
+            }
+        },
         browserify: {
             'public/gen/js.js': ['js/main.js'],
             options: {
@@ -17,9 +26,10 @@ module.exports = function(grunt) {
                 files: [
                     'js/**',
                     '!node_modules/**',
-                    '!public/gen/**'
+                    '!public/gen/**',
+                    'css/**'
                 ],
-                tasks: ['browserify'],
+                tasks: ['browserify', 'less'],
                 options: {
                     nospawn: false,
                     livereload: true
@@ -38,5 +48,5 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['browserify', 'watch']);
+    grunt.registerTask('default', ['browserify', 'less', 'watch']);
 };

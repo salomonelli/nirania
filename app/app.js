@@ -4,7 +4,6 @@ var mustacheExpress = require('mustache-express');
 var path = require('path');
 var app = express();
 
-
 var Lang = require('./i18n/Lang');
 
 app.set('views', path.join(__dirname, 'views'));
@@ -22,6 +21,13 @@ app.get('/', function(req, res) {
     });
 });
 
+app.get('/index', function(req, res) {
+    res.render('layout', {
+        partials: {
+            content: 'index2'
+        }
+    });
+});
 
 app.get('/cheater', function(req, res) {
     res.render('layout', {

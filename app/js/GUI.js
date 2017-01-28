@@ -18,8 +18,11 @@ export let GUI = {
      * @param {Object} obj - obj to render template successScreen
      */
     showSuccessScreen: function(obj) {
-        let html = templates.successScreen.render(obj);
-        $('body').append(html);
+        return new Promise(res => {
+            let html = templates.successScreen.render(obj);
+            $('body').append(html);
+            $('#successScreen').fadeIn(1000, res);
+        });
     },
 
     /**
@@ -27,16 +30,20 @@ export let GUI = {
      * @param {Object} obj - obj to render template gameoverScreen
      */
     showGameOverScreen: function(obj) {
-        let html = templates.gameoverScreen.render(obj);
-        $('body').append(html);
+        return new Promise(res => {
+            let html = templates.gameoverScreen.render(obj);
+            $('body').append(html);
+            $('#gameoverScreen').fadeIn(1000, res);
+        });
     },
 
     /**
      * fades in game name
      */
-    startingAnimationFadeIn: function() {
-        $('.game-name').fadeIn(3000);
-        $('.intro').fadeIn(3000);
+    startingAnimationFadeIn: async function() {
+        return new Promise(res => {
+            $('.intro-text').fadeIn(1000, res);
+        });
     },
 
     /**
@@ -145,5 +152,33 @@ export let GUI = {
      */
     hideInstruction: function() {
         $('.instruction').addClass('gone');
+    },
+
+    fadeOverlayOut: function() {
+        return new Promise(res => $('.overlay').fadeOut(1000, res));
+    },
+
+    openDividers: function() {
+        return Promise.all(
+            ['left', 'right']
+            .map(dir => new Promise(res => {
+                $('.dividers .' + dir).animate({
+                    width: '0'
+                }, res);
+            }))
+        );
+    },
+
+    closeDividers: function() {
+        return Promise.all(
+            ['left', 'right']
+            .map(dir => new Promise(res => {
+                $('.dividers .' + dir).animate({
+                    width: '50%'
+                }, () => {
+                    setTimeout(res, 1800);
+                });
+            }))
+        );
     }
-};
+};;

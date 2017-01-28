@@ -7,7 +7,9 @@ import {
 import {
     CollisionDetector
 } from '../protagonist/CollisionDetector';
-import { Database } from '../Database.js';
+import {
+    Database
+} from '../Database.js';
 const Obstacle = require('../way/obstacles/Obstacle');
 const $ = require('jquery');
 const Cookies = require('js-cookie');
@@ -83,33 +85,33 @@ export class Level {
      * @param {String} color color of way
      * @param {Object[]} obstacles obstacles on way<
      */
-    initWay(length, speed, color, obstacles){
-      this.way = new Way(length, speed, color);
-      this.way.addObstacles(obstacles);
-      this.way.position();
+    initWay(length, speed, color, obstacles) {
+        this.way = new Way(length, speed, color);
+        this.way.addObstacles(obstacles);
+        this.way.position();
     };
 
     /**
      * initiates collision detection
      */
-    initCollisionDetector(){
-      this.collisionDetector = new CollisionDetector(this.way.obstacles);
+    initCollisionDetector() {
+        this.collisionDetector = new CollisionDetector(this.way.obstacles);
     };
 
     /**
      * sets instruction if not null
      * @param {String} instruction explanation for the level that is displayed to the user
      */
-    initInstruction(instruction){
-      if (instruction) this.instruction = instruction;
+    initInstruction(instruction) {
+        if (instruction) this.instruction = instruction;
     };
 
     /**
      * sets requiredDiamonds if not null
      * @param {String} requiredDiamonds amaount of diamonds that is needed to get to the next level
      */
-    initRequiredDiamonds(diamonds){
-      if (diamonds) this.requiredDiamonds = diamonds;
+    initRequiredDiamonds(diamonds) {
+        if (diamonds) this.requiredDiamonds = diamonds;
     };
 
     /**
@@ -118,42 +120,42 @@ export class Level {
      * @returns {boolean} - true if gameover (collision with box or ring)
      */
     checkCollision(protagonist) {
-      this.checkCollisionDetection = false;
-      let currentPosition = this.getCurrentPosition(protagonist);
-      let collObj = this.getCollisionObject(currentPosition);
-      switch (collObj.type) {
-          case 'box':
-          case 'ring':
-          case 'cone':
-              this.hitObstacle();
-              return true;
-          case 'diamond':
-              this.hitDiamond(collObj);
-              return false;
-          default:
-              return false;
-      }
+        this.checkCollisionDetection = false;
+        let currentPosition = this.getCurrentPosition(protagonist);
+        let collObj = this.getCollisionObject(currentPosition);
+        switch (collObj.type) {
+            case 'box':
+            case 'ring':
+            case 'cone':
+                this.hitObstacle();
+                return true;
+            case 'diamond':
+                this.hitDiamond(collObj);
+                return false;
+            default:
+                return false;
+        }
     };
 
     /**
      * is called when obstacle (except diamond) was hit
      */
-    hitObstacle(){
-      this.gameOver = true;
-      this.sound('hitObstacle');
+    hitObstacle() {
+        this.gameOver = true;
+        this.sound('hitObstacle');
     };
 
     /**
      * plays sound
      * @param {String} sound
      */
-    sound(sound){
-      if(!this.playSound) return;
-      switch (sound) {
-        case 'hitObstacle':
-          Sound.play('hitObstacle');
-          break;
-      }
+    sound(sound) {
+        if (!this.playSound) return;
+        switch (sound) {
+            case 'hitObstacle':
+                Sound.play('hitObstacle');
+                break;
+        }
     };
 
     /**
@@ -161,17 +163,17 @@ export class Level {
      * @param {Protagonist} protagonist
      * @return {Way.currentPosition}
      */
-    getCurrentPosition(protagonist){
-      this.way.currentPosition.height = protagonist.position.y;
-      return this.way.currentPosition;
+    getCurrentPosition(protagonist) {
+        this.way.currentPosition.height = protagonist.position.y;
+        return this.way.currentPosition;
     };
 
     /**
      * gets collision object
      * @return {Object}
      */
-    getCollisionObject(currentPosition){
-      return this.collisionDetector.collision(currentPosition);
+    getCollisionObject(currentPosition) {
+        return this.collisionDetector.collision(currentPosition);
     }
 
 
@@ -190,8 +192,8 @@ export class Level {
      * @param {THREE.Object3D} protagonist
      * @param {number} opacity
      */
-    makeProtagonistTransparent(protagonist, opacity){
-      Protagonist.makeGroupTransparent(protagonist, opacity);
+    makeProtagonistTransparent(protagonist, opacity) {
+        Protagonist.makeGroupTransparent(protagonist, opacity);
     }
 
     /**
@@ -199,9 +201,9 @@ export class Level {
      * @param {THREE.Object3D} protagonist
      * @param {THREE.clock} clock
      */
-    moveProtagonist(protagonist, clock){
-      let position = Math.sin(clock.getElapsedTime() * 10) * 1;
-      Protagonist.move(protagonist, position);
+    moveProtagonist(protagonist, clock) {
+        let position = Math.sin(clock.getElapsedTime() * 10) * 1;
+        Protagonist.move(protagonist, position);
     };
 
     /**
@@ -211,7 +213,7 @@ export class Level {
      */
     begin(protagonist) {
         let self = this;
-        if(this.instruction) GUI.showInstruction(this.instruction);
+        if (this.instruction) GUI.showInstruction(this.instruction);
         //reset diamonds
         self.lastDiamond = null;
         self.diamonds = 0;
@@ -255,7 +257,7 @@ export class Level {
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
      */
-    showSuccessScreen() {
+    async showSuccessScreen() {
         let last = '';
         let canNotBePlayed, disableNextLevel, showOutro;
         if (this.current === levels.length) {
@@ -266,7 +268,7 @@ export class Level {
             canNotBePlayed = 'true';
             disableNextLevel = 'disabled';
         }
-        GUI.showSuccessScreen({
+        await GUI.showSuccessScreen({
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
@@ -280,8 +282,8 @@ export class Level {
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
-    showGameOverScreen() {
-        GUI.showGameOverScreen({
+    async showGameOverScreen() {
+        await GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.current
         });
@@ -291,8 +293,8 @@ export class Level {
      * stores the score and success in cookie
      * @param {boolean} success - whether current level has been ended with success
      */
-    async storeToDB(success){
-      if(success) await Database.updateLevel(this.current, success, this.diamonds);
+    async storeToDB(success) {
+        if (success) await Database.updateLevel(this.current, success, this.diamonds);
     };
 
     /**
@@ -322,19 +324,19 @@ export class Level {
         level--;
         let obj = await Database.getLevel(level);
         if (
-          obj.success &&
-          obj.diamonds >= levels[level-1].requiredDiamonds
+            obj.success &&
+            obj.diamonds >= levels[level - 1].requiredDiamonds
         ) return true;
         return false;
     };
 
     static async lastSuccessfulLevel() {
-      let levelAmount = levels.length;
-      let playable;
-      for (let i = 1; i <= levels.length; i++) {
-        playable = await Level.canBePlayed(i);
-        if(!playable) return i - 1;
-      }
-      return 1;
+        let levelAmount = levels.length;
+        let playable;
+        for (let i = 1; i <= levels.length; i++) {
+            playable = await Level.canBePlayed(i);
+            if (!playable) return i - 1;
+        }
+        return 1;
     }
 }

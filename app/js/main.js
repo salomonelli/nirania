@@ -51,13 +51,30 @@ else GUI.uncheckSoundSwitch();
  * initiates the game with intro
  */
 async function gameWithIntro() {
-    GUI.startingAnimationFadeIn();
-    mainScene.showIntro();
+    /*
+
+    // mainScene.showIntro();
     addLevel();
     await render();
-    await Keybindings.keyBind('keydown').first().toPromise();
+
     await startingAnimation();
     await startLevel();
+    await showScreen();
+     */
+
+    // TODO preload everything
+    await GUI.startingAnimationFadeIn();
+    await Keybindings.keyBind('keydown').first().toPromise();
+    await GUI.fadeOverlayOut();
+    await GUI.openDividers();
+    // fade out font
+    // open curtains wait and start
+    mainScene.simpleIntro();
+    addLevel();
+    await render();
+    await startLevel();
+
+    await GUI.closeDividers();
     await showScreen();
 }
 
@@ -70,7 +87,7 @@ function startingAnimation() {
     GUI.startingAnimationFadeOut(fadeTime);
     return new Promise(resolve => {
         setTimeout(async() => {
-            await mainScene.startingAnimation();
+            // await mainScene.startingAnimation();
             resolve();
         }, fadeTime);
     });
@@ -84,11 +101,13 @@ function startingAnimation() {
  */
 async function gameWithoutIntro() {
     // TODO preload everything
+    await GUI.openDividers();
     mainScene.simpleIntro();
     addLevel();
     await render();
     await startLevel();
-    showScreen();
+    await GUI.closeDividers();
+    await showScreen();
 }
 
 /**
@@ -145,11 +164,11 @@ async function showScreen() {
     if (!level[currentLevel].gameOver) {
         //success
         await level[currentLevel].storeToDB(true);
-        level[currentLevel].showSuccessScreen();
+        await level[currentLevel].showSuccessScreen();
     } else {
         //gameover
         await level[currentLevel].storeToDB(false);
-        level[currentLevel].showGameOverScreen();
+        await level[currentLevel].showGameOverScreen();
     }
 }
 
@@ -197,8 +216,8 @@ function reloadPage() {
  * calls /cheater - when somebody tries to cheat
  */
 function detectedCheating(URL, URLpath) {
-  let newURL = URL.replace(URLpath, 'cheater');
-  window.location.href = newURL;
+    let newURL = URL.replace(URLpath, 'cheater');
+    window.location.href = newURL;
 }
 
 /**
@@ -257,14 +276,15 @@ $(document).on('click', '#soundSwitch', function(event) {
 //resets cookies to play game from start
 $(document).on('click', '#playagain', function(event) {
     let object = Cookies.get();
-    for (let property in object) if (object.hasOwnProperty(property)) Cookies.remove(property);
+    for (let property in object)
+        if (object.hasOwnProperty(property)) Cookies.remove(property);
 });
 
 $(document).on('click', '#lastSuccessfulLevel', async function(event) {
-  let URL = window.location.href;
-  URLpath = URL.replace(/http:\/\/.+\//g, '');
-  let newURL = URL.replace(URLpath, '#' + lastLevel);
-  window.location.href = newURL;
+    let URL = window.location.href;
+    URLpath = URL.replace(/http:\/\/.+\//g, '');
+    let newURL = URL.replace(URLpath, '#' + lastLevel);
+    window.location.href = newURL;
 });
 
 music.addEventListener('ended', function() {

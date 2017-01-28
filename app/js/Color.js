@@ -13,10 +13,10 @@ export let Color ={
         ring: 0x82BF45
     }, {
         name: 'pink blue strong',
-        background: 0x781152,
-        way: 0x1CB4C5,
-        box: 0x096388,
-        ring: 0x096388
+        background: 0xC6B273,
+        way: 0x881A1B,
+        box: 0x600004,
+        ring: 0x8C4E39
     }, {
         name: 'light brown',
         background: 0xFDF1CD,
