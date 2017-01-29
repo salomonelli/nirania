@@ -1809,27 +1809,23 @@ var Level = exports.Level = function () {
 
                             case 2:
                                 levelNr--;
-                                console.log(levelNr);
-                                _context5.next = 6;
+                                _context5.next = 5;
                                 return Database.getLevel(levelNr);
 
-                            case 6:
+                            case 5:
                                 obj = _context5.sent;
 
-                                console.dir(obj);
-
                                 if (!(obj.success && obj.diamonds >= levels[levelNr - 1].requiredDiamonds)) {
-                                    _context5.next = 10;
+                                    _context5.next = 8;
                                     break;
                                 }
 
                                 return _context5.abrupt('return', true);
 
-                            case 10:
-                                console.log(false);
+                            case 8:
                                 return _context5.abrupt('return', false);
 
-                            case 12:
+                            case 9:
                             case 'end':
                                 return _context5.stop();
                         }
