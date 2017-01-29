@@ -1,24 +1,14 @@
-import {
-    Protagonist
-} from '../protagonist/Protagonist';
-import {
-    Way
-} from '../way/Way';
-import {
-    CollisionDetector
-} from '../protagonist/CollisionDetector';
-import {
-    Database
-} from '../Database.js';
+import * as Protagonist from '../protagonist/Protagonist';
+import * as Way from '../way/Way';
+import * as CollisionDetector from '../protagonist/CollisionDetector';
+import * as Database from '../Database.js';
 const Obstacle = require('../way/obstacles/Obstacle');
 const $ = require('jquery');
 const Cookies = require('js-cookie');
 import {
     GUI
 } from '../GUI';
-import {
-    Sound
-} from '../Sound';
+import * as Sound from '../Sound';
 
 import {
     level1
@@ -67,27 +57,31 @@ export class Level {
         this.requiredDiamonds = 0;
     }
 
+    get currentLevel() {
+        return levels[this.current - 1];
+    }
+
     /**
      * generates and positions meshes for the current level
      */
     prepare() {
-        let current = levels[this.current - 1];
-        this.initInstruction(current.instruction);
-        this.initRequiredDiamonds(current.requiredDiamonds);
-        this.initWay(current.way.length, current.speed, current.way.color, current.way.obstacles);
+        this.initInstruction();
+        this.initRequiredDiamonds();
+        this.initWay();
         this.initCollisionDetector();
     };
 
     /**
      * creates way
-     * @param {number} length length of way
-     * @param {number} speed speed with which the protagonist moves
-     * @param {String} color color of way
-     * @param {Object[]} obstacles obstacles on way<
      */
-    initWay(length, speed, color, obstacles) {
-        this.way = new Way(length, speed, color);
-        this.way.addObstacles(obstacles);
+    initWay() {
+        console.dir(this.currentLevel);
+        this.way = Way.create(
+            this.currentLevel.way.length,
+            this.currentLevel.speed,
+            this.currentLevel.way.color
+        );
+        this.way.addObstacles(this.currentLevel.way.obstacles);
         this.way.position();
     };
 
@@ -95,23 +89,23 @@ export class Level {
      * initiates collision detection
      */
     initCollisionDetector() {
-        this.collisionDetector = new CollisionDetector(this.way.obstacles);
+        this.collisionDetector = CollisionDetector.create(this.way.obstacles);
     };
 
     /**
      * sets instruction if not null
-     * @param {String} instruction explanation for the level that is displayed to the user
      */
-    initInstruction(instruction) {
-        if (instruction) this.instruction = instruction;
+    initInstruction() {
+        if (this.currentLevel.instruction)
+            this.instruction = this.currentLevel.instruction;
     };
 
     /**
      * sets requiredDiamonds if not null
-     * @param {String} requiredDiamonds amaount of diamonds that is needed to get to the next level
      */
-    initRequiredDiamonds(diamonds) {
-        if (diamonds) this.requiredDiamonds = diamonds;
+    initRequiredDiamonds() {
+        if (this.currentLevel.requiredDiamonds)
+            this.requiredDiamonds = this.currentLevel.requiredDiamonds;
     };
 
     /**
@@ -203,7 +197,7 @@ export class Level {
      */
     moveProtagonist(protagonist, clock) {
         let position = Math.sin(clock.getElapsedTime() * 10) * 1;
-        Protagonist.move(protagonist, position);
+        Protagonist.get().move(protagonist, position);
     };
 
     /**
@@ -212,28 +206,25 @@ export class Level {
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
     begin(protagonist) {
-        let self = this;
         if (this.instruction) GUI.showInstruction(this.instruction);
         //reset diamonds
-        self.lastDiamond = null;
-        self.diamonds = 0;
+        this.lastDiamond = null;
+        this.diamonds = 0;
         //reset way
-        let t = self.way.length - 80;
+        let t = this.way.length - 80;
         let speedMulti = 2;
         let clock = new THREE.Clock(true);
         return new Promise((resolve, reject) => {
-            let animate = function() {
+            let animate = () => {
                 t -= speedMulti;
-                self.animateProtagonist(protagonist, clock, speedMulti);
-                self.way.moveForwardTillEnd(self.speed * speedMulti);
-                if (t <= 0 || self.checkCollision(protagonist)) {
+                this.animateProtagonist(protagonist, clock, speedMulti);
+                this.way.moveForwardTillEnd(this.speed * speedMulti);
+                if (t <= 0 || this.checkCollision(protagonist)) {
                     GUI.hideInstruction();
                     resolve();
                     return;
                 }
-                setTimeout(function() {
-                    animate();
-                }, self.speed);
+                setTimeout(animate, this.speed);
             };
             animate(); //once
         });
@@ -244,15 +235,18 @@ export class Level {
      * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
     hitDiamond(collObj) {
-        let self = this;
-        if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
-            if (self.playSound) Sound.play('hitDiamond');
-            self.lastDiamond = collObj;
-            self.diamonds++;
-            self.lastDiamond.mesh.visible = false;
-            GUI.setDiamondsInScoreBoard(self.diamonds);
+        if (!this.lastDiamond || collObj.mesh.id != this.lastDiamond.mesh.id) {
+            if (this.playSound) Sound.play('hitDiamond');
+            this.lastDiamond = collObj;
+            this.diamonds++;
+            this.animateDiamond(collObj);
+            GUI.setDiamondsInScoreBoard(this.diamonds);
         }
     };
+
+    animateDiamond(diamond) {
+        this.lastDiamond.mesh.visible = false;
+    }
 
     /**
      * renders hogan tempalte success.mustache and adds it to html-body

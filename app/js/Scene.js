@@ -1,8 +1,6 @@
 'use strict';
 require('babel-polyfill');
-import {
-    Protagonist
-} from './protagonist/Protagonist';
+import * as Protagonist from './protagonist/Protagonist';
 import {
     Particles
 } from './Particles';
@@ -39,7 +37,7 @@ export class Scene {
         this.objects = {
             particles: new Particles(-600, 600, -600, 600, -300, 0, 100),
             introParticles: new Particles(20, -300, 100, 1300, -500, 0, 30),
-            protagonist: new Protagonist()
+            protagonist: Protagonist.get()
         };
         this.lights = {
             hemisphere: null,

@@ -9,10 +9,9 @@ import {
 } from '../GUI';
 let THREE = require('three');
 let Obstacle = require('./obstacles/Obstacle');
-let Cookies = require('js-cookie');
 let randomBoolean = require('random-boolean');
 
-export class Way {
+class Way {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -84,8 +83,6 @@ export class Way {
         if (Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
         if (Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = Util.convertDegreesToRadians(360);
 
-        // rotates faster with powerup 1
-        if (Cookies.get('powerup-1') == 'bought') angle = angle * 2;
         this.group.rotation.y += angle;
         this.currentPosition.angle = Util.convertRadiansToDegrees(this.group.rotation.y);
 
@@ -128,4 +125,8 @@ export class Way {
     addToScene(scene) {
         scene.add(this.group);
     };
+}
+
+export function create(length, speed, color) {
+    return new Way(length, speed, color);
 }

@@ -5,43 +5,41 @@ const audio = {
     hitObstacle: new Audio('/sound/hitObstacle.mp3')
 };
 
-export let Sound = {
-  /**
-   * plays sound
-   * @param {String} sound - name of the sound
-   */
-  play: function(sound) {
-      audio[sound].currentTime = 0;
-      audio[sound].play();
-  },
+/**
+ * plays sound
+ * @param {String} sound - name of the sound
+ */
+export function play(sound) {
+    audio[sound].currentTime = 0;
+    audio[sound].play();
+};
 
-  /**
-   * stops sound
-   * @param {String} sound - name of the sound
-   */
-  stop: function(sound){
+/**
+ * stops sound
+ * @param {String} sound - name of the sound
+ */
+export function stop(sound) {
     audio[sound].stop();
-  },
+};
 
-  /**
-   * checks in cookies whether sound is on
-   * @returns {boolean} - true if sound is on
-   */
-  isMusicOn: function(){
-    if(Cookies.get('sound') === 'on' ) return true;
-    if(Cookies.get('sound') === 'undefined'){
-      _setMusicSettings(true);
-      return true;
+/**
+ * checks in cookies whether sound is on
+ * @returns {boolean} - true if sound is on
+ */
+export function isMusicOn() {
+    if (Cookies.get('sound') === 'on') return true;
+    if (Cookies.get('sound') === 'undefined') {
+        _setMusicSettings(true);
+        return true;
     }
     return false;
-  },
+};
 
-  /**
-   * sets music settings in Cookies
-   * @param {boolean} isOn
-   */
-  setMusicSettings: function(isOn){
+/**
+ * sets music settings in Cookies
+ * @param {boolean} isOn
+ */
+export function setMusicSettings(isOn) {
     if (isOn) Cookies.set('sound', 'on');
     else Cookies.set('sound', 'off');
-  }
-};
+}

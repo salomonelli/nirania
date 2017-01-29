@@ -60,7 +60,7 @@ var Color = exports.Color = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Database = undefined;
+exports.getLevel = exports.getSound = exports.updateSound = exports.updateLevel = exports.create = undefined;
 
 var _regenerator = require('babel-runtime/regenerator');
 
@@ -69,6 +69,174 @@ var _regenerator2 = _interopRequireDefault(_regenerator);
 var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+
+var create = exports.create = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        if (DB) {
+                            _context.next = 10;
+                            break;
+                        }
+
+                        _context.next = 3;
+                        return RxDB.create(DBName, 'idb');
+
+                    case 3:
+                        DB = _context.sent;
+                        _context.next = 6;
+                        return DB.collection('level', levelSchema);
+
+                    case 6:
+                        levelCollection = _context.sent;
+                        _context.next = 9;
+                        return DB.collection('sound', soundSchema);
+
+                    case 9:
+                        soundCollection = _context.sent;
+
+                    case 10:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this);
+    }));
+
+    return function create() {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+var updateLevel = exports.updateLevel = function () {
+    var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(level, success, diamonds) {
+        var doc;
+        return _regenerator2.default.wrap(function _callee2$(_context2) {
+            while (1) {
+                switch (_context2.prev = _context2.next) {
+                    case 0:
+                        _context2.next = 2;
+                        return levelCollection.findOne(level).exec();
+
+                    case 2:
+                        doc = _context2.sent;
+
+                        if (!doc) {
+                            _context2.next = 10;
+                            break;
+                        }
+
+                        if (success) doc.set('success', success);
+                        if (!doc.get('diamonds') || diamonds > doc.get('diamonds')) doc.set('diamonds', diamonds);
+                        _context2.next = 8;
+                        return doc.save();
+
+                    case 8:
+                        _context2.next = 12;
+                        break;
+
+                    case 10:
+                        _context2.next = 12;
+                        return levelCollection.insert({
+                            level: level + '',
+                            diamonds: diamonds,
+                            success: success
+                        });
+
+                    case 12:
+                    case 'end':
+                        return _context2.stop();
+                }
+            }
+        }, _callee2, this);
+    }));
+
+    return function updateLevel(_x, _x2, _x3) {
+        return _ref2.apply(this, arguments);
+    };
+}();
+
+var updateSound = exports.updateSound = function () {
+    var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(sound) {
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
+            while (1) {
+                switch (_context3.prev = _context3.next) {
+                    case 0:
+                        soundCollection.insert({
+                            sound: sound
+                        });
+
+                    case 1:
+                    case 'end':
+                        return _context3.stop();
+                }
+            }
+        }, _callee3, this);
+    }));
+
+    return function updateSound(_x4) {
+        return _ref3.apply(this, arguments);
+    };
+}();
+
+var getSound = exports.getSound = function () {
+    var _ref4 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee4() {
+        return _regenerator2.default.wrap(function _callee4$(_context4) {
+            while (1) {
+                switch (_context4.prev = _context4.next) {
+                    case 0:
+                        return _context4.abrupt('return', soundCollection.findOne());
+
+                    case 1:
+                    case 'end':
+                        return _context4.stop();
+                }
+            }
+        }, _callee4, this);
+    }));
+
+    return function getSound() {
+        return _ref4.apply(this, arguments);
+    };
+}();
+
+var getLevel = exports.getLevel = function () {
+    var _ref5 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee5(level) {
+        var doc, ret;
+        return _regenerator2.default.wrap(function _callee5$(_context5) {
+            while (1) {
+                switch (_context5.prev = _context5.next) {
+                    case 0:
+                        _context5.next = 2;
+                        return levelCollection.findOne(level).exec();
+
+                    case 2:
+                        doc = _context5.sent;
+                        ret = {
+                            success: false,
+                            diamonds: 0
+                        };
+
+                        if (doc) {
+                            ret.success = doc.get('success');
+                            ret.diamonds = doc.get('diamonds');
+                        }
+                        return _context5.abrupt('return', ret);
+
+                    case 6:
+                    case 'end':
+                        return _context5.stop();
+                }
+            }
+        }, _callee5, this);
+    }));
+
+    return function getLevel(_x5) {
+        return _ref5.apply(this, arguments);
+    };
+}();
 
 var _rxdb = require('rxdb');
 
@@ -114,143 +282,13 @@ var soundSchema = {
     }
 };
 
-var Database = exports.Database = {
-    create: function () {
-        var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-            return _regenerator2.default.wrap(function _callee$(_context) {
-                while (1) {
-                    switch (_context.prev = _context.next) {
-                        case 0:
-                            if (DB) {
-                                _context.next = 10;
-                                break;
-                            }
+;
 
-                            _context.next = 3;
-                            return RxDB.create(DBName, 'idb');
+;
 
-                        case 3:
-                            DB = _context.sent;
-                            _context.next = 6;
-                            return DB.collection('level', levelSchema);
+;
 
-                        case 6:
-                            levelCollection = _context.sent;
-                            _context.next = 9;
-                            return DB.collection('sound', soundSchema);
-
-                        case 9:
-                            soundCollection = _context.sent;
-
-                        case 10:
-                        case 'end':
-                            return _context.stop();
-                    }
-                }
-            }, _callee, this);
-        }));
-
-        function create() {
-            return _ref.apply(this, arguments);
-        }
-
-        return create;
-    }(),
-    updateLevel: function () {
-        var _ref2 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee2(level, success, diamonds) {
-            var doc;
-            return _regenerator2.default.wrap(function _callee2$(_context2) {
-                while (1) {
-                    switch (_context2.prev = _context2.next) {
-                        case 0:
-                            _context2.next = 2;
-                            return levelCollection.findOne(level).exec();
-
-                        case 2:
-                            doc = _context2.sent;
-
-                            if (!doc) {
-                                _context2.next = 10;
-                                break;
-                            }
-
-                            if (success) doc.set('success', success);
-                            if (!doc.get('diamonds') || diamonds > doc.get('diamonds')) doc.set('diamonds', diamonds);
-                            _context2.next = 8;
-                            return doc.save();
-
-                        case 8:
-                            _context2.next = 12;
-                            break;
-
-                        case 10:
-                            _context2.next = 12;
-                            return levelCollection.insert({
-                                level: level + '',
-                                diamonds: diamonds,
-                                success: success
-                            });
-
-                        case 12:
-                        case 'end':
-                            return _context2.stop();
-                    }
-                }
-            }, _callee2, this);
-        }));
-
-        function updateLevel(_x, _x2, _x3) {
-            return _ref2.apply(this, arguments);
-        }
-
-        return updateLevel;
-    }(),
-    updateSound: function updateSound(sound) {
-        soundCollection.insert({
-            sound: sound
-        });
-    },
-    getSound: function getSound() {
-        return soundCollection.findOne();
-    },
-    getLevel: function () {
-        var _ref3 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee3(level) {
-            var doc, ret;
-            return _regenerator2.default.wrap(function _callee3$(_context3) {
-                while (1) {
-                    switch (_context3.prev = _context3.next) {
-                        case 0:
-                            _context3.next = 2;
-                            return levelCollection.findOne(level).exec();
-
-                        case 2:
-                            doc = _context3.sent;
-                            ret = {
-                                success: false,
-                                diamonds: 0
-                            };
-
-                            if (doc) {
-                                ret.success = doc.get('success');
-                                ret.diamonds = doc.get('diamonds');
-                            }
-                            return _context3.abrupt('return', ret);
-
-                        case 6:
-                        case 'end':
-                            return _context3.stop();
-                    }
-                }
-            }, _callee3, this);
-        }));
-
-        function getLevel(_x4) {
-            return _ref3.apply(this, arguments);
-        }
-
-        return getLevel;
-    }()
-};
+;
 
 },{"babel-runtime/helpers/asyncToGenerator":34,"babel-runtime/regenerator":37,"pouchdb-adapter-idb":448,"rxdb":507}],3:[function(require,module,exports){
 'use strict';
@@ -722,9 +760,13 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Protagonist = require('./protagonist/Protagonist');
 
+var Protagonist = _interopRequireWildcard(_Protagonist);
+
 var _Particles = require('./Particles');
 
 var _Color = require('./Color');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -763,7 +805,7 @@ var Scene = exports.Scene = function () {
         this.objects = {
             particles: new _Particles.Particles(-600, 600, -600, 600, -300, 0, 100),
             introParticles: new _Particles.Particles(20, -300, 100, 1300, -500, 0, 30),
-            protagonist: new _Protagonist.Protagonist()
+            protagonist: Protagonist.get()
         };
         this.lights = {
             hemisphere: null,
@@ -1155,54 +1197,56 @@ var Scene = exports.Scene = function () {
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
+exports.play = play;
+exports.stop = stop;
+exports.isMusicOn = isMusicOn;
+exports.setMusicSettings = setMusicSettings;
 var Cookies = require('js-cookie');
 
 var audio = {
-  hitDiamond: new Audio('/sound/hitDiamond.mp3'),
-  hitObstacle: new Audio('/sound/hitObstacle.mp3')
+    hitDiamond: new Audio('/sound/hitDiamond.mp3'),
+    hitObstacle: new Audio('/sound/hitObstacle.mp3')
 };
 
-var Sound = exports.Sound = {
-  /**
-   * plays sound
-   * @param {String} sound - name of the sound
-   */
-  play: function play(sound) {
+/**
+ * plays sound
+ * @param {String} sound - name of the sound
+ */
+function play(sound) {
     audio[sound].currentTime = 0;
     audio[sound].play();
-  },
+};
 
-  /**
-   * stops sound
-   * @param {String} sound - name of the sound
-   */
-  stop: function stop(sound) {
+/**
+ * stops sound
+ * @param {String} sound - name of the sound
+ */
+function stop(sound) {
     audio[sound].stop();
-  },
+};
 
-  /**
-   * checks in cookies whether sound is on
-   * @returns {boolean} - true if sound is on
-   */
-  isMusicOn: function isMusicOn() {
+/**
+ * checks in cookies whether sound is on
+ * @returns {boolean} - true if sound is on
+ */
+function isMusicOn() {
     if (Cookies.get('sound') === 'on') return true;
     if (Cookies.get('sound') === 'undefined') {
-      _setMusicSettings(true);
-      return true;
+        _setMusicSettings(true);
+        return true;
     }
     return false;
-  },
-
-  /**
-   * sets music settings in Cookies
-   * @param {boolean} isOn
-   */
-  setMusicSettings: function setMusicSettings(isOn) {
-    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
-  }
 };
+
+/**
+ * sets music settings in Cookies
+ * @param {boolean} isOn
+ */
+function setMusicSettings(isOn) {
+    if (isOn) Cookies.set('sound', 'on');else Cookies.set('sound', 'off');
+}
 
 },{"js-cookie":440}],8:[function(require,module,exports){
 "use strict";
@@ -1282,15 +1326,25 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Protagonist = require('../protagonist/Protagonist');
 
+var Protagonist = _interopRequireWildcard(_Protagonist);
+
 var _Way = require('../way/Way');
+
+var Way = _interopRequireWildcard(_Way);
 
 var _CollisionDetector = require('../protagonist/CollisionDetector');
 
+var CollisionDetector = _interopRequireWildcard(_CollisionDetector);
+
 var _Database = require('../Database.js');
+
+var Database = _interopRequireWildcard(_Database);
 
 var _GUI = require('../GUI');
 
 var _Sound = require('../Sound');
+
+var Sound = _interopRequireWildcard(_Sound);
 
 var _level = require('./level1');
 
@@ -1301,6 +1355,8 @@ var _level3 = require('./level3');
 var _level4 = require('./level4');
 
 var _level5 = require('./level5');
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1337,18 +1393,17 @@ var Level = function () {
         this.requiredDiamonds = 0;
     }
 
-    /**
-     * generates and positions meshes for the current level
-     */
-
-
     (0, _createClass3.default)(Level, [{
         key: 'prepare',
+
+
+        /**
+         * generates and positions meshes for the current level
+         */
         value: function prepare() {
-            var current = levels[this.current - 1];
-            this.initInstruction(current.instruction);
-            this.initRequiredDiamonds(current.requiredDiamonds);
-            this.initWay(current.way.length, current.speed, current.way.color, current.way.obstacles);
+            this.initInstruction();
+            this.initRequiredDiamonds();
+            this.initWay();
             this.initCollisionDetector();
         }
     }, {
@@ -1357,14 +1412,11 @@ var Level = function () {
 
         /**
          * creates way
-         * @param {number} length length of way
-         * @param {number} speed speed with which the protagonist moves
-         * @param {String} color color of way
-         * @param {Object[]} obstacles obstacles on way<
          */
-        value: function initWay(length, speed, color, obstacles) {
-            this.way = new _Way.Way(length, speed, color);
-            this.way.addObstacles(obstacles);
+        value: function initWay() {
+            console.dir(this.currentLevel);
+            this.way = Way.create(this.currentLevel.way.length, this.currentLevel.speed, this.currentLevel.way.color);
+            this.way.addObstacles(this.currentLevel.way.obstacles);
             this.way.position();
         }
     }, {
@@ -1375,7 +1427,7 @@ var Level = function () {
          * initiates collision detection
          */
         value: function initCollisionDetector() {
-            this.collisionDetector = new _CollisionDetector.CollisionDetector(this.way.obstacles);
+            this.collisionDetector = CollisionDetector.create(this.way.obstacles);
         }
     }, {
         key: 'initInstruction',
@@ -1383,10 +1435,9 @@ var Level = function () {
 
         /**
          * sets instruction if not null
-         * @param {String} instruction explanation for the level that is displayed to the user
          */
-        value: function initInstruction(instruction) {
-            if (instruction) this.instruction = instruction;
+        value: function initInstruction() {
+            if (this.currentLevel.instruction) this.instruction = this.currentLevel.instruction;
         }
     }, {
         key: 'initRequiredDiamonds',
@@ -1394,10 +1445,9 @@ var Level = function () {
 
         /**
          * sets requiredDiamonds if not null
-         * @param {String} requiredDiamonds amaount of diamonds that is needed to get to the next level
          */
-        value: function initRequiredDiamonds(diamonds) {
-            if (diamonds) this.requiredDiamonds = diamonds;
+        value: function initRequiredDiamonds() {
+            if (this.currentLevel.requiredDiamonds) this.requiredDiamonds = this.currentLevel.requiredDiamonds;
         }
     }, {
         key: 'checkCollision',
@@ -1448,7 +1498,7 @@ var Level = function () {
             if (!this.playSound) return;
             switch (_sound) {
                 case 'hitObstacle':
-                    _Sound.Sound.play('hitObstacle');
+                    Sound.play('hitObstacle');
                     break;
             }
         }
@@ -1499,7 +1549,7 @@ var Level = function () {
          * @param {number} opacity
          */
         value: function makeProtagonistTransparent(protagonist, opacity) {
-            _Protagonist.Protagonist.makeGroupTransparent(protagonist, opacity);
+            Protagonist.makeGroupTransparent(protagonist, opacity);
         }
 
         /**
@@ -1512,7 +1562,7 @@ var Level = function () {
         key: 'moveProtagonist',
         value: function moveProtagonist(protagonist, clock) {
             var position = Math.sin(clock.getElapsedTime() * 10) * 1;
-            _Protagonist.Protagonist.move(protagonist, position);
+            Protagonist.get().move(protagonist, position);
         }
     }, {
         key: 'begin',
@@ -1524,28 +1574,27 @@ var Level = function () {
          * @param {THREE.Object3D} protagonist - group of meshes of protagonist
          */
         value: function begin(protagonist) {
-            var self = this;
+            var _this = this;
+
             if (this.instruction) _GUI.GUI.showInstruction(this.instruction);
             //reset diamonds
-            self.lastDiamond = null;
-            self.diamonds = 0;
+            this.lastDiamond = null;
+            this.diamonds = 0;
             //reset way
-            var t = self.way.length - 80;
+            var t = this.way.length - 80;
             var speedMulti = 2;
             var clock = new THREE.Clock(true);
             return new Promise(function (resolve, reject) {
                 var animate = function animate() {
                     t -= speedMulti;
-                    self.animateProtagonist(protagonist, clock, speedMulti);
-                    self.way.moveForwardTillEnd(self.speed * speedMulti);
-                    if (t <= 0 || self.checkCollision(protagonist)) {
+                    _this.animateProtagonist(protagonist, clock, speedMulti);
+                    _this.way.moveForwardTillEnd(_this.speed * speedMulti);
+                    if (t <= 0 || _this.checkCollision(protagonist)) {
                         _GUI.GUI.hideInstruction();
                         resolve();
                         return;
                     }
-                    setTimeout(function () {
-                        animate();
-                    }, self.speed);
+                    setTimeout(animate, _this.speed);
                 };
                 animate(); //once
             });
@@ -1559,22 +1608,26 @@ var Level = function () {
          * @param {Obstacle} collObj - diamond whitch which the collision happened
          */
         value: function hitDiamond(collObj) {
-            var self = this;
-            if (!self.lastDiamond || collObj.mesh.id != self.lastDiamond.mesh.id) {
-                if (self.playSound) _Sound.Sound.play('hitDiamond');
-                self.lastDiamond = collObj;
-                self.diamonds++;
-                self.lastDiamond.mesh.visible = false;
-                _GUI.GUI.setDiamondsInScoreBoard(self.diamonds);
+            if (!this.lastDiamond || collObj.mesh.id != this.lastDiamond.mesh.id) {
+                if (this.playSound) Sound.play('hitDiamond');
+                this.lastDiamond = collObj;
+                this.diamonds++;
+                this.animateDiamond(collObj);
+                _GUI.GUI.setDiamondsInScoreBoard(this.diamonds);
             }
         }
     }, {
-        key: 'showSuccessScreen',
-
+        key: 'animateDiamond',
+        value: function animateDiamond(diamond) {
+            this.lastDiamond.mesh.visible = false;
+        }
 
         /**
          * renders hogan tempalte success.mustache and adds it to html-body
          */
+
+    }, {
+        key: 'showSuccessScreen',
         value: function () {
             var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
                 var last, canNotBePlayed, disableNextLevel, showOutro;
@@ -1671,7 +1724,7 @@ var Level = function () {
                                 }
 
                                 _context3.next = 3;
-                                return _Database.Database.updateLevel(this.current, success, this.diamonds);
+                                return Database.updateLevel(this.current, success, this.diamonds);
 
                             case 3:
                             case 'end':
@@ -1698,6 +1751,11 @@ var Level = function () {
         value: function background() {
             var current = levels[this.current - 1];
             return current.background;
+        }
+    }, {
+        key: 'currentLevel',
+        get: function get() {
+            return levels[this.current - 1];
         }
     }], [{
         key: 'getTotalDiamonds',
@@ -1736,7 +1794,7 @@ var Level = function () {
                             case 2:
                                 level--;
                                 _context4.next = 5;
-                                return _Database.Database.getLevel(level);
+                                return Database.getLevel(level);
 
                             case 5:
                                 obj = _context4.sent;
@@ -6231,6 +6289,8 @@ var showScreen = function () {
 
 var _Protagonist = require('./protagonist/Protagonist');
 
+var Protagonist = _interopRequireWildcard(_Protagonist);
+
 var _Scene = require('./Scene');
 
 var _Level = require('./level/Level');
@@ -6240,6 +6300,10 @@ var _Keybindings = require('./Keybindings');
 var _GUI = require('./GUI');
 
 var _Database = require('./Database');
+
+var Database = _interopRequireWildcard(_Database);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6332,7 +6396,7 @@ var main = function () {
                 switch (_context5.prev = _context5.next) {
                     case 0:
                         _context5.next = 2;
-                        return _Database.Database.create();
+                        return Database.create();
 
                     case 2:
                         URL = window.location.href;
@@ -6341,7 +6405,7 @@ var main = function () {
                         if (URLpath !== '') currentLevel = URLpath.replace('#', '');
                         _GUI.GUI.showLoadingIcon();
                         _context5.next = 8;
-                        return _Protagonist.Protagonist.init();
+                        return Protagonist.init();
 
                     case 8:
                         background = level[currentLevel].background();
@@ -6399,7 +6463,7 @@ var setLastSuccessfulLevel = function () {
                 switch (_context6.prev = _context6.next) {
                     case 0:
                         _context6.next = 2;
-                        return _Database.Database.create();
+                        return Database.create();
 
                     case 2:
                         _context6.next = 4;
@@ -6585,7 +6649,6 @@ var Body = exports.Body = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.CollisionDetector = undefined;
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -6595,9 +6658,11 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+exports.create = create;
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var CollisionDetector = exports.CollisionDetector = function () {
+var CollisionDetector = function () {
 
     /**
      * @param {Obstacle[]} obstacles
@@ -6665,6 +6730,10 @@ var CollisionDetector = exports.CollisionDetector = function () {
     }]);
     return CollisionDetector;
 }();
+
+function create(obstacles) {
+    return new CollisionDetector(obstacles);
+}
 
 },{"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36}],18:[function(require,module,exports){
 'use strict';
@@ -6841,7 +6910,6 @@ var Leg = exports.Leg = function () {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Protagonist = undefined;
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -6850,6 +6918,9 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
+
+exports.get = get;
+exports.init = init;
 
 var _Body = require('./Body');
 
@@ -6862,8 +6933,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var THREE = require('three');
 var TWEEN = require('tween.js');
 var Cookies = require('js-cookie');
+var protagonist = null;
 
-var Protagonist = exports.Protagonist = function () {
+var Protagonist = function () {
     function Protagonist() {
         (0, _classCallCheck3.default)(this, Protagonist);
 
@@ -7013,6 +7085,19 @@ var Protagonist = exports.Protagonist = function () {
          */
 
     }, {
+        key: 'move',
+
+
+        /**
+         * moves group of protagonist
+         *
+         */
+        value: function move(group, position) {
+            group.children[0].position.x = position * -0.05;
+            group.children[3].position.z = position * 1;
+            group.children[2].position.z = position * -1;
+        }
+    }, {
         key: 'currentPosition',
         get: function get() {
             return this.object3D.position;
@@ -7037,34 +7122,22 @@ var Protagonist = exports.Protagonist = function () {
                 parts.material.opacity = opacity;
             });
         }
-
-        /**
-         * moves group of protagonist
-         * @param {THREE.Object3D} group - contains meshes of protagonist
-         *
-         */
-
-    }, {
-        key: 'move',
-        value: function move(group, position) {
-            group.children[0].position.x = position * -0.05;
-            group.children[3].position.z = position * 1;
-            group.children[2].position.z = position * -1;
-        }
-
-        /**
-         * loads blender files for protagonist
-         * @param {Promise} promise
-         */
-
-    }, {
-        key: 'init',
-        value: function init() {
-            return Promise.all([_Leg.Leg.init(), _Head.Head.init(), _Body.Body.init()]);
-        }
     }]);
     return Protagonist;
 }();
+
+function get() {
+    if (!protagonist) protagonist = new Protagonist();
+    return protagonist;
+}
+
+/**
+ * loads blender files for protagonist
+ * @param {Promise} promise
+ */
+function init() {
+    return Promise.all([_Leg.Leg.init(), _Head.Head.init(), _Body.Body.init()]);
+}
 
 },{"./Body":16,"./Head":18,"./Leg":19,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"js-cookie":440,"three":865,"tween.js":866}],21:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
@@ -7076,7 +7149,6 @@ var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=th
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Way = undefined;
 
 var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
 
@@ -7085,6 +7157,8 @@ var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
 var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
+
+exports.create = create;
 
 var _Color = require('../Color');
 
@@ -7096,10 +7170,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var THREE = require('three');
 var Obstacle = require('./obstacles/Obstacle');
-var Cookies = require('js-cookie');
 var randomBoolean = require('random-boolean');
 
-var Way = exports.Way = function () {
+var Way = function () {
     /**
      * Represents way
      * @param {number} length how long the way is
@@ -7186,8 +7259,6 @@ var Way = exports.Way = function () {
             if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
             if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = _Util.Util.convertDegreesToRadians(360);
 
-            // rotates faster with powerup 1
-            if (Cookies.get('powerup-1') == 'bought') angle = angle * 2;
             this.group.rotation.y += angle;
             this.currentPosition.angle = _Util.Util.convertRadiansToDegrees(this.group.rotation.y);
 
@@ -7242,7 +7313,11 @@ var Way = exports.Way = function () {
     return Way;
 }();
 
-},{"../Color":1,"../GUI":3,"../Util":8,"./obstacles/Obstacle":27,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"js-cookie":440,"random-boolean":491,"three":865}],24:[function(require,module,exports){
+function create(length, speed, color) {
+    return new Way(length, speed, color);
+}
+
+},{"../Color":1,"../GUI":3,"../Util":8,"./obstacles/Obstacle":27,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"random-boolean":491,"three":865}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7446,7 +7521,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var THREE = require('three');
 
-var Cookies = require('js-cookie');
 
 var size = 10;
 var heightFromWay = 20;
@@ -7503,7 +7577,6 @@ var Diamond = exports.Diamond = function () {
          */
         value: function prepareForCollisionDetection(obstacle, radius) {
             var angle = 10;
-            if (Cookies.get('powerup-3') == 'bought') angle = 35;
             return {
                 type: 'diamond',
                 size: {
@@ -7526,7 +7599,7 @@ var Diamond = exports.Diamond = function () {
     return Diamond;
 }();
 
-},{"../../Util":8,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"js-cookie":440,"three":865}],27:[function(require,module,exports){
+},{"../../Util":8,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"three":865}],27:[function(require,module,exports){
 'use strict';
 
 var _Box = require('./Box');

@@ -1,8 +1,6 @@
 'use strict';
 //noinspection JSUnresolvedFunction
-import {
-    Protagonist
-} from './protagonist/Protagonist';
+import * as Protagonist from './protagonist/Protagonist';
 import {
     Scene
 } from './Scene';
@@ -15,9 +13,7 @@ import {
 import {
     GUI
 } from './GUI';
-import {
-    Database
-} from './Database';
+import * as Database from './Database';
 
 let $ = require('jquery');
 let THREE = require('three');
@@ -193,7 +189,7 @@ function detectedCheating(URL, URLpath) {
  * main function for game
  * @return {Promise}
  */
-let main = async function() {
+const main = async function() {
     await Database.create();
     let URL = window.location.href;
     URLpath = URL.replace(/http:\/\/.+\//g, '');
@@ -211,7 +207,7 @@ let main = async function() {
     }
 };
 
-let setLastSuccessfulLevel = async function() {
+const setLastSuccessfulLevel = async function() {
     await Database.create();
     lastLevel = await Level.lastSuccessfulLevel();
 };
@@ -220,7 +216,7 @@ let setLastSuccessfulLevel = async function() {
 /**
  * main function of /
  */
-let intro = function() {
+const intro = function() {
     GUI.introFadeIn();
 };
 

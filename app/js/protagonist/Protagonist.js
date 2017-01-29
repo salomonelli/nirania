@@ -10,8 +10,10 @@ import {
 const THREE = require('three');
 const TWEEN = require('tween.js');
 const Cookies = require('js-cookie');
+let protagonist = null;
 
-export class Protagonist {
+
+class Protagonist {
     constructor() {
         this.object3D = new THREE.Object3D();
         this.body = new Body();
@@ -30,8 +32,8 @@ export class Protagonist {
     /**
      * scales body parts to proper setSize
      */
-    scaleBodyParts(){
-      this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
+    scaleBodyParts() {
+        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
     }
 
     /**
@@ -160,24 +162,27 @@ export class Protagonist {
 
     /**
      * moves group of protagonist
-     * @param {THREE.Object3D} group - contains meshes of protagonist
      *
      */
-    static move(group, position) {
+    move(group, position) {
         group.children[0].position.x = position * -0.05;
         group.children[3].position.z = position * 1;
         group.children[2].position.z = position * -1;
     }
+}
+export function get() {
+    if (!protagonist) protagonist = new Protagonist();
+    return protagonist;
+}
 
-    /**
-     * loads blender files for protagonist
-     * @param {Promise} promise
-     */
-    static init() {
-        return Promise.all([
-            Leg.init(),
-            Head.init(),
-            Body.init()
-        ]);
-    };
+/**
+ * loads blender files for protagonist
+ * @param {Promise} promise
+ */
+export function init() {
+    return Promise.all([
+        Leg.init(),
+        Head.init(),
+        Body.init()
+    ]);
 }
