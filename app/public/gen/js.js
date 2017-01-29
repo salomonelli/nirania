@@ -6793,6 +6793,7 @@ var CollisionDetector = function () {
                     if (obstacle.collisionData.angle.max < obstacle.collisionData.angle.min) obstacle.collisionData.angle.max = obstacle.collisionData.angle.max + 360;
                     var angleDiffPos = currentPosition.anglemax - currentPosition.anglemin;
                     var angleDiffObs = obstacle.collisionData.angle.max - obstacle.collisionData.angle.min;
+                    console.log(currentPosition);
                     if (
                     //other collision with left body half
                     _this.collisionWithinDistance() && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && _this.collisionWithinHeight() ||
@@ -7251,7 +7252,7 @@ var _Color = require('../Color');
 
 var _Util = require('../Util');
 
-var UTIL = _interopRequireWildcard(_Util);
+var Util = _interopRequireWildcard(_Util);
 
 var _GUI = require('../GUI');
 

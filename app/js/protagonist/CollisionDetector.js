@@ -72,8 +72,8 @@ class CollisionDetector {
                 ) obstacle.collisionData.angle.max = obstacle.collisionData.angle.max + 360;
                 let angleDiffPos = currentPosition.anglemax - currentPosition.anglemin;
                 let angleDiffObs = obstacle.collisionData.angle.max - obstacle.collisionData.angle.min;
+                console.log(currentPosition);
                 if (
-
                     (
                         //other collision with left body half
                         this.collisionWithinDistance() &&
