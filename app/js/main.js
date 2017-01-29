@@ -10,9 +10,7 @@ import {
 import {
     Keybindings
 } from './Keybindings';
-import {
-    GUI
-} from './GUI';
+import * as GUI from './GUI';
 import * as Database from './Database';
 
 let $ = require('jquery');

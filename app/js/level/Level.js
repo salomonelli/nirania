@@ -5,9 +5,7 @@ import * as Database from '../Database.js';
 const Obstacle = require('../way/obstacles/Obstacle');
 const $ = require('jquery');
 const Cookies = require('js-cookie');
-import {
-    GUI
-} from '../GUI';
+import * as GUI from '../GUI';
 import * as Sound from '../Sound';
 
 import {

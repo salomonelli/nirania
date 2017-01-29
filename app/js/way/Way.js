@@ -4,9 +4,7 @@ import {
 import {
     Util
 } from '../Util';
-import {
-    GUI
-} from '../GUI';
+import * as GUI from '../GUI';
 let THREE = require('three');
 let Obstacle = require('./obstacles/Obstacle');
 let randomBoolean = require('random-boolean');

@@ -333,7 +333,7 @@ var soundSchema = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.GUI = undefined;
+exports.startingAnimationFadeIn = undefined;
 
 var _regenerator = require('babel-runtime/regenerator');
 
@@ -343,6 +343,59 @@ var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
 
 var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
 
+/**
+ * fades in game name
+ * @return {Promise} resolves after fadeIn animation
+ */
+var startingAnimationFadeIn = exports.startingAnimationFadeIn = function () {
+    var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
+        return _regenerator2.default.wrap(function _callee$(_context) {
+            while (1) {
+                switch (_context.prev = _context.next) {
+                    case 0:
+                        return _context.abrupt('return', new Promise(function (res) {
+                            $('.intro-text').fadeIn(1000, res);
+                        }));
+
+                    case 1:
+                    case 'end':
+                        return _context.stop();
+                }
+            }
+        }, _callee, this);
+    }));
+
+    return function startingAnimationFadeIn() {
+        return _ref.apply(this, arguments);
+    };
+}();
+
+/**
+ * fades out game name
+ * @param {number} fadeTime - in milliseconds
+ */
+
+
+exports.setDiamondsInScoreBoard = setDiamondsInScoreBoard;
+exports.showSuccessScreen = showSuccessScreen;
+exports.showGameOverScreen = showGameOverScreen;
+exports.startingAnimationFadeOut = startingAnimationFadeOut;
+exports.showLoadingIcon = showLoadingIcon;
+exports.removeLoadingIcon = removeLoadingIcon;
+exports.buttonIsEnabled = buttonIsEnabled;
+exports.updateNextLevelButton = updateNextLevelButton;
+exports.introFadeIn = introFadeIn;
+exports.updateDistance = updateDistance;
+exports.fadeInScoreboard = fadeInScoreboard;
+exports.fadeInSoundSwitch = fadeInSoundSwitch;
+exports.getSoundSwitch = getSoundSwitch;
+exports.uncheckSoundSwitch = uncheckSoundSwitch;
+exports.showInstruction = showInstruction;
+exports.hideInstruction = hideInstruction;
+exports.fadeOverlayOut = fadeOverlayOut;
+exports.openDividers = openDividers;
+exports.closeDividers = closeDividers;
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var $ = require('jquery');
@@ -350,204 +403,168 @@ var templates = {
     successScreen: require('./templates/success.mustache'),
     gameoverScreen: require('./templates/gameover.mustache')
 };
+/**
+ * updates amount of diamonds in scoreboard
+ * @param {number} diamonds
+ */
+function setDiamondsInScoreBoard(diamonds) {
+    $('.scores .diamonds span').html(diamonds);
+}
 
-var GUI = exports.GUI = {
-    /**
-     * updates amount of diamonds in scoreboard
-     * @param {number} diamonds
-     */
-    setDiamondsInScoreBoard: function setDiamondsInScoreBoard(diamonds) {
-        $('.scores .diamonds span').html(diamonds);
-    },
+/**
+ * shows screen on successful end of level
+ * @param {Object} obj - obj to render template successScreen
+ * @return {Promise} resolves after fadeIn animation
+ */
+function showSuccessScreen(obj) {
+    return new Promise(function (res) {
+        var html = templates.successScreen.render(obj);
+        $('body').append(html);
+        $('#successScreen').fadeIn(1000, res);
+    });
+}
 
-    /**
-     * shows screen on successful end of level
-     * @param {Object} obj - obj to render template successScreen
-     */
-    showSuccessScreen: function showSuccessScreen(obj) {
-        return new Promise(function (res) {
-            var html = templates.successScreen.render(obj);
-            $('body').append(html);
-            $('#successScreen').fadeIn(1000, res);
-        });
-    },
+/**
+ * shows screen on game over
+ * @param {Object} obj - obj to render template gameoverScreen
+ */
+function showGameOverScreen(obj) {
+    return new Promise(function (res) {
+        var html = templates.gameoverScreen.render(obj);
+        $('body').append(html);
+        $('#gameoverScreen').fadeIn(1000, res);
+    });
+}function startingAnimationFadeOut(fadeTime) {
+    $('.game-name').fadeOut(fadeTime);
+    $('.intro').fadeOut(fadeTime);
+}
 
-    /**
-     * shows screen on game over
-     * @param {Object} obj - obj to render template gameoverScreen
-     */
-    showGameOverScreen: function showGameOverScreen(obj) {
-        return new Promise(function (res) {
-            var html = templates.gameoverScreen.render(obj);
-            $('body').append(html);
-            $('#gameoverScreen').fadeIn(1000, res);
-        });
-    },
+/**
+ * shows loading icon
+ */
+function showLoadingIcon() {
+    var height = $('.sk-folding-cube').height() + $('.loading p').height();
+    $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
+}
 
-    /**
-     * fades in game name
-     */
-    startingAnimationFadeIn: function () {
-        var _ref = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee() {
-            return _regenerator2.default.wrap(function _callee$(_context) {
-                while (1) {
-                    switch (_context.prev = _context.next) {
-                        case 0:
-                            return _context.abrupt('return', new Promise(function (res) {
-                                $('.intro-text').fadeIn(1000, res);
-                            }));
+/**
+ * removes loading icon
+ */
+function removeLoadingIcon() {
+    $('.sk-folding-cube').remove();
+    $('.loading p').remove();
+    var fadeTime = 3000;
+    $('.loading').fadeOut(fadeTime);
+}
 
-                        case 1:
-                        case 'end':
-                            return _context.stop();
-                    }
-                }
-            }, _callee, this);
-        }));
+/**
+ * checks if button is enabled
+ * @param {$} button
+ * @return {boolean} - true if button is enabled
+ */
+function buttonIsEnabled(button) {
+    if (button.hasClass('disabled')) return false;
+    return true;
+}
 
-        function startingAnimationFadeIn() {
-            return _ref.apply(this, arguments);
-        }
-
-        return startingAnimationFadeIn;
-    }(),
-
-    /**
-     * fades out game name
-     * @param {number} fadeTime - in milliseconds
-     */
-    startingAnimationFadeOut: function startingAnimationFadeOut(fadeTime) {
-        $('.game-name').fadeOut(fadeTime);
-        $('.intro').fadeOut(fadeTime);
-    },
-
-    /**
-     * shows loading icon
-     */
-    showLoadingIcon: function showLoadingIcon() {
-        var height = $('.sk-folding-cube').height() + $('.loading p').height();
-        $('.sk-folding-cube').css('marginTop', (window.innerHeight - height) / 2);
-    },
-
-    /**
-     * removes loading icon
-     */
-    removeLoadingIcon: function removeLoadingIcon() {
-        $('.sk-folding-cube').remove();
-        $('.loading p').remove();
-        var fadeTime = 3000;
-        $('.loading').fadeOut(fadeTime);
-    },
-
-    /**
-     * checks if button is enabled
-     * @param {$} button
-     * @returns {boolean} - true if button is enabled
-     */
-    buttonIsEnabled: function buttonIsEnabled(button) {
-        if (button.hasClass('disabled')) return false;
-        return true;
-    },
-
-    /**
-     * updates next-level-button in success screen
-     */
-    updateNextLevelButton: function updateNextLevelButton() {
-        if ($('.button.success.reload').length) {
-            $('.button.success.reload').removeClass('disabled');
-            $('.callout.alert').remove();
-        }
-    },
-
-    /**
-     * fades in intro slide show
-     */
-    introFadeIn: function introFadeIn() {
-        $('.blackOverlay').fadeOut(1000);
-    },
-
-    /**
-     * updates distance in scoreboard
-     * @param {number} distance
-     */
-    updateDistance: function updateDistance(distance) {
-        $('.scores .distance span').html(distance);
-    },
-
-    /**
-     * fades in scoreboard
-     */
-    fadeInScoreboard: function fadeInScoreboard() {
-        $('.scores').fadeIn(1000);
-    },
-
-    /**
-     * fades in soundswitch
-     */
-    fadeInSoundSwitch: function fadeInSoundSwitch() {
-        $('.sound').fadeIn(1000);
-    },
-
-    /**
-     * returns whether sound is on or not
-     * @returns {boolean} - true if sound is enabled
-     */
-    getSoundSwitch: function getSoundSwitch() {
-        if ($('#soundSwitch').is(':checked')) return true;
-        return false;
-    },
-
-    /**
-     * unchecks sound switch
-     */
-    uncheckSoundSwitch: function uncheckSoundSwitch() {
-        $('#soundSwitch').attr('checked', false);
-    },
-
-    /**
-     * shows instruction
-     * @param  {String} instruction
-     */
-    showInstruction: function showInstruction(instruction) {
-        $('.instruction span').html(instruction);
-        $('.instruction').removeClass('gone');
-    },
-
-    /**
-     * hides instruction
-     */
-    hideInstruction: function hideInstruction() {
-        $('.instruction').addClass('gone');
-    },
-
-    fadeOverlayOut: function fadeOverlayOut() {
-        return new Promise(function (res) {
-            return $('.overlay').fadeOut(1000, res);
-        });
-    },
-
-    openDividers: function openDividers() {
-        return Promise.all(['left', 'right'].map(function (dir) {
-            return new Promise(function (res) {
-                $('.dividers .' + dir).animate({
-                    width: '0'
-                }, res);
-            });
-        }));
-    },
-
-    closeDividers: function closeDividers() {
-        return Promise.all(['left', 'right'].map(function (dir) {
-            return new Promise(function (res) {
-                $('.dividers .' + dir).animate({
-                    width: '50%'
-                }, function () {
-                    setTimeout(res, 1800);
-                });
-            });
-        }));
+/**
+ * updates next-level-button in success screen
+ */
+function updateNextLevelButton() {
+    if ($('.button.success.reload').length) {
+        $('.button.success.reload').removeClass('disabled');
+        $('.callout.alert').remove();
     }
-};
+}
+
+/**
+ * fades in intro slide show
+ */
+function introFadeIn() {
+    $('.blackOverlay').fadeOut(1000);
+}
+
+/**
+ * updates distance in scoreboard
+ * @param {number} distance
+ */
+function updateDistance(distance) {
+    $('.scores .distance span').html(distance);
+}
+
+/**
+ * fades in scoreboard
+ */
+function fadeInScoreboard() {
+    $('.scores').fadeIn(1000);
+}
+
+/**
+ * fades in soundswitch
+ */
+function fadeInSoundSwitch() {
+    $('.sound').fadeIn(1000);
+}
+
+/**
+ * returns whether sound is on or not
+ * @return {boolean} - true if sound is enabled
+ */
+function getSoundSwitch() {
+    if ($('#soundSwitch').is(':checked')) return true;
+    return false;
+}
+
+/**
+ * unchecks sound switch
+ */
+function uncheckSoundSwitch() {
+    $('#soundSwitch').attr('checked', false);
+}
+
+/**
+ * shows instruction
+ * @param  {String} instruction
+ */
+function showInstruction(instruction) {
+    $('.instruction span').html(instruction);
+    $('.instruction').removeClass('gone');
+}
+
+/**
+ * hides instruction
+ */
+function hideInstruction() {
+    $('.instruction').addClass('gone');
+}
+
+function fadeOverlayOut() {
+    return new Promise(function (res) {
+        return $('.overlay').fadeOut(1000, res);
+    });
+}
+
+function openDividers() {
+    return Promise.all(['left', 'right'].map(function (dir) {
+        return new Promise(function (res) {
+            $('.dividers .' + dir).animate({
+                width: '0'
+            }, res);
+        });
+    }));
+}
+
+function closeDividers() {
+    return Promise.all(['left', 'right'].map(function (dir) {
+        return new Promise(function (res) {
+            $('.dividers .' + dir).animate({
+                width: '50%'
+            }, function () {
+                setTimeout(res, 1800);
+            });
+        });
+    }));
+}
 
 },{"./templates/gameover.mustache":21,"./templates/success.mustache":22,"babel-runtime/helpers/asyncToGenerator":34,"babel-runtime/regenerator":37,"jquery":441}],4:[function(require,module,exports){
 'use strict';
@@ -1379,6 +1396,8 @@ var Database = _interopRequireWildcard(_Database);
 
 var _GUI = require('../GUI');
 
+var GUI = _interopRequireWildcard(_GUI);
+
 var _Sound = require('../Sound');
 
 var Sound = _interopRequireWildcard(_Sound);
@@ -1536,7 +1555,7 @@ var Level = exports.Level = function () {
             this.lastDiamond = collObj;
             this.diamonds++;
             this.lastDiamond.mesh.visible = false;
-            _GUI.GUI.setDiamondsInScoreBoard(this.diamonds);
+            GUI.setDiamondsInScoreBoard(this.diamonds);
         }
     }, {
         key: 'getCurrentPosition',
@@ -1605,7 +1624,7 @@ var Level = exports.Level = function () {
                     while (1) {
                         switch (_context.prev = _context.next) {
                             case 0:
-                                if (this.instruction) _GUI.GUI.showInstruction(this.instruction);
+                                if (this.instruction) GUI.showInstruction(this.instruction);
                                 //reset diamonds
                                 this.lastDiamond = null;
                                 this.diamonds = 0;
@@ -1633,7 +1652,7 @@ var Level = exports.Level = function () {
                                 break;
 
                             case 14:
-                                _GUI.GUI.hideInstruction();
+                                GUI.hideInstruction();
 
                             case 15:
                             case 'end':
@@ -1675,7 +1694,7 @@ var Level = exports.Level = function () {
                                     disableNextLevel = 'disabled';
                                 }
                                 _context2.next = 6;
-                                return _GUI.GUI.showSuccessScreen({
+                                return GUI.showSuccessScreen({
                                     score: this.diamonds,
                                     level: this.current,
                                     next: this.current + 1,
@@ -1713,7 +1732,7 @@ var Level = exports.Level = function () {
                         switch (_context3.prev = _context3.next) {
                             case 0:
                                 _context3.next = 2;
-                                return _GUI.GUI.showGameOverScreen({
+                                return GUI.showGameOverScreen({
                                     score: this.diamonds,
                                     level: this.current
                                 });
@@ -6091,7 +6110,7 @@ var gameWithIntro = function () {
                 switch (_context.prev = _context.next) {
                     case 0:
                         _context.next = 2;
-                        return _GUI.GUI.startingAnimationFadeIn();
+                        return GUI.startingAnimationFadeIn();
 
                     case 2:
                         _context.next = 4;
@@ -6099,11 +6118,11 @@ var gameWithIntro = function () {
 
                     case 4:
                         _context.next = 6;
-                        return _GUI.GUI.fadeOverlayOut();
+                        return GUI.fadeOverlayOut();
 
                     case 6:
                         _context.next = 8;
-                        return _GUI.GUI.openDividers();
+                        return GUI.openDividers();
 
                     case 8:
                         mainScene.simpleIntro();
@@ -6117,7 +6136,7 @@ var gameWithIntro = function () {
 
                     case 14:
                         _context.next = 16;
-                        return _GUI.GUI.closeDividers();
+                        return GUI.closeDividers();
 
                     case 16:
                         _context.next = 18;
@@ -6149,7 +6168,7 @@ var gameWithoutIntro = function () {
                 switch (_context2.prev = _context2.next) {
                     case 0:
                         _context2.next = 2;
-                        return _GUI.GUI.openDividers();
+                        return GUI.openDividers();
 
                     case 2:
                         mainScene.simpleIntro();
@@ -6163,7 +6182,7 @@ var gameWithoutIntro = function () {
 
                     case 8:
                         _context2.next = 10;
-                        return _GUI.GUI.closeDividers();
+                        return GUI.closeDividers();
 
                     case 10:
                         _context2.next = 12;
@@ -6200,8 +6219,8 @@ var startLevel = function () {
                     case 0:
                         subs = [];
 
-                        _GUI.GUI.fadeInScoreboard();
-                        _GUI.GUI.fadeInSoundSwitch();
+                        GUI.fadeInScoreboard();
+                        GUI.fadeInSoundSwitch();
                         subs.push(_Keybindings.Keybindings.keyBind('keydown').subscribe(function (direction) {
                             return _Scene.Scene.startMovingProtagonist(mainScene, direction);
                         }));
@@ -6300,6 +6319,8 @@ var _Keybindings = require('./Keybindings');
 
 var _GUI = require('./GUI');
 
+var GUI = _interopRequireWildcard(_GUI);
+
 var _Database = require('./Database');
 
 var Database = _interopRequireWildcard(_Database);
@@ -6326,7 +6347,7 @@ window.initMe = 0;
 
 var music = new Audio('/sound/music.mp3');
 
-if (isMusicOn()) music.play();else _GUI.GUI.uncheckSoundSwitch();function render() {
+if (isMusicOn()) music.play();else GUI.uncheckSoundSwitch();function render() {
     return new Promise(function (resolve) {
         requestAnimationFrame(function () {
             render();
@@ -6404,7 +6425,7 @@ var main = function () {
 
                         URLpath = URL.replace(/http:\/\/.+\//g, '');
                         if (URLpath !== '') currentLevel = URLpath.replace('#', '');
-                        _GUI.GUI.showLoadingIcon();
+                        GUI.showLoadingIcon();
                         _context5.next = 8;
                         return Protagonist.init();
 
@@ -6413,7 +6434,7 @@ var main = function () {
 
                         mainScene = new _Scene.Scene(window.innerWidth, window.innerHeight, background);
                         document.body.appendChild(mainScene.renderer.domElement);
-                        _GUI.GUI.removeLoadingIcon();
+                        GUI.removeLoadingIcon();
 
                         if (!(URLpath == '')) {
                             _context5.next = 17;
@@ -6490,7 +6511,7 @@ var setLastSuccessfulLevel = function () {
  * main function of /
  */
 var intro = function intro() {
-    _GUI.GUI.introFadeIn();
+    GUI.introFadeIn();
 };
 
 // reloads page on resize
@@ -6505,7 +6526,7 @@ $(document).on('click', '.button.reload', function () {
 
 //enables and disables sound
 $(document).on('click', '#soundSwitch', function (event) {
-    level[currentLevel].playSound = _GUI.GUI.getSoundSwitch();
+    level[currentLevel].playSound = GUI.getSoundSwitch();
     setMusicSettings(level[currentLevel].playSound);
     if (level[currentLevel].playSound) music.play();else music.pause();
 });
@@ -7205,6 +7226,10 @@ var _Util = require('../Util');
 
 var _GUI = require('../GUI');
 
+var GUI = _interopRequireWildcard(_GUI);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var THREE = require('three');
@@ -7270,7 +7295,7 @@ var Way = function () {
             this.group.position.z = this.group.position.z + speed;
             this.currentPosition.distance = this.currentPosition.distance + speed;
             this.moveRandomObstacles();
-            _GUI.GUI.updateDistance(this.currentPosition.distance);
+            GUI.updateDistance(this.currentPosition.distance);
         }
     }, {
         key: 'setCurrentPosition',
