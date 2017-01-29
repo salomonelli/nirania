@@ -46,7 +46,7 @@ export async function create() {
 }
 
 export async function updateLevel(level, success, diamonds) {
-    let doc = await levelCollection.findOne(level).exec();
+    let doc = await levelCollection.findOne(level + '').exec();
     if (doc) {
         if (success) doc.set('success', success);
         if (!doc.get('diamonds') ||
@@ -75,23 +75,18 @@ export async function getSound() {
 };
 
 export async function getLevel(level) {
-    let doc = await levelCollection.findOne(level).exec();
+    let doc = await levelCollection.findOne(level + '').exec();
     let ret = {
         success: false,
         diamonds: 0
     };
-    if (doc) {
-        ret.success = doc.success;
-        ret.diamonds = doc.diamonds;
-    }
+    if (doc) return doc;
     return ret;
 };
 
-export async function getLastSuccessfulLevel(diamonds) {
-    let doc = await levelCollection.findOne()
+export async function getSuccessfulLevels() {
+    const docs = await levelCollection.find()
         .where('success').eq(true)
-        .where('diamonds').gt(diamonds - 1)
-        .sort('-levelID')
         .exec();
-    return doc.levelID;
+    return docs;
 };

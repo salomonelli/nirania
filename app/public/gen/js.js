@@ -60,7 +60,7 @@ var Color = exports.Color = {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getLastSuccessfulLevel = exports.getLevel = exports.getSound = exports.updateSound = exports.updateLevel = exports.create = undefined;
+exports.getSuccessfulLevels = exports.getLevel = exports.getSound = exports.updateSound = exports.updateLevel = exports.create = undefined;
 
 var _regenerator = require('babel-runtime/regenerator');
 
@@ -118,7 +118,7 @@ var updateLevel = exports.updateLevel = function () {
                 switch (_context2.prev = _context2.next) {
                     case 0:
                         _context2.next = 2;
-                        return levelCollection.findOne(level).exec();
+                        return levelCollection.findOne(level + '').exec();
 
                     case 2:
                         doc = _context2.sent;
@@ -211,7 +211,7 @@ var getLevel = exports.getLevel = function () {
                 switch (_context5.prev = _context5.next) {
                     case 0:
                         _context5.next = 2;
-                        return levelCollection.findOne(level).exec();
+                        return levelCollection.findOne(level + '').exec();
 
                     case 2:
                         doc = _context5.sent;
@@ -220,13 +220,17 @@ var getLevel = exports.getLevel = function () {
                             diamonds: 0
                         };
 
-                        if (doc) {
-                            ret.success = doc.success;
-                            ret.diamonds = doc.diamonds;
+                        if (!doc) {
+                            _context5.next = 6;
+                            break;
                         }
-                        return _context5.abrupt('return', ret);
+
+                        return _context5.abrupt('return', doc);
 
                     case 6:
+                        return _context5.abrupt('return', ret);
+
+                    case 7:
                     case 'end':
                         return _context5.stop();
                 }
@@ -239,19 +243,19 @@ var getLevel = exports.getLevel = function () {
     };
 }();
 
-var getLastSuccessfulLevel = exports.getLastSuccessfulLevel = function () {
-    var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6(diamonds) {
-        var doc;
+var getSuccessfulLevels = exports.getSuccessfulLevels = function () {
+    var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
+        var docs;
         return _regenerator2.default.wrap(function _callee6$(_context6) {
             while (1) {
                 switch (_context6.prev = _context6.next) {
                     case 0:
                         _context6.next = 2;
-                        return levelCollection.findOne().where('success').eq(true).where('diamonds').gt(diamonds - 1).sort('-levelID').exec();
+                        return levelCollection.find().where('success').eq(true).exec();
 
                     case 2:
-                        doc = _context6.sent;
-                        return _context6.abrupt('return', doc.levelID);
+                        docs = _context6.sent;
+                        return _context6.abrupt('return', docs);
 
                     case 4:
                     case 'end':
@@ -261,7 +265,7 @@ var getLastSuccessfulLevel = exports.getLastSuccessfulLevel = function () {
         }, _callee6, this);
     }));
 
-    return function getLastSuccessfulLevel(_x6) {
+    return function getSuccessfulLevels() {
         return _ref6.apply(this, arguments);
     };
 }();
@@ -543,7 +547,7 @@ var GUI = exports.GUI = {
             });
         }));
     }
-};;
+};
 
 },{"./templates/gameover.mustache":21,"./templates/success.mustache":22,"babel-runtime/helpers/asyncToGenerator":34,"babel-runtime/regenerator":37,"jquery":441}],4:[function(require,module,exports){
 'use strict';
@@ -1805,23 +1809,27 @@ var Level = exports.Level = function () {
 
                             case 2:
                                 levelNr--;
-                                _context5.next = 5;
+                                console.log(levelNr);
+                                _context5.next = 6;
                                 return Database.getLevel(levelNr);
 
-                            case 5:
+                            case 6:
                                 obj = _context5.sent;
 
+                                console.dir(obj);
+
                                 if (!(obj.success && obj.diamonds >= levels[levelNr - 1].requiredDiamonds)) {
-                                    _context5.next = 8;
+                                    _context5.next = 10;
                                     break;
                                 }
 
                                 return _context5.abrupt('return', true);
 
-                            case 8:
+                            case 10:
+                                console.log(false);
                                 return _context5.abrupt('return', false);
 
-                            case 9:
+                            case 12:
                             case 'end':
                                 return _context5.stop();
                         }
@@ -1845,43 +1853,24 @@ var Level = exports.Level = function () {
          */
         value: function () {
             var _ref6 = (0, _asyncToGenerator3.default)(_regenerator2.default.mark(function _callee6() {
-                var levelAmount, ret, i;
+                var docs, levelID;
                 return _regenerator2.default.wrap(function _callee6$(_context6) {
                     while (1) {
                         switch (_context6.prev = _context6.next) {
                             case 0:
-                                levelAmount = levels.length;
-                                ret = void 0;
-                                i = 0;
+                                _context6.next = 2;
+                                return Database.getSuccessfulLevels();
 
-                            case 3:
-                                if (!(ret === false && i < levels.length)) {
-                                    _context6.next = 12;
-                                    break;
-                                }
+                            case 2:
+                                docs = _context6.sent;
+                                levelID = docs.filter(function (doc) {
+                                    return doc.diamonds >= levels[doc.levelID - 1].requiredDiamonds;
+                                }).sort(function (a, b) {
+                                    if (a.levelID > b.levelID) return 1;else return -1;
+                                }).pop().levelID;
+                                return _context6.abrupt('return', levelID + 1);
 
-                                _context6.next = 6;
-                                return Level.canBePlayed(i + 1);
-
-                            case 6:
-                                ret = _context6.sent;
-
-                                if (ret) {
-                                    _context6.next = 9;
-                                    break;
-                                }
-
-                                return _context6.abrupt('return', i);
-
-                            case 9:
-                                i++;
-                                _context6.next = 3;
-                                break;
-
-                            case 12:
-                                return _context6.abrupt('return', 1);
-
-                            case 13:
+                            case 5:
                             case 'end':
                                 return _context6.stop();
                         }

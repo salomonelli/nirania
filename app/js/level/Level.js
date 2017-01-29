@@ -285,14 +285,15 @@ export class Level {
      * @return {number}
      */
     static async lastSuccessfulLevel() {
-        const levelAmount = levels.length;
-        let ret;
-        let i = 0;
-        while (ret === false && i < levels.length) {
-            ret = await Level.canBePlayed(i + 1);
-            if (!ret) return i;
-            i++;
-        }
-        return 1;
+        let docs = await Database.getSuccessfulLevels();
+        const levelID = docs
+            .filter(doc => doc.diamonds >= levels[doc.levelID - 1].requiredDiamonds)
+            .sort((a, b) => {
+                if (a.levelID > b.levelID) return 1;
+                else return -1;
+            })
+            .pop()
+            .levelID;
+        return levelID + 1;
     }
 }
