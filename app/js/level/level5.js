@@ -1,5 +1,7 @@
-import { Color } from '../Color';
-import { Util } from '../Util';
+import {
+    Color
+} from '../Color';
+import * as Util from '../Util';
 let boxColor = Color.palette[4].box;
 let ringColor = Color.palette[4].ring;
 let coneColor = Color.palette[4].cone;
@@ -12,124 +14,123 @@ export let level5 = {
     way: {
         length: 4000,
         color: Color.palette[4].way,
-        obstacles : [
-          {
-              type: 'box',
-              size: {
-                  width: 50,
-                  length: 80,
-                  height: 50
-              },
-              color: boxColor,
-              position: {
-                  distance: 1300,
-                  angle: 90
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 5,
-                  length: 200,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 700,
-                  angle: 90
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 5,
-                  length: 200,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 1800,
-                  angle: 90
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 80,
-                  length: 20,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 2100,
-                  angle: 90
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 80,
-                  length: 20,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 2800,
-                  angle: 90
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 100,
-                  length: 20,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 2800,
-                  angle: 100
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 5,
-                  length: 200,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 700,
-                  angle: 0
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 5,
-                  length: 200,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 700,
-                  angle: 180
-              }
-          },
-          {
-              type: 'box',
-              size: {
-                  width: 5,
-                  length: 200,
-                  height: 25
-              },
-              color: boxColor,
-              position: {
-                  distance: 700,
-                  angle: 270
-              }
-          },
+        obstacles: [{
+                type: 'box',
+                size: {
+                    width: 50,
+                    length: 80,
+                    height: 50
+                },
+                color: boxColor,
+                position: {
+                    distance: 1300,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 5,
+                    length: 200,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 700,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 5,
+                    length: 200,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 1800,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 80,
+                    length: 20,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 2100,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 80,
+                    length: 20,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 2800,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 100,
+                    length: 20,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 2800,
+                    angle: 100
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 5,
+                    length: 200,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 700,
+                    angle: 0
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 5,
+                    length: 200,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 700,
+                    angle: 180
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 5,
+                    length: 200,
+                    height: 25
+                },
+                color: boxColor,
+                position: {
+                    distance: 700,
+                    angle: 270
+                }
+            },
             {
                 type: 'box',
                 size: {
@@ -1061,21 +1062,21 @@ export let level5 = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(250,350)*2
+                    distance: Util.randomIntInRange(250, 350) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(500,700)*2
+                    distance: Util.randomIntInRange(500, 700) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(800,900)*2
+                    distance: Util.randomIntInRange(800, 900) * 2
                 }
             },
             {

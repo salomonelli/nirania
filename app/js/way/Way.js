@@ -1,9 +1,7 @@
 import {
     Color
 } from '../Color';
-import {
-    Util
-} from '../Util';
+import * as UTIL from '../Util';
 import * as GUI from '../GUI';
 let THREE = require('three');
 let Obstacle = require('./obstacles/Obstacle');

@@ -1,8 +1,16 @@
-import { Box } from './Box';
-import { Cone } from './Cone';
-import { Diamond } from './Diamond';
-import { Ring } from './Ring';
-import { Util } from '../../Util';
+import {
+    Box
+} from './Box';
+import {
+    Cone
+} from './Cone';
+import {
+    Diamond
+} from './Diamond';
+import {
+    Ring
+} from './Ring';
+import * as Util from '../../Util';
 module.exports = (function() {
     let _obstacleTypes = {
         box: Box,
@@ -66,8 +74,8 @@ module.exports = (function() {
         this.angle = Util.normalizeAngle(this.angle);
 
         let radius = 80 + 15;
-        let angle = -(this.angle -90);
-        angle  = Util.convertDegreesToRadians(angle);
+        let angle = -(this.angle - 90);
+        angle = Util.convertDegreesToRadians(angle);
         let x = radius * Math.cos(angle);
         let z = -(radius * Math.sin(angle));
         this.mesh.rotation.y = angle;

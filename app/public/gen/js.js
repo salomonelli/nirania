@@ -1306,53 +1306,56 @@ function setMusicSettings(isOn) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
-var Util = exports.Util = {
-    /**
-     * converts degrees to radians
-     * @param {number} degrees
-     * @returns {number}
-     */
-    convertDegreesToRadians: function convertDegreesToRadians(degrees) {
-        return degrees * (Math.PI / 180);
-    },
+exports.convertDegreesToRadians = convertDegreesToRadians;
+exports.convertRadiansToDegrees = convertRadiansToDegrees;
+exports.randomNumberInRange = randomNumberInRange;
+exports.randomIntInRange = randomIntInRange;
+exports.normalizeAngle = normalizeAngle;
+/**
+ * converts degrees to radians
+ * @param {number} degrees
+ * @return {number}
+ */
+function convertDegreesToRadians(degrees) {
+  return degrees * (Math.PI / 180);
+}
 
-    /**
-     * converts radians to degrees
-     * @param {number} radians
-     * @returns {number}
-     */
-    convertRadiansToDegrees: function convertRadiansToDegrees(radians) {
-        return radians * (180 / Math.PI);
-    },
+/**
+ * converts radians to degrees
+ * @param {number} radians
+ * @return {number}
+ */
+function convertRadiansToDegrees(radians) {
+  return radians * (180 / Math.PI);
+}
 
-    /**
-     * Returns a random number between min (inclusive) and max (exclusive)
-     * @returns {number}
-     */
-    randomNumberInRange: function randomNumberInRange(min, max) {
-        return Math.random() * (max - min) + min;
-    },
+/**
+ * Returns a random number between min (inclusive) and max (exclusive)
+ * @return {number}
+ */
+function randomNumberInRange(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
-    /**
-     * Returns a random int between min (inclusive) and max (exclusive)
-     * @returns {number}
-     */
-    randomIntInRange: function randomIntInRange(min, max) {
-        return Math.round(Util.randomNumberInRange(min, max));
-    },
+/**
+ * Returns a random int between min (inclusive) and max (exclusive)
+ * @return {number}
+ */
+function randomIntInRange(min, max) {
+  return Math.round(randomNumberInRange(min, max));
+}
 
-    /**
-     * normalizes angle
-     * @param {number} angle - in degrees
-     */
-    normalizeAngle: function normalizeAngle(angle) {
-        if (angle < 0) angle = angle + 360; //always positive
-        angle = angle % 360; //always <360
-        return angle;
-    }
-};
+/**
+ * normalizes angle
+ * @param {number} angle - in degrees
+ */
+function normalizeAngle(angle) {
+  if (angle < 0) angle = angle + 360; //always positive
+  angle = angle % 360; //always <360
+  return angle;
+}
 
 },{}],9:[function(require,module,exports){
 'use strict';
@@ -1915,6 +1918,10 @@ var _Color = require('../Color');
 
 var _Util = require('../Util');
 
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 var boxColor = _Color.Color.palette[1].box;
 var level1 = exports.level1 = {
     level: 1,
@@ -1988,6 +1995,10 @@ exports.level2 = undefined;
 var _Color = require('../Color');
 
 var _Util = require('../Util');
+
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var boxColor = _Color.Color.palette[5].box;
 var level2 = exports.level2 = {
@@ -2400,6 +2411,10 @@ exports.level3 = undefined;
 var _Color = require('../Color');
 
 var _Util = require('../Util');
+
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var boxColor = _Color.Color.palette[2].box;
 var ringColor = _Color.Color.palette[2].ring;
@@ -3498,43 +3513,43 @@ var level3 = exports.level3 = {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
+                distance: Util.randomIntInRange(250, 350) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(500, 700) * 2
+                distance: Util.randomIntInRange(500, 700) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(750, 950) * 2
+                distance: Util.randomIntInRange(750, 950) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1050, 1200) * 2
+                distance: Util.randomIntInRange(1050, 1200) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1300, 1400) * 2
+                distance: Util.randomIntInRange(1300, 1400) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
+                distance: Util.randomIntInRange(1500, 1550) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1900, 2000) * 2
+                distance: Util.randomIntInRange(1900, 2000) * 2
             }
         }, {
             type: 'cone',
@@ -3563,6 +3578,10 @@ exports.level4 = undefined;
 var _Color = require('../Color');
 
 var _Util = require('../Util');
+
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var boxColor = _Color.Color.palette[3].box;
 var ringColor = _Color.Color.palette[3].ring;
@@ -4923,49 +4942,49 @@ var level4 = exports.level4 = {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
+                distance: Util.randomIntInRange(250, 350) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(500, 600) * 2
+                distance: Util.randomIntInRange(500, 600) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(700, 800) * 2
+                distance: Util.randomIntInRange(700, 800) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1050, 1060) * 2
+                distance: Util.randomIntInRange(1050, 1060) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1300, 1320) * 2
+                distance: Util.randomIntInRange(1300, 1320) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1450, 1500) * 2
+                distance: Util.randomIntInRange(1450, 1500) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1600, 1625) * 2
+                distance: Util.randomIntInRange(1600, 1625) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(1900, 2100) * 2
+                distance: Util.randomIntInRange(1900, 2100) * 2
             }
         }, {
             type: 'cone',
@@ -5052,6 +5071,10 @@ exports.level5 = undefined;
 var _Color = require('../Color');
 
 var _Util = require('../Util');
+
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 var boxColor = _Color.Color.palette[4].box;
 var ringColor = _Color.Color.palette[4].ring;
@@ -6011,19 +6034,19 @@ var level5 = exports.level5 = {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
+                distance: Util.randomIntInRange(250, 350) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(500, 700) * 2
+                distance: Util.randomIntInRange(500, 700) * 2
             }
         }, {
             type: 'ring',
             color: ringColor,
             position: {
-                distance: _Util.Util.randomIntInRange(800, 900) * 2
+                distance: Util.randomIntInRange(800, 900) * 2
             }
         }, {
             type: 'ring',
@@ -6684,6 +6707,10 @@ exports.create = create;
 
 var _Util = require('../Util');
 
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CollisionDetector = function () {
@@ -6758,8 +6785,8 @@ var CollisionDetector = function () {
                 if (obstacle.collisionData.distance.max < currentPosition.distance) delete self.obstacles[i];
 
                 if (obstacle.collisionData.distance.min < currentPosition.distance + 100) {
-                    currentPosition.anglemin = _Util.Util.normalizeAngle(currentPosition.anglemin);
-                    currentPosition.anglemax = _Util.Util.normalizeAngle(currentPosition.anglemax);
+                    currentPosition.anglemin = Util.normalizeAngle(currentPosition.anglemin);
+                    currentPosition.anglemax = Util.normalizeAngle(currentPosition.anglemax);
                     _this.currentPosition = currentPosition;
                     _this.currentObstacle = obstacle;
                     if (currentPosition.anglemax < currentPosition.anglemin) currentPosition.anglemax = currentPosition.anglemax + 360;
@@ -7224,6 +7251,8 @@ var _Color = require('../Color');
 
 var _Util = require('../Util');
 
+var UTIL = _interopRequireWildcard(_Util);
+
 var _GUI = require('../GUI');
 
 var GUI = _interopRequireWildcard(_GUI);
@@ -7320,11 +7349,11 @@ var Way = function () {
          * @param {number} angle
          */
         value: function rotate(angle) {
-            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
-            if (_Util.Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = _Util.Util.convertDegreesToRadians(360);
+            if (Util.convertRadiansToDegrees(this.group.rotation.y) >= 360) this.group.rotation.y = 0;
+            if (Util.convertRadiansToDegrees(this.group.rotation.y) < 0) this.group.rotation.y = Util.convertDegreesToRadians(360);
 
             this.group.rotation.y += angle;
-            this.currentPosition.angle = _Util.Util.convertRadiansToDegrees(this.group.rotation.y);
+            this.currentPosition.angle = Util.convertRadiansToDegrees(this.group.rotation.y);
 
             this.setCurrentPosition();
         }
@@ -7399,6 +7428,10 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Util = require('../../Util');
 
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var THREE = require('three');
@@ -7435,7 +7468,7 @@ var Box = exports.Box = function () {
         key: 'position',
         value: function position(angle, distance, length, radius) {
             angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
+            angle = Util.convertDegreesToRadians(angle);
             var y = length / 2 - distance;
             var x = radius * Math.cos(angle);
             var z = -(radius * Math.sin(angle));
@@ -7455,15 +7488,15 @@ var Box = exports.Box = function () {
         value: function prepareForCollisionDetection(obstacle, radius) {
             var b = obstacle.size.width * 0.5;
             var angleRight = Math.atan(b / radius);
-            var minAngle = obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight);
-            var maxAngle = obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight);
+            var minAngle = obstacle.position.angle - Util.convertRadiansToDegrees(angleRight);
+            var maxAngle = obstacle.position.angle + Util.convertRadiansToDegrees(angleRight);
             return {
                 type: 'box',
                 size: obstacle.size,
                 angle: {
                     center: obstacle.position.angle,
-                    min: _Util.Util.normalizeAngle(minAngle),
-                    max: _Util.Util.normalizeAngle(maxAngle)
+                    min: Util.normalizeAngle(minAngle),
+                    max: Util.normalizeAngle(maxAngle)
                 },
                 distance: {
                     center: obstacle.position.distance,
@@ -7494,6 +7527,10 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Util = require('../../Util');
 
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var THREE = require('three');
@@ -7509,7 +7546,9 @@ var Cone = exports.Cone = function () {
     function Cone(cone) {
         (0, _classCallCheck3.default)(this, Cone);
 
-        this.material = new THREE.MeshLambertMaterial({ color: cone.color });
+        this.material = new THREE.MeshLambertMaterial({
+            color: cone.color
+        });
         this.geometry = new THREE.ConeGeometry(radius, height, 100, 100);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
@@ -7531,7 +7570,7 @@ var Cone = exports.Cone = function () {
             radius += height * 0.5;
             this.mesh.rotation.z -= Math.PI / 2;
             angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
+            angle = Util.convertDegreesToRadians(angle);
             var y = length / 2 - distance;
             var x = radius * Math.cos(angle);
             var z = -(radius * Math.sin(angle));
@@ -7553,8 +7592,8 @@ var Cone = exports.Cone = function () {
                 },
                 angle: {
                     center: obstacle.position.angle,
-                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
-                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
+                    min: obstacle.position.angle - Util.convertRadiansToDegrees(angleRight),
+                    max: obstacle.position.angle + Util.convertRadiansToDegrees(angleRight)
                 },
                 distance: {
                     center: obstacle.position.distance,
@@ -7584,6 +7623,10 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 var _createClass3 = _interopRequireDefault(_createClass2);
 
 var _Util = require('../../Util');
+
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7625,7 +7668,7 @@ var Diamond = exports.Diamond = function () {
         key: 'position',
         value: function position(angle, distance, length, radius) {
             angle = -(angle - 90);
-            angle = _Util.Util.convertDegreesToRadians(angle);
+            angle = Util.convertDegreesToRadians(angle);
             radius += heightFromWay;
             var y = length / 2 - distance;
             var x = radius * Math.cos(angle);
@@ -7680,6 +7723,10 @@ var _Ring = require('./Ring');
 
 var _Util = require('../../Util');
 
+var Util = _interopRequireWildcard(_Util);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 module.exports = function () {
     var _obstacleTypes = {
         box: _Box.Box,
@@ -7731,11 +7778,11 @@ module.exports = function () {
     Obstacle.prototype.move = function (direction) {
         if (direction) this.angle += 1;else this.angle -= 1;
 
-        this.angle = _Util.Util.normalizeAngle(this.angle);
+        this.angle = Util.normalizeAngle(this.angle);
 
         var radius = 80 + 15;
         var angle = -(this.angle - 90);
-        angle = _Util.Util.convertDegreesToRadians(angle);
+        angle = Util.convertDegreesToRadians(angle);
         var x = radius * Math.cos(angle);
         var z = -(radius * Math.sin(angle));
         this.mesh.rotation.y = angle;
@@ -7745,10 +7792,10 @@ module.exports = function () {
         //neue angle ist this.angle
         var a = radius - 0.5 * 30;
         var b = 30 * 0.5;
-        var angleRight = _Util.Util.convertRadiansToDegrees(Math.atan(b / a));
+        var angleRight = Util.convertRadiansToDegrees(Math.atan(b / a));
         this.collisionData.angle.center = this.angle;
-        this.collisionData.angle.min = _Util.Util.normalizeAngle(this.angle - angleRight);
-        this.collisionData.angle.max = _Util.Util.normalizeAngle(this.angle + angleRight);
+        this.collisionData.angle.min = Util.normalizeAngle(this.angle - angleRight);
+        this.collisionData.angle.max = Util.normalizeAngle(this.angle + angleRight);
     };
 
     return Obstacle;

@@ -1,6 +1,4 @@
-import {
-    Util
-} from '../Util';
+import * as Util from '../Util';
 class CollisionDetector {
 
     /**

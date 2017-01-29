@@ -1,5 +1,7 @@
-import { Color } from '../Color';
-import { Util } from '../Util';
+import {
+    Color
+} from '../Color';
+import * as Util from '../Util';
 let boxColor = Color.palette[3].box;
 let ringColor = Color.palette[3].ring;
 let coneColor = Color.palette[3].cone;
@@ -11,8 +13,7 @@ export let level4 = {
     way: {
         length: 4230,
         color: Color.palette[3].way,
-        obstacles : [
-            {
+        obstacles: [{
                 type: 'box',
                 size: {
                     width: 25,
@@ -1176,7 +1177,7 @@ export let level4 = {
                     distance: 3900,
                     angle: 300
                 }
-            },{
+            }, {
                 type: 'diamond',
                 position: {
                     distance: 3800,
@@ -1541,56 +1542,56 @@ export let level4 = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(250,350)*2
+                    distance: Util.randomIntInRange(250, 350) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(500,600)*2
+                    distance: Util.randomIntInRange(500, 600) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(700,800)*2
+                    distance: Util.randomIntInRange(700, 800) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(1050,1060)*2
+                    distance: Util.randomIntInRange(1050, 1060) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(1300,1320)*2
+                    distance: Util.randomIntInRange(1300, 1320) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(1450,1500)*2
+                    distance: Util.randomIntInRange(1450, 1500) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(1600,1625)*2
+                    distance: Util.randomIntInRange(1600, 1625) * 2
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: Util.randomIntInRange(1900,2100)*2
+                    distance: Util.randomIntInRange(1900, 2100) * 2
                 }
             },
 

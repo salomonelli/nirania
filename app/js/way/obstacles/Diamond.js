@@ -1,7 +1,5 @@
 let THREE = require('three');
-import {
-    Util
-} from '../../Util';
+import * as Util from '../../Util';
 
 const size = 10;
 const heightFromWay = 20;

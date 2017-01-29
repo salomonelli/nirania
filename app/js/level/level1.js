@@ -1,9 +1,7 @@
 import {
     Color
 } from '../Color';
-import {
-    Util
-} from '../Util';
+import * as Util from '../Util';
 let boxColor = Color.palette[1].box;
 export let level1 = {
     level: 1,
