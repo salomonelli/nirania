@@ -75,7 +75,6 @@ export class Level {
      * creates way
      */
     initWay() {
-        console.dir(this.currentLevel);
         this.way = Way.create(
             this.currentLevel.way.length,
             this.currentLevel.speed,
@@ -136,20 +135,21 @@ export class Level {
      */
     hitObstacle() {
         this.gameOver = true;
-        this.sound('hitObstacle');
+        Sound.play('hitObstacle');
     };
 
     /**
-     * plays sound
-     * @param {String} sound
+     * increases score on diamond hit and removes it
+     * @param {Obstacle} collObj - diamond whitch which the collision happened
      */
-    sound(sound) {
-        if (!this.playSound) return;
-        switch (sound) {
-            case 'hitObstacle':
-                Sound.play('hitObstacle');
-                break;
-        }
+    hitDiamond(collObj) {
+        if (this.lastDiamond && collObj.mesh.id === this.lastDiamond.mesh.id)
+            return;
+        Sound.play('hitDiamond');
+        this.lastDiamond = collObj;
+        this.diamonds++;
+        this.lastDiamond.mesh.visible = false;
+        GUI.setDiamondsInScoreBoard(this.diamonds);
     };
 
     /**
@@ -169,17 +169,6 @@ export class Level {
     getCollisionObject(currentPosition) {
         return this.collisionDetector.collision(currentPosition);
     }
-
-
-    /**
-     * calls animation functions of protagonist
-     * @param {THREE.Object3D} protagonist
-     * @param {THREE.Clock} clock
-     * @param {number} speedMulti
-     */
-    animateProtagonist(protagonist, clock, speedMulti) {
-        this.moveProtagonist(protagonist, clock);
-    };
 
     /**
      * sets transparency of protagonist
@@ -205,48 +194,23 @@ export class Level {
      * @param {function} cb - callback function
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
-    begin(protagonist) {
+    async begin(protagonist) {
         if (this.instruction) GUI.showInstruction(this.instruction);
         //reset diamonds
         this.lastDiamond = null;
         this.diamonds = 0;
         //reset way
         let t = this.way.length - 80;
-        let speedMulti = 2;
-        let clock = new THREE.Clock(true);
-        return new Promise((resolve, reject) => {
-            let animate = () => {
-                t -= speedMulti;
-                this.animateProtagonist(protagonist, clock, speedMulti);
-                this.way.moveForwardTillEnd(this.speed * speedMulti);
-                if (t <= 0 || this.checkCollision(protagonist)) {
-                    GUI.hideInstruction();
-                    resolve();
-                    return;
-                }
-                setTimeout(animate, this.speed);
-            };
-            animate(); //once
-        });
-    };
-
-    /**
-     * increases score on diamond hit and removes it
-     * @param {Obstacle} collObj - diamond whitch which the collision happened
-     */
-    hitDiamond(collObj) {
-        if (!this.lastDiamond || collObj.mesh.id != this.lastDiamond.mesh.id) {
-            if (this.playSound) Sound.play('hitDiamond');
-            this.lastDiamond = collObj;
-            this.diamonds++;
-            this.animateDiamond(collObj);
-            GUI.setDiamondsInScoreBoard(this.diamonds);
+        const speedMulti = 2;
+        const clock = new THREE.Clock(true);
+        while (t > 0 && !this.checkCollision(protagonist)) {
+            t -= speedMulti;
+            this.moveProtagonist(protagonist, clock);
+            this.way.moveForwardTillEnd(this.speed * speedMulti);
+            await new Promise(res => setTimeout(res, this.speed));
         }
+        GUI.hideInstruction();
     };
-
-    animateDiamond(diamond) {
-        this.lastDiamond.mesh.visible = false;
-    }
 
     /**
      * renders hogan tempalte success.mustache and adds it to html-body
@@ -266,10 +230,10 @@ export class Level {
             score: this.diamonds,
             level: this.current,
             next: this.current + 1,
-            last: last,
-            canNotBePlayed: canNotBePlayed,
-            disableNextLevel: disableNextLevel,
-            showOutro: showOutro
+            last,
+            canNotBePlayed,
+            disableNextLevel,
+            showOutro
         });
     };
 
@@ -288,48 +252,46 @@ export class Level {
      * @param {boolean} success - whether current level has been ended with success
      */
     async storeToDB(success) {
-        if (success) await Database.updateLevel(this.current, success, this.diamonds);
+        if (success)
+            await Database.updateLevel(this.current, success, this.diamonds);
     };
 
     /**
      * returns background color for level
      * @returns {number} color as hexdecimal
      */
-    background() {
-        let current = levels[this.current - 1];
-        return current.background;
-    };
-
-    /**
-     * returns total amount of diamonds
-     * @returns {number}
-     */
-    static getTotalDiamonds() {
-        return Cookies.get('total');
+    get backgroundColor() {
+        return this.currentLevel.background;
     };
 
     /**
      * checks whether the level can be played
-     * @param {number} level - that should be played
-     * @returns {boolean}
+     * @param {number} levelNr - that should be played
+     * @return {boolean}
      */
-    static async canBePlayed(level) {
-        if (level == 1) return true;
-        level--;
-        let obj = await Database.getLevel(level);
+    static async canBePlayed(levelNr) {
+        if (levelNr == 1) return true;
+        levelNr--;
+        const obj = await Database.getLevel(levelNr);
         if (
             obj.success &&
-            obj.diamonds >= levels[level - 1].requiredDiamonds
+            obj.diamonds >= levels[levelNr - 1].requiredDiamonds
         ) return true;
         return false;
     };
 
+    /**
+     * finds out last successfully played level
+     * @return {number}
+     */
     static async lastSuccessfulLevel() {
-        let levelAmount = levels.length;
-        let playable;
-        for (let i = 1; i <= levels.length; i++) {
-            playable = await Level.canBePlayed(i);
-            if (!playable) return i - 1;
+        const levelAmount = levels.length;
+        let ret;
+        let i = 0;
+        while (ret === false && i < levels.length) {
+            ret = await Level.canBePlayed(i + 1);
+            if (!ret) return i;
+            i++;
         }
         return 1;
     }

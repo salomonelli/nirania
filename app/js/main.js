@@ -196,7 +196,7 @@ const main = async function() {
     if (URLpath !== '') currentLevel = URLpath.replace('#', '');
     GUI.showLoadingIcon();
     await Protagonist.init();
-    let background = level[currentLevel].background();
+    let background = level[currentLevel].backgroundColor;
     mainScene = new Scene(window.innerWidth, window.innerHeight, background);
     document.body.appendChild(mainScene.renderer.domElement);
     GUI.removeLoadingIcon();

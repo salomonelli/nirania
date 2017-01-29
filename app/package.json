@@ -47,7 +47,7 @@
         "pouchdb-server": "^2.0.1",
         "pre-commit": "^1.2.2",
         "random-boolean": "*",
-        "rxdb": "^1.7.7",
+        "rxdb": "*",
         "rxjs": "^5.0.3",
         "three": "*",
         "tween.js": "*"

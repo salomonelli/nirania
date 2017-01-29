@@ -1,7 +1,7 @@
 import * as RxDB from 'rxdb';
 RxDB.plugin(require('pouchdb-adapter-idb'));
 
-const DBName = 'niraniaDB';
+const DBName = 'niraniaDB2';
 let DB, levelCollection, soundCollection;
 
 const levelSchema = {
@@ -12,6 +12,9 @@ const levelSchema = {
         level: {
             type: 'string',
             primary: true
+        },
+        levelID: {
+            type: 'number'
         },
         success: {
             type: 'boolean'
@@ -54,6 +57,7 @@ export async function updateLevel(level, success, diamonds) {
     } else {
         await levelCollection.insert({
             level: level + '',
+            levelID: level,
             diamonds: diamonds,
             success: success
         });
@@ -77,8 +81,17 @@ export async function getLevel(level) {
         diamonds: 0
     };
     if (doc) {
-        ret.success = doc.get('success');
-        ret.diamonds = doc.get('diamonds');
+        ret.success = doc.success;
+        ret.diamonds = doc.diamonds;
     }
     return ret;
+};
+
+export async function getLastSuccessfulLevel(diamonds) {
+    let doc = await levelCollection.findOne()
+        .where('success').eq(true)
+        .where('diamonds').gt(diamonds - 1)
+        .sort('-levelID')
+        .exec();
+    return doc.levelID;
 };

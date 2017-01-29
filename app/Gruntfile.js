@@ -28,7 +28,7 @@ module.exports = function(grunt) {
                 transform: [
                     'browserify-hogan', ['babelify', {
                         'presets': ['latest']
-                    }], 'cssify'
+                    }]
                 ]
             }
         },
