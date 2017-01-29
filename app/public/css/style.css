@@ -106,3 +106,13 @@ body .dividers .left {
 body .dividers .right {
   float: right;
 }
+body .can-not-be-played {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  text-align: center;
+}
+body .can-not-be-played button {
+  margin-top: 40px;
+}
