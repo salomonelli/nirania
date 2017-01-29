@@ -1,5 +1,9 @@
-import { Color } from '../Color';
-import { Util } from '../Util';
+import {
+    Color
+} from '../Color';
+import {
+    Util
+} from '../Util';
 let boxColor = Color.palette[1].box;
 export let level1 = {
     level: 1,
@@ -8,10 +12,9 @@ export let level1 = {
     background: Color.palette[1].background,
     requiredDiamonds: 0,
     way: {
-        length: 1300,
+        length: 2000,
         color: Color.palette[1].way,
-        obstacles: [
-            {
+        obstacles: [{
                 type: 'box',
                 size: {
                     width: 25,
@@ -20,7 +23,7 @@ export let level1 = {
                 },
                 color: boxColor,
                 position: {
-                    distance: 900,
+                    distance: 1500,
                     angle: 0
                 }
             },
@@ -33,7 +36,7 @@ export let level1 = {
                 },
                 color: boxColor,
                 position: {
-                    distance: 900,
+                    distance: 1500,
                     angle: 90
                 }
             },
@@ -46,7 +49,7 @@ export let level1 = {
                 },
                 color: boxColor,
                 position: {
-                    distance: 900,
+                    distance: 1500,
                     angle: 180
                 }
             },
@@ -59,7 +62,7 @@ export let level1 = {
                 },
                 color: boxColor,
                 position: {
-                    distance: 900,
+                    distance: 1500,
                     angle: 270
                 }
             }

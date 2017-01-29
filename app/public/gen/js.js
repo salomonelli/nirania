@@ -44,6 +44,13 @@ var Color = exports.Color = {
         box: 0xFD6E4E,
         ring: 0x8A5C45,
         cone: 0x463F2F
+    }, {
+        name: 'orange black',
+        background: 0x494B4A,
+        way: 0xB9A58C,
+        box: 0xAC8BA0,
+        ring: 0xFFC3A7,
+        cone: 0xE8DFCE
     }]
 };
 
@@ -1838,7 +1845,7 @@ var level1 = exports.level1 = {
     background: _Color.Color.palette[1].background,
     requiredDiamonds: 0,
     way: {
-        length: 1300,
+        length: 2000,
         color: _Color.Color.palette[1].way,
         obstacles: [{
             type: 'box',
@@ -1849,7 +1856,7 @@ var level1 = exports.level1 = {
             },
             color: boxColor,
             position: {
-                distance: 900,
+                distance: 1500,
                 angle: 0
             }
         }, {
@@ -1861,7 +1868,7 @@ var level1 = exports.level1 = {
             },
             color: boxColor,
             position: {
-                distance: 900,
+                distance: 1500,
                 angle: 90
             }
         }, {
@@ -1873,7 +1880,7 @@ var level1 = exports.level1 = {
             },
             color: boxColor,
             position: {
-                distance: 900,
+                distance: 1500,
                 angle: 180
             }
         }, {
@@ -1885,7 +1892,7 @@ var level1 = exports.level1 = {
             },
             color: boxColor,
             position: {
-                distance: 900,
+                distance: 1500,
                 angle: 270
             }
         }]
@@ -1904,681 +1911,401 @@ var _Color = require('../Color');
 
 var _Util = require('../Util');
 
-var boxColor = _Color.Color.palette[0].box;
-var ringColor = _Color.Color.palette[0].ring;
-
+var boxColor = _Color.Color.palette[5].box;
 var level2 = exports.level2 = {
     level: 2,
     speed: 1,
-    background: _Color.Color.palette[0].background,
-    requiredDiamonds: 8,
+    instruction: 'Collect diamonds <i class="fa fa-diamond" aria-hidden="true"></i> and try to avoid obstacles.',
+    background: _Color.Color.palette[5].background,
+    requiredDiamonds: 5,
     way: {
-        length: 3230,
-        color: _Color.Color.palette[0].way,
-        obstacles: [{
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 450,
-                angle: 60
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 546,
-                angle: 193
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 760,
-                angle: 340
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 824,
-                angle: 315
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 50,
-                length: 25,
-                height: 10
-            },
-            color: boxColor,
-            position: {
-                distance: 863,
-                angle: 71
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 892,
-                angle: 180
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 200,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1057,
-                angle: 152
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1068,
-                angle: 282
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1162,
-                angle: 37
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1290,
-                angle: 159
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 35,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1357,
-                angle: 20
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1420,
-                angle: 350
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1500,
-                angle: 190
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1507,
-                angle: 310
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 20,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1520,
-                angle: 125
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1532,
-                angle: 258
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 37,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1625,
-                angle: 271
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1635,
-                angle: 206
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1721,
-                angle: 9
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1740,
-                angle: 109
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 55,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1820,
-                angle: 131
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 10,
-                length: 75,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1843,
-                angle: 76
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1900,
-                angle: 279
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1923,
-                angle: 64
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 1973,
-                angle: 230
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2046,
-                angle: 295
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2080,
-                angle: 110
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2120,
-                angle: 160
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2298,
-                angle: 284
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2438,
-                angle: 269
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2567,
-                angle: 170
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2675,
-                angle: 265
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2750,
-                angle: 207
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2865,
-                angle: 25
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 2964,
-                angle: 333
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 100,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 3050,
-                angle: 138
-            }
-        }, {
-            type: 'box',
-            size: {
-                width: 25,
-                length: 25,
-                height: 15
-            },
-            color: boxColor,
-            position: {
-                distance: 3100,
-                angle: 43
-            }
-        },
-        //End fo Boxes
-
+        length: 2000,
+        color: _Color.Color.palette[5].way,
+        obstacles: [
+        // ring of diamonds
         {
             type: 'diamond',
             position: {
-                distance: 300,
-                angle: 40
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 350,
-                angle: 42
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 400,
-                angle: 44
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 450,
-                angle: 46
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 500,
-                angle: 48
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 550,
-                angle: 50
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 700,
-                angle: 270
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 770,
-                angle: 280
+                distance: 800,
+                angle: 0
             }
         }, {
             type: 'diamond',
             position: {
                 distance: 800,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 950,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1000,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1050,
-                angle: 280
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 1225,
                 angle: 30
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 1300,
-                angle: 25
+                distance: 800,
+                angle: 60
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 1375,
-                angle: 20
+                distance: 800,
+                angle: 90
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 1450,
+                distance: 800,
+                angle: 120
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 150
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 180
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 210
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 240
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 270
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 300
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 330
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 800,
+                angle: 360
+            }
+        },
+        // ring of diamonds
+        {
+            type: 'diamond',
+            position: {
+                distance: 600,
                 angle: 15
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 1700,
+                distance: 600,
+                angle: 45
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 75
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 105
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 165
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 195
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 255
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 285
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 600,
                 angle: 345
             }
         }, {
             type: 'diamond',
-
             position: {
-                distance: 1750,
-                angle: 340
+                distance: 600,
+                angle: 15
+            }
+        },
+        // boxes
+        {
+            type: 'box',
+            size: {
+                width: 50,
+                length: 800,
+                height: 25
+            },
+            color: boxColor,
+            position: {
+                distance: 1500,
+                angle: 0
             }
         }, {
-            type: 'diamond',
-
+            type: 'box',
+            size: {
+                width: 50,
+                length: 800,
+                height: 25
+            },
+            color: boxColor,
             position: {
-                distance: 1800,
-                angle: 335
+                distance: 1500,
+                angle: 90
             }
         }, {
-            type: 'diamond',
+            type: 'box',
+            size: {
+                width: 50,
+                length: 800,
+                height: 25
+            },
+            color: boxColor,
             position: {
-                distance: 1950,
-                angle: 330
+                distance: 1500,
+                angle: 180
             }
         }, {
-            type: 'diamond',
+            type: 'box',
+            size: {
+                width: 50,
+                length: 800,
+                height: 25
+            },
+            color: boxColor,
             position: {
-                distance: 2000,
-                angle: 330
+                distance: 1500,
+                angle: 270
             }
-        }, {
+        },
+        // diamonds at 45°
+        {
             type: 'diamond',
             position: {
-                distance: 2050,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2500,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2550,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2600,
-                angle: 330
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2650,
-                angle: 320
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2750,
-                angle: 310
-            }
-        }, {
-            type: 'diamond',
-            position: {
-                distance: 2800,
-                angle: 310
+                distance: 1100,
+                angle: 45
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 2900,
-                angle: 310
+                distance: 1200,
+                angle: 45
             }
         }, {
             type: 'diamond',
             position: {
-                distance: 3000,
-                angle: 310
+                distance: 1300,
+                angle: 45
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(250, 350) * 2
+                distance: 1400,
+                angle: 45
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(500, 600) * 2
+                distance: 1500,
+                angle: 45
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(750, 850) * 2
+                distance: 1600,
+                angle: 45
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(1000, 1100) * 2
+                distance: 1700,
+                angle: 45
+            }
+        },
+        // diamonds at 135°
+        {
+            type: 'diamond',
+            position: {
+                distance: 1100,
+                angle: 135
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(1300, 1350) * 2
+                distance: 1200,
+                angle: 135
             }
         }, {
-            type: 'ring',
-            color: ringColor,
+            type: 'diamond',
             position: {
-                distance: _Util.Util.randomIntInRange(1500, 1550) * 2
+                distance: 1300,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1400,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1500,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1600,
+                angle: 135
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 135
+            }
+        },
+        // diamonds at 225°
+        {
+            type: 'diamond',
+            position: {
+                distance: 1100,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1200,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1400,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1500,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1600,
+                angle: 225
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 225
+            }
+        },
+        // diamonds 315 °
+        {
+            type: 'diamond',
+            position: {
+                distance: 1100,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1200,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1300,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1400,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1500,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1600,
+                angle: 315
+            }
+        }, {
+            type: 'diamond',
+            position: {
+                distance: 1700,
+                angle: 315
             }
         }]
     }
@@ -7342,7 +7069,7 @@ var Protagonist = exports.Protagonist = function () {
 },{"./Body":16,"./Head":18,"./Leg":19,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36,"js-cookie":440,"three":865,"tween.js":866}],21:[function(require,module,exports){
 var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"gameoverScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Game Over</h1>");_.b("\n" + i);_.b("        <h3>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h3>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p>");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":433}],22:[function(require,module,exports){
-var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p> Diamonds: ");_.b(_.v(_.f("score",c,p,0)));_.b("</p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i> Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,508,615,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"callout alert\">");_.b("\n" + i);_.b("                More diamonds required");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
+var t = new (require('hogan.js/lib/template')).Template(function(c,p,i){var _=this;_.b(i=i||"");_.b("<div id=\"successScreen\">");_.b("\n" + i);_.b("    <div class=\"wrapper\">");_.b("\n" + i);_.b("        <h1>Level ");_.b(_.v(_.f("level",c,p,0)));_.b("</h1>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <p> ");_.b(_.v(_.f("score",c,p,0)));_.b(" <i class=\"fa fa-diamond\" aria-hidden=\"true\"></i></p>");_.b("\n" + i);_.b("        <br>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("level",c,p,0)));_.b("\" class=\"button reload\">");_.b("\n" + i);_.b("            <i class=\"fa fa-repeat\" aria-hidden=\"true\"></i> Run again");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        <a href=\"/#");_.b(_.v(_.f("next",c,p,0)));_.b("\" class=\"button success reload ");_.b(_.v(_.f("last",c,p,0)));_.b(" ");_.b(_.v(_.f("disableNextLevel",c,p,0)));_.b("\">");_.b("\n" + i);_.b("            <i class=\"fa fa-check\" aria-hidden=\"true\"></i> Next Level");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);_.b("        </a>");_.b("\n" + i);if(_.s(_.f("canNotBePlayed",c,p,1),c,p,0,547,654,"{{ }}")){_.rs(c,p,function(c,p,_){_.b("            <div class=\"callout alert\">");_.b("\n" + i);_.b("                More diamonds required");_.b("\n" + i);_.b("            </div>");_.b("\n");});c.pop();}_.b("\n" + i);_.b("        <div class=\"shopScreen\"></div>");_.b("\n" + i);_.b("\n" + i);_.b("    </div>");_.b("\n" + i);_.b("</div>");_.b("\n");return _.fl();;});module.exports = {  render: function () { return t.render.apply(t, arguments); },  r: function () { return t.r.apply(t, arguments); },  ri: function () { return t.ri.apply(t, arguments); }};
 },{"hogan.js/lib/template":433}],23:[function(require,module,exports){
 'use strict';
 
