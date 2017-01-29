@@ -1,3 +1,6 @@
+import {
+    Util
+} from '../Util';
 class CollisionDetector {
 
     /**
@@ -30,6 +33,8 @@ class CollisionDetector {
             type: null,
             mesh: null
         };
+        currentPosition.anglemin = Util.normalizeAngle(currentPosition.anglemin);
+        currentPosition.anglemax = Util.normalizeAngle(currentPosition.anglemax);
         self.obstacles.forEach((obstacle, i) => {
             if (ret.collision) return;
             // check if obstacle should not be checked anymore
@@ -38,7 +43,7 @@ class CollisionDetector {
 
             if (
                 // check if obstacle is near enough otherwise don't even check whether collision
-                obstacle.collisionData.distance.min < (currentPosition.distance + 100) &&
+                // obstacle.collisionData.distance.min < (currentPosition.distance + 100) &&
                 (
                     //other collision with left body half
                     obstacle.collisionData.distance.min < currentPosition.distance &&
@@ -70,6 +75,24 @@ class CollisionDetector {
                     currentPosition.distance > obstacle.collisionData.distance.min &&
                     currentPosition.anglemax < obstacle.collisionData.angle.max &&
                     currentPosition.anglemax > obstacle.collisionData.angle.min
+                ) ||
+                (
+                    // min angle is larger than max angle (right body half)
+                    obstacle.collisionData.angle.min > obstacle.collisionData.angle.max &&
+                    obstacle.collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < obstacle.collisionData.distance.max &&
+                    obstacle.collisionData.size.height > currentPosition.height &&
+                    currentPosition.anglemax > obstacle.collisionData.angle.min &&
+                    currentPosition.anglemax <= 360
+                ) ||
+                (
+                    // min angle is larger than max angle (left body half)
+                    obstacle.collisionData.angle.min > obstacle.collisionData.angle.max &&
+                    obstacle.collisionData.distance.min < currentPosition.distance &&
+                    currentPosition.distance < obstacle.collisionData.distance.max &&
+                    obstacle.collisionData.size.height > currentPosition.height &&
+                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                    currentPosition.anglemin >= 0
                 )
             ) {
 

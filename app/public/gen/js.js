@@ -1289,52 +1289,52 @@ function setMusicSettings(isOn) {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 var Util = exports.Util = {
-  /**
-   * converts degrees to radians
-   * @param {number} degrees
-   * @returns {number}
-   */
-  convertDegreesToRadians: function convertDegreesToRadians(degrees) {
-    return degrees * (Math.PI / 180);
-  },
+    /**
+     * converts degrees to radians
+     * @param {number} degrees
+     * @returns {number}
+     */
+    convertDegreesToRadians: function convertDegreesToRadians(degrees) {
+        return degrees * (Math.PI / 180);
+    },
 
-  /**
-   * converts radians to degrees
-   * @param {number} radians
-   * @returns {number}
-   */
-  convertRadiansToDegrees: function convertRadiansToDegrees(radians) {
-    return radians * (180 / Math.PI);
-  },
+    /**
+     * converts radians to degrees
+     * @param {number} radians
+     * @returns {number}
+     */
+    convertRadiansToDegrees: function convertRadiansToDegrees(radians) {
+        return radians * (180 / Math.PI);
+    },
 
-  /**
-   * Returns a random number between min (inclusive) and max (exclusive)
-   * @returns {number}
-   */
-  randomNumberInRange: function randomNumberInRange(min, max) {
-    return Math.random() * (max - min) + min;
-  },
+    /**
+     * Returns a random number between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    randomNumberInRange: function randomNumberInRange(min, max) {
+        return Math.random() * (max - min) + min;
+    },
 
-  /**
-   * Returns a random int between min (inclusive) and max (exclusive)
-   * @returns {number}
-   */
-  randomIntInRange: function randomIntInRange(min, max) {
-    return Math.round(Util.randomNumberInRange(min, max));
-  },
+    /**
+     * Returns a random int between min (inclusive) and max (exclusive)
+     * @returns {number}
+     */
+    randomIntInRange: function randomIntInRange(min, max) {
+        return Math.round(Util.randomNumberInRange(min, max));
+    },
 
-  /**
-   * normalizes angle
-   * @param {number} angle - in degrees
-   */
-  normalizeAngle: function normalizeAngle(angle) {
-    //if (angle < 0) angle = angle + 360; //always positive
-    angle = angle % 360; //always <360
-    return angle;
-  }
+    /**
+     * normalizes angle
+     * @param {number} angle - in degrees
+     */
+    normalizeAngle: function normalizeAngle(angle) {
+        if (angle < 0) angle = angle + 360; //always positive
+        angle = angle % 360; //always <360
+        return angle;
+    }
 };
 
 },{}],9:[function(require,module,exports){
@@ -6661,6 +6661,8 @@ var _createClass3 = _interopRequireDefault(_createClass2);
 
 exports.create = create;
 
+var _Util = require('../Util');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var CollisionDetector = function () {
@@ -6701,6 +6703,8 @@ var CollisionDetector = function () {
                 type: null,
                 mesh: null
             };
+            currentPosition.anglemin = _Util.Util.normalizeAngle(currentPosition.anglemin);
+            currentPosition.anglemax = _Util.Util.normalizeAngle(currentPosition.anglemax);
             self.obstacles.forEach(function (obstacle, i) {
                 if (ret.collision) return;
                 // check if obstacle should not be checked anymore
@@ -6709,7 +6713,8 @@ var CollisionDetector = function () {
 
                 if (
                 // check if obstacle is near enough otherwise don't even check whether collision
-                obstacle.collisionData.distance.min < currentPosition.distance + 100 &&
+                // obstacle.collisionData.distance.min < (currentPosition.distance + 100) &&
+
                 //other collision with left body half
                 obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.angle.min < currentPosition.anglemin && currentPosition.anglemin < obstacle.collisionData.angle.max && obstacle.collisionData.size.height > currentPosition.height ||
                 //other collisions from right body half.
@@ -6717,7 +6722,11 @@ var CollisionDetector = function () {
                 //cone
                 obstacle.collisionData.type == 'cone' && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin > obstacle.collisionData.angle.min ||
                 //cone
-                obstacle.collisionData.type == 'cone' && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min) {
+                obstacle.collisionData.type == 'cone' && currentPosition.distance < obstacle.collisionData.distance.max && currentPosition.distance > obstacle.collisionData.distance.min && currentPosition.anglemax < obstacle.collisionData.angle.max && currentPosition.anglemax > obstacle.collisionData.angle.min ||
+                // min angle is larger than max angle (right body half)
+                obstacle.collisionData.angle.min > obstacle.collisionData.angle.max && obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.size.height > currentPosition.height && currentPosition.anglemax > obstacle.collisionData.angle.min && currentPosition.anglemax <= 360 ||
+                // min angle is larger than max angle (left body half)
+                obstacle.collisionData.angle.min > obstacle.collisionData.angle.max && obstacle.collisionData.distance.min < currentPosition.distance && currentPosition.distance < obstacle.collisionData.distance.max && obstacle.collisionData.size.height > currentPosition.height && currentPosition.anglemin < obstacle.collisionData.angle.max && currentPosition.anglemin >= 0) {
 
                     ret = {
                         collision: true,
@@ -6736,7 +6745,7 @@ function create(obstacles) {
     return new CollisionDetector(obstacles);
 }
 
-},{"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36}],18:[function(require,module,exports){
+},{"../Util":8,"babel-runtime/helpers/classCallCheck":35,"babel-runtime/helpers/createClass":36}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7350,7 +7359,9 @@ var Box = exports.Box = function () {
     function Box(box) {
         (0, _classCallCheck3.default)(this, Box);
 
-        this.material = new THREE.MeshLambertMaterial({ color: box.color });
+        this.material = new THREE.MeshLambertMaterial({
+            color: box.color
+        });
         this.geometry = new THREE.BoxGeometry(box.size.height, box.size.length, box.size.width);
         this.mesh = new THREE.Mesh(this.geometry, this.material);
         this.mesh.receiveShadow = true;
@@ -7390,13 +7401,17 @@ var Box = exports.Box = function () {
         value: function prepareForCollisionDetection(obstacle, radius) {
             var b = obstacle.size.width * 0.5;
             var angleRight = Math.atan(b / radius);
+            var minAngle = obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight);
+            var maxAngle = obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight);
+            console.log('min: ' + _Util.Util.normalizeAngle(minAngle));
+            console.log('max: ' + _Util.Util.normalizeAngle(maxAngle));
             return {
                 type: 'box',
                 size: obstacle.size,
                 angle: {
                     center: obstacle.position.angle,
-                    min: obstacle.position.angle - _Util.Util.convertRadiansToDegrees(angleRight),
-                    max: obstacle.position.angle + _Util.Util.convertRadiansToDegrees(angleRight)
+                    min: _Util.Util.normalizeAngle(minAngle),
+                    max: _Util.Util.normalizeAngle(maxAngle)
                 },
                 distance: {
                     center: obstacle.position.distance,
