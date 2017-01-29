@@ -48,8 +48,6 @@ export class Box {
         let angleRight = Math.atan(b / radius);
         let minAngle = obstacle.position.angle - Util.convertRadiansToDegrees(angleRight);
         let maxAngle = obstacle.position.angle + Util.convertRadiansToDegrees(angleRight);
-        console.log('min: ' + Util.normalizeAngle(minAngle));
-        console.log('max: ' + Util.normalizeAngle(maxAngle));
         return {
             type: 'box',
             size: obstacle.size,
