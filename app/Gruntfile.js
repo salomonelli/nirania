@@ -2,8 +2,19 @@ module.exports = function(grunt) {
     require('jit-grunt')(grunt);
     grunt.loadNpmTasks('grunt-browserify');
     grunt.loadNpmTasks('grunt-contrib-less');
-    grunt.loadNpmTasks('grunt-contrib-less');
+    grunt.loadNpmTasks('grunt-contrib-copy');
     grunt.initConfig({
+        copy: {
+            target: {
+                files: [{
+                        expand: true,
+                        src: ['node_modules/font-awesome/**'],
+                        dest: 'public/'
+                    },
+
+                ]
+            }
+        },
         less: {
             production: {
                 files: {
@@ -17,7 +28,7 @@ module.exports = function(grunt) {
                 transform: [
                     'browserify-hogan', ['babelify', {
                         'presets': ['latest']
-                    }]
+                    }], 'cssify'
                 ]
             }
         },
@@ -48,5 +59,5 @@ module.exports = function(grunt) {
         }
     });
 
-    grunt.registerTask('default', ['browserify', 'less', 'watch']);
-};
+    grunt.registerTask('default', ['copy', 'browserify', 'less', 'watch']);
+};;

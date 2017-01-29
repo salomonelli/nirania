@@ -26,7 +26,7 @@ let TWEEN = require('tween.js');
 let Cookies = require('js-cookie');
 
 
-//because some three js modules need a global THREE-letiable....
+//because some three js modules need a global THREE variable....
 window.THREE = THREE;
 
 let mainScene;

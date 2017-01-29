@@ -6522,7 +6522,7 @@ var async = require('async');
 var TWEEN = require('tween.js');
 var Cookies = require('js-cookie');
 
-//because some three js modules need a global THREE-letiable....
+//because some three js modules need a global THREE variable....
 window.THREE = THREE;
 
 var mainScene = void 0;
