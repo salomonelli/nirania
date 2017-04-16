@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import {get as LevelModelGet} from '../../models/level.model';
+import LevelRendererService from '../../services/level-renderer.service';
 import './level.css';
 
 import DividerComponent from '../../components/divider/divider';
@@ -17,7 +18,8 @@ class LevelPage extends Component {
       const canBePlayed = await this.levelDoc.canBePlayed();
       if(canBePlayed) {
         // yes : build level
-        this.dividerComponent.open();
+        this.renderLevelToDom(this.gameDom);
+        await this.dividerComponent.open();
       } else{
         // no : redirect, alert ..
 
@@ -26,12 +28,16 @@ class LevelPage extends Component {
 
     componentWillUnmount() {}
 
+    renderLevelToDom(domElement) {
+      LevelRendererService.render(domElement);
+    }
+
     render() {
         return (
             <div>
                 <h1>Nirania {this.props.match.params.level}</h1>
                 <DividerComponent ref={instance => this.dividerComponent = instance}/>
-                <div className="game"></div>
+                <div ref={instance => this.gameDom = instance} className="game"></div>
             </div>
         );
     }
