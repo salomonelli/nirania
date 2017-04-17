@@ -29,8 +29,8 @@ export class Scene {
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.scene = new THREE.Scene();
         this.setSceneBackground(background);
-        this.powerupUsed = false;
-        this.boostNotUsed = true;
+        // this.powerupUsed = false;
+        // this.boostNotUsed = true;
         this.renderer = new THREE.WebGLRenderer();
         this.setRendererSize();
         this.enableShadowMap(false);

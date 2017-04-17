@@ -8,9 +8,12 @@
     "pouchdb-adapter-idb": "^6.1.2",
     "pouchdb-replication": "^6.1.2",
     "pouchdb-server": "^2.3.4",
+    "random-boolean": "^1.0.0",
     "react": "^15.4.2",
     "react-dom": "^15.4.2",
-    "rxjs": "^5.2.0"
+    "rxjs": "^5.2.0",
+    "three": "^0.84.0",
+    "tween.js": "^16.6.0"
   },
   "devDependencies": {
     "autoprefixer": "6.7.2",
