@@ -294,8 +294,8 @@ class Scene {
      * @param {Scene} scene
      * @param {string} direction - 'left' or 'right'
      */
-    static stopMovingProtagonist(scene, direction) {
-        scene.move[direction] = false;
+    stopMovingProtagonist(direction) {
+        this.move[direction] = false;
     };
 
     /**
@@ -303,8 +303,8 @@ class Scene {
      * @param {Scene} scene
      * @param {string} direction - 'left' or 'right'
      */
-    static startMovingProtagonist(scene, direction) {
-        scene.move[direction] = true;
+    startMovingProtagonist(direction) {
+        this.move[direction] = true;
     };
 
     async startUtilEnd() {
