@@ -30,7 +30,7 @@ class Level {
     constructor(id) {
         this.id = id;
         this.currentLevel = levels.find(level => level.id === this.id);
-        this.way =  Way.create(
+        this.way = Way.create(
             this.currentLevel.way.length,
             this.currentLevel.speed,
             this.currentLevel.way.color
@@ -93,7 +93,7 @@ class Level {
         this.lastDiamond = collObj;
         this.diamonds++;
         this.lastDiamond.mesh.visible = false;
-//        GUI.setDiamondsInScoreBoard(this.diamonds);
+        //        GUI.setDiamondsInScoreBoard(this.diamonds);
     };
 
     /**
@@ -124,16 +124,6 @@ class Level {
     }
 
     /**
-     * moves protagonist to position (body and legs)
-     * @param {THREE.Object3D} protagonist
-     * @param {THREE.clock} clock
-     */
-    moveProtagonist(protagonist, clock) {
-        let position = Math.sin(clock.getElapsedTime() * 10) * 1;
-        Protagonist.get().move(protagonist, position);
-    };
-
-    /**
      * starts level
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
@@ -147,7 +137,7 @@ class Level {
         const clock = new THREE.Clock(true);
         while (t > 0 && !this.checkCollision(protagonist)) {
             t -= speedMulti;
-            this.moveProtagonist(protagonist.group, clock);
+            Protagonist.get().animateMovement();
             this.way.moveForwardTillEnd(this.speed * speedMulti);
             await new Promise(res => setTimeout(res, this.speed));
         }
@@ -168,25 +158,25 @@ class Level {
             canNotBePlayed = 'true';
             disableNextLevel = 'disabled';
         }
-      /*  await GUI.showSuccessScreen({
-            score: this.diamonds,
-            level: this.id,
-            next: this.id + 1,
-            last,
-            canNotBePlayed,
-            disableNextLevel,
-            showOutro
-        });*/
+        /*  await GUI.showSuccessScreen({
+              score: this.diamonds,
+              level: this.id,
+              next: this.id + 1,
+              last,
+              canNotBePlayed,
+              disableNextLevel,
+              showOutro
+          });*/
     };
 
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
     async showGameOverScreen() {
-/*        await GUI.showGameOverScreen({
-            score: this.diamonds,
-            level: this.id
-        });*/
+        /*        await GUI.showGameOverScreen({
+                    score: this.diamonds,
+                    level: this.id
+                });*/
     };
 
 

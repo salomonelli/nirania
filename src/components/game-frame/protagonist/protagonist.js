@@ -4,10 +4,10 @@ import * as TWEEN from 'tween.js';
 import * as Part from './part';
 
 let protagonist = null;
+const CLOCK = new THREE.Clock(true);
 
 class Protagonist {
     constructor() {
-
         this.object3D = new THREE.Object3D();
         this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
 
@@ -36,6 +36,16 @@ class Protagonist {
         this.left.leg.position(0, 0, 0);
         this.left.leg.addToGroup(this.object3D);
     }
+
+    /**
+     * moves protagonist to position (body and legs)
+     * @param {THREE.Object3D} protagonist
+     * @param {THREE.clock} clock
+     */
+    animateMovement() {
+        const position = Math.sin(CLOCK.getElapsedTime() * 10) * 1;
+        this.move(position);
+    };
 
     /**
      * Makes protagonist jump a given height
@@ -149,10 +159,10 @@ class Protagonist {
     /**
      * moves group of protagonist
      */
-    move(group, position) {
-        group.children[0].position.x = position * -0.05;
-        group.children[3].position.z = position * 1;
-        group.children[2].position.z = position * -1;
+    move(position) {
+        this.group.children[0].position.x = position * -0.05;
+        this.group.children[3].position.z = position * 1;
+        this.group.children[2].position.z = position * -1;
     }
 }
 

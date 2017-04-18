@@ -1,10 +1,7 @@
 import React, {Component} from 'react';
 import './game-frame.css';
 
-import * as Protagonist from './protagonist/protagonist';
-import * as Level from './level/level';
-import * as Scene from './Scene';
-import Keybindings from './Keybindings';
+import * as Play from './play';
 
 
 class GameFrameComponent extends Component {
@@ -16,23 +13,24 @@ class GameFrameComponent extends Component {
     }
 
     async componentDidMount() {
+
+
+        // const play = Play.byLevelId(1);
+        // play.renderToDomElement();
+        // const play$ = play.start();
+        // ...
+        //
+        //
+        // play.pause()
+
         console.log('levelId: ' + this.props.level);
-        const level = Level.getById(this.props.level);
-        const scene = Scene.create(window.innerWidth, window.innerHeight, level);
-        scene.renderToDomElement(this.gameFrameDom);
-        scene.simpleIntro();
-        scene.addLevel(level);
+        const play = Play.byLevelId(this.props.level);
+        play.renderToDomElement(this.gameFrameDom);
+
+        const playStatus$ = play.start();
 
 
-
-        scene.move.continue = true;
-        this.running = true;
-        scene.startUtilEnd();
-        level.begin(Protagonist.get());
-
-        // key-handlers
-        this.subs.push(Keybindings.keyBind('keydown').subscribe(direction => scene.startMovingProtagonist(direction)));
-        this.subs.push(Keybindings.keyBind('keyup').subscribe(direction => scene.stopMovingProtagonist(direction)));
+        
 
     }
 
