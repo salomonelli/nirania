@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 import * as Util from '../../util';
 const height = 30;
 const radius = 15;

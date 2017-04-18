@@ -31,63 +31,26 @@ class Level {
     constructor(id) {
         this.id = id;
         this.currentLevel = levels.find(level => level.id === this.id);
-        this.way = null;
+        this.way =  Way.create(
+            this.currentLevel.way.length,
+            this.currentLevel.speed,
+            this.currentLevel.way.color
+        );
         this.speed = 1;
-        this.collisionDetector = null;
         this.gameOver = false;
         this.diamonds = 0;
         this.lastDiamond = null;
         this.opacityHelper = -375;
         this.playSound = true;
-        this.instruction = '';
-        this.requiredDiamonds = 0;
-    }
+        this.instruction = this.currentLevel.instruction || '';
+        this.requiredDiamonds = this.currentLevel.requiredDiamonds || 0;
 
-    /**
-     * generates and positions meshes for the current level
-     */
-    prepare() {
-        this.initInstruction();
-        this.initRequiredDiamonds();
-        this.initWay();
-        this.initCollisionDetector();
-    };
-
-    /**
-     * creates way
-     */
-    initWay() {
-        this.way = Way.create(
-            this.currentLevel.way.length,
-            this.currentLevel.speed,
-            this.currentLevel.way.color
-        );
         this.way.addObstacles(this.currentLevel.way.obstacles);
         this.way.position();
-    };
 
-    /**
-     * initiates collision detection
-     */
-    initCollisionDetector() {
         this.collisionDetector = CollisionDetector.create(this.way.obstacles);
-    };
+    }
 
-    /**
-     * sets instruction if not null
-     */
-    initInstruction() {
-        if (this.currentLevel.instruction)
-            this.instruction = this.currentLevel.instruction;
-    };
-
-    /**
-     * sets requiredDiamonds if not null
-     */
-    initRequiredDiamonds() {
-        if (this.currentLevel.requiredDiamonds)
-            this.requiredDiamonds = this.currentLevel.requiredDiamonds;
-    };
 
     /**
      * calls collision detector and returns true if game needs to be ended
@@ -238,6 +201,5 @@ class Level {
 
 export function getById(id) {
     const ret = new Level(parseInt(id, 10));
-    ret.prepare();
     return ret;
 }

@@ -22,6 +22,9 @@ class GameFrameComponent extends Component {
         scene.renderToDomElement(this.gameFrameDom);
         scene.simpleIntro();
         scene.addLevel(level);
+
+
+
         scene.move.continue = true;
         this.running = true;
         scene.startUtilEnd();

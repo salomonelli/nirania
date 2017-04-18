@@ -1,4 +1,4 @@
-import THREE from 'three';
+import * as THREE from 'three';
 const radius = 100;
 
 export default class Ring {
