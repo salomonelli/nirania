@@ -44,7 +44,9 @@ class Protagonist {
      */
     animateMovement() {
         const position = Math.sin(CLOCK.getElapsedTime() * 10) * 1;
-        this.move(position);
+        this.object3D.children[0].position.x = position * -0.05;
+        this.object3D.children[3].position.z = position * 1;
+        this.object3D.children[2].position.z = position * -1;
     };
 
     /**
@@ -61,7 +63,7 @@ class Protagonist {
                 jump: Math.PI
             }, 700)
             .onUpdate(function() {
-                this.group.position.y = 70 * Math.sin(this.jump);
+                this.object3D.position.y = 70 * Math.sin(this.jump);
             })
             .start();
         tween.onComplete(function() {
@@ -137,14 +139,6 @@ class Protagonist {
     }
 
     /**
-     * returns the group of meshes of the protagonist
-     * @returns {THREE.Object3D}
-     */
-    get group() {
-        return this.object3D;
-    }
-
-    /**
      * changes opacity of protagonist
      * @param {THREE.Object3D} group - contains meshes of protagonist
      * @param {number} opacity - from 0 to 1
@@ -156,14 +150,6 @@ class Protagonist {
         });
     }
 
-    /**
-     * moves group of protagonist
-     */
-    move(position) {
-        this.group.children[0].position.x = position * -0.05;
-        this.group.children[3].position.z = position * 1;
-        this.group.children[2].position.z = position * -1;
-    }
 }
 
 export function get() {

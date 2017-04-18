@@ -16,9 +16,9 @@ class LevelPage extends Component {
         const levelNr = this.props.match.params.level;
         this.levelDoc = await this.levelModel.getByNr(levelNr);
         const canBePlayed = await this.levelDoc.canBePlayed();
+        await this.dividerComponent.open();
         if (canBePlayed) {
             // TODO intro
-            await this.dividerComponent.open();
         } else {
             // no : redirect, alert ..
 

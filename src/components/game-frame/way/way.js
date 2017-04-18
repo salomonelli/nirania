@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import * as randomBoolean from 'random-boolean';
+import randomBoolean from 'random-boolean';
 
 import * as Util from '../util';
 import * as Obstacle from './obstacles/Obstacle';
@@ -55,7 +55,7 @@ class Way {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
-//        GUI.updateDistance(this.currentPosition.distance);
+        //        GUI.updateDistance(this.currentPosition.distance);
     };
 
     /**
@@ -87,16 +87,17 @@ class Way {
      * moves the random obstacles
      */
     moveRandomObstacles() {
-        this.obstacles.forEach(function(obstacle) {
-            if (!obstacle.randomMoving) return;
-            obstacle.directionChangeIndex++;
-            if (obstacle.directionChangeIndex === 15) {
+        const randoms = this.obstacles
+            .filter(obstacle => obstacle.randomMoving);
+        randoms
+            .forEach(obstacle => obstacle.directionChangeIndex++);
+        randoms
+            .filter(obstacle => obstacle.directionChangeIndex === 15)
+            .forEach(obstacle => {
                 obstacle.directionChangeIndex = 0;
                 obstacle.direction = randomBoolean();
-            }
-            //move it
-            obstacle.move(obstacle.direction);
-        });
+            });
+        randoms.forEach(obstacle => obstacle.move(obstacle.direction));
     };
 
     /**
