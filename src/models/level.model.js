@@ -63,27 +63,27 @@ async function updateData(success, diamonds) {
 
     // TODO do we need this function?
 
-
-    if (doc) {
-        if (success) doc.set('success', success);
-        if (!doc.get('diamonds') ||
-            diamonds > doc.get('diamonds')
-        )
-            doc.set('diamonds', diamonds);
-        await doc.save();
-    } else {
-        await levelCollection.insert({
-            level: level + '',
-            levelID: level,
-            diamonds: diamonds,
-            success: success
-        });
-    }
+    /*
+        if (doc) {
+            if (success) doc.set('success', success);
+            if (!doc.get('diamonds') ||
+                diamonds > doc.get('diamonds')
+            )
+                doc.set('diamonds', diamonds);
+            await doc.save();
+        } else {
+            await levelCollection.insert({
+                level: level + '',
+                levelID: level,
+                diamonds: diamonds,
+                success: success
+            });
+        }*/
 };
 
 
 function levelId() {
-    return parseInt(this.level);
+    return parseInt(this.level, 10);
 }
 
 async function create() {
@@ -97,6 +97,7 @@ async function create() {
         },
         methods: {
             updateData,
+            previousLevel,
             canBePlayed,
             levelId
         }

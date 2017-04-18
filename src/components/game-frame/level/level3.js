@@ -1,9 +1,5 @@
-import {
-    Color
-} from '../Color';
-import {
-    Util
-} from '../Util';
+import Color from '../color';
+import * as Util from '../util';
 let boxColor = Color.palette[2].box;
 let ringColor = Color.palette[2].ring;
 let coneColor = Color.palette[2].cone;
@@ -16,7 +12,9 @@ export let level3 = {
     way: {
         length: 4230,
         color: Color.palette[2].way,
-        obstacles: [{
+        obstacles: [
+
+            {
                 type: 'box',
                 size: {
                     width: 25,
@@ -1276,7 +1274,6 @@ export let level3 = {
                     angle: 340
                 }
             }
-
 
         ]
     }

@@ -7,13 +7,11 @@ import * as Level from './level/level';
 let initPromise = null;
 
 async function init() {
-  if(!initPromise) {
-    console.dir(Protagonist);
-    initPromise = Promise.all([
-      Protagonist.init()
-    ]);
-  }
-  return initPromise;
+    if (!initPromise) {
+        console.dir(Protagonist);
+        initPromise = Promise.all([Protagonist.init()]);
+    }
+    return initPromise;
 }
 
 class GameFrameComponent extends Component {
@@ -23,17 +21,15 @@ class GameFrameComponent extends Component {
     }
 
     async componentDidMount() {
-      await init();
-      console.log('levelId: ' + this.props.level);
-      const level = Level.getById(this.props.level);
-      // let background = level[currentLevel].backgroundColor;
-      // mainScene = new Scene(window.innerWidth, window.innerHeight, background);
-      // document.body.appendChild(mainScene.renderer.domElement);
+        await init();
+        console.log('levelId: ' + this.props.level);
+        // const level = Level.getById(this.props.level);
+        // let background = level[currentLevel].backgroundColor;
+        // mainScene = new Scene(window.innerWidth, window.innerHeight, background);
+        // document.body.appendChild(mainScene.renderer.domElement);
     }
 
-    componentWillUnmount() {
-
-    }
+    componentWillUnmount() {}
 
     render() {
         return (

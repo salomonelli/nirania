@@ -5,7 +5,9 @@ const Color = {
         body: 0xffffff,
         head: 0xffffff
     },
-    palette: [{
+    palette: [
+
+        {
             name: 'blue pink light',
             background: 0x3E9598,
             way: 0xC9B693,

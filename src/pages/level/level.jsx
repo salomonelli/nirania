@@ -12,21 +12,20 @@ class LevelPage extends Component {
     }
 
     async componentDidMount() {
-      this.levelModel = await LevelModelGet();
-      const levelNr = this.props.match.params.level;
-      this.levelDoc = await this.levelModel.getByNr(levelNr);
-      const canBePlayed = await this.levelDoc.canBePlayed();
-      if(canBePlayed) {
-        // TODO intro
-        await this.dividerComponent.open();
-      } else{
-        // no : redirect, alert ..
+        this.levelModel = await LevelModelGet();
+        const levelNr = this.props.match.params.level;
+        this.levelDoc = await this.levelModel.getByNr(levelNr);
+        const canBePlayed = await this.levelDoc.canBePlayed();
+        if (canBePlayed) {
+            // TODO intro
+            await this.dividerComponent.open();
+        } else {
+            // no : redirect, alert ..
 
-      }
+        }
     }
 
     componentWillUnmount() {}
-
 
     render() {
         return (

@@ -1,5 +1,5 @@
-import { Color } from '../Color';
-import { Util } from '../Util';
+import Color from '../color';
+import * as Util from '../util';
 let boxColor = Color.palette[3].box;
 let ringColor = Color.palette[3].ring;
 let coneColor = Color.palette[3].cone;

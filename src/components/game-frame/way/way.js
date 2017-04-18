@@ -1,8 +1,10 @@
-import Color from '../color';
 import * as Util from '../util';
-let THREE = require('three');
-let Obstacle = require('./obstacles/Obstacle');
-let randomBoolean = require('random-boolean');
+const THREE = require('three');
+import * as GUI from '../GUI';
+
+// TODO fix imports
+const Obstacle = require('./obstacles/Obstacle');
+const randomBoolean = require('random-boolean');
 
 class Way {
     /**
@@ -89,7 +91,7 @@ class Way {
         this.obstacles.forEach(function(obstacle) {
             if (!obstacle.randomMoving) return;
             obstacle.directionChangeIndex++;
-            if (obstacle.directionChangeIndex == 15) {
+            if (obstacle.directionChangeIndex === 15) {
                 obstacle.directionChangeIndex = 0;
                 obstacle.direction = randomBoolean();
             }

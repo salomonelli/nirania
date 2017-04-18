@@ -29,7 +29,7 @@ export function randomNumberInRange(min, max) {
  * @returns {number}
  */
 export function randomIntInRange(min, max) {
-    return Math.round(Util.randomNumberInRange(min, max));
+    return Math.round(randomNumberInRange(min, max));
 };
 
 /**

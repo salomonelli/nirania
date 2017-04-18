@@ -47,11 +47,8 @@ class Protagonist {
      * Makes protagonist jump a given height
      */
     jump() {
-        let height = 40;
-        if (Cookies.get('powerup-2') == 'bought') height = 70;
-        let self = this;
-        if (!self.isJumping) {
-            self.isJumping = true;
+        if (!this.isJumping) {
+            this.isJumping = true;
             let tween = new TWEEN
                 .Tween({
                     jump: 0
@@ -60,11 +57,11 @@ class Protagonist {
                     jump: Math.PI
                 }, 700)
                 .onUpdate(function() {
-                    self.group.position.y = 70 * Math.sin(this.jump);
+                    this.group.position.y = 70 * Math.sin(this.jump);
                 })
                 .start();
             tween.onComplete(function() {
-                self.isJumping = false;
+                this.isJumping = false;
             });
         }
 
@@ -96,6 +93,8 @@ class Protagonist {
             case 'z':
                 this.object3D.rotateZ(angle);
                 break;
+            default:
+                throw new Error('angle not possible');
         }
     }
 

@@ -1,9 +1,22 @@
-import * as level1 from './level1';
-import Way from '../way/way';
+import * as Way from '../way/way';
+import * as CollisionDetector from '../protagonist/CollisionDetector';
+import * as Sound from '../Sound';
+import * as GUI from '../GUI';
+import * as Protagonist from '../protagonist/protagonist';
+const THREE = require('three');
 
-// TODO import other levels
+
+import level1 from './level1';
+import level2 from './level2';
+import level3 from './level3';
+import level4 from './level4';
+import level5 from './level5';
 const levels = [
-    level1
+    level1,
+    level2,
+    level3,
+    level4,
+    level5
 ];
 
 /**
@@ -17,7 +30,7 @@ class Level {
      */
     constructor(id) {
         this.id = id;
-        this.currentLevel = levels[this.id - 1];
+        this.currentLevel = levels.find(level => level.level === this.id);
         this.way = null;
         this.speed = 1;
         this.collisionDetector = null;
@@ -217,54 +230,12 @@ class Level {
     };
 
     /**
-     * stores the score and success in cookie
-     * @param {boolean} success - whether current level has been ended with success
-     */
-    async storeToDB(success) {
-        if (success)
-            await Database.updateLevel(this.id, success, this.diamonds);
-    };
-
-    /**
      * returns background color for level
      * @returns {number} color as hexdecimal
      */
     get backgroundColor() {
         return this.currentLevel.background;
     };
-
-    /**
-     * checks whether the level can be played
-     * @param {number} levelNr - that should be played
-     * @return {boolean}
-     */
-    static async canBePlayed(levelNr) {
-        if (levelNr == 1) return true;
-        levelNr--;
-        const obj = await Database.getLevel(levelNr);
-        if (
-            obj.success &&
-            obj.diamonds >= levels[levelNr - 1].requiredDiamonds
-        ) return true;
-        return false;
-    };
-
-    /**
-     * finds out last successfully played level
-     * @return {number}
-     */
-    static async lastSuccessfulLevel() {
-        let docs = await Database.getSuccessfulLevels();
-        const levelID = docs
-            .filter(doc => doc.diamonds >= levels[doc.levelID - 1].requiredDiamonds)
-            .sort((a, b) => {
-                if (a.levelID > b.levelID) return 1;
-                else return -1;
-            })
-            .pop()
-            .levelID;
-        return levelID + 1;
-    }
 }
 
 export function getById(id) {

@@ -1,4 +1,3 @@
-import * as Color from '../color';
 const THREE = require('three');
 
 /**

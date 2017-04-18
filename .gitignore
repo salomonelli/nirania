@@ -8,3 +8,4 @@ app/npm-debug.*
 *.extra
 log.txt
 firefox_root/
+config.json
