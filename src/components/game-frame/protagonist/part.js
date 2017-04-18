@@ -1,14 +1,11 @@
 import * as THREE from 'three';
 
-const partTypes = [
-    'leg',
-    'head',
-    'body'
-];
-
-const geometries = {};
-
-let _initPromise = null;
+const loader = new THREE.JSONLoader();
+const jsonData = {
+    'head': loader.parse(require('../blender/head.json')),
+    'body': loader.parse(require('../blender/body.json')),
+    'leg': loader.parse(require('../blender/leg.json'))
+};
 
 class Part {
     constructor(type, geometry) {
@@ -40,26 +37,8 @@ class Part {
     };
 }
 
-/**
- * TODO use inline json
- * @link http://stackoverflow.com/questions/27992147/three-js-include-mesh-data-in-code/27996338#27996338
- */
-export async function init() {
-    if (!_initPromise) {
-        _initPromise = Promise.all(partTypes.map(type => new Promise(res => {
-            const loader = new THREE.JSONLoader();
-            loader.load('/blender/' + type + '.json', function(geometry, materials) {
-                geometries[type] = geometry;
-                res();
-            });
-        })));
-    }
-    return _initPromise;
-}
-
-
 export function getByType(type) {
-    if (!partTypes.includes(type))
+    if (!Object.keys(jsonData).includes(type))
         throw new Error(`part-type ${type} not known`);
-    return new Part(type, geometries[type]);
+    return new Part(type, jsonData[type].geometry);
 }

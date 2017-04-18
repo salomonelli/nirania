@@ -162,13 +162,3 @@ export function get() {
 
     return protagonist;
 }
-
-/**
- * loads blender files for protagonist
- * @param {Promise} promise
- */
-export function init() {
-    return Promise.all([
-        Part.init()
-    ]);
-}

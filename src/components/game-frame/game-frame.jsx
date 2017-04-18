@@ -6,15 +6,6 @@ import * as Level from './level/level';
 import * as Scene from './Scene';
 import Keybindings from './Keybindings';
 
-let initPromise = null;
-
-async function init() {
-    if (!initPromise) {
-        // run
-        initPromise = Promise.all([Protagonist.init()]);
-    }
-    return initPromise;
-}
 
 class GameFrameComponent extends Component {
     constructor(props) {
@@ -25,7 +16,6 @@ class GameFrameComponent extends Component {
     }
 
     async componentDidMount() {
-        await init();
         console.log('levelId: ' + this.props.level);
         const level = Level.getById(this.props.level);
         const scene = Scene.create(window.innerWidth, window.innerHeight, level);
