@@ -57,7 +57,7 @@ class Way {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
-        GUI.updateDistance(this.currentPosition.distance);
+//        GUI.updateDistance(this.currentPosition.distance);
     };
 
     /**

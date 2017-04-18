@@ -1,5 +1,4 @@
-import * as Color from '../color';
-const THREE = require('three');
+import * as THREE from 'three';
 
 /**
  * head of protagonist

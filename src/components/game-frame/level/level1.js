@@ -1,7 +1,7 @@
 import Color from '../color';
 const boxColor = Color.palette[1].box;
-const level1 = {
-    level: 1,
+const level = {
+    id: 1,
     speed: 1,
     instruction: 'Press <kbd>a</kbd> and <kbd>d</kbd> to avoid the obstacle.',
     background: Color.palette[1].background,
@@ -67,4 +67,4 @@ const level1 = {
     }
 };
 
-export default level1;
+export default level;

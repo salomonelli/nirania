@@ -3,12 +3,13 @@ import './game-frame.css';
 
 import * as Protagonist from './protagonist/protagonist';
 import * as Level from './level/level';
+import * as Scene from './Scene';
 
 let initPromise = null;
 
 async function init() {
     if (!initPromise) {
-        console.dir(Protagonist);
+        // run
         initPromise = Promise.all([Protagonist.init()]);
     }
     return initPromise;
@@ -24,10 +25,19 @@ class GameFrameComponent extends Component {
         await init();
         console.log('levelId: ' + this.props.level);
         const level = Level.getById(this.props.level);
-        // let background = level[currentLevel].backgroundColor;
-        // mainScene = new Scene(window.innerWidth, window.innerHeight, background);
-        // document.body.appendChild(mainScene.renderer.domElement);
+        const scene = Scene.create(window.innerWidth, window.innerHeight, level);
+        scene.renderToDomElement(this.gameFrameDom);
+        scene.simpleIntro();
+        scene.addLevel(level);
+        scene.move.continue = true;
+        scene.startUtilEnd();
+        level.begin(Protagonist.get());
     }
+
+    startGame(){
+
+    }
+
 
     componentWillUnmount() {}
 

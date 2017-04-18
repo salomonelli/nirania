@@ -30,7 +30,7 @@ class Level {
      */
     constructor(id) {
         this.id = id;
-        this.currentLevel = levels.find(level => level.level === this.id);
+        this.currentLevel = levels.find(level => level.id === this.id);
         this.way = null;
         this.speed = 1;
         this.collisionDetector = null;
@@ -173,11 +173,9 @@ class Level {
 
     /**
      * starts level
-     * @param {function} cb - callback function
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
     async begin(protagonist) {
-        if (this.instruction) GUI.showInstruction(this.instruction);
         //reset diamonds
         this.lastDiamond = null;
         this.diamonds = 0;
@@ -187,7 +185,7 @@ class Level {
         const clock = new THREE.Clock(true);
         while (t > 0 && !this.checkCollision(protagonist)) {
             t -= speedMulti;
-            this.moveProtagonist(protagonist, clock);
+            this.moveProtagonist(protagonist.group, clock);
             this.way.moveForwardTillEnd(this.speed * speedMulti);
             await new Promise(res => setTimeout(res, this.speed));
         }

@@ -5,7 +5,7 @@ let ringColor = Color.palette[2].ring;
 let coneColor = Color.palette[2].cone;
 
 const level = {
-    level: 3,
+    id: 3,
     speed: 1,
     background: Color.palette[2].background,
     requiredDiamonds: 0,

@@ -4,7 +4,7 @@ let boxColor = Color.palette[3].box;
 let ringColor = Color.palette[3].ring;
 let coneColor = Color.palette[3].cone;
 const level = {
-    level: 4,
+    id: 4,
     speed: 1,
     background: Color.palette[3].background,
     requiredDiamonds: 0,

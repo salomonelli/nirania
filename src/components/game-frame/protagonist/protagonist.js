@@ -1,8 +1,8 @@
 import Body from './body';
 import Head from './head';
 import Leg from './leg';
-import THREE from 'three';
-const TWEEN = require('tween.js');
+import * as THREE from 'three';
+import * as TWEEN from 'tween.js';
 
 let protagonist = null;
 
@@ -129,6 +129,8 @@ class Protagonist {
             case 'z':
                 this.object3D.position.z--;
                 break;
+            default:
+                throw new Error('axis unknown');
         }
     }
 

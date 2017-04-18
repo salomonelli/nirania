@@ -38,6 +38,9 @@ export function randomIntInRange(min, max) {
  */
 export function normalizeAngle(angle) {
     //if (angle < 0) angle = angle + 360; //always positive
-    angle = angle % 360; //always <360
-    return angle;
+    return angle % 360; //always <360
 };
+
+export async function requestAnimationFramePromise() {
+    return new Promise(res => requestAnimationFrame(() => res()));
+}
