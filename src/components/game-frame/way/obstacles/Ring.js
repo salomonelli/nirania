@@ -1,7 +1,7 @@
-let THREE = require('three');
+import THREE from 'three';
 const radius = 100;
 
-export class Ring {
+export default class Ring {
     /**
      * Represents the obstacle "Ring"
      * @param {Object} ring - structure as in levelX.js

@@ -1,7 +1,7 @@
-let THREE = require('three');
+import * as THREE from 'three';
 import * as Util from '../../util';
 
-export class Box {
+export default class Box {
 
     /**
      * Represents the obstacle "Box"

@@ -1,7 +1,7 @@
 import Color from '../color';
 import * as Util from '../util';
 let boxColor = Color.palette[5].box;
-export let level2 = {
+const level2 = {
     level: 2,
     speed: 1,
     instruction: 'Collect diamonds <i class="fa fa-diamond" aria-hidden="true"></i> and try to avoid obstacles.',
@@ -452,3 +452,5 @@ export let level2 = {
         ]
     }
 };
+
+export default level2;

@@ -3,7 +3,7 @@ import * as Util from '../util';
 let boxColor = Color.palette[3].box;
 let ringColor = Color.palette[3].ring;
 let coneColor = Color.palette[3].cone;
-export let level4 = {
+const level = {
     level: 4,
     speed: 1,
     background: Color.palette[3].background,
@@ -1679,3 +1679,5 @@ export let level4 = {
         ]
     }
 };
+
+export default level;

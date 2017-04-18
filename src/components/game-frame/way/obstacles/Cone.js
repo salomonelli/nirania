@@ -1,9 +1,9 @@
-let THREE = require('three');
+import THREE from 'three';
 import * as Util from '../../util';
 const height = 30;
 const radius = 15;
 
-export class Cone {
+export default class Cone {
     /**
      * Represenst cone that moves randomly around the way
      */

@@ -1,10 +1,11 @@
-import * as Util from '../util';
-const THREE = require('three');
-import * as GUI from '../GUI';
-
+import * as THREE from 'three';
 // TODO fix imports
-const Obstacle = require('./obstacles/Obstacle');
 const randomBoolean = require('random-boolean');
+
+import * as Util from '../util';
+import * as GUI from '../GUI';
+import * as Obstacle from './obstacles/Obstacle';
+
 
 class Way {
     /**

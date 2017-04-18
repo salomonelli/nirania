@@ -1,26 +1,17 @@
-import {
-    Box
-} from './Box';
-import {
-    Cone
-} from './Cone';
-import {
-    Diamond
-} from './Diamond';
-import {
-    Ring
-} from './Ring';
+import Box from './Box';
+import Cone from './Cone';
+import Diamond from './Diamond';
+import Ring from './Ring';
 import * as Util from '../../util';
 
-// TODO es6 class
-module.exports = (function() {
-    let _obstacleTypes = {
-        box: Box,
-        ring: Ring,
-        diamond: Diamond,
-        cone: Cone
-    };
+const _obstacleTypes = {
+    box: Box,
+    ring: Ring,
+    diamond: Diamond,
+    cone: Cone
+};
 
+export default class Obstacle {
     /**
      * Represents an Obstacle on wthe way
      * @param {String} type - string like 'cube'
@@ -29,7 +20,7 @@ module.exports = (function() {
      * @param {number} angle - in radiant, on which side the obstacle is positioned
      * @constructor
      */
-    function Obstacle(type, mesh, distance, angle, collisionData) {
+    constructor(type, mesh, distance, angle, collisionData) {
         this.type = type;
         this.mesh = mesh;
         this.distance = distance;
@@ -38,38 +29,14 @@ module.exports = (function() {
         this.randomMoving = false;
 
         //used if moving obstacle
-        if (type == 'cone') {
+        if (type === 'cone') {
             this.randomMoving = true;
             this.directionChangeIndex = 0;
             this.direction = true; //true == 'right', false == 'left'
         }
     }
 
-    /**
-     * creates from array obstacles and returns them
-     * @param {Array} obstacles - contains information to generate obstacles
-     * @returns {Array} ret - containing obstacle objects
-     */
-    Obstacle.generateFromArray = function(obstacles, wayLength, radius) {
-        let ret = [];
-        obstacles.forEach(function(o) {
-            let obstacle = new _obstacleTypes[o.type](o);
-            obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
-            let collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
-            ret.push(
-                new Obstacle(
-                    o.type,
-                    obstacle.mesh,
-                    o.position.distance,
-                    o.position.angle,
-                    collisionData
-                )
-            );
-        });
-        return ret;
-    };
-
-    Obstacle.prototype.move = function(direction) {
+    move(direction) {
         if (direction) this.angle += 1;
         else this.angle -= 1;
 
@@ -91,7 +58,30 @@ module.exports = (function() {
         this.collisionData.angle.center = this.angle;
         this.collisionData.angle.min = Util.normalizeAngle(this.angle - angleRight);
         this.collisionData.angle.max = Util.normalizeAngle(this.angle + angleRight);
-    };
+    }
+};
 
-    return Obstacle;
-})();
+/**
+ * creates from array obstacles and returns them
+ * @param {Array} obstacles - contains information to generate obstacles
+ * @returns {Array} ret - containing obstacle objects
+ */
+export function generateFromArray(obstacles, wayLength, radius) {
+    const ret = obstacles.map(o => {
+        const obstacle = new _obstacleTypes[o.type](o);
+        obstacle.position(o.position.angle, o.position.distance, wayLength, radius);
+        const collisionData = _obstacleTypes[o.type].prepareForCollisionDetection(o, radius);
+        return new Obstacle(
+            o.type,
+            obstacle.mesh,
+            o.position.distance,
+            o.position.angle,
+            collisionData
+        );
+    });
+    return ret;
+};
+
+export function create(type, mesh, distance, angle, collisionData) {
+    return new Obstacle(type, mesh, distance, angle, collisionData);
+}

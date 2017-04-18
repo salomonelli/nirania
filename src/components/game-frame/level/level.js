@@ -239,7 +239,7 @@ class Level {
 }
 
 export function getById(id) {
-    const ret = new Level(id);
+    const ret = new Level(parseInt(id, 10));
     ret.prepare();
     return ret;
 }

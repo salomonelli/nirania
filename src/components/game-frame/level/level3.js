@@ -4,7 +4,7 @@ let boxColor = Color.palette[2].box;
 let ringColor = Color.palette[2].ring;
 let coneColor = Color.palette[2].cone;
 
-export let level3 = {
+const level = {
     level: 3,
     speed: 1,
     background: Color.palette[2].background,
@@ -1278,3 +1278,5 @@ export let level3 = {
         ]
     }
 };
+
+export default level;

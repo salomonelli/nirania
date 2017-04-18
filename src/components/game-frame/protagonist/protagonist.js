@@ -1,7 +1,7 @@
 import Body from './body';
 import Head from './head';
 import Leg from './leg';
-const THREE = require('three');
+import THREE from 'three';
 const TWEEN = require('tween.js');
 
 let protagonist = null;
@@ -172,8 +172,6 @@ export function get() {
  * @param {Promise} promise
  */
 export function init() {
-    console.log('legt:');
-    console.dir(Leg);
     return Promise.all([
         Head.init(),
         Body.init(),

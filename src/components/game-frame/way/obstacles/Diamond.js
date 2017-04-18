@@ -1,9 +1,9 @@
-let THREE = require('three');
+import THREE from 'three';
 import * as Util from '../../util';
 const size = 10;
 const heightFromWay = 20;
 
-export class Diamond {
+export default class Diamond {
     /**
      * Represents the 'obstacle' 'diamond' (that can be collected)
      * @param {Object} diamond - structure as in levelX.js
