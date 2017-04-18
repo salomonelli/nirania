@@ -1,32 +1,26 @@
-import Body from './body';
-import Head from './head';
-import Leg from './leg';
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
+
+import * as Part from './part';
 
 let protagonist = null;
 
 class Protagonist {
     constructor() {
+
         this.object3D = new THREE.Object3D();
-        this.body = new Body();
-        this.head = new Head();
+        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
+
+        this.body = Part.getByType('body');
+        this.head = Part.getByType('head');
         this.left = {
-            leg: new Leg()
+            leg: Part.getByType('leg')
         };
         this.right = {
-            leg: new Leg()
+            leg: Part.getByType('leg')
         };
         this.groupBodyParts();
-        this.scaleBodyParts();
         this.isJumping = false;
-    }
-
-    /**
-     * scales body parts to proper setSize
-     */
-    scaleBodyParts() {
-        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
     }
 
     /**
@@ -47,24 +41,22 @@ class Protagonist {
      * Makes protagonist jump a given height
      */
     jump() {
-        if (!this.isJumping) {
-            this.isJumping = true;
-            let tween = new TWEEN
-                .Tween({
-                    jump: 0
-                })
-                .to({
-                    jump: Math.PI
-                }, 700)
-                .onUpdate(function() {
-                    this.group.position.y = 70 * Math.sin(this.jump);
-                })
-                .start();
-            tween.onComplete(function() {
-                this.isJumping = false;
-            });
-        }
-
+        if (this.isJumping) return;
+        this.isJumping = true;
+        let tween = new TWEEN
+            .Tween({
+                jump: 0
+            })
+            .to({
+                jump: Math.PI
+            }, 700)
+            .onUpdate(function() {
+                this.group.position.y = 70 * Math.sin(this.jump);
+            })
+            .start();
+        tween.onComplete(function() {
+            this.isJumping = false;
+        });
     }
 
     /**
@@ -156,7 +148,6 @@ class Protagonist {
 
     /**
      * moves group of protagonist
-     *
      */
     move(group, position) {
         group.children[0].position.x = position * -0.05;
@@ -164,8 +155,11 @@ class Protagonist {
         group.children[2].position.z = position * -1;
     }
 }
+
 export function get() {
-    if (!protagonist) protagonist = new Protagonist();
+    if (!protagonist)
+        protagonist = new Protagonist();
+
     return protagonist;
 }
 
@@ -175,8 +169,6 @@ export function get() {
  */
 export function init() {
     return Promise.all([
-        Head.init(),
-        Body.init(),
-        Leg.init()
+        Part.init()
     ]);
 }
