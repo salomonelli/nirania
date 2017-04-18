@@ -1,7 +1,6 @@
 import * as Way from '../way/way';
 import * as CollisionDetector from '../protagonist/CollisionDetector';
 import * as Sound from '../Sound';
-import * as GUI from '../GUI';
 import * as Protagonist from '../protagonist/protagonist';
 const THREE = require('three');
 
@@ -94,7 +93,7 @@ class Level {
         this.lastDiamond = collObj;
         this.diamonds++;
         this.lastDiamond.mesh.visible = false;
-        GUI.setDiamondsInScoreBoard(this.diamonds);
+//        GUI.setDiamondsInScoreBoard(this.diamonds);
     };
 
     /**
@@ -152,7 +151,7 @@ class Level {
             this.way.moveForwardTillEnd(this.speed * speedMulti);
             await new Promise(res => setTimeout(res, this.speed));
         }
-        GUI.hideInstruction();
+        // GUI.hideInstruction();
     };
 
     /**
@@ -169,7 +168,7 @@ class Level {
             canNotBePlayed = 'true';
             disableNextLevel = 'disabled';
         }
-        await GUI.showSuccessScreen({
+      /*  await GUI.showSuccessScreen({
             score: this.diamonds,
             level: this.id,
             next: this.id + 1,
@@ -177,26 +176,20 @@ class Level {
             canNotBePlayed,
             disableNextLevel,
             showOutro
-        });
+        });*/
     };
 
     /**
      * renders hogan template gameover.mustache and adds it to html-body
      */
     async showGameOverScreen() {
-        await GUI.showGameOverScreen({
+/*        await GUI.showGameOverScreen({
             score: this.diamonds,
             level: this.id
-        });
+        });*/
     };
 
-    /**
-     * returns background color for level
-     * @returns {number} color as hexdecimal
-     */
-    get backgroundColor() {
-        return this.currentLevel.background;
-    };
+
 }
 
 export function getById(id) {

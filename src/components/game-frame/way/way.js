@@ -1,9 +1,7 @@
 import * as THREE from 'three';
-// TODO fix imports
-const randomBoolean = require('random-boolean');
+import * as randomBoolean from 'random-boolean';
 
 import * as Util from '../util';
-import * as GUI from '../GUI';
 import * as Obstacle from './obstacles/Obstacle';
 
 
