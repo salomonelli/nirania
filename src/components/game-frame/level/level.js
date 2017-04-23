@@ -1,7 +1,7 @@
 import * as Way from '../way/way';
-import * as CollisionDetector from '../protagonist/CollisionDetector';
+import * as CollisionDetector from '../erich/CollisionDetector';
+import * as Erich from '../erich/erich';
 import * as Sound from '../Sound';
-import * as Protagonist from '../protagonist/protagonist';
 const THREE = require('three');
 
 
@@ -27,8 +27,9 @@ class Level {
      * @param {number} id - number starting at 1 representing current level
      * @constructor
      */
-    constructor(id) {
+    constructor(id, erich) {
         this.id = id;
+        this.erich = erich;
         this.currentLevel = levels.find(level => level.id === this.id);
         this.way = Way.create(
             this.currentLevel.way.length,
@@ -97,12 +98,11 @@ class Level {
     };
 
     /**
-     * gets current position of protagonist
-     * @param {Protagonist} protagonist
+     * gets current position of erich
      * @return {Way.currentPosition}
      */
-    getCurrentPosition(protagonist) {
-        this.way.currentPosition.height = protagonist.position.y;
+    getCurrentPosition() {
+        this.way.currentPosition.height = this.erich.position.y;
         return this.way.currentPosition;
     };
 
@@ -116,11 +116,10 @@ class Level {
 
     /**
      * sets transparency of protagonist
-     * @param {THREE.Object3D} protagonist
      * @param {number} opacity
      */
-    makeProtagonistTransparent(protagonist, opacity) {
-        Protagonist.makeGroupTransparent(protagonist, opacity);
+    makeErichTransparent(opacity) {
+        Erich.makeGroupTransparent(this.erich.object3D, opacity);
     }
 
     /**
@@ -137,7 +136,7 @@ class Level {
         const clock = new THREE.Clock(true);
         while (t > 0 && !this.checkCollision(protagonist)) {
             t -= speedMulti;
-            Protagonist.get().animateMovement();
+            this.erich.animateMovement();
             this.way.moveForwardTillEnd(this.speed * speedMulti);
             await new Promise(res => setTimeout(res, this.speed));
         }
@@ -182,7 +181,7 @@ class Level {
 
 }
 
-export function getById(id) {
-    const ret = new Level(parseInt(id, 10));
+export function getById(id, erich) {
+    const ret = new Level(parseInt(id, 10), erich);
     return ret;
 }

@@ -1,4 +1,4 @@
-import * as Protagonist from './protagonist/protagonist';
+import * as Erich from './erich/erich';
 import {
     Particles
 } from './Particles';
@@ -33,7 +33,6 @@ class Scene extends THREE.Scene {
 
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
         this.particles = new Particles(-600, 600, -600, 600, -300, 0, 100);
-        this.human = Protagonist.get();
         this.move = {
             left: false,
             right: false,
@@ -109,7 +108,7 @@ class Scene extends THREE.Scene {
                 this.way.rotate(Math.PI * 0.01);
                 this.particles.rotate(Math.PI * 0.01);
             }
-            if (this.move.up) this.human.jump();
+            if (this.move.up) this.level.erich.jump();
         }
     };
 
@@ -117,8 +116,8 @@ class Scene extends THREE.Scene {
      * returns the THREE group of the protagonist
      * @returns {THREE.Object3D} group of protagonist
      */
-    getProtagonist() {
-        return this.human.group;
+    getErich() {
+        return this.level.erich.group;
     };
 
     /**
@@ -128,10 +127,10 @@ class Scene extends THREE.Scene {
         this.camera.position.set(0, 50, 95);
         this.particles.position(0, 0, -500);
         this.particles.addToScene(this);
-        this.human.position(0, 5, 0);
-        this.human.rotate('y', Math.PI);
-        this.human.addToScene(this);
-        this.camera.lookAt(this.human.currentPosition);
+        this.level.erich.position(0, 5, 0);
+        this.level.erich.rotate('y', Math.PI);
+        this.level.erich.addToScene(this);
+        this.camera.lookAt(this.level.erich.currentPosition);
     };
 
 
@@ -147,7 +146,7 @@ class Scene extends THREE.Scene {
      * @param {Scene} scene
      * @param {string} direction - 'left' or 'right'
      */
-    stopMovingProtagonist(direction) {
+    stopMovingErich(direction) {
         this.move[direction] = false;
     };
 
@@ -156,7 +155,7 @@ class Scene extends THREE.Scene {
      * @param {Scene} scene
      * @param {string} direction - 'left' or 'right'
      */
-    startMovingProtagonist(direction) {
+    startMovingErich(direction) {
         this.move[direction] = true;
     };
 

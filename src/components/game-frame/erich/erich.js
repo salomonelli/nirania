@@ -3,10 +3,9 @@ import * as TWEEN from 'tween.js';
 
 import * as Part from './part';
 
-let protagonist = null;
 const CLOCK = new THREE.Clock(true);
 
-class Protagonist {
+class Erich {
     constructor() {
         this.object3D = new THREE.Object3D();
         this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
@@ -24,7 +23,7 @@ class Protagonist {
     }
 
     /**
-     * groups the body parts of protagonist and positions them
+     * groups the body parts of erich and positions them
      */
     groupBodyParts() {
         this.body.position(0, 0, 0);
@@ -38,8 +37,8 @@ class Protagonist {
     }
 
     /**
-     * moves protagonist to position (body and legs)
-     * @param {THREE.Object3D} protagonist
+     * moves erich to position (body and legs)
+     * @param {THREE.Object3D} erich
      * @param {THREE.clock} clock
      */
     animateMovement() {
@@ -50,7 +49,7 @@ class Protagonist {
     };
 
     /**
-     * Makes protagonist jump a given height
+     * Makes erich jump a given height
      */
     jump() {
         if (this.isJumping) return;
@@ -72,7 +71,7 @@ class Protagonist {
     }
 
     /**
-     * positions protagonist according to given coordinates
+     * positions erich according to given coordinates
      * @param {number} x - x position of particles group
      * @param {number} y - y position of particles group
      * @param {number} z - z position of particles group
@@ -82,7 +81,7 @@ class Protagonist {
     }
 
     /**
-     * rotates the protagonist according to axis and angle
+     * rotates the erich according to axis and angle
      * @param {string} axis - 'x', 'y' or 'z'
      * @param {number} angle - in radians
      */
@@ -103,15 +102,15 @@ class Protagonist {
     }
 
     /**
-     * adds protagonist to given scene
-     * @param {THREE.Scene} scene - scene to which the protagonist will be added
+     * adds erich to given scene
+     * @param {THREE.Scene} scene - scene to which the erich will be added
      */
     addToScene(scene) {
         scene.add(this.object3D);
     }
 
     /**
-     * returns the current position of the Protagonist
+     * returns the current position of the Erich
      * @returns {Object}
      */
     get currentPosition() {
@@ -119,7 +118,7 @@ class Protagonist {
     }
 
     /**
-     * decreases the position of the protagonist according to given axis
+     * decreases the position of the erich according to given axis
      * @param {string} axis - 'x', 'y' or 'z'
      */
     decreasePosition(axis) {
@@ -139,8 +138,8 @@ class Protagonist {
     }
 
     /**
-     * changes opacity of protagonist
-     * @param {THREE.Object3D} group - contains meshes of protagonist
+     * changes opacity of erich
+     * @param {THREE.Object3D} group - contains meshes of erich
      * @param {number} opacity - from 0 to 1
      */
     static makeGroupTransparent(group, opacity) {
@@ -152,9 +151,6 @@ class Protagonist {
 
 }
 
-export function get() {
-    if (!protagonist)
-        protagonist = new Protagonist();
-
-    return protagonist;
+export function create() {
+    return new Erich();
 }

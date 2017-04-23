@@ -1,23 +1,24 @@
 import * as Level from './level/level';
-import * as Protagonist from './protagonist/protagonist';
+import * as Erich from './erich/erich';
 import * as Scene from './Scene';
 class Play {
 
-    constructor(level, scene) {
+    constructor(level, scene, erich) {
         this.level = level;
         this.scene = scene;
         this.diamonds = 0;
+        this.erich = erich;
     }
 
     start() {
 
         // this.running = true;
         this.scene.setupLevel(this.level);
-        this.level.begin(Protagonist.get());
+        this.level.begin(this.erich);
 
         // key-handlers
-        // this.subs.push(Keybindings.keyBind('keydown').subscribe(direction => scene.startMovingProtagonist(direction)));
-        // this.subs.push(Keybindings.keyBind('keyup').subscribe(direction => scene.stopMovingProtagonist(direction)));
+        // this.subs.push(Keybindings.keyBind('keydown').subscribe(direction => scene.startMovingErich(direction)));
+        // this.subs.push(Keybindings.keyBind('keyup').subscribe(direction => scene.stopMovingErich(direction)));
         // return observable
     }
 
@@ -32,8 +33,9 @@ class Play {
 
 
 export function byLevelId(levelId) {
-    const level = Level.getById(levelId);
+    const erich = Erich.create();
+    const level = Level.getById(levelId, erich);
     // TODO get width and height from domelement
     const scene = Scene.create(window.innerWidth, window.innerHeight, level);
-    return new Play(level, scene);
+    return new Play(level, scene, erich);
 }
