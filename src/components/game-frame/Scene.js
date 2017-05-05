@@ -94,22 +94,35 @@ class Scene extends THREE.Scene {
         this.particles.animate();
         this.renderer.render(this, this.camera);
     };
+
     /**
      * turns camera and protagonist until told to stop
      */
-    turn() {
+    animateMovement() {
+        const angle = 0.01;
         if (this.move.continue) {
             if (this.move.left) {
-                this.way.rotate(-Math.PI * 0.01);
-                this.particles.rotate(-Math.PI * 0.01);
+                this.way.rotate(-Math.PI * angle);
+                this.particles.rotate(-Math.PI * angle);
+                this.move.left = false;
             }
             if (this.move.right) {
-                this.way.rotate(Math.PI * 0.01);
-                this.particles.rotate(Math.PI * 0.01);
+                this.way.rotate(Math.PI * angle);
+                this.particles.rotate(Math.PI * angle);
+                this.move.right = false;
             }
             if (this.move.up) this.level.erich.jump();
         }
     };
+
+    startAction(action) {
+        this.move[action] = true;
+    }
+
+    endAction(action) {
+        this.move[action] = false;
+    }
+
 
     /**
      * returns the THREE group of the protagonist

@@ -6,6 +6,7 @@ import * as Level from './level/level';
 import * as Erich from './erich/erich';
 import * as Scene from './Scene';
 import * as Util from './util';
+import {getActionByKey} from './keybindings';
 
 class Play {
 
@@ -38,30 +39,40 @@ class Play {
         while (!this.playStatus$.getValue().completed) {
             await this.requestAnimationFramePromise();
             this.scene.render();
-            this.scene.turn();
+            // this.scene.turn();
             // TWEEN.update();
-            // TODO duschen!!
         }
     }
 
     async loopStatus() {
-        const speed = 2;
+        this.scene.startAction('continue');
+        const speed = 1;
         while (
             this.scene.way.move(speed) > 0 &&
             !this.playStatus$.getValue().completed
             // !this.checkCollision(this.erich)
         ) {
             this.erich.animateMovement();
+            this.scene.animateMovement();
             await new Promise(res => setTimeout(res, this.speed));
         }
+        this.scene.endAction('continue');
     }
 
     renderToDomElement(domElement) {
         this.scene.renderToDomElement(domElement);
     }
 
-    listenKeys(to = true) {
+    getActionByKey(code, twoPlayers = false, leftPlayer = null) {
+        return getActionByKey(code, twoPlayers, leftPlayer);
+    }
 
+    startAction(action) {
+        this.scene.startAction(action);
+    }
+
+    endAction(action) {
+        this.scene.endAction(action);
     }
 }
 
