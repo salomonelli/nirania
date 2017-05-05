@@ -48,7 +48,7 @@ class GameFrameComponent extends Component {
         .map(ev => ev.code)
         .map(code => this.play.getActionByKey(code))
         .filter(code => !!code)
-        .subscribe(action => this.play.startAction(action));
+        .subscribe(action => this.play.endAction(action));
         this.subs.push(listenKeyDownSub);
     }
 

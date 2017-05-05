@@ -104,12 +104,10 @@ class Scene extends THREE.Scene {
             if (this.move.left) {
                 this.way.rotate(-Math.PI * angle);
                 this.particles.rotate(-Math.PI * angle);
-                this.move.left = false;
             }
             if (this.move.right) {
                 this.way.rotate(Math.PI * angle);
                 this.particles.rotate(Math.PI * angle);
-                this.move.right = false;
             }
             if (this.move.up) this.level.erich.jump();
         }
