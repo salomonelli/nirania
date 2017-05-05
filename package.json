@@ -53,6 +53,7 @@
     "react-router-dom": "^4.1.1",
     "rimraf": "^2.6.1",
     "rxdb": "^3.0.7",
+    "rxjs": "^5.3.0",
     "style-loader": "0.13.1",
     "url-loader": "0.5.7",
     "webpack": "1.14.0",

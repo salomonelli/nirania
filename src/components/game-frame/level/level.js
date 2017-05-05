@@ -1,6 +1,5 @@
 import * as Way from '../way/way';
-import * as CollisionDetector from '../erich/CollisionDetector';
-import * as Erich from '../erich/erich';
+import * as CollisionDetector from '../collision-detector';
 import * as Sound from '../Sound';
 const THREE = require('three');
 
@@ -115,25 +114,17 @@ class Level {
     }
 
     /**
-     * sets transparency of protagonist
-     * @param {number} opacity
-     */
-    makeErichTransparent(opacity) {
-        Erich.makeGroupTransparent(this.erich.object3D, opacity);
-    }
-
-    /**
      * starts level
      * @param {THREE.Object3D} protagonist - group of meshes of protagonist
      */
-    async begin(protagonist) {
+    // TODO remove this
+    async begin_old(protagonist) {
         //reset diamonds
         this.lastDiamond = null;
         this.diamonds = 0;
         //reset way
         let t = this.way.length - 80;
         const speedMulti = 2;
-        const clock = new THREE.Clock(true);
         while (t > 0 && !this.checkCollision(protagonist)) {
             t -= speedMulti;
             this.erich.animateMovement();

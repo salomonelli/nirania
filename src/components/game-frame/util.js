@@ -18,6 +18,7 @@ export function convertRadiansToDegrees(radians) {
 
 /**
  * Returns a random number between min (inclusive) and max (exclusive)
+ * TODO duschen!!
  * @returns {number}
  */
 export function randomNumberInRange(min, max) {
@@ -40,7 +41,3 @@ export function normalizeAngle(angle) {
     //if (angle < 0) angle = angle + 360; //always positive
     return angle % 360; //always <360
 };
-
-export async function requestAnimationFramePromise() {
-    return new Promise(res => requestAnimationFrame(() => res()));
-}

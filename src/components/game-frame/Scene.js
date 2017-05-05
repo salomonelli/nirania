@@ -24,6 +24,7 @@ class Scene extends THREE.Scene {
         this.background = new THREE.Color(level.currentLevel.background);
 
         this.level = level;
+        this.way = level.way;
         this.width = width;
         this.height = height;
 
@@ -41,6 +42,15 @@ class Scene extends THREE.Scene {
             boost: false
         };
         this.addLights();
+        this.add(this.way.group);
+
+        this.camera.position.set(0, 50, 95);
+        this.particles.position(0, 0, -500);
+        this.particles.addToScene(this);
+        this.level.erich.position(0, 5, 0);
+        this.level.erich.rotate('y', Math.PI);
+        this.level.erich.addToScene(this);
+        this.camera.lookAt(this.level.erich.currentPosition);
     }
 
     /**
@@ -84,17 +94,6 @@ class Scene extends THREE.Scene {
         this.particles.animate();
         this.renderer.render(this, this.camera);
     };
-
-
-    /**
-     * adds current level objects to scene
-     * @param {Level} level - current level
-     */
-    addLevel(level) {
-        this.way = level.way;
-        this.way.addToScene(this);
-    };
-
     /**
      * turns camera and protagonist until told to stop
      */
@@ -120,26 +119,6 @@ class Scene extends THREE.Scene {
         return this.level.erich.group;
     };
 
-    /**
-     * sets camera to the right position
-     */
-    simpleIntro() {
-        this.camera.position.set(0, 50, 95);
-        this.particles.position(0, 0, -500);
-        this.particles.addToScene(this);
-        this.level.erich.position(0, 5, 0);
-        this.level.erich.rotate('y', Math.PI);
-        this.level.erich.addToScene(this);
-        this.camera.lookAt(this.level.erich.currentPosition);
-    };
-
-
-    setupLevel(level) {
-        this.simpleIntro();
-        this.addLevel(level);
-        this.move.continue = true;
-        this.startUntilEnd();
-    }
 
     /**
      * disables turning in the given direction
@@ -158,15 +137,6 @@ class Scene extends THREE.Scene {
     startMovingErich(direction) {
         this.move[direction] = true;
     };
-
-    async startUntilEnd() {
-        while (this.move.continue) {
-            await Util.requestAnimationFramePromise();
-            this.render();
-            this.turn(this.level);
-            TWEEN.update();
-        }
-    }
 }
 
 

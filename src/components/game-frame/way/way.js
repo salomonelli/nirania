@@ -50,13 +50,15 @@ class Way {
     /**
      * moves way direction z positive
      * @param {number} speed
+     * @return {number} distance left
      */
-    moveForwardTillEnd(speed) {
+    move(speed) {
         this.group.position.z = this.group.position.z + speed;
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
-        //        GUI.updateDistance(this.currentPosition.distance);
+        return this.length - this.currentPosition.distance - 80;
     };
+
 
     /**
      * sets current position
@@ -105,21 +107,13 @@ class Way {
      * @param {[{}]} obstacles
      */
     addObstacles(obstacles) {
-        let self = this;
-        self.obstacles = Obstacle.generateFromArray(obstacles, self.length, self.radius);
-        self.obstacles.forEach(function(obstacle) {
-            if (obstacle.distance < self.length) self.group.add(obstacle.mesh);
-            else console.error('Way.prototype.addObstacles(): ATTENTION!! Obstacle was not added. Distance of Obstacles is greater than the length of the way.');
+        this.obstacles = Obstacle.generateFromArray(obstacles, this.length, this.radius);
+        this.obstacles.forEach(obstacle => {
+            if (obstacle.distance < this.length) this.group.add(obstacle.mesh);
+            else throw new Error('Distance of Obstacles is greater than the length of the way.');
         });
     };
 
-    /**
-     * adds way to given scene
-     * @param {THREE.Scene} scene - scene to which the way will be added
-     */
-    addToScene(scene) {
-        scene.add(this.group);
-    };
 }
 
 export function create(length, speed, color) {

@@ -136,19 +136,6 @@ class Erich {
                 throw new Error('axis unknown');
         }
     }
-
-    /**
-     * changes opacity of erich
-     * @param {THREE.Object3D} group - contains meshes of erich
-     * @param {number} opacity - from 0 to 1
-     */
-    static makeGroupTransparent(group, opacity) {
-        group.children.forEach(function(parts) {
-            parts.material.transparent = true;
-            parts.material.opacity = opacity;
-        });
-    }
-
 }
 
 export function create() {
