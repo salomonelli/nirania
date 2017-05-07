@@ -8,7 +8,9 @@ import * as Scene from './Scene';
 import * as Util from './util';
 import * as TWEEN from 'tween.js';
 import * as CollisionDetector from './collision-detector';
-import {getActionByKey} from './keybindings';
+import {
+    getActionByKey
+} from './keybindings';
 
 class Play {
 
@@ -39,7 +41,7 @@ class Play {
     }
 
     async loopAnimation() {
-        while (!this.playStatus$.getValue().completed) {
+        while (!this.playStatus$.getValue().complete) {
             await this.requestAnimationFramePromise();
             this.scene.render();
             // this.scene.turn();
@@ -52,9 +54,9 @@ class Play {
         const speed = 1;
         while (
             this.scene.way.move(speed) > 0 &&
-            !this.playStatus$.getValue().completed &&
-            !this.checkCollision()
+            !this.playStatus$.getValue().complete
         ) {
+            this.checkCollision();
             this.erich.animateMovement();
             this.scene.animateMovement();
             await new Promise(res => setTimeout(res, this.speed));
@@ -68,14 +70,18 @@ class Play {
 
     checkCollision() {
         const collisionObj = this.collisionDetector.collision(this.scene.way.currentPosition);
+        if(!collisionObj.collision) return;
+        const currentValue = this.playStatus$.getValue();
         switch (collisionObj.type) {
             case 'diamond':
-                const currentValue = this.playStatus$.getValue();
                 currentValue.diamonds++;
                 this.scene.hideFromScene(collisionObj.mesh);
                 this.playStatus$.next(currentValue);
                 break;
             default:
+                currentValue.complete = true;
+                currentValue.success = false;
+                this.playStatus$.next(currentValue);
                 return collisionObj.collision;
         }
     }

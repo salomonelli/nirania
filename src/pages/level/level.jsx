@@ -16,7 +16,12 @@ class LevelPage extends Component {
         const levelNr = this.props.match.params.level;
         this.levelDoc = await this.levelModel.getByNr(levelNr);
         const canBePlayed = await this.levelDoc.canBePlayed();
-        await this.dividerComponent.open();
+        this.dividerComponent.open();
+        // TODO this needs to be put into canBePlayed 
+        const playStatus$ = this.gameFrameComponent.startGame();
+        playStatus$
+        .filter(obj => obj.complete)
+        .subscribe(() => this.dividerComponent.close());
         if (canBePlayed) {
             // TODO intro
         } else {
@@ -32,7 +37,7 @@ class LevelPage extends Component {
             <div>
                 <h1>Nirania {this.props.match.params.level}</h1>
                 <DividerComponent ref={instance => this.dividerComponent = instance}/>
-                <GameFrameComponent level={this.props.match.params.level}/>
+                <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
             </div>
         );
     }

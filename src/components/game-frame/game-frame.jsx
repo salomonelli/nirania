@@ -12,24 +12,16 @@ class GameFrameComponent extends Component {
     }
 
     async componentDidMount() {
-
-        // const play = Play.byLevelId(1);
-        // play.renderToDomElement();
-        // const play$ = play.start();
-        // ...
-        //
-        //
-        // play.pause()
-
-        console.log('levelId: ' + this.props.level);
         this.play = Play.byLevelId(this.props.level);
         this.play.renderToDomElement(this.gameFrameDom);
-
-        const playStatus$ = this.play.start();
-        this.listenKeys();
     }
 
-    startGame() {}
+    startGame() {
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+        const playStatus$ = this.play.start();
+        this.listenKeys();
+        return playStatus$;
+    }
 
     listenKeys(twoPlayers = false, leftPlayer = null) {
         if (twoPlayers && leftPlayer === null) {

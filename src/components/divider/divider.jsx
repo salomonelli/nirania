@@ -16,6 +16,11 @@ class DividerComponent extends Component {
         return new Promise(res => setTimeout(res, transitionTime));
     }
 
+    async close() {
+        this.setState({open: false});
+        return new Promise(res => setTimeout(res, transitionTime));
+    }
+
     async componentDidMount() {}
 
     componentWillUnmount() {}
