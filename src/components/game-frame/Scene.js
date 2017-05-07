@@ -109,7 +109,16 @@ class Scene extends THREE.Scene {
                 this.way.rotate(Math.PI * angle);
                 this.particles.rotate(Math.PI * angle);
             }
-            if (this.move.up) this.level.erich.jump();
+            if (this.move.up) {
+                const height$ = this.level.erich.jump();
+                if(height$) {
+                    const sub = height$.subscribe(
+                        h => this.way.currentPosition.height = h,
+                        err=>{},
+                        () => sub.unsubscribe()
+                    );
+                }
+            }
         }
     };
 

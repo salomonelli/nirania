@@ -32,6 +32,7 @@ class CollisionDetector {
             mesh: null
         };
         self.obstacles.forEach((obstacle, i) => {
+
             if (ret.collision) return;
             // check if obstacle should not be checked anymore
             // remove from array with the next garbage-collection

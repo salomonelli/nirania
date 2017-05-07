@@ -1,5 +1,8 @@
 import * as THREE from 'three';
 import * as TWEEN from 'tween.js';
+import {
+    BehaviorSubject
+} from 'rxjs/Rx';
 
 import * as Part from './part';
 
@@ -52,9 +55,11 @@ class Erich {
      * Makes erich jump a given height
      */
     jump() {
+        const height$ = new BehaviorSubject(this.object3D.position.y);
         const jumpHeight = 70;
         if (this.isJumping) return;
         this.isJumping = true;
+        const ret = {};
         const self = this;
         let tween = new TWEEN
             .Tween({
@@ -64,12 +69,16 @@ class Erich {
                 jump: Math.PI
             }, 700)
             .onUpdate(function() {
-                self.object3D.position.y = jumpHeight * Math.sin(this.jump);
+                const height = jumpHeight * Math.sin(this.jump);
+                self.object3D.position.y = height;
+                height$.next(height);
             })
             .start();
         tween.onComplete(() => {
             this.isJumping = false;
+            height$.complete();
         });
+        return height$;
     }
 
     /**
