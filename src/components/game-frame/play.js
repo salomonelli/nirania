@@ -7,6 +7,7 @@ import * as Erich from './erich/erich';
 import * as Scene from './Scene';
 import * as Util from './util';
 import * as TWEEN from 'tween.js';
+import * as CollisionDetector from './collision-detector';
 import {getActionByKey} from './keybindings';
 
 class Play {
@@ -20,6 +21,7 @@ class Play {
             complete: false,
             success: null
         });
+        this.collisionDetector = CollisionDetector.create(this.scene.way.obstacles);
     }
 
     start() {
@@ -50,8 +52,8 @@ class Play {
         const speed = 1;
         while (
             this.scene.way.move(speed) > 0 &&
-            !this.playStatus$.getValue().completed
-            // !this.checkCollision(this.erich)
+            !this.playStatus$.getValue().completed &&
+            !this.checkCollision()
         ) {
             this.erich.animateMovement();
             this.scene.animateMovement();
@@ -62,6 +64,19 @@ class Play {
 
     renderToDomElement(domElement) {
         this.scene.renderToDomElement(domElement);
+    }
+
+    checkCollision() {
+        const collisionObj = this.collisionDetector.collision(this.scene.way.currentPosition);
+        switch (collisionObj.type) {
+            case 'diamond':
+                const currentValue = this.playStatus$.getValue();
+                currentValue.diamonds++;
+                this.playStatus$.next(currentValue);
+                break;
+            default:
+                return collisionObj.collision;
+        }
     }
 
     getActionByKey(code, twoPlayers = false, leftPlayer = null) {

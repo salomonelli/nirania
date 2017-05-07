@@ -52,6 +52,7 @@ class Erich {
      * Makes erich jump a given height
      */
     jump() {
+        const jumpHeight = 70;
         if (this.isJumping) return;
         this.isJumping = true;
         const self = this;
@@ -63,7 +64,7 @@ class Erich {
                 jump: Math.PI
             }, 700)
             .onUpdate(function() {
-                self.object3D.position.y = 40 * Math.sin(this.jump);
+                self.object3D.position.y = jumpHeight * Math.sin(this.jump);
             })
             .start();
         tween.onComplete(() => {

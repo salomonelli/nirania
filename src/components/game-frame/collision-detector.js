@@ -17,6 +17,7 @@ class CollisionDetector {
             return 0;
         });
         this.obstacles = obstacles;
+        this.lastObstacleId = null;
     }
 
     /**
@@ -72,7 +73,10 @@ class CollisionDetector {
                     currentPosition.anglemax > obstacle.collisionData.angle.min
                 )
             ) {
-
+                if(
+                    this.lastObstacleId === obstacle.mesh.id
+                ) return ret;
+                this.lastObstacleId = obstacle.mesh.id;
                 ret = {
                     collision: true,
                     type: obstacle.collisionData.type,
