@@ -72,6 +72,7 @@ class Play {
             case 'diamond':
                 const currentValue = this.playStatus$.getValue();
                 currentValue.diamonds++;
+                this.scene.hideFromScene(collisionObj.mesh);
                 this.playStatus$.next(currentValue);
                 break;
             default:

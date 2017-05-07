@@ -130,6 +130,10 @@ class Scene extends THREE.Scene {
         this.move[action] = false;
     }
 
+    hideFromScene(mesh) {
+        mesh.material.opacity = 0;
+    }
+
 
     /**
      * returns the THREE group of the protagonist
