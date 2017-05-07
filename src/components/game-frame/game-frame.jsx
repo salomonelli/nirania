@@ -60,7 +60,7 @@ class GameFrameComponent extends Component {
 
     render() {
         return (
-            <div ref={instance => this.gameFrameDom = instance}></div>
+            <div className="game-frame" ref={instance => this.gameFrameDom = instance}></div>
         );
     }
 }

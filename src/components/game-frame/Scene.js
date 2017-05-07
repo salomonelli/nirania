@@ -99,7 +99,7 @@ class Scene extends THREE.Scene {
      * turns camera and protagonist until told to stop
      */
     animateMovement() {
-        const angle = 0.01;
+        const angle = 0.003;
         if (this.move.continue) {
             if (this.move.left) {
                 this.way.rotate(-Math.PI * angle);

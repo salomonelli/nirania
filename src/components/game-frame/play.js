@@ -6,6 +6,7 @@ import * as Level from './level/level';
 import * as Erich from './erich/erich';
 import * as Scene from './Scene';
 import * as Util from './util';
+import * as TWEEN from 'tween.js';
 import {getActionByKey} from './keybindings';
 
 class Play {
@@ -40,7 +41,7 @@ class Play {
             await this.requestAnimationFramePromise();
             this.scene.render();
             // this.scene.turn();
-            // TWEEN.update();
+            TWEEN.update();
         }
     }
 

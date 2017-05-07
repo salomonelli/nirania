@@ -54,6 +54,7 @@ class Erich {
     jump() {
         if (this.isJumping) return;
         this.isJumping = true;
+        const self = this;
         let tween = new TWEEN
             .Tween({
                 jump: 0
@@ -62,10 +63,10 @@ class Erich {
                 jump: Math.PI
             }, 700)
             .onUpdate(function() {
-                this.object3D.position.y = 70 * Math.sin(this.jump);
+                self.object3D.position.y = 40 * Math.sin(this.jump);
             })
             .start();
-        tween.onComplete(function() {
+        tween.onComplete(() => {
             this.isJumping = false;
         });
     }
