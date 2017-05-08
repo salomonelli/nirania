@@ -58,6 +58,23 @@ async function canBePlayed() {
     else return false;
 };
 
+async function upsertLevel(levelId, success, survived, diamonds) {
+    const levelDoc = await this.getByNr(levelId);
+    if (levelDoc) {
+        if(!levelDoc.get('survived')) levelDoc.set('survived', survived);
+        if(!levelDoc.get('success')) levelDoc.set('success', success);
+        if(levelDoc.get('diamonds') > diamonds && success) levelDoc.set('diamonds', diamonds);
+        await levelDoc.save();
+    } else{
+        this.insert({
+            level: levelId + '',
+            success: success,
+            survived: survived,
+            diamonds: diamonds
+        });
+    }
+}
+
 
 async function updateData(success, diamonds) {
 
@@ -93,7 +110,8 @@ async function create() {
         schema,
         statics: {
             getByNr,
-            getSuccessful
+            getSuccessful,
+            upsertLevel
         },
         methods: {
             updateData,

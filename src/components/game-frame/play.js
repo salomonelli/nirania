@@ -21,6 +21,7 @@ class Play {
         this.playStatus$ = new BehaviorSubject({
             diamonds: 0,
             complete: false,
+            survived: false,
             success: null
         });
         this.collisionDetector = CollisionDetector.create(this.scene.way.obstacles);
@@ -29,10 +30,6 @@ class Play {
     start() {
         this.loopAnimation();
         this.loopStatus();
-        // key-handlers
-        // this.subs.push(Keybindings.keyBind('keydown').subscribe(direction => scene.startMovingErich(direction)));
-        // this.subs.push(Keybindings.keyBind('keyup').subscribe(direction => scene.stopMovingErich(direction)));
-        // return observable
         return this.playStatus$;
     }
 
@@ -44,7 +41,6 @@ class Play {
         while (!this.playStatus$.getValue().complete) {
             await this.requestAnimationFramePromise();
             this.scene.render();
-            // this.scene.turn();
             TWEEN.update();
         }
     }
@@ -64,8 +60,17 @@ class Play {
         this.scene.endAction('continue');
         const currentValue = this.playStatus$.getValue();
         currentValue.complete = true;
-        currentValue.success = false;
+        currentValue.survived = true;
+        currentValue.success = this.isSuccess(true, currentValue.diamonds);
         this.playStatus$.next(currentValue);
+    }
+
+    isSuccess(complete, diamonds) {
+        if(
+            complete &&
+            diamonds >= this.level.currentLevel.requiredDiamonds
+        ) return true;
+        return false;
     }
 
     renderToDomElement(domElement) {
@@ -85,6 +90,7 @@ class Play {
             default:
                 currentValue.complete = true;
                 currentValue.success = false;
+                currentValue.survived = false;
                 this.playStatus$.next(currentValue);
                 return collisionObj.collision;
         }

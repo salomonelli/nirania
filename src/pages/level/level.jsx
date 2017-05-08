@@ -20,22 +20,28 @@ class LevelPage extends Component {
         if (canBePlayed) {
             this.play();
         } else {
+            console.log('can not be played');
             // no : redirect, alert ..
 
         }
     }
 
-    play() {
+    async play() {
         this.dividerComponent.open();
         const playStatus$ = this.gameFrameComponent.startGame();
+        const levelNr = this.props.match.params.level;
         playStatus$
         .filter(obj => obj.complete)
-        .subscribe(() => {
+        .subscribe(async (currentValue) => {
             this.dividerComponent.close();
-            console.log(this.levelDoc);
+            await this.levelModel.upsertLevel(
+                levelNr,
+                currentValue.success,
+                currentValue.survived,
+                currentValue.diamonds
+            );
         });
     }
-
 
 
     componentWillUnmount() {}
