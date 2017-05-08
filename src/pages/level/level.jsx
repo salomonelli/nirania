@@ -17,8 +17,16 @@ class LevelPage extends Component {
         this.levelDoc = await this.levelModel.getByNr(levelNr);
 
         const canBePlayed = await this.levelDoc.canBePlayed();
+        if (canBePlayed) {
+            this.play();
+        } else {
+            // no : redirect, alert ..
+
+        }
+    }
+
+    play() {
         this.dividerComponent.open();
-        // TODO this needs to be put into canBePlayed
         const playStatus$ = this.gameFrameComponent.startGame();
         playStatus$
         .filter(obj => obj.complete)
@@ -26,12 +34,6 @@ class LevelPage extends Component {
             this.dividerComponent.close();
             console.log(this.levelDoc);
         });
-        if (canBePlayed) {
-            // TODO intro
-        } else {
-            // no : redirect, alert ..
-
-        }
     }
 
 

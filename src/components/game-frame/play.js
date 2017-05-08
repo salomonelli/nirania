@@ -62,6 +62,10 @@ class Play {
             await new Promise(res => setTimeout(res, this.speed));
         }
         this.scene.endAction('continue');
+        const currentValue = this.playStatus$.getValue();
+        currentValue.complete = true;
+        currentValue.success = false;
+        this.playStatus$.next(currentValue);
     }
 
     renderToDomElement(domElement) {

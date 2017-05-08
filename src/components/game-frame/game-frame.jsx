@@ -17,7 +17,6 @@ class GameFrameComponent extends Component {
     }
 
     startGame() {
-        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaa');
         const playStatus$ = this.play.start();
         this.listenKeys();
         return playStatus$;
