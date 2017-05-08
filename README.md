@@ -1,11 +1,10 @@
+## This project is in progress. :construction_worker:
+
 # Nirania
 
-Nirania is a game based on JavaScript using Three.js. This game was created for a university project (DHBW Villingen-Schwenningen, Germany).
+Nirania is a game based on JavaScript using Three.js. 
 
-Play game: http://nirania.sarasteiert.com
+# Contributors
 
-## Getting Started
-
-Docker needs to be installed. Run the "run.bash" on Linux and Max OSX to start the application.
-
-(Check IP of container with "docker inspect nirania".)
+[pubkey](https://github.com/pubkey)
+[salomonelli](https://github.com/salomonelli)

@@ -5,3 +5,8 @@ npm-debug.log
 server_nohup.out
 .DS_Store
 app/npm-debug.*
+*.extra
+log.txt
+firefox_root/
+config.json
+jest/
