@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import './App.css';
+import '../node_modules/roboto-fontface/css/roboto/roboto-fontface.css';
 
 class App extends Component {
     constructor(props) {
@@ -11,9 +13,9 @@ class App extends Component {
 
     render() {
         return (
-            <div>
+              <MuiThemeProvider>
                 <h1>RxDB Example - React</h1>
-            </div>
+              </MuiThemeProvider>
         );
     }
 }

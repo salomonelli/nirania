@@ -86,13 +86,11 @@ module.exports = {
   module: {
     // First, run the linter.
     // It's important to do this before Babel processes the JS.
-    preLoaders: [
-      {
-        test: /\.(js|jsx)$/,
-        loader: 'eslint',
-        include: paths.appSrc,
-      }
-    ],
+    preLoaders: [{
+      test: /\.(js|jsx)$/,
+      loader: 'eslint',
+      include: paths.appSrc,
+    }],
     loaders: [
       // ** ADDING/UPDATING LOADERS **
       // The "url" loader handles all assets unless explicitly excluded.
@@ -141,8 +139,8 @@ module.exports = {
       // In production, we use a plugin to extract that CSS to a file, but
       // in development "style" loader enables hot editing of CSS.
       {
-        test: /\.css$/,
-        loader: 'style!css?importLoaders=1!postcss'
+        test: /\.less$/,
+        loaders: ["style-loader", "css-loader", "less-loader"]
       },
       // JSON is not enabled by default in Webpack but both Node and Browserify
       // allow it implicitly so we also enable it.
