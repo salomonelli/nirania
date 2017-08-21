@@ -1,3 +1,4 @@
+/* eslint-disable */
 'use strict';
 
 if (typeof Promise === 'undefined') {
