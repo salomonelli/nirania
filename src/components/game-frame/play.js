@@ -58,11 +58,15 @@ class Play {
             await new Promise(res => setTimeout(res, this.speed));
         }
         this.scene.endAction('continue');
-        const currentValue = this.playStatus$.getValue();
-        currentValue.complete = true;
-        currentValue.survived = true;
-        currentValue.success = this.isSuccess(true, currentValue.diamonds);
-        this.playStatus$.next(currentValue);
+        if(
+          !this.playStatus$.getValue().complete
+        ) {
+            const currentValue = this.playStatus$.getValue();
+            currentValue.survived = true;
+            currentValue.success = this.isSuccess(true, currentValue.diamonds);
+            currentValue.complete = true;
+            this.playStatus$.next(currentValue);
+        }
     }
 
     isSuccess(complete, diamonds) {
