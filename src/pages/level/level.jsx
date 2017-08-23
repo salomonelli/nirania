@@ -16,8 +16,22 @@ class LevelPage extends Component {
             success: false,
             survived: false,
             diamonds: 0,
-            nextLevel: null
+            nextLevel: null,
+            gameFrameComponent: () => <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
         };
+    }
+
+    reset() {
+        this.setState( {
+            playing: false,
+            end: false,
+            canNotBePlayed: false,
+            success: false,
+            survived: false,
+            diamonds: 0,
+            nextLevel: null,
+            gameFrameComponent: () => <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
+        });
     }
 
     async componentDidMount() {
@@ -58,6 +72,7 @@ class LevelPage extends Component {
     componentWillUnmount() {}
 
     render() {
+        const CurrentGameFrame = this.state.gameFrameComponent;
         return (
           <MuiThemeProvider>
             <div className="level">
@@ -74,12 +89,13 @@ class LevelPage extends Component {
                 </div>
               }
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
-              <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
+              <CurrentGameFrame />
                 { this.state.end &&
                   <div className="intro">
                       <p>Success: {this.state.success ? 'true': 'false'}</p>
                       <p>Survived: {this.state.survived ? 'true' : 'false'}</p>
                       <p>Diamonds: {this.state.diamonds}</p>
+                      <RaisedButton label='Repeat' primary={false} onClick={this.reset.bind(this)}/>
                       <RaisedButton label={'Level ' + this.state.nextLevel} primary={true} onClick={this.play.bind(this)}/>
                   </div>
                 }

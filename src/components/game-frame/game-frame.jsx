@@ -46,7 +46,7 @@ class GameFrameComponent extends Component {
     stopListenKeys() {}
 
     componentWillUnmount() {
-        this.subs.forEch(sub => sub.unsubscribe());
+        this.subs.forEach(sub => sub.unsubscribe());
     }
 
     render() {
