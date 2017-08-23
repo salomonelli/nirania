@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import { browserHistory } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import {get as LevelModelGet} from '../../models/level.model';
@@ -21,7 +22,7 @@ class LevelPage extends Component {
         };
     }
 
-    reset() {
+    async reset() {
         this.setState( {
             playing: false,
             end: false,
@@ -32,6 +33,7 @@ class LevelPage extends Component {
             nextLevel: null,
             gameFrameComponent: () => <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
         });
+        await this.componentDidMount();
     }
 
     async componentDidMount() {
@@ -68,6 +70,12 @@ class LevelPage extends Component {
         });
     }
 
+    async playNextLevel() {
+        this.props.history.push('/level/'+this.state.nextLevel);
+        await this.reset();
+    }
+
+
 
     componentWillUnmount() {}
 
@@ -96,7 +104,12 @@ class LevelPage extends Component {
                       <p>Survived: {this.state.survived ? 'true' : 'false'}</p>
                       <p>Diamonds: {this.state.diamonds}</p>
                       <RaisedButton label='Repeat' primary={false} onClick={this.reset.bind(this)}/>
-                      <RaisedButton label={'Level ' + this.state.nextLevel} primary={true} onClick={this.play.bind(this)}/>
+                      {
+                        this.state.success &&
+                        <RaisedButton label={'Level ' + this.state.nextLevel} primary={true}
+                          onClick={this.playNextLevel.bind(this)}/>
+
+                      }
                   </div>
                 }
             </div>
