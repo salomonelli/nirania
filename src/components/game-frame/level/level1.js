@@ -3,6 +3,7 @@ const boxColor = Color.palette[1].box;
 const level = {
     id: 1,
     speed: 1,
+    author: 'salomonelli',
     instruction: 'Press <kbd>a</kbd> and <kbd>d</kbd> to avoid the obstacle.',
     background: Color.palette[1].background,
     requiredDiamonds: 0,

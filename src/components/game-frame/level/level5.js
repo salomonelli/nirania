@@ -5,6 +5,7 @@ let ringColor = Color.palette[4].ring;
 let coneColor = Color.palette[4].cone;
 
 const level = {
+    author: 'salomonelli',
     id: 5,
     speed: 1,
     background: Color.palette[4].background,

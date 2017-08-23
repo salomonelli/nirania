@@ -5,6 +5,7 @@
     "babel-polyfill": "^6.23.0",
     "concurrently": "^3.3.0",
     "material-ui": "^0.19.0",
+    "material-ui-icons": "^1.0.0-beta.5",
     "mdi": "^2.0.46",
     "pouchdb-adapter-http": "^6.1.2",
     "pouchdb-adapter-idb": "^6.1.2",

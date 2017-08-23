@@ -1,6 +1,7 @@
 import Color from '../color';
 let boxColor = Color.palette[5].box;
 const level = {
+    author: 'salomonelli',
     id: 2,
     speed: 1,
     instruction: 'Collect diamonds <i class="fa fa-diamond" aria-hidden="true"></i> and try to avoid obstacles.',

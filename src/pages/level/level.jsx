@@ -74,7 +74,9 @@ class LevelPage extends Component {
         this.props.history.push('/level/'+this.state.nextLevel);
         await this.reset();
     }
-
+    allLevels() {
+        this.props.history.push('/level');
+    }
 
 
     componentWillUnmount() {}
@@ -110,6 +112,9 @@ class LevelPage extends Component {
                           onClick={this.playNextLevel.bind(this)}/>
 
                       }
+                      <RaisedButton label='View Levels' primary={false} onClick={this.allLevels.bind(this)}/>
+
+
                   </div>
                 }
             </div>
