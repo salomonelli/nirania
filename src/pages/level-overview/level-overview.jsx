@@ -38,27 +38,16 @@ class LevelPage extends Component {
         const sub = this.levelModel.find().$.subscribe(playedLevelsFromDb => {
             const playedLevels = playedLevelsFromDb.filter(level => !isNaN(parseInt(level.level)));
             const tilesData = levels.map(level => {
-                level.active = playedLevels[level.id-1] && playedLevels[level.id-1].canBePlayed() ? 'active' : 'inactive';
-                level.diamonds = playedLevels[level.id-1] && playedLevels[level.id-1].diamonds ?
-                playedLevels[level.id].diamonds : 0;
+                const levelData = playedLevels.filter(pL => parseInt(pL.level) === level.id);
+                let prevLevel;
+                if (level.id != 1) prevLevel = playedLevels.filter(pL => parseInt(pL.level) === (level.id - 1));
+                level.active = level.id === 1 || prevLevel.length === 1 && prevLevel[0].success ? 'active' : 'inactive';
+                level.diamonds = levelData.length === 1 ? levelData[0].diamonds : 0;
                 return level;
             });
             this.setState({tilesData: tilesData});
         });
         this.subs.push(sub);
-        /*
-        this.levelsDoc = await this.levelModel.find().exec();
-        const playedLevels = this.levelsDoc.filter(level => !isNaN(parseInt(level.level)));
-        console.dir(levels);
-
-        const tilesData = levels.map(level => {
-        level.active = playedLevels[level.id-1] && playedLevels[level.id-1].canBePlayed() ? 'active' : 'inactive';
-        level.diamonds = playedLevels[level.id-1] && playedLevels[level.id-1].diamonds ?
-        playedLevels[level.id].diamonds : 0;
-        return level;
-        this.setState({tilesData: tilesData});
-        });
-         */
     }
 
     componentWillUnmount() {

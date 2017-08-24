@@ -63,7 +63,7 @@ async function upsertLevel(levelId, success, survived, diamonds) {
     if (levelDoc) {
         if(!levelDoc.get('survived')) levelDoc.set('survived', survived);
         if(!levelDoc.get('success')) levelDoc.set('success', success);
-        if(levelDoc.get('diamonds') > diamonds && success) levelDoc.set('diamonds', diamonds);
+        if(levelDoc.get('diamonds') < diamonds && !!success) levelDoc.set('diamonds', diamonds);
         await levelDoc.save();
     } else{
         this.insert({
