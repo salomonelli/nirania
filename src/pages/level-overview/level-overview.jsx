@@ -29,24 +29,41 @@ class LevelPage extends Component {
             playedLevels: [],
             levels: levels
         };
+        this.subs = [];
     }
 
     async componentDidMount() {
         this.levelModel = await LevelModelGet();
         // const levelNr = this.props.match.params.level;
+        const sub = this.levelModel.find().$.subscribe(playedLevelsFromDb => {
+            const playedLevels = playedLevelsFromDb.filter(level => !isNaN(parseInt(level.level)));
+            const tilesData = levels.map(level => {
+                level.active = playedLevels[level.id-1] && playedLevels[level.id-1].canBePlayed() ? 'active' : 'inactive';
+                level.diamonds = playedLevels[level.id-1] && playedLevels[level.id-1].diamonds ?
+                playedLevels[level.id].diamonds : 0;
+                return level;
+            });
+            this.setState({tilesData: tilesData});
+        });
+        this.subs.push(sub);
+        /*
         this.levelsDoc = await this.levelModel.find().exec();
         const playedLevels = this.levelsDoc.filter(level => !isNaN(parseInt(level.level)));
         console.dir(levels);
+
         const tilesData = levels.map(level => {
-            level.active = playedLevels[level.id-1] && playedLevels[level.id-1].canBePlayed() ? 'active' : 'inactive';
-            level.diamonds = playedLevels[level.id-1] && playedLevels[level.id-1].diamonds ?
-               playedLevels[level.id].diamonds : 0;
-            return level;
-        });
+        level.active = playedLevels[level.id-1] && playedLevels[level.id-1].canBePlayed() ? 'active' : 'inactive';
+        level.diamonds = playedLevels[level.id-1] && playedLevels[level.id-1].diamonds ?
+        playedLevels[level.id].diamonds : 0;
+        return level;
         this.setState({tilesData: tilesData});
+        });
+         */
     }
 
-    componentWillUnmount() {}
+    componentWillUnmount() {
+        this.subs.forEach(sub => sub.unsubscribe());
+    }
 
     levelColor(color) {
         return '#' +new THREE.Color(color).getHexString();
