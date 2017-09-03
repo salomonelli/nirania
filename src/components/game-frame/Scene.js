@@ -1,7 +1,9 @@
 import * as Erich from './erich/erich';
+/*
 import {
     Particles
 } from './Particles';
+ */
 import Color from './color';
 import * as Util from './util';
 
@@ -33,7 +35,7 @@ class Scene extends THREE.Scene {
         this.renderer.shadowMap.enabled = false;
 
         this.camera = new THREE.PerspectiveCamera(75, this.width / this.height, 1, 3000);
-        this.particles = new Particles(-600, 600, -600, 600, -300, 0, 100);
+        // this.particles = new Particles(-600, 600, -600, 600, -300, 0, 100);
         this.move = {
             left: false,
             right: false,
@@ -45,8 +47,8 @@ class Scene extends THREE.Scene {
         this.add(this.way.group);
 
         this.camera.position.set(0, 50, 95);
-        this.particles.position(0, 0, -500);
-        this.particles.addToScene(this);
+        // this.particles.position(0, 0, -500);
+        // this.particles.addToScene(this);
         this.level.erich.position(0, 5, 0);
         this.level.erich.rotate('y', Math.PI);
         this.level.erich.addToScene(this);
@@ -91,7 +93,7 @@ class Scene extends THREE.Scene {
      * Renders scene and with basic animations like particles
      */
     render() {
-        this.particles.animate();
+        // this.particles.animate();
         this.renderer.render(this, this.camera);
     };
 
@@ -103,11 +105,11 @@ class Scene extends THREE.Scene {
         if (this.move.continue) {
             if (this.move.left) {
                 this.way.rotate(-Math.PI * angle);
-                this.particles.rotate(-Math.PI * angle);
+                // this.particles.rotate(-Math.PI * angle);
             }
             if (this.move.right) {
                 this.way.rotate(Math.PI * angle);
-                this.particles.rotate(Math.PI * angle);
+                // this.particles.rotate(Math.PI * angle);
             }
             if (this.move.up) {
                 const height$ = this.level.erich.jump();
