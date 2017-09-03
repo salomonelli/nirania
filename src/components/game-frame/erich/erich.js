@@ -42,7 +42,7 @@ class Erich {
         this.left.leg.addToGroup(this.object3D);
          */
         this.head.position.x = 0;
-        this.head.position.y = -2;
+        this.head.position.y = -10;
         this.head.position.z = 0;
         this.object3D.add(this.head);
         // this.head.addToGroup(this.object3D);
@@ -62,6 +62,12 @@ class Erich {
         this.object3D.children[2].position.z = position * -1;
         */
     };
+
+    tweenLoop() {
+        while(!!this.isJumping) {
+            TWEEN.update();
+        };
+    }
 
     /**
      * Makes erich jump a given height

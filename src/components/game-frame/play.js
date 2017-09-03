@@ -53,7 +53,7 @@ class Play {
             !this.playStatus$.getValue().complete
         ) {
             this.checkCollision();
-            this.erich.animateMovement();
+            // this.erich.animateMovement();
             this.scene.animateMovement();
             await new Promise(res => setTimeout(res, this.speed));
         }
