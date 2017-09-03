@@ -135,6 +135,9 @@ class Scene extends THREE.Scene {
     hideFromScene(mesh) {
         mesh.material.opacity = 0;
     }
+    moveCameraForward(speed) {
+        this.camera.position.z = this.camera.position.z + speed;
+    }
 
 
     /**

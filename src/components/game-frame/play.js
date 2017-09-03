@@ -49,7 +49,7 @@ class Play {
         this.scene.startAction('continue');
         const speed = 1;
         while (
-            this.scene.way.move(speed) > 0 &&
+            this.scene.way.move(speed, this.erich, this.scene) > 0 &&
             !this.playStatus$.getValue().complete
         ) {
             this.checkCollision();

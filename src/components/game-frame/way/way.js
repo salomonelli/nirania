@@ -52,8 +52,10 @@ class Way {
      * @param {number} speed
      * @return {number} distance left
      */
-    move(speed) {
-        this.group.position.z = this.group.position.z + speed;
+    move(speed, erich, scene) {
+        // this.group.position.z = this.group.position.z + speed;
+        erich.moveForward(speed);
+        scene.moveCameraForward(-speed);
         this.currentPosition.distance = this.currentPosition.distance + speed;
         this.moveRandomObstacles();
         return this.length - this.currentPosition.distance - 80;

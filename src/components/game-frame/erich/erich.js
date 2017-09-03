@@ -63,16 +63,11 @@ class Erich {
         */
     };
 
-    tweenLoop() {
-        while(!!this.isJumping) {
-            TWEEN.update();
-        };
-    }
-
     /**
      * Makes erich jump a given height
      */
     jump() {
+        console.dir(this.object3D.position);
         const height$ = new BehaviorSubject(this.object3D.position.y);
         const jumpHeight = 70;
         if (this.isJumping) return;
@@ -107,6 +102,10 @@ class Erich {
      */
     position(x, y, z) {
         this.object3D.position.set(x, y, z);
+    }
+
+    moveForward(speed) {
+        this.object3D.position.z = this.object3D.position.z - speed;
     }
 
     /**
