@@ -11,11 +11,12 @@ const CLOCK = new THREE.Clock(true);
 class Erich {
     constructor() {
         this.object3D = new THREE.Object3D();
-        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 20;
+        // this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 20;
 
-
+        const geometry = new THREE.SphereGeometry( 10, 32, 32 );
+        const material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         //this.body = Part.getByType('body');
-        this.head = Part.getByType('head');
+        this.head = new THREE.Mesh( geometry, material );//Part.getByType('head');
         /*
         this.left = {
         leg: Part.getByType('leg')
@@ -40,8 +41,11 @@ class Erich {
         this.left.leg.position(0, 0, 0);
         this.left.leg.addToGroup(this.object3D);
          */
-        this.head.position(0, -2, 0);
-        this.head.addToGroup(this.object3D);
+        this.head.position.x = 0;
+        this.head.position.y = -2;
+        this.head.position.z = 0;
+        this.object3D.add(this.head);
+        // this.head.addToGroup(this.object3D);
     }
 
     /**

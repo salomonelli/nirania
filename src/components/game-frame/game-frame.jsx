@@ -13,6 +13,7 @@ class GameFrameComponent extends Component {
 
     async componentDidMount() {
         this.play = Play.byLevelId(this.props.level);
+        console.dir(this.play);
         this.play.renderToDomElement(this.gameFrameDom);
     }
 
