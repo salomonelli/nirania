@@ -11,16 +11,19 @@ const CLOCK = new THREE.Clock(true);
 class Erich {
     constructor() {
         this.object3D = new THREE.Object3D();
-        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 10;
+        this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 20;
 
-        this.body = Part.getByType('body');
+
+        //this.body = Part.getByType('body');
         this.head = Part.getByType('head');
+        /*
         this.left = {
-            leg: Part.getByType('leg')
-        };
-        this.right = {
-            leg: Part.getByType('leg')
-        };
+        leg: Part.getByType('leg')
+      };
+      this.right = {
+      leg: Part.getByType('leg')
+    };
+         */
         this.groupBodyParts();
         this.isJumping = false;
     }
@@ -29,14 +32,16 @@ class Erich {
      * groups the body parts of erich and positions them
      */
     groupBodyParts() {
+        /*
         this.body.position(0, 0, 0);
         this.body.addToGroup(this.object3D);
-        this.head.position(0, 0.1, 0);
-        this.head.addToGroup(this.object3D);
         this.right.leg.position(0.5, 0, 0);
         this.right.leg.addToGroup(this.object3D);
         this.left.leg.position(0, 0, 0);
         this.left.leg.addToGroup(this.object3D);
+         */
+        this.head.position(0, -2, 0);
+        this.head.addToGroup(this.object3D);
     }
 
     /**
@@ -45,10 +50,13 @@ class Erich {
      * @param {THREE.clock} clock
      */
     animateMovement() {
+
+        /*
         const position = Math.sin(CLOCK.getElapsedTime() * 10) * 1;
         this.object3D.children[0].position.x = position * -0.05;
         this.object3D.children[3].position.z = position * 1;
         this.object3D.children[2].position.z = position * -1;
+        */
     };
 
     /**
