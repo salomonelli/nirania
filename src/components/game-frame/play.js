@@ -29,7 +29,8 @@ class Play {
 
     start() {
         this.loopAnimation();
-        this.loopStatus();
+        new Promise(res => setTimeout(res, 1000))
+        .then(() => this.loopStatus());
         return this.playStatus$;
     }
 
@@ -46,15 +47,16 @@ class Play {
     }
 
     async loopStatus() {
+        const factor = 1;
         this.scene.startAction('continue');
-        const speed = 2;
+        const speed = 3 * factor;
         while (
             this.scene.way.move(speed, this.erich, this.scene) > 0 &&
             !this.playStatus$.getValue().complete
         ) {
             this.checkCollision();
             this.scene.animateMovement();
-            await new Promise(res => setTimeout(res, 10));
+            await new Promise(res => setTimeout(res, 10 * factor));
         }
         this.scene.endAction('continue');
         if(
@@ -81,6 +83,7 @@ class Play {
     }
 
     checkCollision() {
+
         const collisionObj = this.collisionDetector.collision(this.scene.way.currentPosition);
         if(!collisionObj.collision) return;
         const currentValue = this.playStatus$.getValue();

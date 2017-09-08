@@ -104,10 +104,17 @@ class Scene extends THREE.Scene {
         const angle = 0.003;
         if (this.move.continue) {
             if (this.move.left) {
+                /*
+                this.camera.position.x = this.camera.position.x + 1;
+                this.camera.lookAt(this.level.erich.currentPosition);
+
+                // TODO move camera and erich
+                 */
                 this.way.rotate(-Math.PI * angle);
                 // this.particles.rotate(-Math.PI * angle);
             }
             if (this.move.right) {
+                // TODO move camera and erich
                 this.way.rotate(Math.PI * angle);
                 // this.particles.rotate(Math.PI * angle);
             }
