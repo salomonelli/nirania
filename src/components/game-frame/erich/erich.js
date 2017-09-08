@@ -4,16 +4,13 @@ import {
     BehaviorSubject
 } from 'rxjs/Rx';
 
-import * as Part from './part';
-
-const CLOCK = new THREE.Clock(true);
 
 class Erich {
     constructor() {
         this.object3D = new THREE.Object3D();
         // this.object3D.scale.x = this.object3D.scale.y = this.object3D.scale.z = 20;
 
-        const geometry = new THREE.SphereGeometry( 10, 32, 32 );
+        const geometry = new THREE.SphereGeometry( 10, 50, 50  );
         const material = new THREE.MeshBasicMaterial( {color: 0xffffff} );
         //this.body = Part.getByType('body');
         this.head = new THREE.Mesh( geometry, material );//Part.getByType('head');
@@ -71,7 +68,6 @@ class Erich {
         const jumpHeight = 70;
         if (this.isJumping) return;
         this.isJumping = true;
-        const ret = {};
         const self = this;
         let tween = new TWEEN
             .Tween({

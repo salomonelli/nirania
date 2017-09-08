@@ -42,36 +42,38 @@ class CollisionDetector {
                 // check if obstacle is near enough otherwise don't even check whether collision
                 obstacle.collisionData.distance.min < (currentPosition.distance + 100) &&
                 (
-                    //other collision with left body half
-                    obstacle.collisionData.distance.min < currentPosition.distance &&
-                    currentPosition.distance < obstacle.collisionData.distance.max &&
-                    obstacle.collisionData.angle.min < currentPosition.anglemin &&
-                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
-                    obstacle.collisionData.size.height > currentPosition.height
-                ) ||
-                (
-                    //other collisions from right body half.
-                    obstacle.collisionData.distance.min < currentPosition.distance &&
-                    currentPosition.distance < obstacle.collisionData.distance.max &&
-                    obstacle.collisionData.angle.min < currentPosition.anglemax &&
-                    currentPosition.anglemax < obstacle.collisionData.angle.max &&
-                    obstacle.collisionData.size.height > currentPosition.height
-                ) ||
-                (
-                    //cone
-                    obstacle.collisionData.type == 'cone' &&
-                    currentPosition.distance < obstacle.collisionData.distance.max &&
-                    currentPosition.distance > obstacle.collisionData.distance.min &&
-                    currentPosition.anglemin < obstacle.collisionData.angle.max &&
-                    currentPosition.anglemin > obstacle.collisionData.angle.min
-                ) ||
-                (
-                    //cone
-                    obstacle.collisionData.type == 'cone' &&
-                    currentPosition.distance < obstacle.collisionData.distance.max &&
-                    currentPosition.distance > obstacle.collisionData.distance.min &&
-                    currentPosition.anglemax < obstacle.collisionData.angle.max &&
-                    currentPosition.anglemax > obstacle.collisionData.angle.min
+                  (
+                      //other collision with left body half
+                      obstacle.collisionData.distance.min < currentPosition.distance &&
+                      currentPosition.distance < obstacle.collisionData.distance.max &&
+                      obstacle.collisionData.angle.min < currentPosition.anglemin &&
+                      currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                      obstacle.collisionData.size.height > currentPosition.height
+                  ) ||
+                  (
+                      //other collisions from right body half.
+                      obstacle.collisionData.distance.min < currentPosition.distance &&
+                      currentPosition.distance < obstacle.collisionData.distance.max &&
+                      obstacle.collisionData.angle.min < currentPosition.anglemax &&
+                      currentPosition.anglemax < obstacle.collisionData.angle.max &&
+                      obstacle.collisionData.size.height > currentPosition.height
+                  ) ||
+                  (
+                      //cone
+                      obstacle.collisionData.type === 'cone' &&
+                      currentPosition.distance < obstacle.collisionData.distance.max &&
+                      currentPosition.distance > obstacle.collisionData.distance.min &&
+                      currentPosition.anglemin < obstacle.collisionData.angle.max &&
+                      currentPosition.anglemin > obstacle.collisionData.angle.min
+                  ) ||
+                  (
+                      //cone
+                      obstacle.collisionData.type ==='cone' &&
+                      currentPosition.distance < obstacle.collisionData.distance.max &&
+                      currentPosition.distance > obstacle.collisionData.distance.min &&
+                      currentPosition.anglemax < obstacle.collisionData.angle.max &&
+                      currentPosition.anglemax > obstacle.collisionData.angle.min
+                  )
                 )
             ) {
                 if(

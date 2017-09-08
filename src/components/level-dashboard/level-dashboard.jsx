@@ -2,9 +2,6 @@ import React, {Component} from 'react';
 import './level-dashboard.css';
 
 class LevelDashboardComponent extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     async componentDidMount() {}
 

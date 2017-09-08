@@ -36,12 +36,12 @@ class LevelPage extends Component {
         this.levelModel = await LevelModelGet();
         // const levelNr = this.props.match.params.level;
         const sub = this.levelModel.find().$.subscribe(playedLevelsFromDb => {
-            const playedLevels = playedLevelsFromDb.filter(level => !isNaN(parseInt(level.level)));
+            const playedLevels = playedLevelsFromDb.filter(level => !isNaN(parseInt(level.level, 10)));
             const tilesData = levels.map(level => {
-                const levelData = playedLevels.filter(pL => parseInt(pL.level) === level.id);
+                const levelData = playedLevels.filter(pL => parseInt(pL.level, 10) === level.id);
                 let prevLevel;
-                if (level.id != 1) prevLevel = playedLevels.filter(pL => parseInt(pL.level) === (level.id - 1));
-                level.active = level.id === 1 || prevLevel.length === 1 && prevLevel[0].success ? 'active' : 'inactive';
+                if (level.id !== 1) prevLevel = playedLevels.filter(pL => parseInt(pL.level, 10) === (level.id - 1));
+                level.active = (level.id === 1) || (prevLevel.length === 1 && prevLevel[0].success) ? 'active' : 'inactive';
                 level.diamonds = levelData.length === 1 ? levelData[0].diamonds : 0;
                 return level;
             });

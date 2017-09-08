@@ -1,8 +1,6 @@
 import * as Way from '../way/way';
 import * as CollisionDetector from '../collision-detector';
 import * as Sound from '../Sound';
-const THREE = require('three');
-
 
 import level1 from './level1';
 import level2 from './level2';
@@ -132,31 +130,6 @@ class Level {
             await new Promise(res => setTimeout(res, this.speed));
         }
         // GUI.hideInstruction();
-    };
-
-    /**
-     * renders hogan tempalte success.mustache and adds it to html-body
-     */
-    async showSuccessScreen() {
-        let last = '';
-        let canNotBePlayed, disableNextLevel, showOutro;
-        if (this.id === levels.length) {
-            last = 'gone';
-            showOutro = 'true';
-        }
-        if (!Level.canBePlayed(this.id + 1)) {
-            canNotBePlayed = 'true';
-            disableNextLevel = 'disabled';
-        }
-        /*  await GUI.showSuccessScreen({
-              score: this.diamonds,
-              level: this.id,
-              next: this.id + 1,
-              last,
-              canNotBePlayed,
-              disableNextLevel,
-              showOutro
-          });*/
     };
 
     /**

@@ -1,14 +1,6 @@
-import * as Erich from './erich/erich';
-/*
-import {
-    Particles
-} from './Particles';
- */
 import Color from './color';
-import * as Util from './util';
 
 import * as THREE from 'three';
-import * as TWEEN from 'tween.js';
 
 /**
  * Represents Scene

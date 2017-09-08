@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import Rx from 'rxjs';
-import { browserHistory } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 import {get as LevelModelGet} from '../../models/level.model';
