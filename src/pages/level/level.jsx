@@ -1,4 +1,5 @@
 import React, {Component} from 'react';
+import Rx from 'rxjs';
 import { browserHistory } from 'react-router';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -41,16 +42,19 @@ class LevelPage extends Component {
         const levelNr = this.props.match.params.level;
         this.setState({nextLevel: parseInt(levelNr) + 1});
         this.levelDoc = await this.levelModel.getByNr(levelNr);
-
         const canBePlayed = await this.levelDoc.canBePlayed();
         if (!canBePlayed) this.setState({canNotBePlayed: true});
-        document.addEventListener('keydown', this.play.bind(this));
+        Rx.Observable.fromEvent(document, 'keydown')
+        .filter(() => this.state.playing === false)
+        .first()
+        .subscribe(() => this.play());
     }
 
     async play() {
         document.removeEventListener('keydown', () => {});
         this.setState({playing: true});
         this.dividerComponent.open();
+        console.log('play2');
         const playStatus$ = this.gameFrameComponent.startGame();
         const levelNr = this.props.match.params.level;
         playStatus$
