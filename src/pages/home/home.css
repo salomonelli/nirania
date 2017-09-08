@@ -1,0 +1,52 @@
+.tile-background {
+  height: 100%;
+  width: 100%;
+}
+
+.tile {
+  background: white;
+  cursor: pointer;
+}
+
+.tile.inactive {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.level-diamonds {
+  display: inline-flex;
+  align-items: center;
+  color: white;
+}
+
+.level-diamonds .diamonds {
+  margin-right: 16px;
+  margin-left: 16px;
+  letter-spacing: 4px;
+}
+
+
+/*
+
+.diamond {
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-bottom: 12px solid white;
+  position: relative;
+  top: -11px;
+  margin-right: 16px;
+  margin-left:8px;
+}
+
+.diamond:after {
+  content: '';
+  position: absolute;
+  left: -8px;
+  top: 12px;
+  width: 0;
+  height: 0;
+  border: 8px solid transparent;
+  border-top: 12px solid white;
+}
+ */

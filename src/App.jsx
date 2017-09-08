@@ -14,7 +14,7 @@ class App extends Component {
     render() {
         return (
               <MuiThemeProvider>
-                <h1>RxDB Example - React</h1>
+                <h1>Nirania</h1>
               </MuiThemeProvider>
         );
     }
