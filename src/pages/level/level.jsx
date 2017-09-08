@@ -7,6 +7,7 @@ import {get as LevelModelGet} from '../../models/level.model';
 import './level.css';
 import DividerComponent from '../../components/divider/divider';
 import GameFrameComponent from '../../components/game-frame/game-frame';
+import LevelDashboardComponent from '../../components/level-dashboard/level-dashboard';
 
 class LevelPage extends Component {
     constructor(props) {
@@ -40,7 +41,7 @@ class LevelPage extends Component {
     async componentDidMount() {
         this.levelModel = await LevelModelGet();
         const levelNr = this.props.match.params.level;
-        this.setState({nextLevel: parseInt(levelNr) + 1});
+        this.setState({nextLevel: parseInt(levelNr, 10) + 1});
         this.levelDoc = await this.levelModel.getByNr(levelNr);
         const canBePlayed = await this.levelDoc.canBePlayed();
         if (!canBePlayed) this.setState({canNotBePlayed: true});
@@ -57,6 +58,7 @@ class LevelPage extends Component {
         console.log('play2');
         const playStatus$ = this.gameFrameComponent.startGame();
         const levelNr = this.props.match.params.level;
+        playStatus$.subscribe(currentValue => this.setState({diamonds: currentValue.diamonds}));
         playStatus$
         .filter(obj => obj.complete)
         .subscribe(async (currentValue) => {
@@ -102,6 +104,7 @@ class LevelPage extends Component {
                   <RaisedButton label="Play" primary={true} onClick={this.play.bind(this)}/>
                 </div>
               }
+              <LevelDashboardComponent diamonds={this.state.diamonds}/>
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
               <CurrentGameFrame />
                 { this.state.end &&
