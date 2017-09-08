@@ -67,7 +67,6 @@ class Erich {
      * Makes erich jump a given height
      */
     jump() {
-        console.dir(this.object3D.position);
         const height$ = new BehaviorSubject(this.object3D.position.y);
         const jumpHeight = 70;
         if (this.isJumping) return;

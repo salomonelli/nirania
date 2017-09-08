@@ -47,15 +47,14 @@ class Play {
 
     async loopStatus() {
         this.scene.startAction('continue');
-        const speed = 1;
+        const speed = 2;
         while (
             this.scene.way.move(speed, this.erich, this.scene) > 0 &&
             !this.playStatus$.getValue().complete
         ) {
             this.checkCollision();
-            // this.erich.animateMovement();
             this.scene.animateMovement();
-            await new Promise(res => setTimeout(res, this.speed));
+            await new Promise(res => setTimeout(res, 10));
         }
         this.scene.endAction('continue');
         if(
