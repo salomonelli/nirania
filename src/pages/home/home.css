@@ -1,52 +1,52 @@
-.tile-background {
-  height: 100%;
+.page {
+  position: absolute;
   width: 100%;
-}
-
-.tile {
+  height: 100%;
   background: white;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
 }
 
-.tile.inactive {
-  cursor: not-allowed;
-  opacity: 0.5;
+.page .wrapper {
+  width: 100%;
 }
 
-.level-diamonds {
-  display: inline-flex;
-  align-items: center;
-  color: white;
+.page .wrapper h1 {
+  font-size: 4rem;
+  text-transform: uppercase;
+  font-weight: lighter;
+  letter-spacing: 2rem;
+  text-align: center;
+  top: 0;
+  width: 100%;
 }
 
-.level-diamonds .diamonds {
-  margin-right: 16px;
-  margin-left: 16px;
-  letter-spacing: 4px;
+.page .wrapper p {
+  width: 100%;
+  text-align: center;
+  font-weight: 300;
+  letter-spacing: 0.1rem;
 }
 
-
-/*
-
-.diamond {
-  width: 0;
-  height: 0;
-  border: 8px solid transparent;
-  border-bottom: 12px solid white;
-  position: relative;
-  top: -11px;
-  margin-right: 16px;
-  margin-left:8px;
+.page .wrapper p.desktop {
+  display: inline-block;
 }
 
-.diamond:after {
-  content: '';
-  position: absolute;
-  left: -8px;
-  top: 12px;
-  width: 0;
-  height: 0;
-  border: 8px solid transparent;
-  border-top: 12px solid white;
+.page .wrapper p.mobile {
+  display: none;
 }
- */
+
+@media only screen and (max-width : 1024px) {
+  .page .wrapper p.mobile {
+    display: inline-block;
+  }
+
+  .page .wrapper p.desktop {
+    display: none;
+  }
+  .page .wrapper h1 {
+    font-size: 2rem;
+    letter-spacing: 1.5rem;
+  }
+}

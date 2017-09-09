@@ -32,29 +32,33 @@ class LevelPage extends Component {
             survived: false,
             diamonds: 0,
             nextLevel: null,
+            autostart: false,
             gameFrameComponent: () => <GameFrameComponent ref={instance => this.gameFrameComponent = instance} level={this.props.match.params.level}/>
         });
         await this.componentDidMount();
     }
 
     async componentDidMount() {
+        this.setState({autostart: this.props.location.search.replace('?', '')});
         this.levelModel = await LevelModelGet();
         const levelNr = this.props.match.params.level;
         this.setState({nextLevel: parseInt(levelNr, 10) + 1});
         this.levelDoc = await this.levelModel.getByNr(levelNr);
         const canBePlayed = await this.levelDoc.canBePlayed();
         if (!canBePlayed) this.setState({canNotBePlayed: true});
-        Rx.Observable.fromEvent(document, 'keydown')
-        .filter(() => this.state.playing === false)
-        .first()
-        .subscribe(() => this.play());
+        if(this.state.autostart) await this.play();
+        else {
+            Rx.Observable.fromEvent(document, 'keydown')
+            .filter(() => this.state.playing === false)
+            .first()
+            .subscribe(() => this.play());
+        }
     }
 
     async play() {
         document.removeEventListener('keydown', () => {});
         this.setState({playing: true});
         this.dividerComponent.open();
-        console.log('play2');
         const playStatus$ = this.gameFrameComponent.startGame();
         const levelNr = this.props.match.params.level;
         playStatus$.subscribe(currentValue => this.setState({diamonds: currentValue.diamonds}));
@@ -96,7 +100,7 @@ class LevelPage extends Component {
                   <h1>can not be played</h1>
                 </div>
               }
-              {!this.state.canNotBePlayed && !this.state.playing &&
+              {!this.state.canNotBePlayed && !this.state.playing && !this.state.autostart &&
                 <div className="intro">
                   <h1>Nirania</h1>
                   <h3>Level {this.props.match.params.level}</h3>
