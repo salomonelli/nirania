@@ -7,6 +7,7 @@ import './level.css';
 import DividerComponent from '../../components/divider/divider';
 import GameFrameComponent from '../../components/game-frame/game-frame';
 import LevelDashboardComponent from '../../components/level-dashboard/level-dashboard';
+import LevelEndComponent from '../../components/level-end/level-end';
 
 class LevelPage extends Component {
     constructor(props) {
@@ -65,13 +66,16 @@ class LevelPage extends Component {
         playStatus$
         .filter(obj => obj.complete)
         .subscribe(async (currentValue) => {
-            this.dividerComponent.close();
-            await this.levelModel.upsertLevel(
+            const promise1 = this.dividerComponent.close();
+            const promise2 = this.levelModel.upsertLevel(
                 levelNr,
                 currentValue.success,
                 currentValue.survived,
                 currentValue.diamonds
             );
+            await Promise.all([promise1, promise2]);
+            console.dir(this.levelEndComponent);
+            this.levelEndComponent.startCountDown();
             this.setState({end: true});
             this.setState({success: currentValue.success});
             this.setState({survived: currentValue.survived});
@@ -110,23 +114,11 @@ class LevelPage extends Component {
               <LevelDashboardComponent diamonds={this.state.diamonds}/>
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
               <CurrentGameFrame />
-                { this.state.end &&
-                  <div className="intro">
-                      <p>Success: {this.state.success ? 'true': 'false'}</p>
-                      <p>Survived: {this.state.survived ? 'true' : 'false'}</p>
-                      <p>Diamonds: {this.state.diamonds}</p>
-                      <RaisedButton label='Repeat' primary={false} onClick={this.reset.bind(this)}/>
-                      {
-                        this.state.success &&
-                        <RaisedButton label={'Level ' + this.state.nextLevel} primary={true}
-                          onClick={this.playNextLevel.bind(this)}/>
-
-                      }
-                      <RaisedButton label='View Levels' primary={false} onClick={this.allLevels.bind(this)}/>
-
-
+                  <div className={'intro' + (this.state.end ? '' : ' hidden')}>
+                      <LevelEndComponent ref={instance => this.levelEndComponent = instance} nextLevel={this.state.nextLevel} success={this.state.success}
+                        onAllLevels={this.allLevels.bind(this)} onNextLevel={this.playNextLevel.bind(this)}
+                        onRepeat={this.reset.bind(this)}/>
                   </div>
-                }
             </div>
           </MuiThemeProvider>
         );
@@ -134,3 +126,19 @@ class LevelPage extends Component {
 }
 
 export default LevelPage;
+
+
+/*
+<RaisedButton label='View Levels' primary={false} onClick={this.allLevels.bind(this)}/>
+
+<p>Success: {this.state.success ? 'true': 'false'}</p>
+<p>Survived: {this.state.survived ? 'true' : 'false'}</p>
+<p>Diamonds: {this.state.diamonds}</p>
+<RaisedButton label='Repeat' primary={false} onClick={this.reset.bind(this)}/>
+{
+this.state.success &&
+<RaisedButton label={'Level ' + this.state.nextLevel} primary={true}
+onClick={this.playNextLevel.bind(this)}/>
+
+}
+ */

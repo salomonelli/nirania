@@ -1,0 +1,65 @@
+.level-end {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.auto-starter div {
+  font-size: 1rem;
+  letter-spacing: 0.2rem;
+  line-height: 3rem;
+  opacity: 0.8;
+}
+
+.level-repeat, .level-next, .level-list {
+  width: auto;
+  float: left;
+  cursor: pointer;
+  opacity: 0.8;
+  padding: 2rem;
+}
+
+.level-next.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.level-repeat svg, .level-next svg, .level-list svg {
+  height: 100px !important;
+  width: 100px !important;
+}
+
+.level-repeat div, .level-next div, .level-list div {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4rem;
+  line-height: 4rem;
+}
+
+
+@media only screen and (max-width : 1024px) {
+  .level-repeat, .level-next, .level-list {
+    padding: 0;
+    padding-bottom: 1rem;
+    width: 100%;
+  }
+  .level-repeat svg, .level-next svg, .level-list svg {
+    height: 50px !important;
+    width: 50px !important;
+  }
+
+  .level-repeat div, .level-next div, .level-list div {
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.4rem;
+    line-height: 2rem;
+  }
+
+  .auto-starter div {
+    font-size: 0.8rem;
+    line-height: 1rem;
+    letter-spacing: 0.1rem;
+  }
+
+}

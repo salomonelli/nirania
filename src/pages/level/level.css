@@ -1,7 +1,12 @@
 .level .intro {
-    position: absolute;
-    display: inline-block;
-    z-index: 20;
-    width: 100%;
-    text-align: center;
+  position: absolute;
+  display: inline-block;
+  z-index: 20;
+  width: 100%;
+  text-align: center;
+  height: 100%;
+}
+
+.level .intro.hidden {
+  display: none;
 }
