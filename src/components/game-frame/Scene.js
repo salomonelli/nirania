@@ -116,15 +116,19 @@ class Scene extends THREE.Scene {
                     const sub = height$.subscribe(
                         h => this.way.currentPosition.height = h,
                         err=>{},
-                        () => sub.unsubscribe()
+                        () => {
+                            if(!!this.move.once) this.move.up = false;
+                            sub.unsubscribe();
+                        }
                     );
                 }
             }
         }
     };
 
-    startAction(action) {
+    startAction(action, once) {
         this.move[action] = true;
+        this.move.once = once;
     }
 
     endAction(action) {

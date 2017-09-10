@@ -105,8 +105,8 @@ class Play {
         return getActionByKey(code, twoPlayers, leftPlayer);
     }
 
-    startAction(action) {
-        this.scene.startAction(action);
+    startAction(action, once = false) {
+        this.scene.startAction(action, once);
     }
 
     endAction(action) {
