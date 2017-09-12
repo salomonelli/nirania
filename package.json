@@ -1,6 +1,7 @@
 {
-  "name": "rxdb-example-react",
-  "version": "3.0.0",
+  "name": "nirania",
+  "version": "1.0.0",
+  "homepage": "https://salomonelli.github.io/nirania",
   "dependencies": {
     "babel-polyfill": "^6.23.0",
     "concurrently": "^3.3.0",
@@ -70,6 +71,8 @@
   "scripts": {
     "dev": "PORT=8888 node scripts/start.js",
     "build": "node scripts/build.js",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "test": "node scripts/test.js --env=jsdom",
     "start": "concurrently \"npm run server\" \"npm run dev\"",
     "server": "pouchdb-server --host 0.0.0.0 -p 10102 -m -d /tmp/pouchdb-server/ -n true"
