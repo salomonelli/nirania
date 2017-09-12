@@ -56,10 +56,17 @@
     line-height: 2rem;
   }
 
-  .auto-starter div {
-    font-size: 0.8rem;
-    line-height: 1rem;
-    letter-spacing: 0.1rem;
+  .auto-starter {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    top: 2rem;
+
+    div {
+      font-size: 0.8rem;
+      line-height: 1rem;
+      letter-spacing: 0.1rem;
+    }
   }
 
 }
