@@ -9,18 +9,18 @@
   display: inline-flex;
   align-items: center;
   padding: 2rem;
-  div {
-    font-size: 2rem;
-  }
+}
+.diamond-quantity {
+  font-size: 3rem;
 }
 
 #diamond {
   width: 0;
   height: 0;
-  border: 25px solid transparent;
+  border: 2rem solid transparent;
   border-bottom-color: white;
   position: relative;
-  top: -25px;
+  top: -2rem;
   float: left;
   margin-right: 2rem;
 }
@@ -28,11 +28,11 @@
 #diamond:after {
   content: '';
   position: absolute;
-  left: -25px;
-  top: 25px;
+  left: -2rem;
+  top: 2rem;
   width: 0;
   height: 0;
-  border: 25px solid transparent;
+  border: 2rem solid transparent;
   border-top-color: white;
 }
 
