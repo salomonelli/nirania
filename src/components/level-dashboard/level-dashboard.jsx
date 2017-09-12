@@ -10,15 +10,21 @@ class LevelDashboardComponent extends Component {
     render() {
         return (
             <div className="level-dashboard">
-                <table>
-                  <tr>
-                    <td>Diamonds</td>
-                    <td>{this.props.diamonds}</td>
-                  </tr>
-                </table>
+                <div className="diamond-wrapper">
+                  <div id="diamond"></div>
+                  <div className="diamond-quantity">{this.props.diamonds}</div>
+                </div>
             </div>
         );
     }
 }
 
 export default LevelDashboardComponent;
+/*
+<table>
+  <tr>
+    <td>Diamonds</td>
+    <td>{this.props.diamonds}</td>
+  </tr>
+</table>
+ */

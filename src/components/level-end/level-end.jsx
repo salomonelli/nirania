@@ -38,17 +38,17 @@ class LevelEndComponent extends Component {
         return (
             <div >
               <div className='level-end'>
+                  <div className='level-list' onClick={this.props.onAllLevels}>
+                    <ViewListIcon></ViewListIcon>
+                    <div>Overview</div>
+                  </div>
                   <div className='level-repeat' onClick={this.props.onRepeat}>
                     <ReplayIcon></ReplayIcon>
                     <div>Repeat</div>
                   </div>
                   <div className={'level-next ' + (this.props.success ? '' : 'disabled')} onClick={this.props.onNextLevel}>
                     <SkipNextIcon></SkipNextIcon>
-                    <div>Level {this.props.nextLevel}</div>
-                  </div>
-                  <div className='level-list' onClick={this.props.onAllLevels}>
-                    <ViewListIcon></ViewListIcon>
-                    <div>Overview</div>
+                    <div>Next Level</div>
                   </div>
               </div>
               <div className='auto-starter'>
