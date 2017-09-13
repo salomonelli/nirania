@@ -25,6 +25,7 @@ class LevelPage extends Component {
     }
 
     async reset() {
+        if(!this.state.end) return;
         this.setState( {
             playing: false,
             end: false,
