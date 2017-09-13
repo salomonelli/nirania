@@ -8,31 +8,31 @@
 .diamond-wrapper {
   display: inline-flex;
   align-items: center;
-  padding: 2rem;
+  padding: 1rem;
 }
 .diamond-quantity {
-  font-size: 3rem;
+  font-size: 1.5rem;
 }
 
 #diamond {
   width: 0;
   height: 0;
-  border: 2rem solid transparent;
+  border: 1rem solid transparent;
   border-bottom-color: white;
   position: relative;
-  top: -2rem;
+  top: -1rem;
   float: left;
-  margin-right: 2rem;
+  margin-right: 1rem;
 }
 
 #diamond:after {
   content: '';
   position: absolute;
-  left: -2rem;
-  top: 2rem;
+  left: -1rem;
+  top: 1rem;
   width: 0;
   height: 0;
-  border: 2rem solid transparent;
+  border: 1rem solid transparent;
   border-top-color: white;
 }
 
