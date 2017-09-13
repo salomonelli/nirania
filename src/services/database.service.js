@@ -20,10 +20,12 @@ const _create = async function() {
     window['db'] = db; // write to window for debugging
 
     // show leadership in title
+    /*
     db.waitForLeadership().then(() => {
         console.log('isLeader now');
         document.title = '♛ ' + document.title;
     });
+     */
     // sync
     console.log('DatabaseService: sync');
     if (db.collections.length > 0) {
