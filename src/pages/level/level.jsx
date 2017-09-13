@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
 import Rx from 'rxjs';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
-import RaisedButton from 'material-ui/RaisedButton';
 import {get as LevelModelGet} from '../../models/level.model';
 import './level.css';
 import DividerComponent from '../../components/divider/divider';
 import GameFrameComponent from '../../components/game-frame/game-frame';
 import LevelDashboardComponent from '../../components/level-dashboard/level-dashboard';
+import CheaterComponent from '../../components/cheater/cheater';
 import LevelEndComponent from '../../components/level-end/level-end';
 
 class LevelPage extends Component {
@@ -41,6 +41,8 @@ class LevelPage extends Component {
     }
 
     async componentDidMount() {
+        Rx.Observable.fromEvent(window, 'resize')
+        .subscribe(() => location.reload());
         if (!!this.state.autostart) this.setState({autostart: this.props.location.search.replace('?', '')});
         this.levelModel = await LevelModelGet();
         const levelNr = this.props.match.params.level;
@@ -103,9 +105,7 @@ class LevelPage extends Component {
           <MuiThemeProvider>
             <div className="level">
               {this.state.canNotBePlayed &&
-                <div className="intro">
-                  <h1>can not be played</h1>
-                </div>
+                  <CheaterComponent onAllLevels={this.allLevels.bind(this)}></CheaterComponent>
               }
               <LevelDashboardComponent diamonds={this.state.diamonds}/>
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
