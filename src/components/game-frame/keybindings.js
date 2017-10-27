@@ -1,7 +1,8 @@
 const KEY_MAP_LEFT = {
     KeyA: 'left',
     KeyD: 'right',
-    KeyW: 'up'
+    KeyW: 'up',
+    KeyP: 'pause'
 };
 
 const KEY_MAP_RIGHT = {

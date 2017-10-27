@@ -21,7 +21,8 @@ class Play {
             diamonds: 0,
             complete: false,
             survived: false,
-            success: null
+            success: null,
+            pause: false
         });
         this.collisionDetector = CollisionDetector.create(this.scene.way.obstacles);
     }
@@ -53,6 +54,11 @@ class Play {
             this.scene.way.move(speed, this.erich, this.scene) > 0 &&
             !this.playStatus$.getValue().complete
         ) {
+            if(this.playStatus$.getValue().pause) {
+                await this.playStatus$
+                  .filter(data => !data.pause)
+                  .first().toPromise();
+            }
             this.checkCollision();
             this.scene.animateMovement();
             await new Promise(res => setTimeout(res, 10 * factor));
@@ -106,7 +112,17 @@ class Play {
     }
 
     startAction(action, once = false) {
-        this.scene.startAction(action, once);
+        switch (action) {
+            case 'pause':
+                const currentValue = this.playStatus$.getValue();
+                currentValue.pause = !currentValue.pause;
+                this.playStatus$.next(currentValue);
+                break;
+            default:
+                this.scene.startAction(action, once);
+                break;
+        }
+
     }
 
     endAction(action) {
