@@ -12,7 +12,6 @@ import {
 } from './keybindings';
 
 class Play {
-
     constructor(level, scene, erich) {
         this.level = level;
         this.scene = scene;
@@ -22,12 +21,26 @@ class Play {
             complete: false,
             survived: false,
             success: null,
-            pause: false
+            pause: false,
+            position: this.level.way.length,
+            explanation: null
         });
         this.collisionDetector = CollisionDetector.create(this.scene.way.obstacles);
     }
 
+
+    getState() {
+        return this.playStatus$.getValue();
+    }
+
+    setState(newState) {
+        const oldState = this.playStatus$.getValue();
+        Object.keys(newState).forEach(k => oldState[k] = newState[k]);
+        this.playStatus$.next(oldState);
+    }
+
     start() {
+        this.level.behavior.start && this.level.behavior.start(this);
         this.loopAnimation();
         new Promise(res => setTimeout(res, 1000))
         .then(() => this.loopStatus());
@@ -50,8 +63,14 @@ class Play {
         const factor = 1;
         this.scene.startAction('continue');
         const speed = 3 * factor;
+        let position = this.level.way.length;
+        const move = () => {
+            position = this.scene.way.move(speed, this.erich, this.scene);
+            this.setState({position});
+            return position;
+        };
         while (
-            this.scene.way.move(speed, this.erich, this.scene) > 0 &&
+            move()  > 0 &&
             !this.playStatus$.getValue().complete
         ) {
             if(this.playStatus$.getValue().pause) {
@@ -67,12 +86,13 @@ class Play {
         if(
           !this.playStatus$.getValue().complete
         ) {
-            const currentValue = this.playStatus$.getValue();
-            currentValue.survived = true;
-            currentValue.success = this.isSuccess(true, currentValue.diamonds);
-            currentValue.complete = true;
-            this.playStatus$.next(currentValue);
+            this.setState({
+                survived: true,
+                success: this.isSuccess(true, this.getState().diamonds),
+                complete: true
+            });
         }
+        this.level.behavior.end && this.level.behavior.end(this);
     }
 
     isSuccess(complete, diamonds) {
@@ -91,18 +111,18 @@ class Play {
 
         const collisionObj = this.collisionDetector.collision(this.scene.way.currentPosition);
         if(!collisionObj.collision) return;
-        const currentValue = this.playStatus$.getValue();
         switch (collisionObj.type) {
             case 'diamond':
-                currentValue.diamonds++;
+                const diamonds = this.getState().diamonds + 1;
                 this.scene.hideFromScene(collisionObj.mesh);
-                this.playStatus$.next(currentValue);
+                this.setState({diamonds});
                 break;
             default:
-                currentValue.complete = true;
-                currentValue.success = false;
-                currentValue.survived = false;
-                this.playStatus$.next(currentValue);
+                this.setState({
+                    complete: true,
+                    success: false,
+                    survived: false
+                });
                 return collisionObj.collision;
         }
     }
@@ -114,9 +134,7 @@ class Play {
     startAction(action, once = false) {
         switch (action) {
             case 'pause':
-                const currentValue = this.playStatus$.getValue();
-                currentValue.pause = !currentValue.pause;
-                this.playStatus$.next(currentValue);
+                this.setState({pause: !this.getState().pause});
                 break;
             default:
                 this.scene.startAction(action, once);
@@ -127,6 +145,14 @@ class Play {
 
     endAction(action) {
         this.scene.endAction(action);
+    }
+
+    displayExplanation(text) {
+        this.setState({explanation: text});
+    }
+
+    hideExplanation() {
+        this.setState({explanation: null});
     }
 }
 

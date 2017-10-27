@@ -8,6 +8,7 @@ import GameFrameComponent from '../../components/game-frame/game-frame';
 import LevelDashboardComponent from '../../components/level-dashboard/level-dashboard';
 import CheaterComponent from '../../components/cheater/cheater';
 import LevelEndComponent from '../../components/level-end/level-end';
+import ExplanationComponent from '../../components/explanation/explanation';
 
 class LevelPage extends Component {
     constructor(props) {
@@ -68,7 +69,12 @@ class LevelPage extends Component {
         this.dividerComponent.open();
         const playStatus$ = this.gameFrameComponent.startGame();
         const levelNr = this.props.match.params.level;
-        playStatus$.subscribe(currentValue => this.setState({diamonds: currentValue.diamonds}));
+        playStatus$.subscribe(currentValue => {
+            this.setState({diamonds: currentValue.diamonds});
+            if (currentValue.explanation)
+                this.explanationComponent.display(currentValue.explanation);
+            else this.explanationComponent.hide();
+        });
         playStatus$
         .filter(obj => obj.complete)
         .subscribe(async (currentValue) => {
@@ -109,6 +115,7 @@ class LevelPage extends Component {
               }
               <LevelDashboardComponent diamonds={this.state.diamonds}/>
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
+              <ExplanationComponent ref={instance => this.explanationComponent = instance} />
               <CurrentGameFrame />
               <div className={'intro' + (this.state.end ? '' : ' hidden')}>
                 <LevelEndComponent ref={instance => this.levelEndComponent = instance} nextLevel={this.state.nextLevel} success={this.state.success}

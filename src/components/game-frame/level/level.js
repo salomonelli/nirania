@@ -33,6 +33,7 @@ class Level {
             this.currentLevel.speed,
             this.currentLevel.way.color
         );
+        this.behavior = this.currentLevel.behavior || {};
         this.speed = 1;
         this.gameOver = false;
         this.diamonds = 0;

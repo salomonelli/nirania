@@ -6,6 +6,22 @@ const level = {
     author: 'salomonelli',
     instruction: 'Press <kbd>a</kbd> and <kbd>d</kbd> to avoid the obstacle.',
     background: Color.palette[1].background,
+    behavior: {
+        start: play => {
+            let jumpInfo = false;
+            play.playStatus$.map(state => state.position)
+            .do(position => console.log(position))
+            .filter(() => jumpInfo === false)
+            .filter(position => position < 1500)
+            .subscribe(position => {
+                console.log('aaaaaaaaaaa');
+                jumpInfo = true;
+                play.startAction('pause');
+                play.displayExplanation('Daniel Daniel');
+            });
+        },
+        end: play => { console.log('end');}
+    },
     requiredDiamonds: 0,
     way: {
         length: 2000,

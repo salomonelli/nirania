@@ -6,7 +6,9 @@ import * as Play from './play';
 class GameFrameComponent extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            pause: false
+        };
         this.subs = [];
         this.running = false;
         this.lastTap = 0;
@@ -19,6 +21,8 @@ class GameFrameComponent extends Component {
 
     startGame() {
         const playStatus$ = this.play.start();
+        playStatus$.map(state => state.pause)
+          .subscribe(pause => this.setState({pause}));
         this.listenKeys();
         return playStatus$;
     }
@@ -87,7 +91,9 @@ class GameFrameComponent extends Component {
 
     render() {
         return (
-            <div className="game-frame-wrapper">
+            <div className={this.state.pause ? 'game-frame-wrapper pause':
+                'game-frame-wrapper'
+              }                >
               <div className="tappable-controls">
                 <div className="left" ref="left"></div>
                 <div className="right" ref="right"></div>

@@ -4,6 +4,10 @@
   width: 100%;
 }
 
+.game-frame-wrapper.pause  {
+  filter: blur(4px);
+}
+
 .game-frame {
   position: absolute;
   left: 0;
