@@ -6,6 +6,8 @@
 
 .game-frame-wrapper.pause  {
   filter: blur(4px);
+  -webkit-transition: filter 0.5s; /* Safari */
+  transition: filter 0.5s;
 }
 
 .game-frame {

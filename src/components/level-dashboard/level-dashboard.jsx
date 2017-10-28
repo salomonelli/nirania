@@ -9,7 +9,7 @@ class LevelDashboardComponent extends Component {
 
     render() {
         return (
-            <div className="level-dashboard">
+            <div className={'level-dashboard ' + this.props.pause}>
                 <div className="diamond-wrapper">
                   <div id="diamond"></div>
                   <div className="diamond-quantity">{this.props.diamonds}</div>

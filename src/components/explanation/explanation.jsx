@@ -1,4 +1,6 @@
 import React, {Component} from 'react';
+import ChevronLeft from 'material-ui-icons/ChevronLeft';
+import ChevronRight from 'material-ui-icons/ChevronRight';
 import './explanation.css';
 
 
@@ -7,7 +9,8 @@ class ExplanationComponent extends Component {
         super(props);
         this.state = {
             visible: false,
-            text: ''
+            text: '',
+            iconType: null
         };
     }
 
@@ -15,10 +18,11 @@ class ExplanationComponent extends Component {
 
     componentWillUnmount() {}
 
-    display(text) {
+    display(text, iconType) {
         this.setState({
             text,
-            visible: true
+            visible: true,
+            iconType
         });
     }
 
@@ -37,7 +41,19 @@ class ExplanationComponent extends Component {
             <div className={this.state.visible
                 ? 'explanation'
                 : 'explanation hidden'}>
-                <p>{this.state.text}</p>
+                <div className="text">
+                  <p>{this.state.text}</p>
+                </div>
+                <div className="keyboard">
+                  <div className="row-1">
+                    <div className="arrow-up"><ChevronLeft /></div>
+                  </div>
+                  <div className="row-2">
+                    <div className="arrow-left active"><ChevronLeft /></div>
+                    <div className="arrow-down"><ChevronLeft /></div>
+                    <div className="arrow-right"><ChevronRight /></div>
+                  </div>
+                </div>
             </div>
         );
     }

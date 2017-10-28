@@ -53,6 +53,11 @@ class Play {
 
     async loopAnimation() {
         while (!this.playStatus$.getValue().complete) {
+            if(this.playStatus$.getValue().pause) {
+                await this.playStatus$
+                  .filter(data => !data.pause)
+                  .first().toPromise();
+            }
             await this.requestAnimationFramePromise();
             this.scene.render();
             TWEEN.update();

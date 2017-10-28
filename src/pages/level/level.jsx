@@ -17,6 +17,7 @@ class LevelPage extends Component {
             playing: false,
             end: false,
             canNotBePlayed: false,
+            pause: false,
             success: false,
             survived: false,
             diamonds: 0,
@@ -70,7 +71,7 @@ class LevelPage extends Component {
         const playStatus$ = this.gameFrameComponent.startGame();
         const levelNr = this.props.match.params.level;
         playStatus$.subscribe(currentValue => {
-            this.setState({diamonds: currentValue.diamonds});
+            this.setState({diamonds: currentValue.diamonds, pause: currentValue.pause});
             if (currentValue.explanation)
                 this.explanationComponent.display(currentValue.explanation);
             else this.explanationComponent.hide();
@@ -113,7 +114,7 @@ class LevelPage extends Component {
               {this.state.canNotBePlayed &&
                   <CheaterComponent onAllLevels={this.allLevels.bind(this)}></CheaterComponent>
               }
-              <LevelDashboardComponent diamonds={this.state.diamonds}/>
+              <LevelDashboardComponent pause={this.state.pause ? 'pause' : ''} diamonds={this.state.diamonds}/>
               <DividerComponent ref={instance => this.dividerComponent = instance}/>
               <ExplanationComponent ref={instance => this.explanationComponent = instance} />
               <CurrentGameFrame />

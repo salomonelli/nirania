@@ -17,7 +17,7 @@ const level = {
                 console.log('aaaaaaaaaaa');
                 jumpInfo = true;
                 play.startAction('pause');
-                play.displayExplanation('Daniel Daniel');
+                play.displayExplanation('Hold to turn left', 'left-turn');
             });
         },
         end: play => { console.log('end');}
