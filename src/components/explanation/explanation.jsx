@@ -30,7 +30,8 @@ class ExplanationComponent extends Component {
         if(!this.state.text) return;
         this.setState({
             text: null,
-            visible: false
+            visible: false,
+            iconType: null
         });
     }
 
@@ -44,14 +45,18 @@ class ExplanationComponent extends Component {
                 <div className="text">
                   <p>{this.state.text}</p>
                 </div>
-                <div className="keyboard">
+                <div className={this.state.iconType ? 'keyboard' : 'keyboard hidden'}>
                   <div className="row-1">
-                    <div className="arrow-up"><ChevronLeft /></div>
+                    <div className={this.state.iconType === 'jump' ? 'arrow-up active' : 'arrow-up'}>
+                      <ChevronLeft /></div>
                   </div>
                   <div className="row-2">
-                    <div className="arrow-left active"><ChevronLeft /></div>
+                    <div className={this.state.iconType === 'left-turn' ? 'arrow-left active' : 'arrow-left'}>
+                      <ChevronLeft />
+                      </div>
                     <div className="arrow-down"><ChevronLeft /></div>
-                    <div className="arrow-right"><ChevronRight /></div>
+                    <div className={this.state.iconType === 'right-turn' ? 'arrow-right active' : 'arrow-right'}>
+                      <ChevronRight /></div>
                   </div>
                 </div>
             </div>

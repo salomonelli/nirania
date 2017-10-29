@@ -73,7 +73,7 @@ class LevelPage extends Component {
         playStatus$.subscribe(currentValue => {
             this.setState({diamonds: currentValue.diamonds, pause: currentValue.pause});
             if (currentValue.explanation)
-                this.explanationComponent.display(currentValue.explanation);
+                this.explanationComponent.display(currentValue.explanation, currentValue.icon);
             else this.explanationComponent.hide();
         });
         playStatus$

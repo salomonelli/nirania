@@ -1,5 +1,6 @@
 import {
-    BehaviorSubject
+    BehaviorSubject,
+    Subject
 } from 'rxjs/Rx';
 
 import * as Level from './level/level';
@@ -25,6 +26,7 @@ class Play {
             position: this.level.way.length,
             explanation: null
         });
+        this.actions$ = new Subject();
         this.collisionDetector = CollisionDetector.create(this.scene.way.obstacles);
     }
 
@@ -145,19 +147,19 @@ class Play {
                 this.scene.startAction(action, once);
                 break;
         }
-
+        this.actions$.next(action);
     }
 
     endAction(action) {
         this.scene.endAction(action);
     }
 
-    displayExplanation(text) {
-        this.setState({explanation: text});
+    displayExplanation(text, iconType) {
+        this.setState({explanation: text, icon: iconType});
     }
 
     hideExplanation() {
-        this.setState({explanation: null});
+        this.setState({explanation: null, icon: null});
     }
 }
 
