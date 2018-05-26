@@ -1,14 +1,16 @@
 import Color from '../color';
 let boxColor = Color.palette[5].box;
+let boxColor2 = Color.palette[5].box2;
+let ringColor = Color.palette[5].ring;
 const level = {
     author: 'salomonelli',
     id: 2,
     speed: 1,
     instruction: 'Collect diamonds <i class="fa fa-diamond" aria-hidden="true"></i> and try to avoid obstacles.',
     background: Color.palette[5].background,
-    requiredDiamonds: 5,
+    requiredDiamonds: 0,
     way: {
-        length: 2000,
+        length: 4000,
         color: Color.palette[5].way,
         obstacles: [
             // ring of diamonds
@@ -195,12 +197,27 @@ const level = {
                     angle: 15
                 }
             },
+            // rings
+            {
+                type: 'ring',
+                color: ringColor,
+                position: {
+                    distance: 1400
+                }
+            },
+            {
+                type: 'ring',
+                color: ringColor,
+                position: {
+                    distance: 1500
+                }
+            },
             // boxes
             {
                 type: 'box',
                 size: {
-                    width: 50,
-                    length: 800,
+                    width: 25,
+                    length: 900,
                     height: 25
                 },
                 color: boxColor,
@@ -212,8 +229,8 @@ const level = {
             {
                 type: 'box',
                 size: {
-                    width: 50,
-                    length: 800,
+                    width: 25,
+                    length: 900,
                     height: 25
                 },
                 color: boxColor,
@@ -225,8 +242,8 @@ const level = {
             {
                 type: 'box',
                 size: {
-                    width: 50,
-                    length: 800,
+                    width: 25,
+                    length: 900,
                     height: 25
                 },
                 color: boxColor,
@@ -238,8 +255,8 @@ const level = {
             {
                 type: 'box',
                 size: {
-                    width: 50,
-                    length: 800,
+                    width: 25,
+                    length: 900,
                     height: 25
                 },
                 color: boxColor,
@@ -248,204 +265,122 @@ const level = {
                     angle: 270
                 }
             },
-            // diamonds at 45°
             {
-                type: 'diamond',
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
                 position: {
-                    distance: 1100,
+                    distance: 2200,
+                    angle: 0
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
+                position: {
+                    distance: 2200,
+                    angle: 90
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
+                position: {
+                    distance: 2200,
+                    angle: 180
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
+                position: {
+                    distance: 2200,
+                    angle: 270
+                }
+            },
+            {
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
+                position: {
+                    distance: 2200,
                     angle: 45
                 }
             },
             {
-                type: 'diamond',
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
                 position: {
-                    distance: 1200,
-                    angle: 45
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1300,
-                    angle: 45
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1400,
-                    angle: 45
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1500,
-                    angle: 45
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1600,
-                    angle: 45
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1700,
-                    angle: 45
-                }
-            },
-            // diamonds at 135°
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1100,
+                    distance: 2200,
                     angle: 135
                 }
             },
             {
-                type: 'diamond',
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
                 position: {
-                    distance: 1200,
-                    angle: 135
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1300,
-                    angle: 135
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1400,
-                    angle: 135
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1500,
-                    angle: 135
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1600,
-                    angle: 135
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1700,
-                    angle: 135
-                }
-            },
-            // diamonds at 225°
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1100,
+                    distance: 2200,
                     angle: 225
                 }
             },
             {
-                type: 'diamond',
+                type: 'box',
+                size: {
+                    width: 25,
+                    length: 25,
+                    height: 500
+                },
+                color: boxColor2,
                 position: {
-                    distance: 1200,
-                    angle: 225
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1300,
-                    angle: 225
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1400,
-                    angle: 225
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1500,
-                    angle: 225
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1600,
-                    angle: 225
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1700,
-                    angle: 225
-                }
-            },
-            // diamonds 315 °
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1100,
+                    distance: 2200,
                     angle: 315
                 }
             },
             {
-                type: 'diamond',
+                type: 'ring',
+                color: ringColor,
                 position: {
-                    distance: 1200,
-                    angle: 315
+                    distance: 2500
                 }
             },
             {
-                type: 'diamond',
+                type: 'ring',
+                color: ringColor,
                 position: {
-                    distance: 1300,
-                    angle: 315
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1400,
-                    angle: 315
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1500,
-                    angle: 315
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1600,
-                    angle: 315
-                }
-            },
-            {
-                type: 'diamond',
-                position: {
-                    distance: 1700,
-                    angle: 315
+                    distance: 2600
                 }
             },
 

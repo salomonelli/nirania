@@ -40,7 +40,7 @@ const level = {
             await play.playStatus$.map(state => state.position)
             .filter(position => position < 1000).first().toPromise();
             play.startAction('pause');
-            play.displayExplanation('Collect diamonds');
+            play.displayExplanation('Collect diamonds', 'right-left');
             await play.actions$.first().toPromise();
             play.hideExplanation();
             play.startAction('pause');

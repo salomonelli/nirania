@@ -51,11 +51,11 @@ class ExplanationComponent extends Component {
                       <ChevronLeft /></div>
                   </div>
                   <div className="row-2">
-                    <div className={this.state.iconType === 'left-turn' ? 'arrow-left active' : 'arrow-left'}>
+                    <div className={(this.state.iconType === 'left-turn' || this.state.iconType === 'right-left') ? 'arrow-left active' : 'arrow-left'}>
                       <ChevronLeft />
                       </div>
                     <div className="arrow-down"><ChevronLeft /></div>
-                    <div className={this.state.iconType === 'right-turn' ? 'arrow-right active' : 'arrow-right'}>
+                    <div className={(this.state.iconType === 'right-turn' || this.state.iconType === 'right-left') ? 'arrow-right active' : 'arrow-right'}>
                       <ChevronRight /></div>
                   </div>
                 </div>

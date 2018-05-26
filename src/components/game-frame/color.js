@@ -15,10 +15,10 @@ const Color = {
             ring: 0x82BF45
         }, {
             name: 'pink blue strong',
-            background: 0xC6B273,
-            way: 0x881A1B,
-            box: 0x600004,
-            ring: 0x8C4E39
+            background: 0xcdd3ad,
+            way: 0xcdd1c6,
+            box: 0xFF4242,
+            ring: 0xD4EE5E
         }, {
             name: 'light brown',
             background: 0xFDF1CD,
@@ -43,11 +43,11 @@ const Color = {
         },
         {
             name: 'orange black',
-            background: 0x494B4A,
-            way: 0xB9A58C,
-            box: 0xAC8BA0,
-            ring: 0xFFC3A7,
-            cone: 0xE8DFCE
+            background: 0xEEE6AB,
+            way: 0xC5BC8E,
+            box: 0x696758,
+            ring: 0x00897B,// 0x969066,
+            box2: 0x696758// 0x00897B
         }
     ]
 };
