@@ -10,7 +10,7 @@ const level = {
     background: Color.palette[5].background,
     requiredDiamonds: 0,
     way: {
-        length: 4000,
+        length: 3000,
         color: Color.palette[5].way,
         obstacles: [
             // ring of diamonds

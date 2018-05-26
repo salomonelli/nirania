@@ -1,7 +1,7 @@
 .level .intro {
   position: absolute;
   display: inline-block;
-  z-index: 20;
+  z-index: 9999;
   width: 100%;
   text-align: center;
   height: 100%;
