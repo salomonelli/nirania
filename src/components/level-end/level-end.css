@@ -11,6 +11,7 @@
   letter-spacing: 0.2rem;
   line-height: 3rem;
   opacity: 0.8;
+  color: #33333385;
 }
 
 .level-repeat, .level-next, .level-list {
@@ -27,15 +28,15 @@
 }
 
 .level-repeat svg, .level-next svg, .level-list svg {
-  height: 100px !important;
-  width: 100px !important;
+  height: 50px !important;
+  width: 50px !important;
 }
 
 .level-repeat div, .level-next div, .level-list div {
   font-size: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.4rem;
-  line-height: 4rem;
+  line-height: 1rem;
 }
 
 
@@ -54,14 +55,14 @@
     font-size: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.4rem;
-    line-height: 2rem;
+    line-height: 1rem;
   }
 
   .auto-starter {
     position: absolute;
     width: 100%;
     text-align: center;
-    top: 2rem;
+    top: 0rem;
 
     div {
       font-size: 0.8rem;
@@ -70,4 +71,31 @@
     }
   }
 
+}
+
+.level-success p {
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-size: 35px;
+  color: #1B5E20;
+}
+.level-success.failure p {
+    color: #b71c1c;
+}
+
+.level-success .diamonds {
+    font-size: 30px;
+    font-weight: normal;
+    color: rgba(0, 0, 0, 0.87);
+}
+
+#diamond {
+  width: 0;
+  height: 0;
+  border: 1rem solid transparent;
+  border-bottom-color: white;
+  position: relative;
+  top: -1rem;
+  float: left;
+  margin-right: 1rem;
 }

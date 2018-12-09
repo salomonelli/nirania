@@ -9,6 +9,7 @@ import Rx from 'rxjs';
 class LevelEndComponent extends Component {
     constructor(props) {
         super(props);
+        console.dir(this.props);
         this.state = {
             timer: 5
         };
@@ -38,6 +39,13 @@ class LevelEndComponent extends Component {
         return (
             <div >
               <div className='level-end'>
+                  <div className={'level-success ' + (this.props.success ? '' : 'failure')}>
+                    <p>
+                      {
+                          this.props.success ? 'Level Success' : 'Level Failed'
+                        }
+                    </p>
+                  </div>
                   <div className='level-list' onClick={this.props.onAllLevels}>
                     <ViewListIcon></ViewListIcon>
                     <div>Overview</div>
