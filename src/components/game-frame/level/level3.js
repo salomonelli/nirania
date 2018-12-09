@@ -685,13 +685,6 @@ const level = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: 1502
-                }
-            },
-            {
-                type: 'ring',
-                color: ringColor,
-                position: {
                     distance: 1601
                 }
             },
