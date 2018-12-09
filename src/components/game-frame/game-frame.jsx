@@ -31,7 +31,8 @@ class GameFrameComponent extends Component {
         if (twoPlayers && leftPlayer === null) {
             throw new Error('Leftplayer may not be null.');
         }
-
+        /*
+        TODO fix mobile
         const onTouchStartRight = Rx.Observable
         .fromEvent(this.refs.right, 'touchstart')
         .subscribe(() => this.play.startAction('right'));
@@ -63,7 +64,7 @@ class GameFrameComponent extends Component {
             this.lastTap = currentTime;
         });
         this.subs.push(doubleTap);
-
+        */
 
 
         const listenKeySub = Rx.Observable
