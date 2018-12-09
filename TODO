@@ -1,12 +1,8 @@
 fix font in browser
 
 
-
-animation beginning of game
-animation beginning of Level
-autorestart
-performance-check
 set ring width to 2
+performance-check
 change from cookies to db
 design
 adjust running legs
