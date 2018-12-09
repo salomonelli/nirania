@@ -87,9 +87,10 @@ class LevelPage extends Component {
                 currentValue.diamonds
             );
             await Promise.all([promise1, promise2]);
+            const storedLevel = await this.levelModel.getByNr(levelNr);
             this.levelEndComponent.startCountDown();
             this.setState({end: true});
-            this.setState({success: currentValue.success});
+            this.setState({success: storedLevel.success});
             this.setState({survived: currentValue.survived});
             this.setState({diamonds: currentValue.diamonds});
         });
