@@ -209,7 +209,7 @@ const level = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: 1500
+                    distance: 1502
                 }
             },
             // boxes
@@ -373,7 +373,7 @@ const level = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: 2500
+                    distance: 2501
                 }
             },
             {
