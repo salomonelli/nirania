@@ -685,14 +685,14 @@ const level = {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: 1501
+                    distance: 1502
                 }
             },
             {
                 type: 'ring',
                 color: ringColor,
                 position: {
-                    distance: 1600
+                    distance: 1601
                 }
             },
             // ring of diamonds
