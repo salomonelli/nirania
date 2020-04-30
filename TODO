@@ -1,7 +1,23 @@
 fix font in browser
-
-
 set ring width to 2
+fix colors of first level
+
+sounds
+diamonds required guidance
+pause (also on esc)
+add linter
+ci
+add shadow to figure
+show all levels
+
+release 2
+
+mobile
+unit tests
+selenium tests
+
+
+
 performance-check
 change from cookies to db
 design
@@ -10,11 +26,6 @@ different font
 set sound at end of game
 be able to choose figure
 daimonds require gui
-show all levels
-mobile
-unit tests
-selenium tests
-add linter
 
 
 DONE:
