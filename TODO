@@ -1,4 +1,3 @@
-fix font in browser
 set ring width to 2
 fix colors of first level
 
@@ -10,7 +9,11 @@ ci
 add shadow to figure
 show all levels
 
-release 2
+# Done
+- fix font in browser
+
+
+#### release 2
 
 mobile
 unit tests

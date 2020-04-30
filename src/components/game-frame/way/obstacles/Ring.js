@@ -47,8 +47,8 @@ export default class Ring {
             },
             distance: {
                 center: obstacle.position.distance,
-                min: obstacle.position.distance -1,
-                max: obstacle.position.distance + 1
+                min: obstacle.position.distance - 2,
+                max: obstacle.position.distance + 2
             },
         };
     };
