@@ -31,7 +31,7 @@
     "babelify": "",
     "browserify-hogan": "^0.3.0",
     "concurrently": "^3.4.0",
-    "eslint": "^3.14.1",
+    "eslint": "^6.8.0",
     "font-awesome": "^4.7.0",
     "grunt": "^1.0.1",
     "grunt-browserify": "^5.0.0",
