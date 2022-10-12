@@ -1,8 +1,6 @@
 import Color from '../color';
-import * as Util from '../util';
 let boxColor = Color.palette[2].box;
 let ringColor = Color.palette[2].ring;
-let coneColor = Color.palette[2].cone;
 
 const level = {
     author: 'salomonelli',
