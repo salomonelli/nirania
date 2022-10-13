@@ -40,7 +40,7 @@ export type RxLevelDocument = RxDocument<LevelDocType, typeof methods>;
 export type LevelCollection = RxCollection<LevelDocType, typeof methods, typeof statics>;
 
 async function getByNr(this: LevelCollection, level: number): Promise<RxLevelDocument> {
-    let doc = await this.findOne(level + '').exec();
+    let doc: RxLevelDocument | null = await this.findOne(level + '').exec();
     if (!doc) {
         const docData = {
             level: level + '',
@@ -48,9 +48,12 @@ async function getByNr(this: LevelCollection, level: number): Promise<RxLevelDoc
             survived: false,
             diamonds: 0
         };
-        doc = await this.insert(docData);
+        try {
+            await this.insert(docData);
+        } catch (err) { }
+        doc = await this.findOne(level + '').exec(true) as any;
     }
-    return doc;
+    return ensureNotFalsy(doc);
 }
 
 async function getSuccessful(this: LevelCollection) {

@@ -5,7 +5,7 @@ import * as Util from '../util';
 import * as Obstacle from './obstacles/Obstacle';
 
 
-class Way {
+export class Way {
     group: any;
     obstacles: any[];
     radius: number;
@@ -128,6 +128,3 @@ class Way {
 
 }
 
-export function create(length: number, speed: number, color: any) {
-    return new Way(length, speed, color);
-}

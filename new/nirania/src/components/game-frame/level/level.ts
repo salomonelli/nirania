@@ -1,4 +1,4 @@
-import * as Way from '../way/way';
+import { Way } from '../way/way';
 import * as CollisionDetector from '../collision-detector';
 import * as Sound from '../Sound';
 
@@ -18,9 +18,9 @@ export const levels = [
 /**
  * Represents Level
  */
-class Level {
+export class Level {
     currentLevel: any;
-    way: any;
+    way: Way;
     behavior: any;
     speed: number;
     gameOver: boolean;
@@ -39,7 +39,7 @@ class Level {
      */
     constructor(public id: number, public erich: any) {
         this.currentLevel = levels.find(level => level.id === this.id);
-        this.way = Way.create(
+        this.way = new Way(
             this.currentLevel.way.length,
             this.currentLevel.speed,
             this.currentLevel.way.color
@@ -138,7 +138,7 @@ class Level {
         while (t > 0 && !this.checkCollision(protagonist)) {
             t -= speedMulti;
             this.erich.animateMovement();
-            this.way.moveForwardTillEnd(this.speed * speedMulti);
+            // this.way.moveForwardTillEnd(this.speed * speedMulti);
             await new Promise(res => setTimeout(res, this.speed));
         }
         // GUI.hideInstruction();
